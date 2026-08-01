@@ -1,6 +1,6 @@
-mcp[cli]>=1.3.0
-mcp-server-fastapi>=1.0.0
-fastapi>=0.100.0
-uvicorn>=0.22.0
-sse-starlette>=1.6.0
-asyncpg>=0.28.0
+mcp[cli]
+mcp-server-fastapi
+fastapi
+uvicorn
+sse-starlette
+asyncpg
