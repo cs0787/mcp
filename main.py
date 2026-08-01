@@ -1,13 +1,8 @@
 import os
 import logging
 from typing import Optional
-from fastapi import FastAPI, Request, HTTPException, Depends, status
-from fastapi.responses import JSONResponse
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import asyncpg
-
-# Use the correct high-level stable FastMCP path
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 # Configure Logging
 logging.basicConfig(
@@ -20,7 +15,7 @@ logger = logging.getLogger("AndroidSecondBrain")
 MCP_SECRET_KEY = os.getenv("MCP_SECRET_KEY")
 NEON_DATABASE_URL = os.getenv("NEON_DATABASE_URL")
 
-# Initialize the FastMCP Server Object
+# Initialize FastMCP Server (It natively acts as a web application wrapper)
 mcp = FastMCP("AndroidSecondBrain")
 
 # Database Connection Pool Global Variable
@@ -153,70 +148,10 @@ async def extract_file_knowledge(topic: str) -> str:
         return f"Error executing extract_file_knowledge query: {str(e)}"
 
 
-# ============================================================================
-# FASTAPI APPLICATION & SECURITY MIDDLEWARE
-# ============================================================================
-
-app = FastAPI(
-    title="Android Second Brain MCP Server",
-    description="MCP Server providing mobile AI assistants access to cloud-stored Second Brain data",
-    version="1.0.0"
-)
-
-security = HTTPBearer()
-
-
-def json_error_response(status_code: int, msg: str):
-    return JSONResponse(status_code=status_code, content={"detail": msg})
-
-
-@app.middleware("http")
-async def enforce_mcp_authentication(request: Request, call_next):
-    """Enforces authentication check for all endpoints except health."""
-    if request.url.path in ["/health", "/docs", "/openapi.json"]:
-        return await call_next(request)
-
-    if not MCP_SECRET_KEY:
-        return json_error_response(status.HTTP_500_INTERNAL_SERVER_ERROR, "Server security configuration error.")
-
-    auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        return json_error_response(status.HTTP_401_UNAUTHORIZED, "Missing or invalid Authorization header.")
-
-    token = auth_header.split(" ")[1]
-    if token != MCP_SECRET_KEY:
-        return json_error_response(status.HTTP_401_UNAUTHORIZED, "Forbidden: Invalid MCP Secret Key.")
-
-    return await call_next(request)
-
-
-@app.on_event("startup")
-async def on_startup():
-    logger.info("Initializing database pool during server startup...")
-    if NEON_DATABASE_URL:
-        await get_db_pool()
-
-
-@app.on_event("shutdown")
-async def on_shutdown():
-    global db_pool
-    if db_pool:
-        await db_pool.close()
-        logger.info("Database connection pool closed.")
-
-
-@app.get("/health")
-async def health_check():
-    """Health check endpoint for cloud monitoring."""
-    return {"status": "healthy", "service": "AndroidSecondBrain"}
-
-
-# FastMCP provides an integrated sub-app setup that handles all routing natively
-# We mount the built-in fastmcp ASGI sub-application structure directly onto our router path
-app.mount("/sse", mcp.get_app())
-
-
+# FastMCP includes its own server run control systems natively.
+# We don't mount it to FastAPI manually. It launches itself as an ASGI app.
 if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 10000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port)
+    # Pull dynamic network port injected by Render, defaulting to 10000
+    server_port = int(os.environ.get("PORT", 10000))
+    # Run the server over SSE (Server-Sent Events) transport format
+    mcp.run(transport="sse", port=server_port, host="0.0.0.0")
