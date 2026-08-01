@@ -7,7 +7,7 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Install system dependencies required for database connectors
+# Install system dependencies required for compilation tasks
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
@@ -20,8 +20,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application source code
 COPY . .
 
-# Expose standard web traffic ports
+# Expose cloud instance traffic network ports
 EXPOSE 10000
 
-# Run FastAPI server with Uvicorn dynamically mapping to Render's allocated environment $PORT
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-10000}"]
+# Execute main Python script directly so FastMCP boots up the web transport stack natively
+CMD ["python", "main.py"]
