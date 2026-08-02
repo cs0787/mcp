@@ -2,6 +2,10 @@ import os
 import logging
 from typing import Optional
 import asyncpg
+import uvicorn
+from starlette.applications import Starlette
+from starlette.responses import JSONResponse
+from starlette.routing import Route
 from fastmcp import FastMCP
 
 # Configure Logging
@@ -15,7 +19,7 @@ logger = logging.getLogger("AndroidSecondBrain")
 MCP_SECRET_KEY = os.getenv("MCP_SECRET_KEY")
 NEON_DATABASE_URL = os.getenv("NEON_DATABASE_URL")
 
-# Initialize FastMCP Server (It natively acts as a web application wrapper)
+# Initialize FastMCP Server
 mcp = FastMCP("AndroidSecondBrain")
 
 # Database Connection Pool Global Variable
@@ -148,10 +152,13 @@ async def extract_file_knowledge(topic: str) -> str:
         return f"Error executing extract_file_knowledge query: {str(e)}"
 
 
-# FastMCP includes its own server run control systems natively.
-# We don't mount it to FastAPI manually. It launches itself as an ASGI app.
+# Health check endpoint for root path
+async def homepage(request):
+    return JSONResponse({"status": "healthy", "service": "AndroidSecondBrain MCP Server"})
+
+
 if __name__ == "__main__":
-    # Pull dynamic network port injected by Render, defaulting to 10000
     server_port = int(os.environ.get("PORT", 10000))
-    # Run the server over SSE (Server-Sent Events) transport format
+    
+    # Run FastMCP directly on 0.0.0.0
     mcp.run(transport="sse", port=server_port, host="0.0.0.0")
