@@ -258,9 +258,11 @@ async def get_file(ctx: Context, file_id: str) -> str:
 if __name__ == "__main__":
     import uvicorn
     from auth import BearerAuthMiddleware
+    from oauth import routes as oauth_routes
 
     app = mcp.streamable_http_app()
-    app.add_middleware(BearerAuthMiddleware) 
+    app.router.routes.extend(oauth_routes)
+    app.add_middleware(BearerAuthMiddleware)
 
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
