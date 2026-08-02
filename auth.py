@@ -25,6 +25,13 @@ class BearerAuthMiddleware:
             await self.app(scope, receive, send)
             return
 
+        # Let OAuth discovery/authorize/token endpoints through unauthenticated -
+        # clients need to reach these before they have any token yet.
+        from oauth import EXEMPT_PATHS
+        if scope.get("path") in EXEMPT_PATHS:
+            await self.app(scope, receive, send)
+            return
+
         headers = dict(scope.get("headers", []))
         auth_header = headers.get(b"authorization", b"").decode()
 
