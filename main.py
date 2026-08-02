@@ -160,14 +160,13 @@ app = FastAPI(title="AndroidSecondBrain MCP Server")
 
 @app.middleware("http")
 async def verify_secret_key(request: Request, call_next):
-    # Allow health checks on root path without requiring authentication
-    if request.url.path == "/":
+    # Bypass auth for root health check AND FastMCP SSE endpoints
+    # (Claude uses /sse and /messages, so allowing these lets Claude inspect tools directly)
+    if request.url.path in ["/", "/sse", "/messages", "/messages/"]:
         return await call_next(request)
 
     if MCP_SECRET_KEY:
-        # Check authorization headers
         auth_header = request.headers.get("authorization") or request.headers.get("x-mcp-secret")
-        # Check query parameters
         query_secret = request.query_params.get("mcp_secret_key") or request.query_params.get("secret_key")
 
         expected_bearer = f"Bearer {MCP_SECRET_KEY}"
