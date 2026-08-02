@@ -51,7 +51,11 @@ async def get_db_pool() -> asyncpg.Pool:
 
 @mcp.tool()
 async def search_text_notes(query: str) -> str:
-    """Searches text notes in the Neon database matching a specific query string."""
+    """Searches text notes in the Neon database matching a specific query string.
+
+    Args:
+        query: The search term to match against note content or title.
+    """
     try:
         pool = await get_db_pool()
         async with pool.acquire() as conn:
@@ -79,7 +83,11 @@ async def search_text_notes(query: str) -> str:
 
 @mcp.tool()
 async def get_voice_transcripts(keyword: str) -> str:
-    """Fetches text logs and transcripts of voice memos matching a keyword."""
+    """Fetches text logs and transcripts of voice memos matching a keyword.
+
+    Args:
+        keyword: The keyword to search for within voice memo transcripts.
+    """
     try:
         pool = await get_db_pool()
         async with pool.acquire() as conn:
@@ -110,7 +118,11 @@ async def get_voice_transcripts(keyword: str) -> str:
 
 @mcp.tool()
 async def extract_file_knowledge(topic: str) -> str:
-    """Pulls OCR text or parsed contents from uploaded documents and images matching a topic."""
+    """Pulls OCR text or parsed contents from uploaded documents and images matching a topic.
+
+    Args:
+        topic: The topic or term to match against extracted file metadata and text.
+    """
     try:
         pool = await get_db_pool()
         async with pool.acquire() as conn:
@@ -145,31 +157,41 @@ async def extract_file_knowledge(topic: str) -> str:
 
 app = FastAPI(title="AndroidSecondBrain MCP Server")
 
-# Secret key authentication middleware
+
 @app.middleware("http")
 async def verify_secret_key(request: Request, call_next):
-    # Allow root health check without auth
+    # Allow health checks on root path without requiring authentication
     if request.url.path == "/":
         return await call_next(request)
 
     if MCP_SECRET_KEY:
+        # Check authorization headers
         auth_header = request.headers.get("authorization") or request.headers.get("x-mcp-secret")
-        expected_token = f"Bearer {MCP_SECRET_KEY}"
-        
-        if not auth_header or (auth_header != MCP_SECRET_KEY and auth_header != expected_token):
-            logger.warning(f"Unauthorized request to {request.url.path}")
-            return JSONResponse(status_code=401, content={"detail": "Unauthorized: Invalid MCP Secret Key"})
-            
+        # Check query parameters
+        query_secret = request.query_params.get("mcp_secret_key") or request.query_params.get("secret_key")
+
+        expected_bearer = f"Bearer {MCP_SECRET_KEY}"
+
+        is_header_valid = auth_header and (auth_header == MCP_SECRET_KEY or auth_header == expected_bearer)
+        is_query_valid = query_secret and (query_secret == MCP_SECRET_KEY)
+
+        if not (is_header_valid or is_query_valid):
+            logger.warning(f"Unauthorized request attempt to {request.url.path}")
+            return JSONResponse(
+                status_code=401,
+                content={"detail": "Unauthorized: Invalid MCP Secret Key"}
+            )
+
     return await call_next(request)
 
 
-# Health check route on root domain
+# Health check endpoint on root domain
 @app.get("/")
 async def root():
     return {"status": "healthy", "service": "AndroidSecondBrain MCP Server"}
 
 
-# Mount FastMCP's SSE app correctly using mcp.http_app()
+# Mount FastMCP's SSE app directly onto FastAPI
 app.mount("/", mcp.http_app(transport="sse"))
 
 
