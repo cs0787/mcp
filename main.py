@@ -3,9 +3,8 @@ import logging
 from typing import Optional
 import asyncpg
 import uvicorn
-from starlette.applications import Starlette
-from starlette.responses import JSONResponse
-from starlette.routing import Route
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import JSONResponse
 from fastmcp import FastMCP
 
 # Configure Logging
@@ -152,13 +151,41 @@ async def extract_file_knowledge(topic: str) -> str:
         return f"Error executing extract_file_knowledge query: {str(e)}"
 
 
-# Health check endpoint for root path
-async def homepage(request):
-    return JSONResponse({"status": "healthy", "service": "AndroidSecondBrain MCP Server"})
+# ============================================================================
+# FASTAPI WRAPPER & ROUTING
+# ============================================================================
+
+app = FastAPI(title="AndroidSecondBrain MCP Server")
+
+# Secret key authentication middleware
+@app.middleware("http")
+async def verify_secret_key(request: Request, call_next):
+    # Allow root health check without auth
+    if request.url.path == "/":
+        return await call_next(request)
+
+    if MCP_SECRET_KEY:
+        auth_header = request.headers.get("authorization") or request.headers.get("x-mcp-secret")
+        expected_token = f"Bearer {MCP_SECRET_KEY}"
+        
+        if not auth_header or (auth_header != MCP_SECRET_KEY and auth_header != expected_token):
+            logger.warning(f"Unauthorized request to {request.url.path}")
+            return JSONResponse(status_code=401, content={"detail": "Unauthorized: Invalid MCP Secret Key"})
+            
+    return await call_next(request)
+
+
+# Root route for health check
+@app.get("/")
+async def root():
+    return {"status": "healthy", "service": "AndroidSecondBrain MCP Server"}
+
+
+# Mount FastMCP SSE application onto FastAPI
+# This connects FastMCP's SSE routes (/sse and /messages) directly to FastAPI
+app.mount("/", mcp.sse_app())
 
 
 if __name__ == "__main__":
     server_port = int(os.environ.get("PORT", 10000))
-    
-    # Run FastMCP directly on 0.0.0.0
-    mcp.run(transport="sse", port=server_port, host="0.0.0.0")
+    uvicorn.run(app, host="0.0.0.0", port=server_port)
