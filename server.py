@@ -17,6 +17,10 @@ from dataclasses import dataclass
 
 from mcp.server.fastmcp import FastMCP, Context
 
+# Import middleware and routes required for top-level app initialization
+from auth import BearerAuthMiddleware
+from oauth import routes as oauth_routes
+
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL environment variable is not set")
@@ -255,14 +259,16 @@ async def get_file(ctx: Context, file_id: str) -> str:
     return json.dumps(_row_to_dict(row), ensure_ascii=False, indent=2)
 
 
+# ---------------------------------------------------------------------------
+# Top-Level ASGI Application Export (Required for Vercel)
+# ---------------------------------------------------------------------------
+app = mcp.streamable_http_app()
+app.router.routes.extend(oauth_routes)
+app.add_middleware(BearerAuthMiddleware)
+
+
 if __name__ == "__main__":
     import uvicorn
-    from auth import BearerAuthMiddleware
-    from oauth import routes as oauth_routes
-
-    app = mcp.streamable_http_app()
-    app.router.routes.extend(oauth_routes)
-    app.add_middleware(BearerAuthMiddleware)
 
     port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run("server:app", host="0.0.0.0", port=port, reload=True)
