@@ -361,20 +361,23 @@ if __name__ == "__main__":
     from oauth import routes as oauth_routes
     from webapp import routes as webapp_routes
 
-    from contextlib import asynccontextmanager
+    from contextlib import asynccontextmanager, AsyncExitStack
 
     @asynccontextmanager
     async def lifespan(app):
-        # Startup logic
+        # Startup: initialize control pool and MCP session manager
         await db_control.init_control_pool()
-        yield
-        # Shutdown logic
+        async with AsyncExitStack() as stack:
+            await stack.enter_async_context(mcp.session_manager.run())
+            yield
+        # Shutdown: close control pool and tenant pools
         await tenant_pools.get_manager().close_all()
         await db_control.close_control_pool()
 
-    app = mcp.streamable_http_app(lifespan=lifespan)
+    app = mcp.streamable_http_app()
     app.router.routes.extend(oauth_routes)
     app.router.routes.extend(webapp_routes)
+    app.router.lifespan_context = lifespan
 
     session_secret = os.environ.get("SESSION_SECRET_KEY")
     if not session_secret:
