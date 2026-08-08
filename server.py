@@ -361,32 +361,28 @@ if __name__ == "__main__":
     from oauth import routes as oauth_routes
     from webapp import routes as webapp_routes
 
-    from contextlib import asynccontextmanager, AsyncExitStack
-
-    @asynccontextmanager
-    async def lifespan(app):
-        # Startup: initialize control pool and MCP session manager
-        await db_control.init_control_pool()
-        async with AsyncExitStack() as stack:
-            await stack.enter_async_context(mcp.session_manager.run())
-            yield
-        # Shutdown: close control pool and tenant pools
-        await tenant_pools.get_manager().close_all()
-        await db_control.close_control_pool()
-
     app = mcp.streamable_http_app()
     app.router.routes.extend(oauth_routes)
     app.router.routes.extend(webapp_routes)
-    app.router.lifespan_context = lifespan
 
     session_secret = os.environ.get("SESSION_SECRET_KEY")
     if not session_secret:
         raise RuntimeError("SESSION_SECRET_KEY environment variable is not set")
     https_only = os.environ.get("SESSION_HTTPS_ONLY", "true").lower() != "false"
 
-    # Order matters here: middleware added LAST runs FIRST. We want
-    # BearerAuthMiddleware to run first (it gates the /mcp API endpoints and
-    # exempts the webapp paths), then SessionMiddleware to populate
-    # request.session before webapp.py's route handlers run.
+    # Order matters here: middleware added LAST runs FIRST.
     app.add_middleware(SessionMiddleware, secret_key=session_secret, same_site="lax", https_only=https_only)
     app.add_middleware(BearerAuthMiddleware)
+
+    # Use Starlette's startup event handler safely alongside MCP's built-in lifespan
+    @app.on_event("startup")
+    async def _startup():
+        await db_control.init_control_pool()
+
+    @app.on_event("shutdown")
+    async def _shutdown():
+        await tenant_pools.get_manager().close_all()
+        await db_control.close_control_pool()
+
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
