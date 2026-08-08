@@ -1,4 +1,0 @@
-mcp==1.9.4
-asyncpg>=0.29.0
-starlette>=0.37.0
-uvicorn[standard]>=0.29.0
