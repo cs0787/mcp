@@ -361,9 +361,24 @@ if __name__ == "__main__":
     from oauth import routes as oauth_routes
     from webapp import routes as webapp_routes
 
+    from contextlib import asynccontextmanager
+
+    # Wrap the app lifespan to handle database control initialization safely
+    @asynccontextmanager
+    async def lifespan(app):
+        # Startup logic
+        await db_control.init_control_pool()
+        yield
+        # Shutdown logic
+        await tenant_pools.get_manager().close_all()
+        await db_control.close_control_pool()
+
     app = mcp.streamable_http_app()
     app.router.routes.extend(oauth_routes)
     app.router.routes.extend(webapp_routes)
+    
+    # Assign the lifespan handler safely to the Starlette router
+    app.router.lifespan_context = lifespan
 
     session_secret = os.environ.get("SESSION_SECRET_KEY")
     if not session_secret:
@@ -373,16 +388,6 @@ if __name__ == "__main__":
     # Order matters here: middleware added LAST runs FIRST.
     app.add_middleware(SessionMiddleware, secret_key=session_secret, same_site="lax", https_only=https_only)
     app.add_middleware(BearerAuthMiddleware)
-
-    # Use Starlette's startup event handler safely alongside MCP's built-in lifespan
-    @app.on_event("startup")
-    async def _startup():
-        await db_control.init_control_pool()
-
-    @app.on_event("shutdown")
-    async def _shutdown():
-        await tenant_pools.get_manager().close_all()
-        await db_control.close_control_pool()
 
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
