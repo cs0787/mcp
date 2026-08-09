@@ -2,20 +2,7 @@
 Multi-user bearer-token auth for the MCP server.
 
 Every MCP request must include: Authorization: Bearer <MCP_API_KEY>
-
-Unlike the original single-user version, that key is no longer compared
-against one fixed value from an env var. Instead:
-  1. We hash the presented key and look it up in the control-plane `users`
-     table (db_control.py) to find out WHICH user it belongs to.
-  2. We decrypt that user's stored Neon connection string.
-  3. We get-or-create an asyncpg pool for that specific user (tenant_pools.py).
-  4. We stash the user id + pool in contextvars (tenant_context.py) for the
-     duration of the request, so the MCP tool functions in server.py can
-     read them back out without needing to know anything about HTTP/auth.
-
-Routes used by the signup/login/dashboard website (see webapp.py) are
-exempt from this middleware -- those use cookie sessions instead, since a
-browser user hasn't generated an API key yet when they're signing up.
+Routes used by the website (landing page, signup, login, dashboard) are exempt.
 """
 
 import hashlib
@@ -28,8 +15,8 @@ import security
 import tenant_pools
 from tenant_context import current_user_id, current_pool
 
-# Browser-facing account pages use session cookies, not the API key -- keep
-# them out of this bearer check entirely.
+# Paths that do not require Bearer token auth
+WEBAPP_EXACT_PATHS = {"/", ""}
 WEBAPP_PATH_PREFIXES = ("/signup", "/login", "/logout", "/dashboard", "/static")
 
 
@@ -48,12 +35,14 @@ class BearerAuthMiddleware:
 
         path = scope.get("path", "")
 
-        # Let OAuth discovery/authorize/token endpoints through unauthenticated
-        # (clients need to reach these before they have any token), and let
-        # the account website through (it authenticates via session cookie).
         from oauth import EXEMPT_PATHS
 
-        if path in EXEMPT_PATHS or path.startswith(WEBAPP_PATH_PREFIXES):
+        # Allow public web app pages and OAuth discovery endpoints through unauthenticated
+        if (
+            path in WEBAPP_EXACT_PATHS
+            or path in EXEMPT_PATHS
+            or any(path.startswith(prefix) for prefix in WEBAPP_PATH_PREFIXES)
+        ):
             await self.app(scope, receive, send)
             return
 
@@ -90,8 +79,6 @@ class BearerAuthMiddleware:
             await _reject(scope, receive, send, f"Could not connect to your database: {e}", status_code=502)
             return
 
-        # Best-effort -- a slow/failed bookkeeping write should never break
-        # an otherwise-valid request.
         try:
             await db_control.touch_api_key_last_used(control_pool, str(owner["api_key_id"]))
         except Exception:
