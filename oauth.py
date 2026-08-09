@@ -32,13 +32,18 @@ from starlette.requests import Request
 import db_control
 import security
 
-# Render auto-populates RENDER_EXTERNAL_URL for web services at runtime.
-# BASE_URL is a manual fallback for local testing or other hosts.
-BASE_URL = os.environ.get("RENDER_EXTERNAL_URL") or os.environ.get("BASE_URL")
+
+# Replaced the top BASE_URL logic in oauth.py with this:
+BASE_URL = os.environ.get("BASE_URL") or os.environ.get("RENDER_EXTERNAL_URL")
+
+# Auto-detect Vercel deployment URL if BASE_URL isn't explicitly set
+if not BASE_URL and os.environ.get("VERCEL_URL"):
+    BASE_URL = f"https://{os.environ.get('VERCEL_URL')}"
+
 if not BASE_URL:
     raise RuntimeError(
         "Could not determine this server's public URL. "
-        "Set BASE_URL manually if RENDER_EXTERNAL_URL isn't available."
+        "Set BASE_URL in your environment variables."
     )
 BASE_URL = BASE_URL.rstrip("/")
 
