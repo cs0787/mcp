@@ -353,7 +353,7 @@ async def search_all(query: str, limit: int = 10) -> str:
 
 if __name__ == "__main__":
     import uvicorn
-    from contextlib import asynccontextmanager
+    import contextlib
     from starlette.middleware.sessions import SessionMiddleware
 
     import db_control
@@ -362,18 +362,20 @@ if __name__ == "__main__":
     from oauth import routes as oauth_routes
     from webapp import routes as webapp_routes
 
-    @asynccontextmanager
+    @contextlib.asynccontextmanager
     async def lifespan(app):
         # Startup: initialize control pool and MCP session manager background tasks
         await db_control.init_control_pool()
-        async with mcp.session_manager.run():
+        async with contextlib.AsyncExitStack() as stack:
+            await stack.enter_async_context(mcp.session_manager.run())
             yield
         # Shutdown: close connection pools cleanly
         await tenant_pools.get_manager().close_all()
         await db_control.close_control_pool()
 
-    # Pass the lifespan directly into streamable_http_app
-    app = mcp.streamable_http_app(lifespan=lifespan)
+    # Create the base application and supply the custom lifespan
+    app = mcp.streamable_http_app()
+    app.router.lifespan_context = lifespan
     app.router.routes.extend(oauth_routes)
     app.router.routes.extend(webapp_routes)
 
