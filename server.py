@@ -353,6 +353,7 @@ async def search_all(query: str, limit: int = 10) -> str:
 
 if __name__ == "__main__":
     import uvicorn
+    from contextlib import asynccontextmanager
     from starlette.middleware.sessions import SessionMiddleware
 
     import db_control
@@ -361,7 +362,18 @@ if __name__ == "__main__":
     from oauth import routes as oauth_routes
     from webapp import routes as webapp_routes
 
-    app = mcp.streamable_http_app()
+    @asynccontextmanager
+    async def lifespan(app):
+        # Startup: initialize control pool and MCP session manager background tasks
+        await db_control.init_control_pool()
+        async with mcp.session_manager.run():
+            yield
+        # Shutdown: close connection pools cleanly
+        await tenant_pools.get_manager().close_all()
+        await db_control.close_control_pool()
+
+    # Pass the lifespan directly into streamable_http_app
+    app = mcp.streamable_http_app(lifespan=lifespan)
     app.router.routes.extend(oauth_routes)
     app.router.routes.extend(webapp_routes)
 
@@ -376,16 +388,6 @@ if __name__ == "__main__":
     # request.session before webapp.py's route handlers run.
     app.add_middleware(SessionMiddleware, secret_key=session_secret, same_site="lax", https_only=https_only)
     app.add_middleware(BearerAuthMiddleware)
-
-    async def _startup():
-        await db_control.init_control_pool()
-
-    async def _shutdown():
-        await tenant_pools.get_manager().close_all()
-        await db_control.close_control_pool()
-
-    app.add_event_handler("startup", _startup)
-    app.add_event_handler("shutdown", _shutdown)
 
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
