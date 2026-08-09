@@ -1,20 +1,5 @@
 """
-Minimal OAuth 2.1 Authorization Server, bolted onto the MCP server.
-
-Why this exists: Claude's web connector UI insists on a full OAuth handshake
-(metadata discovery -> dynamic client registration -> authorize -> token)
-even though the actual credential this service uses is just an API key.
-This implements just enough real OAuth 2.1 + PKCE to satisfy that UI.
-
-Flow, from the user's point of view: they click "connect" in Claude, land
-on /authorize here. If they're not logged in (no session cookie), they're
-sent to /login?next=... first -- login/signup lives in webapp.py and sets
-the same session cookie the dashboard uses. Once logged in, /authorize
-shows a plain "Allow access to your notes?" consent screen (no typing a
-key). Clicking Allow mints a FRESH API key scoped to this one connection
-(labeled by client_id) and stores its hash in the api_keys table --
-so revoking access to one connected app later, from the dashboard, doesn't
-break any other app's connection.
+Minimal OAuth 2.1 Authorization Server, adjusted for Vercel runtime.
 """
 
 import time
@@ -33,30 +18,22 @@ import db_control
 import security
 
 
-# Replaced the top BASE_URL logic in oauth.py with this:
-BASE_URL = os.environ.get("BASE_URL") or os.environ.get("RENDER_EXTERNAL_URL")
+def get_base_url(request: Request | None = None) -> str:
+    base_url = os.environ.get("BASE_URL") or os.environ.get("RENDER_EXTERNAL_URL")
+    if not base_url and os.environ.get("VERCEL_URL"):
+        base_url = f"https://{os.environ.get('VERCEL_URL')}"
+    if not base_url and request:
+        base_url = str(request.base_url).rstrip("/")
+    if not base_url:
+        base_url = "http://localhost:8000"
+    return base_url.rstrip("/")
 
-# Auto-detect Vercel deployment URL if BASE_URL isn't explicitly set
-if not BASE_URL and os.environ.get("VERCEL_URL"):
-    BASE_URL = f"https://{os.environ.get('VERCEL_URL')}"
 
-if not BASE_URL:
-    raise RuntimeError(
-        "Could not determine this server's public URL. "
-        "Set BASE_URL in your environment variables."
-    )
-BASE_URL = BASE_URL.rstrip("/")
-
-# Only allow redirecting back to Claude - prevents this OAuth server being
-# abused as an open redirector to phish other sites.
 ALLOWED_REDIRECT_PREFIXES = (
     "https://claude.ai/",
     "https://claude.com/",
 )
 
-# In-memory single-use authorization codes. Fine for this use case: codes
-# live for ~2 minutes and are exchanged immediately by Claude's backend
-# right after the redirect.
 _auth_codes: dict[str, dict] = {}
 CODE_TTL_SECONDS = 120
 
@@ -67,22 +44,21 @@ def _cleanup_codes() -> None:
         _auth_codes.pop(c, None)
 
 
-# ---------------------------------------------------------------------------
-# Discovery metadata
-# ---------------------------------------------------------------------------
 async def protected_resource_metadata(request: Request):
+    base_url = get_base_url(request)
     return JSONResponse({
-        "resource": f"{BASE_URL}/mcp",
-        "authorization_servers": [BASE_URL],
+        "resource": f"{base_url}/mcp",
+        "authorization_servers": [base_url],
     })
 
 
 async def authorization_server_metadata(request: Request):
+    base_url = get_base_url(request)
     return JSONResponse({
-        "issuer": BASE_URL,
-        "authorization_endpoint": f"{BASE_URL}/authorize",
-        "token_endpoint": f"{BASE_URL}/token",
-        "registration_endpoint": f"{BASE_URL}/register",
+        "issuer": base_url,
+        "authorization_endpoint": f"{base_url}/authorize",
+        "token_endpoint": f"{base_url}/token",
+        "registration_endpoint": f"{base_url}/register",
         "response_types_supported": ["code"],
         "grant_types_supported": ["authorization_code"],
         "code_challenge_methods_supported": ["S256"],
@@ -90,9 +66,6 @@ async def authorization_server_metadata(request: Request):
     })
 
 
-# ---------------------------------------------------------------------------
-# Dynamic Client Registration (RFC 7591) - accept any client, no secret
-# ---------------------------------------------------------------------------
 async def register_client(request: Request):
     body = await request.json()
     redirect_uris = body.get("redirect_uris", [])
@@ -107,27 +80,21 @@ async def register_client(request: Request):
     })
 
 
-# ---------------------------------------------------------------------------
-# Authorize - session-based consent screen, then issues a short-lived code
-# ---------------------------------------------------------------------------
 CONSENT_PAGE = """
 <!DOCTYPE html>
 <html>
 <head>
 <title>Authorize access</title>
 <style>
-  body { background-color: #0b0f19; font-family: system-ui, -apple-system, sans-serif; max-width: 440px; margin: 80px auto; padding: 0 20px; color: #f3f4f6; }
-  .card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(0, 242, 254, 0.2); box-shadow: 0 0 25px rgba(0, 242, 254, 0.1); border-radius: 12px; padding: 24px; }
-  h2 { color: #fff; font-weight: 600; letter-spacing: -0.5px; margin-top: 0; }
-  button { width: 100%; padding: 12px; font-size: 15px; font-weight: 500; cursor: pointer; border: none; border-radius: 8px; margin-top: 12px; transition: all 0.2s ease; }
-  .allow { background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); color: #0b0f19; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3); }
-  .allow:hover { opacity: 0.9; transform: translateY(-1px); }
-  .deny { background: transparent; color: #9ca3af; border: 1px solid rgba(255, 255, 255, 0.1); }
-  .deny:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
-  .warn { color: #f87171; }
-  .muted { color: #9ca3af; font-size: 14px; line-height: 1.5; }
-  .link-btn { all: unset; color: #38bdf8; text-decoration: underline; cursor: pointer; font-size: 13px; }
-  .link-btn:hover { color: #7dd3fc; }
+  body {{ background-color: #0b0f19; font-family: system-ui, -apple-system, sans-serif; max-width: 440px; margin: 80px auto; padding: 0 20px; color: #f3f4f6; }}
+  .card {{ background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(0, 242, 254, 0.2); box-shadow: 0 0 25px rgba(0, 242, 254, 0.1); border-radius: 12px; padding: 24px; }}
+  h2 {{ color: #fff; font-weight: 600; letter-spacing: -0.5px; margin-top: 0; }}
+  button {{ width: 100%; padding: 12px; font-size: 15px; font-weight: 500; cursor: pointer; border: none; border-radius: 8px; margin-top: 12px; transition: all 0.2s ease; }}
+  .allow {{ background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); color: #0b0f19; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3); }}
+  .deny {{ background: transparent; color: #9ca3af; border: 1px solid rgba(255, 255, 255, 0.1); }}
+  .warn {{ color: #f87171; }}
+  .muted {{ color: #9ca3af; font-size: 14px; line-height: 1.5; }}
+  .link-btn {{ all: unset; color: #38bdf8; text-decoration: underline; cursor: pointer; font-size: 13px; }}
 </style>
 </head>
 <body>
@@ -226,8 +193,6 @@ async def authorize_post(request: Request):
 
     user_id = request.session.get("user_id")
     if not user_id:
-        # Session expired between showing the consent screen and submitting
-        # it -- send them through login again with the same params.
         next_url = "/authorize?" + urlencode({
             "client_id": client_id,
             "redirect_uri": redirect_uri,
@@ -240,13 +205,8 @@ async def authorize_post(request: Request):
     control_pool = db_control.get_control_pool()
     user = await db_control.get_user_by_id(control_pool, user_id)
     if user is None or not user["connection_string_encrypted"]:
-        # Shouldn't normally be reachable (the consent screen already gates
-        # on this), but never hand out a token for a not-yet-usable account.
         return RedirectResponse("/dashboard", status_code=302)
 
-    # Mint a FRESH key for this one connection rather than reusing a single
-    # shared key -- each connected AI app can be revoked independently from
-    # the dashboard without breaking the others.
     raw_key = security.generate_api_key()
     label = f"{client_id or 'AI app'} (connected {time.strftime('%Y-%m-%d')})"
     await db_control.create_api_key(control_pool, user_id, security.hash_api_key(raw_key), label)
@@ -257,7 +217,6 @@ async def authorize_post(request: Request):
         "code_challenge": code_challenge,
         "code_challenge_method": code_challenge_method,
         "expires_at": time.time() + CODE_TTL_SECONDS,
-        # Handed back verbatim at the /token step below.
         "api_key": raw_key,
     }
 
@@ -267,9 +226,6 @@ async def authorize_post(request: Request):
     return RedirectResponse(f"{redirect_uri}?{urlencode(params)}", status_code=302)
 
 
-# ---------------------------------------------------------------------------
-# Token exchange
-# ---------------------------------------------------------------------------
 async def token(request: Request):
     form = await request.form()
     grant_type = form.get("grant_type")
@@ -310,10 +266,6 @@ routes = [
     Route("/token", token, methods=["POST"]),
 ]
 
-# Paths the bearer-auth middleware must NOT block, since OAuth clients hit
-# these before they have any token at all. (/authorize itself relies on the
-# session cookie, handled the same way the webapp.py pages are -- see
-# WEBAPP_PATH_PREFIXES in auth.py.)
 EXEMPT_PATHS = {
     "/.well-known/oauth-protected-resource",
     "/.well-known/oauth-protected-resource/mcp",
