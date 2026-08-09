@@ -2,19 +2,7 @@
 Notes MCP Server (multi-user)
 ------------------------------
 Exposes each signed-up user's own Neon Postgres notes database as MCP tools
-that Claude, ChatGPT, Gemini, etc. can call as a remote connector.
-
-Transport: streamable-http (works as a remote connector, not just local stdio)
-Auth: bearer token via a per-user MCP_API_KEY, resolved to that user's own
-      database connection by BearerAuthMiddleware (auth.py) -- see
-      tenant_context.py / tenant_pools.py for how that's threaded through.
-
-Schema note: this matches the `notes` table exactly as created by the
-Android app's CloudSyncWorker (workspaces + notes only -- no created_at
-column, no transcripts/file_metadata tables). The transcripts/files tools
-below are kept for accounts that DO have those tables (e.g. a future
-version of the app, or someone who added them by hand) and degrade
-gracefully to "not available" for accounts that don't.
+for Vercel execution.
 """
 
 import os
@@ -24,6 +12,7 @@ import asyncpg
 
 from mcp.server.fastmcp import FastMCP
 from starlette.middleware.sessions import SessionMiddleware
+from starlette.types import ASGIApp, Scope, Receive, Send
 
 import db_control
 import tenant_pools
@@ -36,10 +25,7 @@ mcp = FastMCP(
     "notes-mcp",
     instructions=(
         "Tools for searching and reading the user's personal notes app data. "
-        "Use search_all or search_notes first for general questions. "
-        "search_transcripts/search_files only apply to accounts that also "
-        "store voice transcripts / OCR'd files -- most accounts will just "
-        "have notes."
+        "Use search_all or search_notes first for general questions."
     ),
 )
 
@@ -47,14 +33,14 @@ mcp = FastMCP(
 def _get_pool() -> asyncpg.Pool:
     pool = current_pool.get()
     if pool is None:
-        raise RuntimeError("No database connection resolved for this request (auth middleware should have set one)")
+        raise RuntimeError("No database connection resolved for this request")
     return pool
 
 
 def _row_to_dict(row) -> dict:
     d = dict(row)
     for k, v in d.items():
-        if hasattr(v, "isoformat"):  # datetimes aren't JSON serializable by default
+        if hasattr(v, "isoformat"):
             d[k] = v.isoformat()
     return d
 
@@ -64,35 +50,20 @@ def _rows_to_json(rows) -> str:
 
 
 async def _fetch_with_trgm_fallback(pool: asyncpg.Pool, trgm_sql: str, fallback_sql: str, *args):
-    """Try the fuzzy-search (pg_trgm) query first; if the account's DB role
-    couldn't create the pg_trgm extension, fall back to a plain ILIKE query
-    instead of erroring out."""
     try:
         return await pool.fetch(trgm_sql, *args)
     except asyncpg.exceptions.UndefinedFunctionError:
         return await pool.fetch(fallback_sql, *args)
 
 
-async def _fetch_optional_table(pool: asyncpg.Pool, sql: str, *args):
-    """For tables (transcripts, file_metadata) that only exist on some
-    accounts. Returns None (rather than raising) if the table isn't there."""
-    try:
-        return await pool.fetch(sql, *args)
-    except asyncpg.exceptions.UndefinedTableError:
-        return None
-
-
 async def _fetch_optional_table_row(pool: asyncpg.Pool, sql: str, *args):
     try:
         return await pool.fetchrow(sql, *args)
     except asyncpg.exceptions.UndefinedTableError:
-        return "unavailable"  # sentinel distinct from "no row found" (None)
+        return "unavailable"
 
 
 async def _fetch_optional_with_trgm_fallback(pool: asyncpg.Pool, trgm_sql: str, fallback_sql: str, *args):
-    """Combines both degradations: table might not exist on this account
-    (-> None), or pg_trgm might not be enabled on this account (-> ILIKE-only
-    fallback query)."""
     try:
         return await pool.fetch(trgm_sql, *args)
     except asyncpg.exceptions.UndefinedTableError:
@@ -104,11 +75,6 @@ async def _fetch_optional_with_trgm_fallback(pool: asyncpg.Pool, trgm_sql: str, 
             return None
 
 
-# ---------------------------------------------------------------------------
-# Notes (matches CloudSyncWorker.kt's schema: id, workspace_id,
-# workspace_name, title, content, type, media_url, media_name, color_hex,
-# x, y, updated_at -- note there is no created_at column)
-# ---------------------------------------------------------------------------
 _NOTES_TRGM_SQL = """
     SELECT id, workspace_id, workspace_name, title, content, type,
            media_url, media_name, color_hex, x, y, updated_at,
@@ -132,13 +98,6 @@ _NOTES_FALLBACK_SQL = """
 
 @mcp.tool()
 async def search_notes(query: str, limit: int = 15, workspace_id: str | None = None) -> str:
-    """Fuzzy-search notes by title/content.
-
-    Args:
-        query: search text
-        limit: max results (default 15)
-        workspace_id: optional -- restrict to one workspace
-    """
     rows = await _fetch_with_trgm_fallback(
         _get_pool(), _NOTES_TRGM_SQL, _NOTES_FALLBACK_SQL, query, limit, workspace_id
     )
@@ -147,11 +106,6 @@ async def search_notes(query: str, limit: int = 15, workspace_id: str | None = N
 
 @mcp.tool()
 async def get_note(note_id: str) -> str:
-    """Fetch a single note by its exact id.
-
-    Args:
-        note_id: the note's primary key
-    """
     row = await _get_pool().fetchrow("SELECT * FROM notes WHERE id = $1", note_id)
     if not row:
         return json.dumps({"error": f"No note found with id {note_id}"})
@@ -160,12 +114,6 @@ async def get_note(note_id: str) -> str:
 
 @mcp.tool()
 async def list_recent_notes(limit: int = 20, workspace_id: str | None = None) -> str:
-    """List the most recently updated notes.
-
-    Args:
-        limit: max results (default 20)
-        workspace_id: optional -- restrict to one workspace
-    """
     rows = await _get_pool().fetch(
         """
         SELECT id, workspace_id, workspace_name, title, type, updated_at
@@ -181,24 +129,12 @@ async def list_recent_notes(limit: int = 20, workspace_id: str | None = None) ->
 
 @mcp.tool()
 async def list_workspaces() -> str:
-    """List the user's workspaces (notes are grouped into workspaces)."""
     rows = await _get_pool().fetch("SELECT id, name, updated_at FROM workspaces ORDER BY updated_at DESC")
     return _rows_to_json(rows)
 
 
-# ---------------------------------------------------------------------------
-# Transcripts (voice memos) -- only present on some accounts
-# ---------------------------------------------------------------------------
 @mcp.tool()
 async def search_transcripts(query: str, limit: int = 15) -> str:
-    """Fuzzy-search voice memo transcripts by title/content, for accounts
-    that store transcripts. Returns an 'available: false' note if this
-    account's database doesn't have a transcripts table.
-
-    Args:
-        query: search text
-        limit: max results (default 15)
-    """
     rows = await _fetch_optional_with_trgm_fallback(
         _get_pool(),
         """
@@ -225,12 +161,6 @@ async def search_transcripts(query: str, limit: int = 15) -> str:
 
 @mcp.tool()
 async def get_transcript(transcript_id: str) -> str:
-    """Fetch a single voice transcript by its exact id (only for accounts
-    that have a transcripts table).
-
-    Args:
-        transcript_id: the transcript's primary key
-    """
     row = await _fetch_optional_table_row(_get_pool(), "SELECT * FROM transcripts WHERE id = $1", transcript_id)
     if row == "unavailable":
         return json.dumps({"available": False, "reason": "This account has no transcripts table."})
@@ -239,19 +169,8 @@ async def get_transcript(transcript_id: str) -> str:
     return json.dumps(_row_to_dict(row), ensure_ascii=False, indent=2)
 
 
-# ---------------------------------------------------------------------------
-# Files / PDFs (OCR) -- only present on some accounts
-# ---------------------------------------------------------------------------
 @mcp.tool()
 async def search_files(query: str, limit: int = 15) -> str:
-    """Fuzzy-search PDFs/images by topic or OCR'd text, for accounts that
-    store file metadata. Returns an 'available: false' note if this
-    account's database doesn't have a file_metadata table.
-
-    Args:
-        query: search text
-        limit: max results (default 15)
-    """
     rows = await _fetch_optional_with_trgm_fallback(
         _get_pool(),
         """
@@ -278,12 +197,6 @@ async def search_files(query: str, limit: int = 15) -> str:
 
 @mcp.tool()
 async def get_file(file_id: str) -> str:
-    """Fetch full metadata + OCR text for one file by its exact id (only
-    for accounts that have a file_metadata table).
-
-    Args:
-        file_id: the file_metadata primary key
-    """
     row = await _fetch_optional_table_row(_get_pool(), "SELECT * FROM file_metadata WHERE id = $1", file_id)
     if row == "unavailable":
         return json.dumps({"available": False, "reason": "This account has no file_metadata table."})
@@ -292,25 +205,10 @@ async def get_file(file_id: str) -> str:
     return json.dumps(_row_to_dict(row), ensure_ascii=False, indent=2)
 
 
-# ---------------------------------------------------------------------------
-# Unified search across whatever tables this account actually has
-# ---------------------------------------------------------------------------
 @mcp.tool()
 async def search_all(query: str, limit: int = 10) -> str:
-    """Fuzzy-search notes, and voice transcripts / file OCR text if this
-    account has those tables, all at once.
-
-    Use this as the default search tool for any general question like
-    "what do I know about X" or "find my notes on Y".
-
-    Args:
-        query: search text (matched fuzzily against titles/content/OCR text)
-        limit: max results per content type (default 10)
-    """
     pool = _get_pool()
-
     notes = await _fetch_with_trgm_fallback(pool, _NOTES_TRGM_SQL, _NOTES_FALLBACK_SQL, query, limit, None)
-
     transcripts = await _fetch_optional_with_trgm_fallback(
         pool,
         """
@@ -358,19 +256,18 @@ async def search_all(query: str, limit: int = 10) -> str:
     return json.dumps(result, ensure_ascii=False, indent=2)
 
 
-@contextlib.asynccontextmanager
-async def lifespan(app):
-    await db_control.init_control_pool()
-    async with contextlib.AsyncExitStack() as stack:
-        await stack.enter_async_context(mcp.session_manager.run())
-        yield
-    await tenant_pools.get_manager().close_all()
-    await db_control.close_control_pool()
+# Vercel Serverless Middleware: Guarantees DB control pool initialization on invocation
+class DatabaseInitMiddleware:
+    def __init__(self, app: ASGIApp):
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send):
+        if scope["type"] == "http":
+            await db_control.init_control_pool()
+        await self.app(scope, receive, send)
 
 
-# Create the ASGI application instance exposed at top-level for Vercel/Uvicorn
 app = mcp.streamable_http_app()
-app.router.lifespan_context = lifespan
 app.router.routes.extend(oauth_routes)
 app.router.routes.extend(webapp_routes)
 
@@ -379,9 +276,10 @@ if not session_secret:
     raise RuntimeError("SESSION_SECRET_KEY environment variable is not set")
 https_only = os.environ.get("SESSION_HTTPS_ONLY", "true").lower() != "false"
 
+# Middlewares execution order: DatabaseInitMiddleware runs FIRST on incoming requests
 app.add_middleware(SessionMiddleware, secret_key=session_secret, same_site="lax", https_only=https_only)
 app.add_middleware(BearerAuthMiddleware)
-
+app.add_middleware(DatabaseInitMiddleware)
 
 if __name__ == "__main__":
     import uvicorn
