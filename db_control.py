@@ -1,6 +1,5 @@
 """
-The control-plane database.
-Updated for Vercel serverless lazy initialization.
+The control-plane database pool manager for Vercel Serverless.
 """
 
 import os
@@ -8,38 +7,50 @@ import asyncio
 import asyncpg
 
 _pool: asyncpg.Pool | None = None
+_pool_loop: asyncio.AbstractEventLoop | None = None
 _init_lock = asyncio.Lock()
 
 
 async def init_control_pool() -> asyncpg.Pool:
-    global _pool
-    # If pool is already active and open, reuse it
-    if _pool is not None and not getattr(_pool, "_closed", True):
+    global _pool, _pool_loop
+    current_loop = asyncio.get_running_loop()
+
+    # Reuse pool if active and on the same event loop
+    if _pool is not None and _pool_loop == current_loop and not getattr(_pool, "_closed", True):
         return _pool
 
     async with _init_lock:
-        if _pool is not None and not getattr(_pool, "_closed", True):
+        if _pool is not None and _pool_loop == current_loop and not getattr(_pool, "_closed", True):
             return _pool
 
         control_db_url = os.environ.get("CONTROL_DATABASE_URL")
         if not control_db_url:
-            raise RuntimeError("CONTROL_DATABASE_URL environment variable is not set")
+            raise RuntimeError("CONTROL_DATABASE_URL environment variable is missing in Vercel settings.")
 
-        _pool = await asyncpg.create_pool(control_db_url, min_size=1, max_size=5, ssl="require")
+        # Clean up stale pool if loop changed
+        if _pool is not None and not getattr(_pool, "_closed", True):
+            try:
+                await _pool.close()
+            except Exception:
+                pass
+
+        _pool = await asyncpg.create_pool(control_db_url, min_size=1, max_size=3, ssl="require")
+        _pool_loop = current_loop
         await _init_schema(_pool)
         return _pool
 
 
 async def close_control_pool() -> None:
-    global _pool
+    global _pool, _pool_loop
     if _pool is not None:
         await _pool.close()
         _pool = None
+        _pool_loop = None
 
 
 def get_control_pool() -> asyncpg.Pool:
     if _pool is None:
-        raise RuntimeError("Control pool not initialized")
+        raise RuntimeError("Control pool not initialized.")
     return _pool
 
 
