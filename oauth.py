@@ -1,5 +1,6 @@
 """
 Minimal OAuth 2.1 Authorization Server, adjusted for Vercel runtime.
+Monochromatic UI styling.
 """
 
 import time
@@ -86,20 +87,33 @@ CONSENT_PAGE = """
 <head>
 <title>Authorize access</title>
 <style>
-  body {{ background-color: #0b0f19; font-family: system-ui, -apple-system, sans-serif; max-width: 440px; margin: 80px auto; padding: 0 20px; color: #f3f4f6; }}
-  .card {{ background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(0, 242, 254, 0.2); box-shadow: 0 0 25px rgba(0, 242, 254, 0.1); border-radius: 12px; padding: 24px; }}
-  h2 {{ color: #fff; font-weight: 600; letter-spacing: -0.5px; margin-top: 0; }}
-  button {{ width: 100%; padding: 12px; font-size: 15px; font-weight: 500; cursor: pointer; border: none; border-radius: 8px; margin-top: 12px; transition: all 0.2s ease; }}
-  .allow {{ background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); color: #0b0f19; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3); }}
-  .deny {{ background: transparent; color: #9ca3af; border: 1px solid rgba(255, 255, 255, 0.1); }}
-  .warn {{ color: #f87171; }}
-  .muted {{ color: #9ca3af; font-size: 14px; line-height: 1.5; }}
-  .link-btn {{ all: unset; color: #38bdf8; text-decoration: underline; cursor: pointer; font-size: 13px; }}
+  body {{
+    background-color: #050505;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Display', Roboto, sans-serif;
+    max-width: 420px; margin: 80px auto; padding: 0 20px; color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+  }}
+  .card {{
+    background: #0d0d0f; border: 1px solid #222226;
+    border-radius: 14px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+  }}
+  h2 {{ color: #ffffff; font-weight: 700; letter-spacing: -0.03em; margin-top: 0; font-size: 22px; }}
+  button {{
+    width: 100%; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer;
+    border-radius: 8px; margin-top: 10px; transition: all 0.2s ease;
+  }}
+  .allow {{ background: #ffffff; color: #000000; border: 1px solid #ffffff; }}
+  .allow:hover {{ background: #e4e4e7; border-color: #e4e4e7; }}
+  .deny {{ background: #141417; color: #a1a1aa; border: 1px solid #222226; }}
+  .deny:hover {{ background: #1c1c20; color: #ffffff; }}
+  .warn {{ color: #f87171; font-size: 14px; }}
+  .muted {{ color: #a1a1aa; font-size: 14px; line-height: 1.5; }}
+  .link-btn {{ all: unset; color: #ffffff; text-decoration: underline; cursor: pointer; font-size: 13px; }}
 </style>
 </head>
 <body>
   <div class="card">
-    <h2>Allow access to your notes?</h2>
+    <h2>Authorize Access</h2>
     <p class="muted">
       Signed in as {email}.
       <form method="POST" action="/logout" style="display:inline">
@@ -154,7 +168,7 @@ async def authorize_get(request: Request):
         body = f"""
         <p class="warn">You haven't added a Neon connection string yet.</p>
         <p class="muted">Add one from your dashboard, then come back and authorize again.</p>
-        <button type="button" class="allow" onclick="window.location='/dashboard'">Go to dashboard</button>
+        <button type="button" class="allow" onclick="window.location='/dashboard'">Go to Dashboard</button>
         <form method="POST" action="/authorize">
           {hidden}
           <button type="submit" name="decision" value="deny" class="deny">Cancel</button>
@@ -164,7 +178,7 @@ async def authorize_get(request: Request):
         body = f"""
         <form method="POST" action="/authorize">
           {hidden}
-          <button type="submit" name="decision" value="allow" class="allow">Allow</button>
+          <button type="submit" name="decision" value="allow" class="allow">Allow Connection</button>
           <button type="submit" name="decision" value="deny" class="deny">Deny</button>
         </form>
         """
