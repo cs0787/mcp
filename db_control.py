@@ -1,33 +1,33 @@
 """
 The control-plane database.
-
-This is a SEPARATE, small Postgres/Neon database that belongs to this MCP
-service itself -- it is NOT any user's personal notes database. It stores:
-  - users: login + their (encrypted) personal Neon connection string
-  - api_keys: one row per issued key. A user can have several -- typically
-    one per connected AI app, minted automatically when they log in and
-    click "Allow" on the OAuth consent screen -- each independently
-    revocable without breaking the others.
-
-Set CONTROL_DATABASE_URL to this database's connection string. Don't reuse
-a user's own notes DB for this.
+Updated for Vercel serverless lazy initialization.
 """
 
 import os
+import asyncio
 import asyncpg
 
-CONTROL_DATABASE_URL = os.environ.get("CONTROL_DATABASE_URL")
-
 _pool: asyncpg.Pool | None = None
+_init_lock = asyncio.Lock()
 
 
 async def init_control_pool() -> asyncpg.Pool:
     global _pool
-    if not CONTROL_DATABASE_URL:
-        raise RuntimeError("CONTROL_DATABASE_URL environment variable is not set")
-    _pool = await asyncpg.create_pool(CONTROL_DATABASE_URL, min_size=1, max_size=5, ssl="require")
-    await _init_schema(_pool)
-    return _pool
+    # If pool is already active and open, reuse it
+    if _pool is not None and not getattr(_pool, "_closed", True):
+        return _pool
+
+    async with _init_lock:
+        if _pool is not None and not getattr(_pool, "_closed", True):
+            return _pool
+
+        control_db_url = os.environ.get("CONTROL_DATABASE_URL")
+        if not control_db_url:
+            raise RuntimeError("CONTROL_DATABASE_URL environment variable is not set")
+
+        _pool = await asyncpg.create_pool(control_db_url, min_size=1, max_size=5, ssl="require")
+        await _init_schema(_pool)
+        return _pool
 
 
 async def close_control_pool() -> None:
@@ -39,7 +39,7 @@ async def close_control_pool() -> None:
 
 def get_control_pool() -> asyncpg.Pool:
     if _pool is None:
-        raise RuntimeError("Control pool not initialized -- init_control_pool() must run at startup")
+        raise RuntimeError("Control pool not initialized")
     return _pool
 
 
@@ -114,7 +114,6 @@ async def create_api_key(pool: asyncpg.Pool, user_id: str, key_hash: str, label:
 
 
 async def get_active_key_owner(pool: asyncpg.Pool, key_hash: str):
-    """Returns the (api_key + user) row for a non-revoked key, or None."""
     return await pool.fetchrow(
         """
         SELECT u.id AS user_id, u.email, u.connection_string_encrypted, k.id AS api_key_id
@@ -127,7 +126,6 @@ async def get_active_key_owner(pool: asyncpg.Pool, key_hash: str):
 
 
 async def touch_api_key_last_used(pool: asyncpg.Pool, api_key_id: str) -> None:
-    # Best-effort bookkeeping -- callers should not fail a request over this.
     await pool.execute("UPDATE api_keys SET last_used_at = now() WHERE id = $1", api_key_id)
 
 
@@ -148,4 +146,4 @@ async def revoke_api_key(pool: asyncpg.Pool, user_id: str, api_key_id: str) -> b
         "UPDATE api_keys SET revoked_at = now() WHERE id = $1 AND user_id = $2 AND revoked_at IS NULL",
         api_key_id, user_id,
     )
-    return result.endswith("1")  # asyncpg command tag, e.g. "UPDATE 1"
+    return result.endswith("1")
