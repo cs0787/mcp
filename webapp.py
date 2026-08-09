@@ -1,17 +1,6 @@
 """
-The account website: signup, login, and a dashboard where a user pastes
-their own Neon connection string and manages their API keys.
-
-Deliberately plain server-rendered HTML (no JS framework, no template
-engine dependency) to match the rest of this small service. Sessions are
-cookie-based via Starlette's SessionMiddleware (see server.py), separate
-from API keys entirely -- API keys are what AI apps use, the session
-cookie is what a human's browser uses.
-
-`next` handling: when the OAuth consent screen (oauth.py) finds no session,
-it sends the browser to /login?next=/authorize?... so that after logging
-in (or signing up), the browser lands right back on the consent screen
-instead of a generic dashboard.
+The account website: signup, login, and a dashboard with a professional 
+Neon dark aesthetic.
 """
 
 import asyncpg
@@ -24,21 +13,27 @@ import security
 import tenant_pools
 
 PAGE_STYLE = """
-  body { font-family: system-ui, sans-serif; max-width: 480px; margin: 60px auto; padding: 0 20px; color: #1a1a1a; }
-  h2 { margin-bottom: 4px; }
-  .muted { color: #666; font-size: 14px; }
-  input { width: 100%; padding: 10px; margin: 8px 0; font-size: 15px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
-  button { width: 100%; padding: 10px; font-size: 15px; cursor: pointer; border: none; border-radius: 6px; background: #1a1a1a; color: #fff; margin-top: 6px; }
-  button.secondary { background: #eee; color: #1a1a1a; }
-  button.small { width: auto; padding: 6px 12px; font-size: 13px; }
-  button.danger { background: #fff; color: #c00; border: 1px solid #c00; }
-  .error { color: #c00; }
-  .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin: 16px 0; }
-  .key-box { font-family: ui-monospace, monospace; background: #f5f5f5; padding: 10px; border-radius: 6px; word-break: break-all; font-size: 13px; }
-  a { color: #1a1a1a; }
-  .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-  .key-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee; }
+  body { background-color: #0b0f19; font-family: system-ui, -apple-system, sans-serif; max-width: 520px; margin: 60px auto; padding: 0 20px; color: #f3f4f6; }
+  h2 { margin-bottom: 4px; color: #fff; font-weight: 600; letter-spacing: -0.5px; }
+  .muted { color: #9ca3af; font-size: 14px; line-height: 1.5; }
+  input { width: 100%; padding: 12px; margin: 8px 0; font-size: 14px; box-sizing: border-box; background: #030712; border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; border-radius: 8px; outline: none; transition: border-color 0.2s; }
+  input:focus { border-color: #00f2fe; box-shadow: 0 0 10px rgba(0, 242, 254, 0.2); }
+  button { width: 100%; padding: 12px; font-size: 15px; font-weight: 500; cursor: pointer; border: none; border-radius: 8px; background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); color: #0b0f19; margin-top: 8px; transition: opacity 0.2s, transform 0.1s; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.2); }
+  button:hover { opacity: 0.9; transform: translateY(-1px); }
+  button.secondary { background: rgba(255, 255, 255, 0.05); color: #f3f4f6; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: none; }
+  button.secondary:hover { background: rgba(255, 255, 255, 0.1); }
+  button.small { width: auto; padding: 6px 12px; font-size: 13px; margin-top: 0; }
+  button.danger { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: none; }
+  button.danger:hover { background: rgba(239, 68, 68, 0.2); }
+  .error { color: #f87171; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); padding: 10px; border-radius: 8px; font-size: 14px; margin: 10px 0; }
+  .card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(0, 242, 254, 0.2); box-shadow: 0 0 25px rgba(0, 242, 254, 0.05); border-radius: 12px; padding: 20px; margin: 20px 0; }
+  .key-box { font-family: ui-monospace, monospace; background: #030712; border: 1px solid rgba(0, 242, 254, 0.4); color: #00f2fe; padding: 12px; border-radius: 8px; word-break: break-all; font-size: 13px; margin-top: 8px; box-shadow: inset 0 0 10px rgba(0, 242, 254, 0.1); }
+  a { color: #38bdf8; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 16px; }
+  .key-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
   .key-row:last-child { border-bottom: none; }
+  code { background: rgba(255, 255, 255, 0.05); padding: 2px 6px; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 13px; color: #38bdf8; }
 """
 
 
@@ -57,30 +52,25 @@ def _require_login(request: Request) -> str | None:
 
 
 def _safe_next(raw: str | None) -> str:
-    """Only ever redirect to a path on this same site."""
     if raw and raw.startswith("/") and not raw.startswith("//"):
         return raw
     return "/dashboard"
 
 
-# ---------------------------------------------------------------------------
-# Signup
-# ---------------------------------------------------------------------------
 async def signup_get(request: Request):
     next_ = _safe_next(request.query_params.get("next"))
     if _require_login(request):
         return RedirectResponse(next_, status_code=302)
     return _page("Sign up", f"""
-<h2>Create your account</h2>
-<p class="muted">This account is for the MCP connector itself, separate from
-your notes app login.</p>
+<h2>Create Account</h2>
+<p class="muted">Set up your Neon MCP gateway credentials.</p>
 <form method="POST" action="/signup">
   <input type="hidden" name="next" value="{next_}">
-  <input type="email" name="email" placeholder="Email" required autofocus>
+  <input type="email" name="email" placeholder="Email address" required autofocus>
   <input type="password" name="password" placeholder="Password (min 8 characters)" minlength="8" required>
-  <button type="submit">Sign up</button>
+  <button type="submit">Create Account</button>
 </form>
-<p class="muted">Already have an account? <a href="/login?next={next_}">Log in</a></p>
+<p class="muted" style="margin-top: 16px;">Already have an account? <a href="/login?next={next_}">Log in</a></p>
 """)
 
 
@@ -98,13 +88,13 @@ async def signup_post(request: Request):
 
     if error:
         return _page("Sign up", f"""
-<h2>Create your account</h2>
-<p class="error">{error}</p>
+<h2>Create Account</h2>
+<div class="error">{error}</div>
 <form method="POST" action="/signup">
   <input type="hidden" name="next" value="{next_}">
-  <input type="email" name="email" placeholder="Email" value="{email}" required autofocus>
+  <input type="email" name="email" placeholder="Email address" value="{email}" required autofocus>
   <input type="password" name="password" placeholder="Password (min 8 characters)" minlength="8" required>
-  <button type="submit">Sign up</button>
+  <button type="submit">Create Account</button>
 </form>
 """)
 
@@ -113,8 +103,8 @@ async def signup_post(request: Request):
         user_id = await db_control.create_user(pool, email, security.hash_password(password))
     except asyncpg.exceptions.UniqueViolationError:
         return _page("Sign up", f"""
-<h2>Create your account</h2>
-<p class="error">An account with that email already exists.</p>
+<h2>Create Account</h2>
+<div class="error">An account with that email already exists.</div>
 <p><a href="/login?next={next_}">Log in instead</a></p>
 """)
 
@@ -122,22 +112,20 @@ async def signup_post(request: Request):
     return RedirectResponse(next_, status_code=302)
 
 
-# ---------------------------------------------------------------------------
-# Login / logout
-# ---------------------------------------------------------------------------
 async def login_get(request: Request):
     next_ = _safe_next(request.query_params.get("next"))
     if _require_login(request):
         return RedirectResponse(next_, status_code=302)
     return _page("Log in", f"""
-<h2>Log in</h2>
+<h2>Welcome Back</h2>
+<p class="muted">Access your MCP control panel.</p>
 <form method="POST" action="/login">
   <input type="hidden" name="next" value="{next_}">
-  <input type="email" name="email" placeholder="Email" required autofocus>
+  <input type="email" name="email" placeholder="Email address" required autofocus>
   <input type="password" name="password" placeholder="Password" required>
-  <button type="submit">Log in</button>
+  <button type="submit">Log In</button>
 </form>
-<p class="muted">No account yet? <a href="/signup?next={next_}">Sign up</a></p>
+<p class="muted" style="margin-top: 16px;">No account yet? <a href="/signup?next={next_}">Sign up</a></p>
 """)
 
 
@@ -152,13 +140,13 @@ async def login_post(request: Request):
 
     if user is None or not security.verify_password(password, user["password_hash"]):
         return _page("Log in", f"""
-<h2>Log in</h2>
-<p class="error">Incorrect email or password.</p>
+<h2>Welcome Back</h2>
+<div class="error">Incorrect email or password.</div>
 <form method="POST" action="/login">
   <input type="hidden" name="next" value="{next_}">
-  <input type="email" name="email" placeholder="Email" value="{email}" required autofocus>
+  <input type="email" name="email" placeholder="Email address" value="{email}" required autofocus>
   <input type="password" name="password" placeholder="Password" required>
-  <button type="submit">Log in</button>
+  <button type="submit">Log In</button>
 </form>
 """)
 
@@ -175,9 +163,6 @@ async def logout(request: Request):
     return RedirectResponse("/login", status_code=302)
 
 
-# ---------------------------------------------------------------------------
-# Dashboard
-# ---------------------------------------------------------------------------
 async def dashboard_get(request: Request):
     user_id = _require_login(request)
     if not user_id:
@@ -193,19 +178,18 @@ async def dashboard_get(request: Request):
     flash_html = ""
     if flash_key:
         flash_html = f"""
-<div class="card">
-  <strong>New API key (shown once -- copy it now):</strong>
+<div class="card" style="border-color: #00f2fe;">
+  <strong style="color: #00f2fe;">New MCP_API_KEY Generated (Save it now!):</strong>
   <div class="key-box">{flash_key}</div>
-  <p class="muted">Use this as the Bearer token / password when connecting an AI app
-  that asks you to paste one directly. It won't be shown again.</p>
+  <p class="muted" style="margin-top: 8px;">Use this token securely as your Bearer authorization string.</p>
 </div>
 """
 
     if user["connection_string_encrypted"]:
         masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
-        conn_status = f'<p class="muted">Currently set to: <code>{masked}</code></p>'
+        conn_status = f'<p class="muted">Linked Neon DB: <code>{masked}</code></p>'
     else:
-        conn_status = '<p class="error">No connection string set yet -- connecting an AI app will not work until you add one.</p>'
+        conn_status = '<div class="error">No Neon connection string added yet. Connect one below to activate your MCP queries.</div>'
 
     keys = await db_control.list_api_keys(pool, user_id)
     active_keys = [k for k in keys if k["revoked_at"] is None]
@@ -213,56 +197,56 @@ async def dashboard_get(request: Request):
         rows = "".join(f"""
 <div class="key-row">
   <div>
-    <div>{k['label']}</div>
-    <div class="muted">Created {k['created_at'].strftime('%b %d, %Y')}{f" &middot; last used {k['last_used_at'].strftime('%b %d, %Y')}" if k['last_used_at'] else ""}</div>
+    <div style="font-weight: 500; color: #fff;">{k['label']}</div>
+    <div class="muted">Created {k['created_at'].strftime('%b %d, %Y')}</div>
   </div>
-  <form method="POST" action="/dashboard/api-key/revoke">
+  <form method="POST" action="/dashboard/api-key/revoke" style="margin: 0;">
     <input type="hidden" name="key_id" value="{k['id']}">
-    <button type="submit" class="danger small" onclick="return confirm('Revoke this key? Any app using it will stop working immediately.');">Revoke</button>
+    <button type="submit" class="danger small" onclick="return confirm('Revoke this key?');">Revoke</button>
   </form>
 </div>
 """ for k in active_keys)
     else:
-        rows = '<p class="muted">No active API keys yet.</p>'
+        rows = '<p class="muted">No active API keys found.</p>'
 
     base_url = str(request.base_url).rstrip("/")
 
-    return _page("Dashboard", f"""
+    return _page("Dashboard & Settings", f"""
 <div class="top-nav">
-  <h2>Dashboard</h2>
-  <form method="POST" action="/logout"><button class="secondary small">Log out</button></form>
+  <div>
+    <h2>Settings & Control Panel</h2>
+    <div class="muted">{user["email"]}</div>
+  </div>
+  <form method="POST" action="/logout" style="margin:0;"><button class="secondary small">Log out</button></form>
 </div>
-<p class="muted">{user["email"]}</p>
 
 {flash_html}
 
 <div class="card">
-  <strong>Your Neon connection string</strong>
-  <p class="muted">Paste the SAME connection string your notes app uses to sync (the
-  <code>postgresql://...</code> URL for your personal Neon database).</p>
+  <strong style="color: #fff; font-size: 16px;">1. Neon Connection String</strong>
+  <p class="muted">Configure your secure database endpoint used by the MCP server.</p>
   {conn_status}
-  <form method="POST" action="/dashboard/connection-string">
-    <input type="text" name="connection_string" placeholder="postgresql://user:password@ep-xxx.aws.neon.tech/dbname" required>
-    <button type="submit">Save connection string</button>
+  <form method="POST" action="/dashboard/connection-string" style="margin-top: 12px;">
+    <input type="text" name="connection_string" placeholder="postgresql://user:password@ep-xxx.neon.tech/dbname" required>
+    <button type="submit">Save Connection String</button>
   </form>
 </div>
 
 <div class="card">
-  <strong>Connected apps &amp; API keys</strong>
-  <p class="muted">A key is created automatically the first time you connect an AI app
-  through the login screen. Revoke one without affecting your other connections.</p>
-  {rows}
-  <form method="POST" action="/dashboard/api-key/create" style="margin-top:12px;">
-    <button type="submit" class="secondary">Generate a key manually</button>
+  <strong style="color: #fff; font-size: 16px;">2. MCP API Keys</strong>
+  <p class="muted">Generate or manage your explicit <code>MCP_API_KEY</code> tokens for client authentication.</p>
+  <div style="margin-top: 12px;">
+    {rows}
+  </div>
+  <form method="POST" action="/dashboard/api-key/create" style="margin-top:16px;">
+    <button type="submit" class="secondary">Generate New MCP_API_KEY</button>
   </form>
 </div>
 
 <div class="card">
-  <strong>Connect an AI app</strong>
-  <p class="muted">Server URL: <code>{base_url}/mcp</code></p>
-  <p class="muted">Apps with an "Add connector" flow (like Claude) will send you through a
-  login screen automatically -- just log in and click Allow, no key needed.
-  Apps that ask for a Bearer token directly need a manually generated key above.</p>
+  <strong style="color: #fff; font-size: 16px;">3. MCP Server Endpoint</strong>
+  <p class="muted" style="margin-top: 8px;">Your connection endpoint for Claude or other clients:</p>
+  <div class="key-box">{base_url}/mcp</div>
 </div>
 """)
 
@@ -276,15 +260,14 @@ async def update_connection_string(request: Request):
     connection_string = str(form.get("connection_string", "")).strip()
 
     if not (connection_string.startswith("postgresql://") or connection_string.startswith("postgres://")):
-        return _dashboard_error("That doesn't look like a Postgres connection string (should start with postgresql://).")
+        return _dashboard_error("Invalid format: Must start with postgresql://")
 
     ok, err = await tenant_pools.test_connection_string(connection_string)
     if not ok:
-        return _dashboard_error(f"Couldn't connect with that string: {err}")
+        return _dashboard_error(f"Connection test failed: {err}")
 
     pool = db_control.get_control_pool()
     await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))
-    # Drop any cached pool built from the old connection string.
     await tenant_pools.get_manager().invalidate(user_id)
 
     return RedirectResponse("/dashboard", status_code=302)
@@ -297,7 +280,7 @@ async def create_api_key(request: Request):
 
     pool = db_control.get_control_pool()
     raw_key = security.generate_api_key()
-    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manually generated")
+    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")
     request.session["flash_api_key"] = raw_key
 
     return RedirectResponse("/dashboard", status_code=302)
@@ -319,9 +302,9 @@ async def revoke_api_key(request: Request):
 
 def _dashboard_error(message: str) -> HTMLResponse:
     return _page("Dashboard", f"""
-<h2>Dashboard</h2>
-<p class="error">{message}</p>
-<p><a href="/dashboard">Back to dashboard</a></p>
+<h2>Settings & Control Panel</h2>
+<div class="error">{message}</div>
+<p style="margin-top: 16px;"><a href="/dashboard">Back to dashboard</a></p>
 """)
 
 
