@@ -111,14 +111,18 @@ CONSENT_PAGE = """
 <head>
 <title>Authorize access</title>
 <style>
-  body {{ font-family: system-ui, sans-serif; max-width: 420px; margin: 80px auto; padding: 0 20px; color: #1a1a1a; }}
-  .card {{ border: 1px solid #ddd; border-radius: 8px; padding: 20px; }}
-  button {{ width: 100%; padding: 10px; font-size: 15px; cursor: pointer; border: none; border-radius: 6px; margin-top: 10px; }}
-  .allow {{ background: #1a1a1a; color: #fff; }}
-  .deny {{ background: #eee; color: #1a1a1a; }}
-  .warn {{ color: #c00; }}
-  .muted {{ color: #666; font-size: 14px; }}
-  .link-btn {{ all: unset; color: #666; text-decoration: underline; cursor: pointer; font-size: 13px; }}
+  body { background-color: #0b0f19; font-family: system-ui, -apple-system, sans-serif; max-width: 440px; margin: 80px auto; padding: 0 20px; color: #f3f4f6; }
+  .card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(0, 242, 254, 0.2); box-shadow: 0 0 25px rgba(0, 242, 254, 0.1); border-radius: 12px; padding: 24px; }
+  h2 { color: #fff; font-weight: 600; letter-spacing: -0.5px; margin-top: 0; }
+  button { width: 100%; padding: 12px; font-size: 15px; font-weight: 500; cursor: pointer; border: none; border-radius: 8px; margin-top: 12px; transition: all 0.2s ease; }
+  .allow { background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); color: #0b0f19; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3); }
+  .allow:hover { opacity: 0.9; transform: translateY(-1px); }
+  .deny { background: transparent; color: #9ca3af; border: 1px solid rgba(255, 255, 255, 0.1); }
+  .deny:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+  .warn { color: #f87171; }
+  .muted { color: #9ca3af; font-size: 14px; line-height: 1.5; }
+  .link-btn { all: unset; color: #38bdf8; text-decoration: underline; cursor: pointer; font-size: 13px; }
+  .link-btn:hover { color: #7dd3fc; }
 </style>
 </head>
 <body>
