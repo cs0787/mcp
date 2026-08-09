@@ -19,10 +19,17 @@ gracefully to "not available" for accounts that don't.
 
 import os
 import json
+import contextlib
 import asyncpg
 
 from mcp.server.fastmcp import FastMCP
+from starlette.middleware.sessions import SessionMiddleware
 
+import db_control
+import tenant_pools
+from auth import BearerAuthMiddleware
+from oauth import routes as oauth_routes
+from webapp import routes as webapp_routes
 from tenant_context import current_pool
 
 mcp = FastMCP(
@@ -351,45 +358,32 @@ async def search_all(query: str, limit: int = 10) -> str:
     return json.dumps(result, ensure_ascii=False, indent=2)
 
 
+@contextlib.asynccontextmanager
+async def lifespan(app):
+    await db_control.init_control_pool()
+    async with contextlib.AsyncExitStack() as stack:
+        await stack.enter_async_context(mcp.session_manager.run())
+        yield
+    await tenant_pools.get_manager().close_all()
+    await db_control.close_control_pool()
+
+
+# Create the ASGI application instance exposed at top-level for Vercel/Uvicorn
+app = mcp.streamable_http_app()
+app.router.lifespan_context = lifespan
+app.router.routes.extend(oauth_routes)
+app.router.routes.extend(webapp_routes)
+
+session_secret = os.environ.get("SESSION_SECRET_KEY")
+if not session_secret:
+    raise RuntimeError("SESSION_SECRET_KEY environment variable is not set")
+https_only = os.environ.get("SESSION_HTTPS_ONLY", "true").lower() != "false"
+
+app.add_middleware(SessionMiddleware, secret_key=session_secret, same_site="lax", https_only=https_only)
+app.add_middleware(BearerAuthMiddleware)
+
+
 if __name__ == "__main__":
     import uvicorn
-    import contextlib
-    from starlette.middleware.sessions import SessionMiddleware
-
-    import db_control
-    import tenant_pools
-    from auth import BearerAuthMiddleware
-    from oauth import routes as oauth_routes
-    from webapp import routes as webapp_routes
-
-    @contextlib.asynccontextmanager
-    async def lifespan(app):
-        # Startup: initialize control pool and MCP session manager background tasks
-        await db_control.init_control_pool()
-        async with contextlib.AsyncExitStack() as stack:
-            await stack.enter_async_context(mcp.session_manager.run())
-            yield
-        # Shutdown: close connection pools cleanly
-        await tenant_pools.get_manager().close_all()
-        await db_control.close_control_pool()
-
-    # Create the base application and supply the custom lifespan
-    app = mcp.streamable_http_app()
-    app.router.lifespan_context = lifespan
-    app.router.routes.extend(oauth_routes)
-    app.router.routes.extend(webapp_routes)
-
-    session_secret = os.environ.get("SESSION_SECRET_KEY")
-    if not session_secret:
-        raise RuntimeError("SESSION_SECRET_KEY environment variable is not set")
-    https_only = os.environ.get("SESSION_HTTPS_ONLY", "true").lower() != "false"
-
-    # Order matters here: middleware added LAST runs FIRST. We want
-    # BearerAuthMiddleware to run first (it gates the /mcp API endpoints and
-    # exempts the webapp paths), then SessionMiddleware to populate
-    # request.session before webapp.py's route handlers run.
-    app.add_middleware(SessionMiddleware, secret_key=session_secret, same_site="lax", https_only=https_only)
-    app.add_middleware(BearerAuthMiddleware)
-
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
