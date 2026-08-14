@@ -1,7 +1,6 @@
 """
 Memory Notes for AI - Web Application
-Features a Monochromatic Black & White 3D landing page, authentication, 
-and user dashboard settings panel.
+Integrated with the custom Monochromatic Tailwind CSS Frontend design.
 """
 
 import asyncpg
@@ -13,170 +12,164 @@ import db_control
 import security
 import tenant_pools
 
-PAGE_STYLE = """
-  :root {
-    --bg-dark: #050505;
-    --card-bg: #0d0d0f;
-    --card-border: #222226;
-    --card-border-hover: #44444c;
-    --text-main: #ffffff;
-    --text-muted: #a1a1aa;
-    --text-dim: #71717a;
-    --accent-white: #ffffff;
-    --accent-gray: #d4d4d8;
-  }
-  
-  * { box-sizing: border-box; }
-  body {
-    background-color: var(--bg-dark);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
-    margin: 0; padding: 0;
-    color: var(--text-main);
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* Monochromatic Ambient Glow */
-  .bg-glow {
-    position: fixed; top: -180px; left: 50%; transform: translateX(-50%);
-    width: 700px; height: 700px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.07) 0%, rgba(120, 120, 120, 0.03) 40%, transparent 70%);
-    filter: blur(90px); pointer-events: none; z-index: 0;
-  }
-
-  .container { max-width: 1040px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
-
-  /* Typography */
-  h1, h2, h3 { color: #ffffff; font-weight: 700; letter-spacing: -0.03em; }
-  .gradient-text {
-    background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .muted { color: var(--text-muted); font-size: 14px; line-height: 1.6; }
-
-  input {
-    width: 100%; padding: 12px 16px; margin: 8px 0; font-size: 14px;
-    background: #121215; border: 1px solid var(--card-border);
-    color: #ffffff; border-radius: 8px; outline: none; transition: all 0.2s ease;
-  }
-  input:focus { border-color: #ffffff; box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15); }
-
-  /* Monochromatic Buttons */
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: 12px 24px; font-size: 14px; font-weight: 600; cursor: pointer;
-    border: 1px solid #ffffff; border-radius: 8px;
-    background: #ffffff; color: #000000;
-    text-decoration: none; transition: all 0.2s ease;
-    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
-  }
-  .btn:hover { background: #e4e4e7; border-color: #e4e4e7; transform: translateY(-1px); }
-  .btn.secondary {
-    background: #141417; color: var(--text-main);
-    border: 1px solid var(--card-border); box-shadow: none;
-  }
-  .btn.secondary:hover { background: #1c1c20; border-color: var(--card-border-hover); }
-  .btn.small { padding: 6px 14px; font-size: 13px; }
-  .btn.danger { background: #1f1213; color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); box-shadow: none; }
-  .btn.danger:hover { background: #2c1618; border-color: rgba(248, 113, 113, 0.6); }
-
-  .card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border); border-radius: 14px;
-    padding: 24px; margin: 20px 0; transition: border-color 0.2s ease;
-  }
-  .card:hover { border-color: var(--card-border-hover); }
-  .error { color: #f87171; background: #180c0d; border: 1px solid rgba(248, 113, 113, 0.2); padding: 12px; border-radius: 8px; font-size: 14px; margin: 12px 0; }
-  
-  /* Navbar */
-  .navbar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 24px 0; border-bottom: 1px solid var(--card-border);
-  }
-  .brand { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; letter-spacing: -0.02em; }
-  .brand-logo { width: 30px; height: 30px; background: #ffffff; border-radius: 6px; display: grid; place-items: center; font-size: 16px; font-weight: 800; color: #000000; }
-
-  /* Profile Avatar & Dropdown */
-  .user-menu { position: relative; display: flex; align-items: center; gap: 12px; }
-  .avatar {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: #ffffff; color: #000000; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; border: 1px solid #ffffff; transition: transform 0.2s ease;
-  }
-  .avatar:hover { transform: scale(1.04); }
-  .settings-dropdown {
-    position: absolute; right: 0; top: 50px; width: 300px;
-    background: #111114; border: 1px solid var(--card-border-hover);
-    border-radius: 12px; padding: 16px; box-shadow: 0 16px 40px rgba(0,0,0,0.8);
-    display: none; z-index: 100;
-  }
-  .settings-dropdown.active { display: block; }
-
-  /* Monochromatic 3D Hero Section */
-  .hero { text-align: center; padding: 90px 0 50px; perspective: 1000px; }
-  .hero-title { font-size: 58px; line-height: 1.08; margin-bottom: 20px; letter-spacing: -0.04em; }
-  .hero-subtitle { font-size: 19px; color: var(--text-muted); max-width: 640px; margin: 0 auto 36px; line-height: 1.5; }
-
-  /* 3D Floating Monochrome Mockup Card */
-  .hero-3d-card {
-    max-width: 760px; margin: 40px auto 0; padding: 28px;
-    background: linear-gradient(180deg, #121215 0%, #0a0a0c 100%);
-    border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 16px;
-    transform: rotateX(10deg) rotateY(-3deg) rotateZ(0.5deg);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 50px rgba(255, 255, 255, 0.03);
-    transition: transform 0.4s ease, border-color 0.4s ease;
-  }
-  .hero-3d-card:hover { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.01); border-color: rgba(255, 255, 255, 0.35); }
-
-  /* Features Grid */
-  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 60px 0; }
-  .feature-card {
-    background: var(--card-bg); border: 1px solid var(--card-border);
-    border-radius: 12px; padding: 28px; transition: all 0.25s ease;
-  }
-  .feature-card:hover { border-color: var(--card-border-hover); transform: translateY(-3px); }
-  .feature-icon { font-size: 24px; margin-bottom: 14px; display: inline-block; filter: grayscale(100%); }
-
-  /* Key Box & Copy Section */
-  .code-box {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    background: #000000; border: 1px solid var(--card-border);
-    color: #e4e4e7; padding: 12px 16px; border-radius: 8px; font-size: 13px;
-    word-break: break-all; display: flex; justify-content: space-between; align-items: center; gap: 10px;
-  }
-"""
-
-
+# Base HTML Template encapsulating your exact Tailwind setup, fonts, and styles
 def _page(title: str, body: str) -> HTMLResponse:
-    return HTMLResponse(f"""
-<!DOCTYPE html>
-<html>
+    return HTMLResponse(f"""<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{title} - Memory Notes AI</title>
-  <style>{PAGE_STYLE}</style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{title} - Memory Notes</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {{
+            darkMode: "class",
+            theme: {{
+                extend: {{
+                    "colors": {{
+                        "inverse-on-surface": "#f3f0ef",
+                        "error": "#ba1a1a",
+                        "surface-container": "#f1edec",
+                        "tertiary": "#602100",
+                        "surface-dim": "#dcd9d9",
+                        "surface-container-low": "#f6f3f2",
+                        "on-primary-fixed-variant": "#00429c",
+                        "outline": "#737783",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#b0c6ff",
+                        "on-surface": "#1c1b1b",
+                        "primary-fixed": "#d9e2ff",
+                        "tertiary-container": "#853100",
+                        "surface-tint": "#2b5bb5",
+                        "on-secondary-fixed": "#221b00",
+                        "tertiary-fixed": "#ffdbcd",
+                        "on-primary-container": "#a1bbff",
+                        "on-tertiary-container": "#ffa781",
+                        "surface-container-high": "#ebe7e7",
+                        "inverse-surface": "#313030",
+                        "primary-container": "#0d47a1",
+                        "on-surface-variant": "#434652",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#b0c6ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1c1b1b",
+                        "surface-bright": "#fcf8f8",
+                        "primary": "#003178",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#001945",
+                        "secondary-fixed-dim": "#e9c400",
+                        "on-primary": "#ffffff",
+                        "secondary": "#705d00",
+                        "text-tertiary": "#A1A1AA",
+                        "background": "#fcf8f8",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-secondary-fixed-variant": "#544600",
+                        "secondary-container": "#fdd400",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "surface-variant": "#e5e2e1",
+                        "outline-variant": "#c3c6d4",
+                        "on-tertiary-fixed": "#360f00",
+                        "secondary-fixed": "#ffe170",
+                        "text-secondary": "#71717A",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "surface-white": "#FFFFFF",
+                        "surface": "#fcf8f8",
+                        "border-muted": "#E2E2E7",
+                        "on-secondary-container": "#6f5c00"
+                    }},
+                    "borderRadius": {{
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    }},
+                    "spacing": {{
+                        "margin-mobile": "16px",
+                        "stack-md": "12px",
+                        "stack-sm": "4px",
+                        "gutter": "24px",
+                        "stack-lg": "24px",
+                        "base": "8px",
+                        "margin-desktop": "48px",
+                        "container-max": "1280px"
+                    }},
+                    "fontFamily": {{
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-sm": ["Inter"],
+                        "label-sm": ["JetBrains Mono"],
+                        "label-md": ["JetBrains Mono"]
+                    }},
+                    "fontSize": {{
+                        "body-lg": ["18px", {{ "lineHeight": "28px", "fontWeight": "400" }}],
+                        "headline-lg-mobile": ["28px", {{ "lineHeight": "36px", "fontWeight": "600" }}],
+                        "headline-xl": ["40px", {{ "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }}],
+                        "body-md": ["16px", {{ "lineHeight": "24px", "fontWeight": "400" }}],
+                        "headline-md": ["24px", {{ "lineHeight": "32px", "fontWeight": "600" }}],
+                        "headline-lg": ["32px", {{ "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }}],
+                        "body-sm": ["14px", {{ "lineHeight": "20px", "fontWeight": "400" }}],
+                        "label-sm": ["12px", {{ "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }}],
+                        "label-md": ["14px", {{ "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500" }}]
+                    }}
+                }}
+            }}
+        }}
+    </script>
+<style>
+        .hero-pattern {{
+            background-image: radial-gradient(var(--tw-colors-border-muted) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }}
+        .feature-card {{
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }}
+        .feature-card:hover {{
+            transform: translateY(-4px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border-color: #050505;
+        }}
+        .settings-dropdown {{
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 48px;
+            width: 300px;
+            background: #ffffff;
+            border: 1px solid #E2E2E7;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            z-index: 100;
+        }}
+        .settings-dropdown.active {{
+            display: block;
+        }}
+    </style>
 </head>
-<body>
-  <div class="bg-glow"></div>
-  <div class="container">
-    {body}
-  </div>
-  <script>
-    function copyToClipboard(text, btnId) {{
-      navigator.clipboard.writeText(text).then(() => {{
-        const btn = document.getElementById(btnId);
-        const originalText = btn.innerText;
-        btn.innerText = 'Copied';
-        setTimeout(() => btn.innerText = originalText, 2000);
-      }});
-    }}
+<body class="bg-surface-white text-on-surface font-body-md min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
+{body}
+<script>
     function toggleSettings() {{
-      const dropdown = document.getElementById('settingsDropdown');
-      if (dropdown) dropdown.classList.toggle('active');
+        const dropdown = document.getElementById('settingsDropdown');
+        if (dropdown) dropdown.classList.toggle('active');
     }}
-  </script>
+    function copyToClipboard(text, btnId) {{
+        navigator.clipboard.writeText(text).then(() => {{
+            const btn = document.getElementById(btnId);
+            const orig = btn.innerText;
+            btn.innerText = 'Copied!';
+            setTimeout(() => btn.innerText = orig, 2000);
+        }});
+    }}
+</script>
 </body>
 </html>
 """)
@@ -192,85 +185,201 @@ def _safe_next(raw: str | None) -> str:
     return "/dashboard"
 
 
+# Common Navigation Bar
+def _navbar(request: Request, user_email: str | None = None) -> str:
+    if user_email:
+        initial = user_email[0].upper()
+        right_actions = f"""
+        <div class="relative">
+            <div onclick="toggleSettings()" class="w-8 h-8 rounded-full bg-surface-dim overflow-hidden border border-border-muted cursor-pointer flex items-center justify-center font-bold text-xs select-none">
+                {initial}
+            </div>
+            <div id="settingsDropdown" class="settings-dropdown">
+                <div class="font-bold text-sm text-on-surface mb-1">Signed in as</div>
+                <div class="text-xs text-text-secondary truncate mb-3">{user_email}</div>
+                <hr class="border-border-muted mb-3">
+                <a href="/dashboard" class="block font-label-md text-sm text-on-surface py-1.5 hover:text-primary transition-colors">⚙️ Dashboard & Settings</a>
+                <form method="POST" action="/logout" class="mt-2">
+                    <button type="submit" class="w-full text-left font-label-md text-sm text-error py-1.5 hover:opacity-80 transition-opacity">Log Out</button>
+                </form>
+            </div>
+        </div>
+        """
+    else:
+        right_actions = """
+        <a href="/login" class="bg-surface-white text-on-surface px-4 py-2 rounded font-label-md text-label-md border border-[#050505] hover:bg-surface-container-low transition-colors">Log In</a>
+        <a href="/signup" class="bg-secondary-container text-on-surface px-4 py-2 rounded font-label-md text-label-md hover:bg-secondary-fixed transition-colors">Get Started</a>
+        """
+
+    return f"""
+<nav class="sticky top-0 z-50 flex justify-between items-center w-full px-6 py-3 bg-surface-white border-b border-border-muted">
+    <div class="flex items-center gap-4">
+        <a href="/" class="font-headline-md text-headline-md font-bold text-on-surface no-underline">Memory Notes</a>
+    </div>
+    <div class="flex items-center gap-4">
+        {right_actions}
+    </div>
+</nav>
+"""
+
+
 # ---------------------------------------------------------------------------
-# Monochromatic 3D Landing Page
+# Landing Page (Root Route '/')
 # ---------------------------------------------------------------------------
 async def landing_page(request: Request):
     user_id = _require_login(request)
-    nav_actions = '<a href="/dashboard" class="btn small">Dashboard</a>' if user_id else """
-      <a href="/login" class="btn secondary small" style="margin-right: 8px;">Log In</a>
-      <a href="/signup" class="btn small">Get Started</a>
-    """
+    user_email = None
+    if user_id:
+        pool = db_control.get_control_pool()
+        user = await db_control.get_user_by_id(pool, user_id)
+        if user:
+            user_email = user["email"]
 
-    return _page("Home", f"""
-<header class="navbar">
-  <a href="/" class="brand">
-    <div class="brand-logo">M</div> Memory Notes AI
-  </a>
-  <div>{nav_actions}</div>
-</header>
+    nav_html = _navbar(request, user_email)
 
-<section class="hero">
-  <h1 class="hero-title">Long-Term <span class="gradient-text">Memory Gateway</span><br>for AI Models</h1>
-  <p class="hero-subtitle">Connect Claude, ChatGPT, and AI agents directly to your personal Neon Postgres notes with encrypted per-tenant authorization.</p>
-  <div>
-    <a href="/signup" class="btn" style="font-size: 15px; padding: 13px 30px;">Get Started Free</a>
-    <a href="/login" class="btn secondary" style="font-size: 15px; padding: 13px 30px; margin-left: 10px;">Sign In</a>
-  </div>
+    body = f"""
+{nav_html}
+<main class="flex-grow">
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-24 overflow-hidden border-b border-border-muted hero-pattern">
+        <div class="max-w-container-max mx-auto px-margin-desktop relative z-10 flex flex-col lg:flex-row items-center gap-gutter">
+            <div class="flex-1 space-y-stack-lg text-center lg:text-left">
+                <h1 class="font-headline-xl text-headline-xl lg:text-[64px] lg:leading-[72px] font-bold text-on-surface tracking-tight max-w-2xl">
+                    Structured Freedom for Your Thoughts.
+                </h1>
+                <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mx-auto lg:mx-0">
+                    A distraction-free environment for knowledge workers. Capture, connect, and crystallize complex ideas with unparalleled clarity.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-stack-md pt-stack-sm">
+                    <a href="{' /dashboard' if user_id else '/signup'}" class="bg-secondary-container text-on-surface px-8 py-4 font-label-md text-label-md border-b-2 border-r-2 border-[#050505] active:translate-y-[2px] active:translate-x-[2px] active:border-0 transition-all inline-block no-underline">Start Writing Now</a>
+                    <a href="#features" class="bg-surface-white text-on-surface px-8 py-4 font-label-md text-label-md border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline">Explore Features</a>
+                </div>
+            </div>
+            <div class="flex-1 w-full max-w-lg lg:max-w-none relative aspect-square flex items-center justify-center">
+                <div class="p-8 bg-surface-container-low border border-border-muted rounded-xl shadow-lg text-left w-full max-w-md font-mono text-xs">
+                    <div class="flex items-center justify-between pb-3 mb-3 border-b border-border-muted">
+                        <span class="font-bold text-primary">● MCP MEMORY GATEWAY</span>
+                        <span class="text-text-secondary">Connected</span>
+                    </div>
+                    <p class="text-text-secondary mb-2">> AI Model query sync:</p>
+                    <p class="text-on-surface font-semibold">search_notes(query="architecture design")</p>
+                    <p class="text-primary mt-2">✓ Synced instantly to local client.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <div class="hero-3d-card">
-    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px; margin-bottom: 16px;">
-      <span style="font-family: monospace; font-size: 12px; color: #ffffff; letter-spacing: 0.05em;">● MCP PROTOCOL ONLINE</span>
-      <span style="font-family: monospace; font-size: 12px; color: #a1a1aa;">NEON POSTGRES LINKED</span>
+    <!-- Features Section (Bento Grid) -->
+    <section id="features" class="py-24 bg-surface-white border-b border-border-muted">
+        <div class="max-w-container-max mx-auto px-margin-desktop">
+            <div class="mb-16">
+                <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface mb-4">Core Capabilities</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">Tools designed for deep intellectual focus, stripping away the superfluous to leave only what matters.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Feature 1: Large -->
+                <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-8 flex flex-col justify-between group">
+                    <div class="mb-8">
+                        <span class="inline-block p-3 bg-surface-container rounded-sm mb-6 border border-border-muted group-hover:border-[#050505] transition-colors">
+                            <span class="material-symbols-outlined text-primary" data-icon="account_tree">account_tree</span>
+                        </span>
+                        <h3 class="font-headline-md text-headline-md font-semibold text-on-surface mb-2">Non-Linear Connectivity</h3>
+                        <p class="font-body-md text-body-md text-on-surface-variant">Build an intricate web of knowledge. Link notes effortlessly to visualize relationships and emergent ideas.</p>
+                    </div>
+                    <div class="h-48 bg-surface-container-low border border-border-muted flex items-center justify-center relative overflow-hidden text-sm text-text-secondary">
+                        [Interactive Graph Visualization Canvas]
+                    </div>
+                </div>
+                <!-- Feature 2: Small -->
+                <div class="feature-card bg-surface-white border border-border-muted p-8 flex flex-col group">
+                    <span class="inline-block p-3 bg-surface-container rounded-sm mb-6 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
+                        <span class="material-symbols-outlined text-primary" data-icon="format_ink_highlighter">format_ink_highlighter</span>
+                    </span>
+                    <h3 class="font-headline-md text-headline-md font-semibold text-on-surface mb-2">Zen Canvas</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant mb-8">A distraction-free writing environment that centers your thoughts and fades UI elements away.</p>
+                    <div class="mt-auto h-32 bg-surface-container-low border border-border-muted flex flex-col justify-center px-6">
+                        <div class="w-3/4 h-2 bg-border-muted rounded-full mb-2"></div>
+                        <div class="w-1/2 h-2 bg-border-muted rounded-full"></div>
+                    </div>
+                </div>
+                <!-- Feature 3: Small -->
+                <div class="feature-card bg-surface-white border border-border-muted p-8 flex flex-col group">
+                    <span class="inline-block p-3 bg-surface-container rounded-sm mb-6 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
+                        <span class="material-symbols-outlined text-primary" data-icon="search">search</span>
+                    </span>
+                    <h3 class="font-headline-md text-headline-md font-semibold text-on-surface mb-2">Lightning Search</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant mb-8">Instantly retrieve any thought with our incredibly fast, full-text search and filtering engine.</p>
+                    <div class="mt-auto">
+                        <div class="flex items-center gap-2 p-2 border border-border-muted bg-surface-white">
+                            <span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+                            <span class="font-label-sm text-label-sm text-outline">Search query...</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Feature 4: Large -->
+                <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-8 flex flex-col md:flex-row gap-8 items-center group">
+                    <div class="flex-1">
+                        <span class="inline-block p-3 bg-surface-container rounded-sm mb-6 border border-border-muted group-hover:border-[#050505] transition-colors">
+                            <span class="material-symbols-outlined text-primary" data-icon="data_object">data_object</span>
+                        </span>
+                        <h3 class="font-headline-md text-headline-md font-semibold text-on-surface mb-2">MCP Bi-directional Sync</h3>
+                        <p class="font-body-md text-body-md text-on-surface-variant">Connect AI models directly to your notes database. Read and write thoughts dynamically with seamless local sync.</p>
+                    </div>
+                    <div class="flex-1 w-full h-48 bg-surface-container-low border border-border-muted flex items-center justify-center font-mono text-xs text-text-secondary p-4">
+                        POST /mcp HTTP/1.1<br>Host: memory-notes.vercel.app<br>Authorization: Bearer sbmcp_...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 px-margin-desktop flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto bg-surface-white border-t border-border-muted">
+    <div class="flex flex-col items-center md:items-start gap-2 mb-6 md:mb-0">
+        <span class="font-label-md text-label-md font-black text-on-surface">Memory Notes</span>
+        <span class="font-body-sm text-body-sm text-text-secondary">© 2026 Memory Notes. Structured Freedom.</span>
     </div>
-    <div style="text-align: left; font-family: ui-monospace, monospace; font-size: 13px; line-height: 1.8;">
-      <p style="color: #71717a; margin: 0;">&gt; Claude: "Fetch my project notes on system deployment..."</p>
-      <p style="color: #ffffff; margin: 4px 0 0 0;">&gt; Executing search_notes(query="system deployment")...</p>
-      <p style="color: #a1a1aa; margin: 4px 0 0 0;">&gt; 3 notes returned from Neon DB [0.012s]</p>
-    </div>
-  </div>
-</section>
-
-<section class="grid-3">
-  <div class="feature-card">
-    <span class="feature-icon">▫️</span>
-    <h3 style="margin-top: 0;">Model Context Protocol</h3>
-    <p class="muted">Native HTTP streamable MCP transport standard designed for Claude Desktop, Claude Web, and custom LLMs.</p>
-  </div>
-  <div class="feature-card">
-    <span class="feature-icon">◾</span>
-    <h3 style="margin-top: 0;">Isolated & Encrypted</h3>
-    <p class="muted">Your Neon connection string is Fernet-encrypted at rest. Every request is isolated strictly to your database.</p>
-  </div>
-  <div class="feature-card">
-    <span class="feature-icon">▫️</span>
-    <h3 style="margin-top: 0;">Fuzzy Trigram Search</h3>
-    <p class="muted">Leverages Postgres <code>pg_trgm</code> fuzzy search for quick matching across notes, workspaces, and OCR data.</p>
-  </div>
-</section>
-""")
+    <nav class="flex gap-6">
+        <a class="font-body-sm text-body-sm text-text-secondary hover:text-primary transition-opacity" href="#">Privacy Policy</a>
+        <a class="font-body-sm text-body-sm text-text-secondary hover:text-primary transition-opacity" href="#">Terms of Service</a>
+        <a class="font-body-sm text-body-sm text-text-secondary hover:text-primary transition-opacity" href="#">Changelog</a>
+    </nav>
+</footer>
+"""
+    return _page("Home", body)
 
 
 # ---------------------------------------------------------------------------
-# Auth Handlers
+# Signup
 # ---------------------------------------------------------------------------
 async def signup_get(request: Request):
     next_ = _safe_next(request.query_params.get("next"))
     if _require_login(request):
         return RedirectResponse(next_, status_code=302)
-    return _page("Sign up", f"""
-<div style="max-width: 400px; margin: 80px auto;">
-  <h2>Create Your Account</h2>
-  <p class="muted">Set up your Memory Notes gateway account.</p>
-  <form method="POST" action="/signup">
-    <input type="hidden" name="next" value="{next_}">
-    <input type="email" name="email" placeholder="Email address" required autofocus>
-    <input type="password" name="password" placeholder="Password (min 8 characters)" minlength="8" required>
-    <button type="submit" class="btn" style="width: 100%; margin-top: 12px;">Create Account</button>
-  </form>
-  <p class="muted" style="margin-top: 20px; text-align: center;">Already have an account? <a href="/login?next={next_}" style="color: #ffffff;">Log in</a></p>
-</div>
-""")
+    
+    body = f"""
+{_navbar(request)}
+<main class="flex-grow flex items-center justify-center py-20 px-6">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
+        <h2 class="font-headline-md text-headline-md font-bold text-on-surface mb-2">Create Your Account</h2>
+        <p class="font-body-sm text-body-sm text-text-secondary mb-6">Set up your Memory Notes gateway account.</p>
+        <form method="POST" action="/signup">
+            <input type="hidden" name="next" value="{next_}">
+            <div class="mb-4">
+                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Email Address</label>
+                <input type="email" name="email" placeholder="name@example.com" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm focus:outline-none focus:border-primary">
+            </div>
+            <div class="mb-6">
+                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Password (min 8 characters)</label>
+                <input type="password" name="password" placeholder="••••••••" minlength="8" required class="w-full px-4 py-2 border border-border-muted rounded text-sm focus:outline-none focus:border-primary">
+            </div>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded font-label-md text-label-md border-b-2 border-r-2 border-[#050505] active:translate-y-[2px] active:translate-x-[2px] active:border-0 transition-all">Sign Up</button>
+        </form>
+        <p class="font-body-sm text-body-sm text-text-secondary text-center mt-6">Already have an account? <a href="/login?next={next_}" class="text-primary font-semibold hover:underline">Log in</a></p>
+    </div>
+</main>
+"""
+    return _page("Sign up", body)
 
 
 async def signup_post(request: Request):
@@ -286,52 +395,80 @@ async def signup_post(request: Request):
         error = "Password must be at least 8 characters."
 
     if error:
-        return _page("Sign up", f"""
-<div style="max-width: 400px; margin: 80px auto;">
-  <h2>Create Your Account</h2>
-  <div class="error">{error}</div>
-  <form method="POST" action="/signup">
-    <input type="hidden" name="next" value="{next_}">
-    <input type="email" name="email" placeholder="Email address" value="{email}" required autofocus>
-    <input type="password" name="password" placeholder="Password (min 8 characters)" minlength="8" required>
-    <button type="submit" class="btn" style="width: 100%; margin-top: 12px;">Create Account</button>
-  </form>
-</div>
-""")
+        body = f"""
+{_navbar(request)}
+<main class="flex-grow flex items-center justify-center py-20 px-6">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
+        <h2 class="font-headline-md text-headline-md font-bold text-on-surface mb-2">Create Your Account</h2>
+        <div class="error mb-4">{error}</div>
+        <form method="POST" action="/signup">
+            <input type="hidden" name="next" value="{next_}">
+            <div class="mb-4">
+                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Email Address</label>
+                <input type="email" name="email" value="{email}" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm">
+            </div>
+            <div class="mb-6">
+                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Password</label>
+                <input type="password" name="password" minlength="8" required class="w-full px-4 py-2 border border-border-muted rounded text-sm">
+            </div>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded font-label-md text-label-md border border-[#050505]">Sign Up</button>
+        </form>
+    </div>
+</main>
+"""
+        return _page("Sign up", body)
 
     pool = db_control.get_control_pool()
     try:
         user_id = await db_control.create_user(pool, email, security.hash_password(password))
     except asyncpg.exceptions.UniqueViolationError:
-        return _page("Sign up", f"""
-<div style="max-width: 400px; margin: 80px auto;">
-  <h2>Create Your Account</h2>
-  <div class="error">An account with that email already exists.</div>
-  <p><a href="/login?next={next_}" style="color: #ffffff;">Log in instead</a></p>
-</div>
-""")
+        body = f"""
+{_navbar(request)}
+<main class="flex-grow flex items-center justify-center py-20 px-6">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
+        <h2 class="font-headline-md text-headline-md font-bold text-on-surface mb-2">Create Your Account</h2>
+        <div class="error mb-4">An account with that email already exists.</div>
+        <p class="text-sm"><a href="/login?next={next_}" class="text-primary font-semibold underline">Log in instead</a></p>
+    </div>
+</main>
+"""
+        return _page("Sign up", body)
 
     request.session["user_id"] = user_id
     return RedirectResponse(next_, status_code=302)
 
 
+# ---------------------------------------------------------------------------
+# Login
+# ---------------------------------------------------------------------------
 async def login_get(request: Request):
     next_ = _safe_next(request.query_params.get("next"))
     if _require_login(request):
         return RedirectResponse(next_, status_code=302)
-    return _page("Log in", f"""
-<div style="max-width: 400px; margin: 80px auto;">
-  <h2>Welcome Back</h2>
-  <p class="muted">Sign in to your Memory Notes control panel.</p>
-  <form method="POST" action="/login">
-    <input type="hidden" name="next" value="{next_}">
-    <input type="email" name="email" placeholder="Email address" required autofocus>
-    <input type="password" name="password" placeholder="Password" required>
-    <button type="submit" class="btn" style="width: 100%; margin-top: 12px;">Log In</button>
-  </form>
-  <p class="muted" style="margin-top: 20px; text-align: center;">No account yet? <a href="/signup?next={next_}" style="color: #ffffff;">Sign up</a></p>
-</div>
-""")
+    
+    body = f"""
+{_navbar(request)}
+<main class="flex-grow flex items-center justify-center py-20 px-6">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
+        <h2 class="font-headline-md text-headline-md font-bold text-on-surface mb-2">Welcome Back</h2>
+        <p class="font-body-sm text-body-sm text-text-secondary mb-6">Log in to your account.</p>
+        <form method="POST" action="/login">
+            <input type="hidden" name="next" value="{next_}">
+            <div class="mb-4">
+                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Email Address</label>
+                <input type="email" name="email" placeholder="name@example.com" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm focus:outline-none focus:border-primary">
+            </div>
+            <div class="mb-6">
+                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Password</label>
+                <input type="password" name="password" placeholder="••••••••" required class="w-full px-4 py-2 border border-border-muted rounded text-sm focus:outline-none focus:border-primary">
+            </div>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded font-label-md text-label-md border-b-2 border-r-2 border-[#050505] active:translate-y-[2px] active:translate-x-[2px] active:border-0 transition-all">Log In</button>
+        </form>
+        <p class="font-body-sm text-body-sm text-text-secondary text-center mt-6">No account yet? <a href="/signup?next={next_}" class="text-primary font-semibold hover:underline">Sign up</a></p>
+    </div>
+</main>
+"""
+    return _page("Log in", body)
 
 
 async def login_post(request: Request):
@@ -344,30 +481,44 @@ async def login_post(request: Request):
     user = await db_control.get_user_by_email(pool, email)
 
     if user is None or not security.verify_password(password, user["password_hash"]):
-        return _page("Log in", f"""
-<div style="max-width: 400px; margin: 80px auto;">
-  <h2>Welcome Back</h2>
-  <div class="error">Incorrect email or password.</div>
-  <form method="POST" action="/login">
-    <input type="hidden" name="next" value="{next_}">
-    <input type="email" name="email" placeholder="Email address" value="{email}" required autofocus>
-    <input type="password" name="password" placeholder="Password" required>
-    <button type="submit" class="btn" style="width: 100%; margin-top: 12px;">Log In</button>
-  </form>
-</div>
-""")
+        body = f"""
+{_navbar(request)}
+<main class="flex-grow flex items-center justify-center py-20 px-6">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
+        <h2 class="font-headline-md text-headline-md font-bold text-on-surface mb-2">Welcome Back</h2>
+        <div class="error mb-4">Incorrect email or password.</div>
+        <form method="POST" action="/login">
+            <input type="hidden" name="next" value="{next_}">
+            <div class="mb-4">
+                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Email Address</label>
+                <input type="email" name="email" value="{email}" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm">
+            </div>
+            <div class="mb-6">
+                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Password</label>
+                <input type="password" name="password" required class="w-full px-4 py-2 border border-border-muted rounded text-sm">
+            </div>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded font-label-md text-label-md border border-[#050505]">Log In</button>
+        </form>
+    </div>
+</main>
+"""
+        return _page("Log in", body)
 
     request.session["user_id"] = str(user["id"])
     return RedirectResponse(next_, status_code=302)
 
 
 async def logout(request: Request):
+    form = await request.form()
+    next_ = str(form.get("next", "")) if form.get("next") else None
     request.session.clear()
+    if next_ and next_.startswith("/") and not next_.startswith("//"):
+        return RedirectResponse(f"/login?next={next_}", status_code=302)
     return RedirectResponse("/login", status_code=302)
 
 
 # ---------------------------------------------------------------------------
-# Dashboard & User Settings
+# Dashboard & Settings
 # ---------------------------------------------------------------------------
 async def dashboard_get(request: Request):
     user_id = _require_login(request)
@@ -384,107 +535,93 @@ async def dashboard_get(request: Request):
     flash_html = ""
     if flash_key:
         flash_html = f"""
-<div class="card" style="border-color: #ffffff;">
-  <strong style="color: #ffffff;">New MCP API Key Generated (Copy now):</strong>
-  <div class="code-box" style="margin-top: 8px;">
-    <span>{flash_key}</span>
-    <button id="btnCopyKey" class="btn small" onclick="copyToClipboard('{flash_key}', 'btnCopyKey')">Copy Key</button>
-  </div>
+<div class="mb-6 p-4 bg-surface-container-low border border-primary rounded-lg">
+    <strong class="text-xs uppercase font-mono text-primary block mb-1">New API Key (Shown Once — Copy Now):</strong>
+    <div class="flex items-center gap-2 mt-2">
+        <input type="text" readonly value="{flash_key}" id="newApiKeyField" class="w-full font-mono text-xs bg-surface-white border border-border-muted p-2 rounded">
+        <button id="btnCopyKey" onclick="copyToClipboard('{flash_key}', 'btnCopyKey')" class="bg-secondary-container text-on-surface px-4 py-2 rounded font-label-md text-xs whitespace-nowrap border border-[#050505]">Copy</button>
+    </div>
+    <p class="text-xs text-text-secondary mt-2">Use this as your Bearer Token for Claude or direct API configurations.</p>
 </div>
 """
 
     if user["connection_string_encrypted"]:
         masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
-        conn_status = f'<p class="muted">Configured DB: <code style="color:#ffffff;">{masked}</code></p>'
+        conn_status = f'<p class="font-body-sm text-body-sm text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
     else:
-        conn_status = '<div class="error">No connection string added yet. Enter your Neon Postgres URL below to activate MCP responses.</div>'
+        conn_status = '<div class="error">No Neon connection string set yet. Claude connector will fail until configured.</div>'
 
     keys = await db_control.list_api_keys(pool, user_id)
     active_keys = [k for k in keys if k["revoked_at"] is None]
     if active_keys:
         rows = "".join(f"""
-<div style="display:flex; justify-content:space-between; align-items:center; padding: 12px 0; border-bottom: 1px solid var(--card-border);">
-  <div>
-    <div style="font-weight: 500; color: #fff;">{k['label']}</div>
-    <div class="muted">Created {k['created_at'].strftime('%b %d, %Y')}</div>
-  </div>
-  <form method="POST" action="/dashboard/api-key/revoke" style="margin: 0;">
-    <input type="hidden" name="key_id" value="{k['id']}">
-    <button type="submit" class="btn danger small" onclick="return confirm('Revoke this key?');">Revoke</button>
-  </form>
+<div class="flex items-center justify-between py-3 border-b border-border-muted last:border-0">
+    <div>
+        <div class="font-label-md text-sm font-semibold text-on-surface">{k['label']}</div>
+        <div class="font-body-sm text-xs text-text-secondary">Created {k['created_at'].strftime('%b %d, %Y')}{f" • Last used {k['last_used_at'].strftime('%b %d, %Y')}" if k['last_used_at'] else ""}</div>
+    </div>
+    <form method="POST" action="/dashboard/api-key/revoke" class="m-0">
+        <input type="hidden" name="key_id" value="{k['id']}">
+        <button type="submit" class="text-error text-xs font-semibold hover:underline" onclick="return confirm('Revoke this key? Apps using it will disconnect immediately.');">Revoke</button>
+    </form>
 </div>
 """ for k in active_keys)
     else:
-        rows = '<p class="muted">No active API keys found.</p>'
+        rows = '<p class="font-body-sm text-body-sm text-text-secondary">No active API keys found.</p>'
 
     base_url = str(request.base_url).rstrip("/")
     mcp_endpoint = f"{base_url}/mcp"
-    user_initial = user["email"][0].upper()
+    nav_html = _navbar(request, user["email"])
 
-    return _page("Dashboard", f"""
-<header class="navbar">
-  <a href="/" class="brand">
-    <div class="brand-logo">M</div> Memory Notes AI
-  </a>
-  
-  <div class="user-menu">
-    <div class="avatar" onclick="toggleSettings()" title="User Settings">
-      {user_initial}
+    body = f"""
+{nav_html}
+<main class="flex-grow py-12 px-6">
+    <div class="max-w-3xl mx-auto">
+        <div class="mb-8">
+            <h1 class="font-headline-lg text-headline-lg font-bold text-on-surface mb-2">Dashboard & Settings</h1>
+            <p class="font-body-md text-body-md text-text-secondary">Manage your connection strings, API keys, and AI client endpoints.</p>
+        </div>
+
+        {flash_html}
+
+        <!-- 1. Endpoint & Connection URL -->
+        <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
+            <h2 class="font-headline-md text-lg font-semibold text-on-surface mb-2">1. MCP Server Endpoint</h2>
+            <p class="font-body-sm text-sm text-text-secondary mb-4">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector.</p>
+            <div class="flex items-center gap-2">
+                <input type="text" readonly value="{mcp_endpoint}" id="mcpEndpointField" class="w-full font-mono text-xs bg-surface-container-low border border-border-muted p-2.5 rounded">
+                <button id="btnCopyEndpoint" onclick="copyToClipboard('{mcp_endpoint}', 'btnCopyEndpoint')" class="bg-surface-white text-on-surface px-4 py-2.5 rounded font-label-md text-xs whitespace-nowrap border border-[#050505]">Copy URL</button>
+            </div>
+        </div>
+
+        <!-- 2. Neon Connection String Settings -->
+        <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
+            <h2 class="font-headline-md text-lg font-semibold text-on-surface mb-2">2. Neon Database Connection String</h2>
+            <p class="font-body-sm text-sm text-text-secondary mb-4">Paste the same PostgreSQL connection string your mobile notes app uses to sync.</p>
+            {conn_status}
+            <form method="POST" action="/dashboard/connection-string" class="mt-4">
+                <div class="mb-4">
+                    <input type="text" name="connection_string" placeholder="postgresql://user:password@ep-xxx.neon.tech/dbname" required class="w-full px-4 py-2.5 border border-border-muted rounded text-sm font-mono focus:outline-none focus:border-primary">
+                </div>
+                <button type="submit" class="bg-secondary-container text-on-surface px-6 py-2.5 rounded font-label-md text-xs border border-[#050505]">Save Connection String</button>
+            </form>
+        </div>
+
+        <!-- 3. API Keys Management -->
+        <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
+            <h2 class="font-headline-md text-lg font-semibold text-on-surface mb-2">3. MCP API Keys</h2>
+            <p class="font-body-sm text-sm text-text-secondary mb-4">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps.</p>
+            <div class="divide-y divide-border-muted mb-6">
+                {rows}
+            </div>
+            <form method="POST" action="/dashboard/api-key/create">
+                <button type="submit" class="bg-surface-white text-on-surface px-6 py-2.5 rounded font-label-md text-xs border border-[#050505] hover:bg-surface-container-low transition-colors">Generate New Manual API Key</button>
+            </form>
+        </div>
     </div>
-    
-    <div id="settingsDropdown" class="settings-dropdown">
-      <div style="font-weight: 600; color: #fff; margin-bottom: 2px;">User Account</div>
-      <div class="muted" style="margin-bottom: 12px; font-size: 13px;">{user["email"]}</div>
-      <hr style="border: 0; border-top: 1px solid var(--card-border); margin: 10px 0;">
-      <a href="#neon-section" onclick="toggleSettings()" style="display: block; color: var(--text-main); text-decoration: none; padding: 6px 0; font-size: 14px;">⚙️ Database Settings</a>
-      <a href="#keys-section" onclick="toggleSettings()" style="display: block; color: var(--text-main); text-decoration: none; padding: 6px 0; font-size: 14px;">🔑 MCP API Keys</a>
-      <form method="POST" action="/logout" style="margin-top: 12px;">
-        <button type="submit" class="btn secondary small" style="width: 100%;">Log Out</button>
-      </form>
-    </div>
-  </div>
-</header>
-
-<div style="margin-top: 28px;">
-  <h2 style="font-size: 28px;">Control Panel</h2>
-  <p class="muted">Configure your database credentials, API access tokens, and connector details.</p>
-</div>
-
-{flash_html}
-
-<!-- MCP Connection Endpoint Card -->
-<div class="card">
-  <strong style="font-size: 15px;">1. Claude MCP Connector Endpoint</strong>
-  <p class="muted">Provide this URL when adding a new connector in Claude Desktop or custom AI clients:</p>
-  <div class="code-box">
-    <span>{mcp_endpoint}</span>
-    <button id="btnCopyUrl" class="btn small" onclick="copyToClipboard('{mcp_endpoint}', 'btnCopyUrl')">Copy URL</button>
-  </div>
-</div>
-
-<!-- Neon Database Connection String -->
-<div id="neon-section" class="card">
-  <strong style="font-size: 15px;">2. Neon Database Connection String</strong>
-  <p class="muted">Save your Neon PostgreSQL URL (e.g. <code>postgresql://user:pass@ep-xxx.neon.tech/dbname</code>):</p>
-  {conn_status}
-  <form method="POST" action="/dashboard/connection-string" style="margin-top: 12px;">
-    <input type="text" name="connection_string" placeholder="postgresql://user:password@ep-xxx.aws.neon.tech/dbname" required>
-    <button type="submit" class="btn" style="margin-top: 8px;">Save Database Connection</button>
-  </form>
-</div>
-
-<!-- MCP API Keys Management -->
-<div id="keys-section" class="card">
-  <strong style="font-size: 15px;">3. MCP API Keys (MCP_API_KEY)</strong>
-  <p class="muted">Active keys authorized for bearer authentication:</p>
-  <div style="margin-top: 12px;">
-    {rows}
-  </div>
-  <form method="POST" action="/dashboard/api-key/create" style="margin-top: 16px;">
-    <button type="submit" class="btn secondary">Generate New MCP_API_KEY</button>
-  </form>
-</div>
-""")
+</main>
+"""
+    return _page("Dashboard", body)
 
 
 async def update_connection_string(request: Request):
@@ -496,11 +633,11 @@ async def update_connection_string(request: Request):
     connection_string = str(form.get("connection_string", "")).strip()
 
     if not (connection_string.startswith("postgresql://") or connection_string.startswith("postgres://")):
-        return _dashboard_error("Invalid connection string format. Must start with postgresql://")
+        return _dashboard_error("Invalid format: Must start with postgresql://")
 
     ok, err = await tenant_pools.test_connection_string(connection_string)
     if not ok:
-        return _dashboard_error(f"Failed to connect to Neon database: {err}")
+        return _dashboard_error(f"Connection test failed: {err}")
 
     pool = db_control.get_control_pool()
     await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))
@@ -516,7 +653,7 @@ async def create_api_key(request: Request):
 
     pool = db_control.get_control_pool()
     raw_key = security.generate_api_key()
-    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Key")
+    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")
     request.session["flash_api_key"] = raw_key
 
     return RedirectResponse("/dashboard", status_code=302)
@@ -537,15 +674,19 @@ async def revoke_api_key(request: Request):
 
 
 def _dashboard_error(message: str) -> HTMLResponse:
-    return _page("Dashboard Error", f"""
-<div style="max-width: 480px; margin: 60px auto;">
-  <h2>Connection Error</h2>
-  <div class="error">{message}</div>
-  <p style="margin-top: 16px;"><a href="/dashboard" class="btn secondary small">Back to Dashboard</a></p>
-</div>
-""")
+    body = f"""
+<main class="flex-grow flex items-center justify-center py-20 px-6">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm text-center">
+        <h2 class="font-headline-md text-lg font-bold text-error mb-2">Error</h2>
+        <div class="error mb-6">{message}</div>
+        <a href="/dashboard" class="inline-block bg-secondary-container text-on-surface px-6 py-2.5 rounded font-label-md text-xs border border-[#050505] no-underline">Back to Dashboard</a>
+    </div>
+</main>
+"""
+    return _page("Error", body)
 
 
+# Route registry
 routes = [
     Route("/", landing_page, methods=["GET"]),
     Route("/signup", signup_get, methods=["GET"]),
