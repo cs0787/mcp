@@ -319,16 +319,6 @@ async def search_all(query: str, limit: int = 10) -> str:
 # ---------------------------------------------------------------------------
 # App Initialization & Middleware Setup
 # ---------------------------------------------------------------------------
-@contextlib.asynccontextmanager
-async def lifespan(app):
-    await db_control.init_control_pool()
-    async with contextlib.AsyncExitStack() as stack:
-        await stack.enter_async_context(mcp.session_manager.run())
-        yield
-    await tenant_pools.get_manager().close_all()
-    await db_control.close_control_pool()
-
-
 class DatabaseInitMiddleware:
     def __init__(self, app: ASGIApp):
         self.app = app
@@ -340,7 +330,7 @@ class DatabaseInitMiddleware:
 
 
 app = mcp.streamable_http_app()
-app.router.routes.extend(oauth_rules)
+app.router.routes.extend(oauth_routes)
 app.router.routes.extend(webapp_routes)
 
 session_secret = os.environ.get("SESSION_SECRET_KEY")
