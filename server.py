@@ -169,15 +169,16 @@ async def create_note(
         y: Canvas Y coordinate position
     """
     pool = _get_pool()
+    note_id = str(uuid.uuid4())
     ws_id = workspace_id or str(uuid.uuid4())
     
     row = await pool.fetchrow(
         """
         INSERT INTO notes (id, workspace_id, workspace_name, title, content, type, color_hex, x, y, updated_at)
-        VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, (extract(epoch from now()) * 1000)::bigint)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, (extract(epoch from now()) * 1000)::bigint)
         RETURNING id, workspace_id, workspace_name, title, content, type, color_hex, x, y, updated_at
         """,
-        ws_id, workspace_name, title, content, type, color_hex, x, y
+        note_id, ws_id, workspace_name, title, content, type, color_hex, x, y
     )
     return json.dumps(_row_to_dict(row), ensure_ascii=False, indent=2)
 
@@ -226,13 +227,14 @@ async def create_workspace(name: str) -> str:
         name: Name of the workspace
     """
     pool = _get_pool()
+    ws_id = str(uuid.uuid4())
     row = await pool.fetchrow(
         """
         INSERT INTO workspaces (id, name, updated_at)
-        VALUES (gen_random_uuid(), $1, (extract(epoch from now()) * 1000)::bigint)
+        VALUES ($1, $2, (extract(epoch from now()) * 1000)::bigint)
         RETURNING id, name, updated_at
         """,
-        name
+        ws_id, name
     )
     return json.dumps(_row_to_dict(row), ensure_ascii=False, indent=2)
 
@@ -255,14 +257,15 @@ async def create_file_metadata(
         ocr_text: Optional extracted text from OCR
     """
     pool = _get_pool()
+    file_id = str(uuid.uuid4())
     try:
         row = await pool.fetchrow(
             """
             INSERT INTO file_metadata (id, filename, file_type, topic, file_url, ocr_text, created_at)
-            VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, (extract(epoch from now()) * 1000)::bigint)
+            VALUES ($1, $2, $3, $4, $5, $6, (extract(epoch from now()) * 1000)::bigint)
             RETURNING id, filename, topic, created_at
             """,
-            filename, file_type, topic, file_url, ocr_text
+            file_id, filename, file_type, topic, file_url, ocr_text
         )
         return json.dumps(_row_to_dict(row), ensure_ascii=False, indent=2)
     except asyncpg.exceptions.UndefinedTableError:
