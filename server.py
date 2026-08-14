@@ -1,14 +1,15 @@
 """
-Notes MCP Server (multi-user)
-------------------------------
-Exposes each signed-up user's own Neon Postgres notes database as MCP tools
-for Vercel execution.
+Notes MCP Server (multi-user bidirectional sync)
+------------------------------------------------
+Exposes read and write tools for each user's personal Neon Postgres database,
+enabling Claude and other AI models to create and update notes, workspaces, and files.
 """
 
 import os
 import json
 import contextlib
 import asyncpg
+import uuid
 
 from mcp.server.fastmcp import FastMCP
 from starlette.middleware.sessions import SessionMiddleware
@@ -24,8 +25,9 @@ from tenant_context import current_pool
 mcp = FastMCP(
     "notes-mcp",
     instructions=(
-        "Tools for searching and reading the user's personal notes app data. "
-        "Use search_all or search_notes first for general questions."
+        "Tools for searching, reading, creating, and updating the user's personal notes app data. "
+        "Use create_note to add new notes or update_note to modify existing ones. "
+        "Changes will automatically sync to the user's Android app."
     ),
 )
 
@@ -75,6 +77,9 @@ async def _fetch_optional_with_trgm_fallback(pool: asyncpg.Pool, trgm_sql: str, 
             return None
 
 
+# ---------------------------------------------------------------------------
+# READ TOOLS (Search & Get)
+# ---------------------------------------------------------------------------
 _NOTES_TRGM_SQL = """
     SELECT id, workspace_id, workspace_name, title, content, type,
            media_url, media_name, color_hex, x, y, updated_at,
@@ -98,6 +103,7 @@ _NOTES_FALLBACK_SQL = """
 
 @mcp.tool()
 async def search_notes(query: str, limit: int = 15, workspace_id: str | None = None) -> str:
+    """Fuzzy-search notes by title/content."""
     rows = await _fetch_with_trgm_fallback(
         _get_pool(), _NOTES_TRGM_SQL, _NOTES_FALLBACK_SQL, query, limit, workspace_id
     )
@@ -106,6 +112,7 @@ async def search_notes(query: str, limit: int = 15, workspace_id: str | None = N
 
 @mcp.tool()
 async def get_note(note_id: str) -> str:
+    """Fetch a single note by its exact id."""
     row = await _get_pool().fetchrow("SELECT * FROM notes WHERE id = $1", note_id)
     if not row:
         return json.dumps({"error": f"No note found with id {note_id}"})
@@ -114,6 +121,7 @@ async def get_note(note_id: str) -> str:
 
 @mcp.tool()
 async def list_recent_notes(limit: int = 20, workspace_id: str | None = None) -> str:
+    """List the most recently updated notes."""
     rows = await _get_pool().fetch(
         """
         SELECT id, workspace_id, workspace_name, title, type, updated_at
@@ -129,121 +137,173 @@ async def list_recent_notes(limit: int = 20, workspace_id: str | None = None) ->
 
 @mcp.tool()
 async def list_workspaces() -> str:
+    """List the user's workspaces."""
     rows = await _get_pool().fetch("SELECT id, name, updated_at FROM workspaces ORDER BY updated_at DESC")
     return _rows_to_json(rows)
 
 
+# ---------------------------------------------------------------------------
+# WRITE TOOLS (Create & Update Notes, Workspaces, Files)
+# ---------------------------------------------------------------------------
 @mcp.tool()
-async def search_transcripts(query: str, limit: int = 15) -> str:
-    rows = await _fetch_optional_with_trgm_fallback(
-        _get_pool(),
+async def create_note(
+    title: str,
+    content: str,
+    workspace_id: str | None = None,
+    workspace_name: str | None = "General",
+    type: str = "text",
+    color_hex: str | None = "#FFFFFF",
+    x: float = 0.0,
+    y: float = 0.0
+) -> str:
+    """Create a new note in the user's database. This will sync to their Android app instantly on next refresh.
+    
+    Args:
+        title: Title of the note
+        content: Main body content of the note
+        workspace_id: Optional UUID of the workspace
+        workspace_name: Name of the workspace (defaults to 'General')
+        type: Note type (e.g., text, checklist)
+        color_hex: Background color hex code
+        x: Canvas X coordinate position
+        y: Canvas Y coordinate position
+    """
+    pool = _get_pool()
+    ws_id = workspace_id or str(uuid.uuid4())
+    
+    row = await pool.fetchrow(
         """
-        SELECT id, title, content, duration_seconds, audio_uri, created_at,
-               similarity(title || ' ' || content, $1) AS score
-        FROM transcripts
-        WHERE title % $1 OR content % $1 OR title ILIKE '%'||$1||'%' OR content ILIKE '%'||$1||'%'
-        ORDER BY score DESC
-        LIMIT $2
+        INSERT INTO notes (id, workspace_id, workspace_name, title, content, type, color_hex, x, y, updated_at)
+        VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, now())
+        RETURNING id, workspace_id, workspace_name, title, content, type, color_hex, x, y, updated_at
         """,
-        """
-        SELECT id, title, content, duration_seconds, audio_uri, created_at
-        FROM transcripts
-        WHERE title ILIKE '%'||$1||'%' OR content ILIKE '%'||$1||'%'
-        ORDER BY created_at DESC
-        LIMIT $2
-        """,
-        query, limit,
+        ws_id, workspace_name, title, content, type, color_hex, x, y
     )
-    if rows is None:
-        return json.dumps({"available": False, "reason": "This account has no transcripts table."})
-    return _rows_to_json(rows)
-
-
-@mcp.tool()
-async def get_transcript(transcript_id: str) -> str:
-    row = await _fetch_optional_table_row(_get_pool(), "SELECT * FROM transcripts WHERE id = $1", transcript_id)
-    if row == "unavailable":
-        return json.dumps({"available": False, "reason": "This account has no transcripts table."})
-    if row is None:
-        return json.dumps({"error": f"No transcript found with id {transcript_id}"})
     return json.dumps(_row_to_dict(row), ensure_ascii=False, indent=2)
 
 
 @mcp.tool()
-async def search_files(query: str, limit: int = 15) -> str:
-    rows = await _fetch_optional_with_trgm_fallback(
-        _get_pool(),
+async def update_note(
+    note_id: str,
+    title: str | None = None,
+    content: str | None = None,
+    color_hex: str | None = None
+) -> str:
+    """Update an existing note's title, content, or color by its ID. Automatically updates updated_at for sync.
+    
+    Args:
+        note_id: The primary key ID of the note to update
+        title: New title (optional)
+        content: New content body (optional)
+        color_hex: New background color hex code (optional)
+    """
+    pool = _get_pool()
+    existing = await pool.fetchrow("SELECT * FROM notes WHERE id = $1", note_id)
+    if not existing:
+        return json.dumps({"error": f"No note found with id {note_id}"})
+    
+    new_title = title if title is not None else existing["title"]
+    new_content = content if content is not None else existing["content"]
+    new_color = color_hex if color_hex is not None else existing["color_hex"]
+
+    row = await pool.fetchrow(
         """
-        SELECT id, filename, file_type, topic, file_url, created_at,
-               similarity(topic || ' ' || ocr_text, $1) AS score
-        FROM file_metadata
-        WHERE topic % $1 OR ocr_text % $1 OR topic ILIKE '%'||$1||'%' OR ocr_text ILIKE '%'||$1||'%'
-        ORDER BY score DESC
-        LIMIT $2
+        UPDATE notes 
+        SET title = $1, content = $2, color_hex = $3, updated_at = now()
+        WHERE id = $4
+        RETURNING id, title, content, color_hex, updated_at
         """,
-        """
-        SELECT id, filename, file_type, topic, file_url, created_at
-        FROM file_metadata
-        WHERE topic ILIKE '%'||$1||'%' OR ocr_text ILIKE '%'||$1||'%'
-        ORDER BY created_at DESC
-        LIMIT $2
-        """,
-        query, limit,
+        new_title, new_content, new_color, note_id
     )
-    if rows is None:
-        return json.dumps({"available": False, "reason": "This account has no file_metadata table."})
-    return _rows_to_json(rows)
-
-
-@mcp.tool()
-async def get_file(file_id: str) -> str:
-    row = await _fetch_optional_table_row(_get_pool(), "SELECT * FROM file_metadata WHERE id = $1", file_id)
-    if row == "unavailable":
-        return json.dumps({"available": False, "reason": "This account has no file_metadata table."})
-    if row is None:
-        return json.dumps({"error": f"No file found with id {file_id}"})
     return json.dumps(_row_to_dict(row), ensure_ascii=False, indent=2)
 
 
+@mcp.tool()
+async def create_workspace(name: str) -> str:
+    """Create a new workspace to group notes.
+    
+    Args:
+        name: Name of the workspace
+    """
+    pool = _get_pool()
+    row = await pool.fetchrow(
+        """
+        INSERT INTO workspaces (id, name, updated_at)
+        VALUES (gen_random_uuid(), $1, now())
+        RETURNING id, name, updated_at
+        """,
+        name
+    )
+    return json.dumps(_row_to_dict(row), ensure_ascii=False, indent=2)
+
+
+@mcp.tool()
+async def create_file_metadata(
+    filename: str,
+    file_type: str,
+    topic: str,
+    file_url: str,
+    ocr_text: str | None = None
+) -> str:
+    """Store metadata and OCR text for a file or PDF in the user's database.
+    
+    Args:
+        filename: Name of the file
+        file_type: Type of file (e.g., pdf, image)
+        topic: Topic description
+        file_url: Storage link or URI
+        ocr_text: Optional extracted text from OCR
+    """
+    pool = _get_pool()
+    try:
+        row = await pool.fetchrow(
+            """
+            INSERT INTO file_metadata (id, filename, file_type, topic, file_url, ocr_text, created_at)
+            VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, now())
+            RETURNING id, filename, topic, created_at
+            """,
+            filename, file_type, topic, file_url, ocr_text
+        )
+        return json.dumps(_row_to_dict(row), ensure_ascii=False, indent=2)
+    except asyncpg.exceptions.UndefinedTableError:
+        return json.dumps({"available": False, "reason": "This account has no file_metadata table."})
+
+
+# ---------------------------------------------------------------------------
+# Unified search across available tables
+# ---------------------------------------------------------------------------
 @mcp.tool()
 async def search_all(query: str, limit: int = 10) -> str:
+    """Fuzzy-search notes, transcripts, and file OCR text all at once."""
     pool = _get_pool()
     notes = await _fetch_with_trgm_fallback(pool, _NOTES_TRGM_SQL, _NOTES_FALLBACK_SQL, query, limit, None)
+    
     transcripts = await _fetch_optional_with_trgm_fallback(
         pool,
         """
-        SELECT id, title, content, created_at,
-               similarity(title || ' ' || content, $1) AS score
-        FROM transcripts
-        WHERE title % $1 OR content % $1 OR title ILIKE '%'||$1||'%' OR content ILIKE '%'||$1||'%'
-        ORDER BY score DESC
-        LIMIT $2
+        SELECT id, title, content, created_at, similarity(title || ' ' || content, $1) AS score
+        FROM transcripts WHERE title % $1 OR content % $1 OR title ILIKE '%'||$1||'%' OR content ILIKE '%'||$1||'%'
+        ORDER BY score DESC LIMIT $2
         """,
         """
-        SELECT id, title, content, created_at
-        FROM transcripts
+        SELECT id, title, content, created_at FROM transcripts
         WHERE title ILIKE '%'||$1||'%' OR content ILIKE '%'||$1||'%'
-        ORDER BY created_at DESC
-        LIMIT $2
+        ORDER BY created_at DESC LIMIT $2
         """,
         query, limit,
     )
+    
     files = await _fetch_optional_with_trgm_fallback(
         pool,
         """
-        SELECT id, filename, topic, file_type, created_at,
-               similarity(topic || ' ' || ocr_text, $1) AS score
-        FROM file_metadata
-        WHERE topic % $1 OR ocr_text % $1 OR topic ILIKE '%'||$1||'%' OR ocr_text ILIKE '%'||$1||'%'
-        ORDER BY score DESC
-        LIMIT $2
+        SELECT id, filename, topic, file_type, created_at, similarity(topic || ' ' || ocr_text, $1) AS score
+        FROM file_metadata WHERE topic % $1 OR ocr_text % $1 OR topic ILIKE '%'||$1||'%' OR ocr_text ILIKE '%'||$1||'%'
+        ORDER BY score DESC LIMIT $2
         """,
         """
-        SELECT id, filename, topic, file_type, created_at
-        FROM file_metadata
+        SELECT id, filename, topic, file_type, created_at FROM file_metadata
         WHERE topic ILIKE '%'||$1||'%' OR ocr_text ILIKE '%'||$1||'%'
-        ORDER BY created_at DESC
-        LIMIT $2
+        ORDER BY created_at DESC LIMIT $2
         """,
         query, limit,
     )
@@ -256,7 +316,19 @@ async def search_all(query: str, limit: int = 10) -> str:
     return json.dumps(result, ensure_ascii=False, indent=2)
 
 
-# Vercel Serverless Middleware: Guarantees DB control pool initialization on invocation
+# ---------------------------------------------------------------------------
+# App Initialization & Middleware Setup
+# ---------------------------------------------------------------------------
+@contextlib.asynccontextmanager
+async def lifespan(app):
+    await db_control.init_control_pool()
+    async with contextlib.AsyncExitStack() as stack:
+        await stack.enter_async_context(mcp.session_manager.run())
+        yield
+    await tenant_pools.get_manager().close_all()
+    await db_control.close_control_pool()
+
+
 class DatabaseInitMiddleware:
     def __init__(self, app: ASGIApp):
         self.app = app
@@ -268,7 +340,7 @@ class DatabaseInitMiddleware:
 
 
 app = mcp.streamable_http_app()
-app.router.routes.extend(oauth_routes)
+app.router.routes.extend(oauth_rules)
 app.router.routes.extend(webapp_routes)
 
 session_secret = os.environ.get("SESSION_SECRET_KEY")
@@ -276,7 +348,6 @@ if not session_secret:
     raise RuntimeError("SESSION_SECRET_KEY environment variable is not set")
 https_only = os.environ.get("SESSION_HTTPS_ONLY", "true").lower() != "false"
 
-# Middlewares execution order: DatabaseInitMiddleware runs FIRST on incoming requests
 app.add_middleware(SessionMiddleware, secret_key=session_secret, same_site="lax", https_only=https_only)
 app.add_middleware(BearerAuthMiddleware)
 app.add_middleware(DatabaseInitMiddleware)
