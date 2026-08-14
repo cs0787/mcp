@@ -174,7 +174,7 @@ async def create_note(
     row = await pool.fetchrow(
         """
         INSERT INTO notes (id, workspace_id, workspace_name, title, content, type, color_hex, x, y, updated_at)
-        VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, now())
+        VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, (extract(epoch from now()) * 1000)::bigint)
         RETURNING id, workspace_id, workspace_name, title, content, type, color_hex, x, y, updated_at
         """,
         ws_id, workspace_name, title, content, type, color_hex, x, y
@@ -209,7 +209,7 @@ async def update_note(
     row = await pool.fetchrow(
         """
         UPDATE notes 
-        SET title = $1, content = $2, color_hex = $3, updated_at = now()
+        SET title = $1, content = $2, color_hex = $3, updated_at = (extract(epoch from now()) * 1000)::bigint
         WHERE id = $4
         RETURNING id, title, content, color_hex, updated_at
         """,
@@ -229,7 +229,7 @@ async def create_workspace(name: str) -> str:
     row = await pool.fetchrow(
         """
         INSERT INTO workspaces (id, name, updated_at)
-        VALUES (gen_random_uuid(), $1, now())
+        VALUES (gen_random_uuid(), $1, (extract(epoch from now()) * 1000)::bigint)
         RETURNING id, name, updated_at
         """,
         name
@@ -259,7 +259,7 @@ async def create_file_metadata(
         row = await pool.fetchrow(
             """
             INSERT INTO file_metadata (id, filename, file_type, topic, file_url, ocr_text, created_at)
-            VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, now())
+            VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, (extract(epoch from now()) * 1000)::bigint)
             RETURNING id, filename, topic, created_at
             """,
             filename, file_type, topic, file_url, ocr_text
