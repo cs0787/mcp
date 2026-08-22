@@ -12,7 +12,7 @@ import db_control
 import security
 import tenant_pools
 
-# Base HTML Template encapsulating your exact Tailwind setup, fonts, and styles
+
 def _page(title: str, body: str) -> HTMLResponse:
     return HTMLResponse(f"""<!DOCTYPE html>
 <html class="scroll-smooth" lang="en">
@@ -87,16 +87,6 @@ def _page(title: str, body: str) -> HTMLResponse:
                         "xl": "0.5rem",
                         "full": "0.75rem"
                     }},
-                    "spacing": {{
-                        "margin-mobile": "16px",
-                        "stack-md": "12px",
-                        "stack-sm": "4px",
-                        "gutter": "24px",
-                        "stack-lg": "24px",
-                        "base": "8px",
-                        "margin-desktop": "48px",
-                        "container-max": "1280px"
-                    }},
                     "fontFamily": {{
                         "body-lg": ["Inter"],
                         "headline-lg-mobile": ["Hanken Grotesk"],
@@ -107,17 +97,6 @@ def _page(title: str, body: str) -> HTMLResponse:
                         "body-sm": ["Inter"],
                         "label-sm": ["JetBrains Mono"],
                         "label-md": ["JetBrains Mono"]
-                    }},
-                    "fontSize": {{
-                        "body-lg": ["18px", {{ "lineHeight": "28px", "fontWeight": "400" }}],
-                        "headline-lg-mobile": ["28px", {{ "lineHeight": "36px", "fontWeight": "600" }}],
-                        "headline-xl": ["40px", {{ "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }}],
-                        "body-md": ["16px", {{ "lineHeight": "24px", "fontWeight": "400" }}],
-                        "headline-md": ["24px", {{ "lineHeight": "32px", "fontWeight": "600" }}],
-                        "headline-lg": ["32px", {{ "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }}],
-                        "body-sm": ["14px", {{ "lineHeight": "20px", "fontWeight": "400" }}],
-                        "label-sm": ["12px", {{ "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }}],
-                        "label-md": ["14px", {{ "lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500" }}]
                     }}
                 }}
             }}
@@ -185,36 +164,35 @@ def _safe_next(raw: str | None) -> str:
     return "/dashboard"
 
 
-# Common Navigation Bar
 def _navbar(request: Request, user_email: str | None = None) -> str:
     if user_email:
         initial = user_email[0].upper()
         right_actions = f"""
         <div class="relative">
-            <div onclick="toggleSettings()" class="w-8 h-8 rounded-full bg-surface-dim overflow-hidden border border-border-muted cursor-pointer flex items-center justify-center font-bold text-xs select-none">
+            <div onclick="toggleSettings()" class="w-8 h-8 rounded-full bg-surface-dim overflow-hidden border border-border-muted cursor-pointer flex items-center justify-center font-bold text-xs select-none hover:border-black transition-colors">
                 {initial}
             </div>
             <div id="settingsDropdown" class="settings-dropdown">
                 <div class="font-bold text-sm text-on-surface mb-1">Signed in as</div>
                 <div class="text-xs text-text-secondary truncate mb-3">{user_email}</div>
                 <hr class="border-border-muted mb-3">
-                <a href="/dashboard" class="block font-label-md text-sm text-on-surface py-1.5 hover:text-primary transition-colors">⚙️ Dashboard & Settings</a>
+                <a href="/dashboard" class="block text-sm text-on-surface py-1.5 hover:text-primary font-semibold transition-colors">⚙️ Dashboard & Settings</a>
                 <form method="POST" action="/logout" class="mt-2">
-                    <button type="submit" class="w-full text-left font-label-md text-sm text-error py-1.5 hover:opacity-80 transition-opacity">Log Out</button>
+                    <button type="submit" class="w-full text-left text-sm text-error py-1.5 hover:opacity-80 transition-opacity">Log Out</button>
                 </form>
             </div>
         </div>
         """
     else:
         right_actions = """
-        <a href="/login" class="bg-surface-white text-on-surface px-4 py-2 rounded font-label-md text-label-md border border-[#050505] hover:bg-surface-container-low transition-colors">Log In</a>
-        <a href="/signup" class="bg-secondary-container text-on-surface px-4 py-2 rounded font-label-md text-label-md hover:bg-secondary-fixed transition-colors">Get Started</a>
+        <a href="/login" class="bg-surface-white text-on-surface px-4 py-2 rounded text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors no-underline">Log In</a>
+        <a href="/signup" class="bg-secondary-container text-on-surface px-4 py-2 rounded text-sm font-semibold hover:bg-secondary-fixed transition-colors no-underline">Get Started</a>
         """
 
     return f"""
-<nav class="sticky top-0 z-50 flex justify-between items-center w-full px-6 py-3 bg-surface-white border-b border-border-muted">
+<nav class="sticky top-0 z-50 flex justify-between items-center w-full px-6 lg:px-12 py-3 bg-surface-white border-b border-border-muted">
     <div class="flex items-center gap-4">
-        <a href="/" class="font-headline-md text-headline-md font-bold text-on-surface no-underline">Memory Notes</a>
+        <a href="/" class="text-xl font-bold text-on-surface no-underline tracking-tight">Memory Notes</a>
     </div>
     <div class="flex items-center gap-4">
         {right_actions}
@@ -224,7 +202,7 @@ def _navbar(request: Request, user_email: str | None = None) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Landing Page (Root Route '/')
+# Landing Page (Tighter spacing, higher text placement)
 # ---------------------------------------------------------------------------
 async def landing_page(request: Request):
     user_id = _require_login(request)
@@ -240,29 +218,30 @@ async def landing_page(request: Request):
     body = f"""
 {nav_html}
 <main class="flex-grow">
-    <!-- Hero Section -->
-    <section class="relative pt-32 pb-24 overflow-hidden border-b border-border-muted hero-pattern">
-        <div class="max-w-container-max mx-auto px-margin-desktop relative z-10 flex flex-col lg:flex-row items-center gap-gutter">
-            <div class="flex-1 space-y-stack-lg text-center lg:text-left">
-                <h1 class="font-headline-xl text-headline-xl lg:text-[64px] lg:leading-[72px] font-bold text-on-surface tracking-tight max-w-2xl">
+    <!-- Hero Section (Adjusted top padding from pt-32 to pt-10) -->
+    <section class="relative pt-10 pb-16 overflow-hidden border-b border-border-muted hero-pattern">
+        <div class="max-w-6xl mx-auto px-6 lg:px-12 relative z-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+            <div class="flex-1 space-y-4 text-center lg:text-left">
+                <h1 class="text-4xl lg:text-[54px] lg:leading-[60px] font-bold text-on-surface tracking-tight max-w-2xl">
                     Structured Freedom for Your Thoughts.
                 </h1>
-                <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mx-auto lg:mx-0">
+                <p class="text-base lg:text-lg text-on-surface-variant max-w-xl mx-auto lg:mx-0 leading-relaxed">
                     A distraction-free environment for knowledge workers. Capture, connect, and crystallize complex ideas with unparalleled clarity.
                 </p>
-                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-stack-md pt-stack-sm">
-                    <a href="{' /dashboard' if user_id else '/signup'}" class="bg-secondary-container text-on-surface px-8 py-4 font-label-md text-label-md border-b-2 border-r-2 border-[#050505] active:translate-y-[2px] active:translate-x-[2px] active:border-0 transition-all inline-block no-underline">Start Writing Now</a>
-                    <a href="#features" class="bg-surface-white text-on-surface px-8 py-4 font-label-md text-label-md border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline">Explore Features</a>
+                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-3">
+                    <a href="{' /dashboard' if user_id else '/signup'}" class="bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline">Start Writing Now</a>
+                    <a href="#features" class="bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline">Explore Features</a>
                 </div>
             </div>
-            <div class="flex-1 w-full max-w-lg lg:max-w-none relative aspect-square flex items-center justify-center">
-                <div class="p-8 bg-surface-container-low border border-border-muted rounded-xl shadow-lg text-left w-full max-w-md font-mono text-xs">
+            
+            <div class="flex-1 w-full max-w-md lg:max-w-none flex items-center justify-center">
+                <div class="p-6 bg-surface-container-low border border-border-muted rounded-xl shadow-sm text-left w-full max-w-md font-mono text-xs">
                     <div class="flex items-center justify-between pb-3 mb-3 border-b border-border-muted">
                         <span class="font-bold text-primary">● MCP MEMORY GATEWAY</span>
                         <span class="text-text-secondary">Connected</span>
                     </div>
-                    <p class="text-text-secondary mb-2">> AI Model query sync:</p>
-                    <p class="text-on-surface font-semibold">search_notes(query="architecture design")</p>
+                    <p class="text-text-secondary mb-1">&gt; AI Model query sync:</p>
+                    <p class="text-on-surface font-semibold">&gt; search_notes(query="architecture design")</p>
                     <p class="text-primary mt-2">✓ Synced instantly to local client.</p>
                 </div>
             </div>
@@ -270,62 +249,61 @@ async def landing_page(request: Request):
     </section>
 
     <!-- Features Section (Bento Grid) -->
-    <section id="features" class="py-24 bg-surface-white border-b border-border-muted">
-        <div class="max-w-container-max mx-auto px-margin-desktop">
-            <div class="mb-16">
-                <h2 class="font-headline-lg text-headline-lg font-semibold text-on-surface mb-4">Core Capabilities</h2>
-                <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">Tools designed for deep intellectual focus, stripping away the superfluous to leave only what matters.</p>
+    <section id="features" class="py-16 bg-surface-white border-b border-border-muted">
+        <div class="max-w-6xl mx-auto px-6 lg:px-12">
+            <div class="mb-12">
+                <h2 class="text-2xl lg:text-3xl font-bold text-on-surface mb-2">Core Capabilities</h2>
+                <p class="text-sm text-on-surface-variant max-w-2xl">Tools designed for deep intellectual focus, stripping away the superfluous to leave only what matters.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Feature 1: Large -->
-                <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-8 flex flex-col justify-between group">
-                    <div class="mb-8">
-                        <span class="inline-block p-3 bg-surface-container rounded-sm mb-6 border border-border-muted group-hover:border-[#050505] transition-colors">
+                <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-6 flex flex-col justify-between group rounded">
+                    <div class="mb-6">
+                        <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors">
                             <span class="material-symbols-outlined text-primary" data-icon="account_tree">account_tree</span>
                         </span>
-                        <h3 class="font-headline-md text-headline-md font-semibold text-on-surface mb-2">Non-Linear Connectivity</h3>
-                        <p class="font-body-md text-body-md text-on-surface-variant">Build an intricate web of knowledge. Link notes effortlessly to visualize relationships and emergent ideas.</p>
+                        <h3 class="text-xl font-semibold text-on-surface mb-1">Non-Linear Connectivity</h3>
+                        <p class="text-sm text-on-surface-variant">Build an intricate web of knowledge. Link notes effortlessly to visualize relationships and emergent ideas.</p>
                     </div>
-                    <div class="h-48 bg-surface-container-low border border-border-muted flex items-center justify-center relative overflow-hidden text-sm text-text-secondary">
-                        [Interactive Graph Visualization Canvas]
+                    <div class="h-36 bg-surface-container-low border border-border-muted rounded flex items-center justify-center text-xs font-mono text-text-secondary">
+                        [Interactive Graph Visualization]
                     </div>
                 </div>
-                <!-- Feature 2: Small -->
-                <div class="feature-card bg-surface-white border border-border-muted p-8 flex flex-col group">
-                    <span class="inline-block p-3 bg-surface-container rounded-sm mb-6 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
+                
+                <div class="feature-card bg-surface-white border border-border-muted p-6 flex flex-col group rounded">
+                    <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
                         <span class="material-symbols-outlined text-primary" data-icon="format_ink_highlighter">format_ink_highlighter</span>
                     </span>
-                    <h3 class="font-headline-md text-headline-md font-semibold text-on-surface mb-2">Zen Canvas</h3>
-                    <p class="font-body-md text-body-md text-on-surface-variant mb-8">A distraction-free writing environment that centers your thoughts and fades UI elements away.</p>
-                    <div class="mt-auto h-32 bg-surface-container-low border border-border-muted flex flex-col justify-center px-6">
-                        <div class="w-3/4 h-2 bg-border-muted rounded-full mb-2"></div>
-                        <div class="w-1/2 h-2 bg-border-muted rounded-full"></div>
+                    <h3 class="text-xl font-semibold text-on-surface mb-1">Zen Canvas</h3>
+                    <p class="text-sm text-on-surface-variant mb-6">A distraction-free writing environment that centers your thoughts and fades UI elements away.</p>
+                    <div class="mt-auto h-24 bg-surface-container-low border border-border-muted rounded flex flex-col justify-center px-4">
+                        <div class="w-3/4 h-1.5 bg-border-muted rounded-full mb-2"></div>
+                        <div class="w-1/2 h-1.5 bg-border-muted rounded-full"></div>
                     </div>
                 </div>
-                <!-- Feature 3: Small -->
-                <div class="feature-card bg-surface-white border border-border-muted p-8 flex flex-col group">
-                    <span class="inline-block p-3 bg-surface-container rounded-sm mb-6 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
+
+                <div class="feature-card bg-surface-white border border-border-muted p-6 flex flex-col group rounded">
+                    <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
                         <span class="material-symbols-outlined text-primary" data-icon="search">search</span>
                     </span>
-                    <h3 class="font-headline-md text-headline-md font-semibold text-on-surface mb-2">Lightning Search</h3>
-                    <p class="font-body-md text-body-md text-on-surface-variant mb-8">Instantly retrieve any thought with our incredibly fast, full-text search and filtering engine.</p>
+                    <h3 class="text-xl font-semibold text-on-surface mb-1">Lightning Search</h3>
+                    <p class="text-sm text-on-surface-variant mb-6">Instantly retrieve any thought with our fast, full-text fuzzy search engine.</p>
                     <div class="mt-auto">
-                        <div class="flex items-center gap-2 p-2 border border-border-muted bg-surface-white">
-                            <span class="material-symbols-outlined text-outline" data-icon="search">search</span>
-                            <span class="font-label-sm text-label-sm text-outline">Search query...</span>
+                        <div class="flex items-center gap-2 p-2 border border-border-muted rounded bg-surface-white text-xs text-outline">
+                            <span class="material-symbols-outlined text-base" data-icon="search">search</span>
+                            <span>Search query...</span>
                         </div>
                     </div>
                 </div>
-                <!-- Feature 4: Large -->
-                <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-8 flex flex-col md:flex-row gap-8 items-center group">
+
+                <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-6 flex flex-col md:flex-row gap-6 items-center group rounded">
                     <div class="flex-1">
-                        <span class="inline-block p-3 bg-surface-container rounded-sm mb-6 border border-border-muted group-hover:border-[#050505] transition-colors">
+                        <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors">
                             <span class="material-symbols-outlined text-primary" data-icon="data_object">data_object</span>
                         </span>
-                        <h3 class="font-headline-md text-headline-md font-semibold text-on-surface mb-2">MCP Bi-directional Sync</h3>
-                        <p class="font-body-md text-body-md text-on-surface-variant">Connect AI models directly to your notes database. Read and write thoughts dynamically with seamless local sync.</p>
+                        <h3 class="text-xl font-semibold text-on-surface mb-1">MCP Bi-directional Sync</h3>
+                        <p class="text-sm text-on-surface-variant">Connect AI models directly to your notes database. Read and write thoughts dynamically with seamless local sync.</p>
                     </div>
-                    <div class="flex-1 w-full h-48 bg-surface-container-low border border-border-muted flex items-center justify-center font-mono text-xs text-text-secondary p-4">
+                    <div class="flex-1 w-full h-36 bg-surface-container-low border border-border-muted rounded flex items-center justify-center font-mono text-xs text-text-secondary p-3">
                         POST /mcp HTTP/1.1<br>Host: memory-notes.vercel.app<br>Authorization: Bearer sbmcp_...
                     </div>
                 </div>
@@ -333,16 +311,17 @@ async def landing_page(request: Request):
         </div>
     </section>
 </main>
+
 <!-- Footer -->
-<footer class="w-full py-12 px-margin-desktop flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto bg-surface-white border-t border-border-muted">
-    <div class="flex flex-col items-center md:items-start gap-2 mb-6 md:mb-0">
-        <span class="font-label-md text-label-md font-black text-on-surface">Memory Notes</span>
-        <span class="font-body-sm text-body-sm text-text-secondary">© 2026 Memory Notes. Structured Freedom.</span>
+<footer class="w-full py-8 px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center max-w-6xl mx-auto bg-surface-white border-t border-border-muted">
+    <div class="flex flex-col items-center md:items-start gap-1 mb-4 md:mb-0">
+        <span class="text-sm font-bold text-on-surface">Memory Notes</span>
+        <span class="text-xs text-text-secondary">© 2026 Memory Notes. Structured Freedom.</span>
     </div>
-    <nav class="flex gap-6">
-        <a class="font-body-sm text-body-sm text-text-secondary hover:text-primary transition-opacity" href="#">Privacy Policy</a>
-        <a class="font-body-sm text-body-sm text-text-secondary hover:text-primary transition-opacity" href="#">Terms of Service</a>
-        <a class="font-body-sm text-body-sm text-text-secondary hover:text-primary transition-opacity" href="#">Changelog</a>
+    <nav class="flex gap-4 text-xs text-text-secondary">
+        <a class="hover:text-primary transition-colors no-underline" href="#">Privacy Policy</a>
+        <a class="hover:text-primary transition-colors no-underline" href="#">Terms of Service</a>
+        <a class="hover:text-primary transition-colors no-underline" href="#">Changelog</a>
     </nav>
 </footer>
 """
@@ -359,23 +338,23 @@ async def signup_get(request: Request):
     
     body = f"""
 {_navbar(request)}
-<main class="flex-grow flex items-center justify-center py-20 px-6">
+<main class="flex-grow flex items-center justify-center py-16 px-6">
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
-        <h2 class="font-headline-md text-headline-md font-bold text-on-surface mb-2">Create Your Account</h2>
-        <p class="font-body-sm text-body-sm text-text-secondary mb-6">Set up your Memory Notes gateway account.</p>
+        <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
+        <p class="text-xs text-text-secondary mb-6">Set up your Memory Notes gateway account.</p>
         <form method="POST" action="/signup">
             <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
-                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Email Address</label>
+                <label class="block text-xs font-semibold text-on-surface mb-1">Email Address</label>
                 <input type="email" name="email" placeholder="name@example.com" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm focus:outline-none focus:border-primary">
             </div>
             <div class="mb-6">
-                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Password (min 8 characters)</label>
+                <label class="block text-xs font-semibold text-on-surface mb-1">Password (min 8 characters)</label>
                 <input type="password" name="password" placeholder="••••••••" minlength="8" required class="w-full px-4 py-2 border border-border-muted rounded text-sm focus:outline-none focus:border-primary">
             </div>
-            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded font-label-md text-label-md border-b-2 border-r-2 border-[#050505] active:translate-y-[2px] active:translate-x-[2px] active:border-0 transition-all">Sign Up</button>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all">Sign Up</button>
         </form>
-        <p class="font-body-sm text-body-sm text-text-secondary text-center mt-6">Already have an account? <a href="/login?next={next_}" class="text-primary font-semibold hover:underline">Log in</a></p>
+        <p class="text-xs text-text-secondary text-center mt-6">Already have an account? <a href="/login?next={next_}" class="text-primary font-semibold hover:underline">Log in</a></p>
     </div>
 </main>
 """
@@ -397,21 +376,21 @@ async def signup_post(request: Request):
     if error:
         body = f"""
 {_navbar(request)}
-<main class="flex-grow flex items-center justify-center py-20 px-6">
+<main class="flex-grow flex items-center justify-center py-16 px-6">
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
-        <h2 class="font-headline-md text-headline-md font-bold text-on-surface mb-2">Create Your Account</h2>
-        <div class="error mb-4">{error}</div>
+        <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
+        <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">{error}</div>
         <form method="POST" action="/signup">
             <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
-                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Email Address</label>
+                <label class="block text-xs font-semibold text-on-surface mb-1">Email Address</label>
                 <input type="email" name="email" value="{email}" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm">
             </div>
             <div class="mb-6">
-                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Password</label>
+                <label class="block text-xs font-semibold text-on-surface mb-1">Password</label>
                 <input type="password" name="password" minlength="8" required class="w-full px-4 py-2 border border-border-muted rounded text-sm">
             </div>
-            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded font-label-md text-label-md border border-[#050505]">Sign Up</button>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border border-[#050505]">Sign Up</button>
         </form>
     </div>
 </main>
@@ -424,11 +403,11 @@ async def signup_post(request: Request):
     except asyncpg.exceptions.UniqueViolationError:
         body = f"""
 {_navbar(request)}
-<main class="flex-grow flex items-center justify-center py-20 px-6">
+<main class="flex-grow flex items-center justify-center py-16 px-6">
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
-        <h2 class="font-headline-md text-headline-md font-bold text-on-surface mb-2">Create Your Account</h2>
-        <div class="error mb-4">An account with that email already exists.</div>
-        <p class="text-sm"><a href="/login?next={next_}" class="text-primary font-semibold underline">Log in instead</a></p>
+        <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
+        <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">An account with that email already exists.</div>
+        <p class="text-xs"><a href="/login?next={next_}" class="text-primary font-semibold underline">Log in instead</a></p>
     </div>
 </main>
 """
@@ -448,23 +427,23 @@ async def login_get(request: Request):
     
     body = f"""
 {_navbar(request)}
-<main class="flex-grow flex items-center justify-center py-20 px-6">
+<main class="flex-grow flex items-center justify-center py-16 px-6">
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
-        <h2 class="font-headline-md text-headline-md font-bold text-on-surface mb-2">Welcome Back</h2>
-        <p class="font-body-sm text-body-sm text-text-secondary mb-6">Log in to your account.</p>
+        <h2 class="text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
+        <p class="text-xs text-text-secondary mb-6">Log in to your account.</p>
         <form method="POST" action="/login">
             <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
-                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Email Address</label>
+                <label class="block text-xs font-semibold text-on-surface mb-1">Email Address</label>
                 <input type="email" name="email" placeholder="name@example.com" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm focus:outline-none focus:border-primary">
             </div>
             <div class="mb-6">
-                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Password</label>
+                <label class="block text-xs font-semibold text-on-surface mb-1">Password</label>
                 <input type="password" name="password" placeholder="••••••••" required class="w-full px-4 py-2 border border-border-muted rounded text-sm focus:outline-none focus:border-primary">
             </div>
-            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded font-label-md text-label-md border-b-2 border-r-2 border-[#050505] active:translate-y-[2px] active:translate-x-[2px] active:border-0 transition-all">Log In</button>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all">Log In</button>
         </form>
-        <p class="font-body-sm text-body-sm text-text-secondary text-center mt-6">No account yet? <a href="/signup?next={next_}" class="text-primary font-semibold hover:underline">Sign up</a></p>
+        <p class="text-xs text-text-secondary text-center mt-6">No account yet? <a href="/signup?next={next_}" class="text-primary font-semibold hover:underline">Sign up</a></p>
     </div>
 </main>
 """
@@ -483,21 +462,21 @@ async def login_post(request: Request):
     if user is None or not security.verify_password(password, user["password_hash"]):
         body = f"""
 {_navbar(request)}
-<main class="flex-grow flex items-center justify-center py-20 px-6">
+<main class="flex-grow flex items-center justify-center py-16 px-6">
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
-        <h2 class="font-headline-md text-headline-md font-bold text-on-surface mb-2">Welcome Back</h2>
-        <div class="error mb-4">Incorrect email or password.</div>
+        <h2 class="text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
+        <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">Incorrect email or password.</div>
         <form method="POST" action="/login">
             <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
-                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Email Address</label>
+                <label class="block text-xs font-semibold text-on-surface mb-1">Email Address</label>
                 <input type="email" name="email" value="{email}" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm">
             </div>
             <div class="mb-6">
-                <label class="block font-label-sm text-label-sm text-on-surface mb-1">Password</label>
+                <label class="block text-xs font-semibold text-on-surface mb-1">Password</label>
                 <input type="password" name="password" required class="w-full px-4 py-2 border border-border-muted rounded text-sm">
             </div>
-            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded font-label-md text-label-md border border-[#050505]">Log In</button>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border border-[#050505]">Log In</button>
         </form>
     </div>
 </main>
@@ -539,7 +518,7 @@ async def dashboard_get(request: Request):
     <strong class="text-xs uppercase font-mono text-primary block mb-1">New API Key (Shown Once — Copy Now):</strong>
     <div class="flex items-center gap-2 mt-2">
         <input type="text" readonly value="{flash_key}" id="newApiKeyField" class="w-full font-mono text-xs bg-surface-white border border-border-muted p-2 rounded">
-        <button id="btnCopyKey" onclick="copyToClipboard('{flash_key}', 'btnCopyKey')" class="bg-secondary-container text-on-surface px-4 py-2 rounded font-label-md text-xs whitespace-nowrap border border-[#050505]">Copy</button>
+        <button id="btnCopyKey" onclick="copyToClipboard('{flash_key}', 'btnCopyKey')" class="bg-secondary-container text-on-surface px-4 py-2 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy</button>
     </div>
     <p class="text-xs text-text-secondary mt-2">Use this as your Bearer Token for Claude or direct API configurations.</p>
 </div>
@@ -547,9 +526,9 @@ async def dashboard_get(request: Request):
 
     if user["connection_string_encrypted"]:
         masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
-        conn_status = f'<p class="font-body-sm text-body-sm text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
+        conn_status = f'<p class="text-xs text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
     else:
-        conn_status = '<div class="error">No Neon connection string set yet. Claude connector will fail until configured.</div>'
+        conn_status = '<div class="p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">No Neon connection string set yet. Claude connector will fail until configured.</div>'
 
     keys = await db_control.list_api_keys(pool, user_id)
     active_keys = [k for k in keys if k["revoked_at"] is None]
@@ -557,8 +536,8 @@ async def dashboard_get(request: Request):
         rows = "".join(f"""
 <div class="flex items-center justify-between py-3 border-b border-border-muted last:border-0">
     <div>
-        <div class="font-label-md text-sm font-semibold text-on-surface">{k['label']}</div>
-        <div class="font-body-sm text-xs text-text-secondary">Created {k['created_at'].strftime('%b %d, %Y')}{f" • Last used {k['last_used_at'].strftime('%b %d, %Y')}" if k['last_used_at'] else ""}</div>
+        <div class="text-sm font-semibold text-on-surface">{k['label']}</div>
+        <div class="text-xs text-text-secondary">Created {k['created_at'].strftime('%b %d, %Y')}{f" • Last used {k['last_used_at'].strftime('%b %d, %Y')}" if k['last_used_at'] else ""}</div>
     </div>
     <form method="POST" action="/dashboard/api-key/revoke" class="m-0">
         <input type="hidden" name="key_id" value="{k['id']}">
@@ -567,7 +546,7 @@ async def dashboard_get(request: Request):
 </div>
 """ for k in active_keys)
     else:
-        rows = '<p class="font-body-sm text-body-sm text-text-secondary">No active API keys found.</p>'
+        rows = '<p class="text-xs text-text-secondary">No active API keys found.</p>'
 
     base_url = str(request.base_url).rstrip("/")
     mcp_endpoint = f"{base_url}/mcp"
@@ -575,47 +554,47 @@ async def dashboard_get(request: Request):
 
     body = f"""
 {nav_html}
-<main class="flex-grow py-12 px-6">
+<main class="flex-grow py-10 px-6">
     <div class="max-w-3xl mx-auto">
-        <div class="mb-8">
-            <h1 class="font-headline-lg text-headline-lg font-bold text-on-surface mb-2">Dashboard & Settings</h1>
-            <p class="font-body-md text-body-md text-text-secondary">Manage your connection strings, API keys, and AI client endpoints.</p>
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-on-surface mb-1">Dashboard & Settings</h1>
+            <p class="text-xs text-text-secondary">Manage your database connection string, API keys, and connector endpoint.</p>
         </div>
 
         {flash_html}
 
         <!-- 1. Endpoint & Connection URL -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
-            <h2 class="font-headline-md text-lg font-semibold text-on-surface mb-2">1. MCP Server Endpoint</h2>
-            <p class="font-body-sm text-sm text-text-secondary mb-4">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector.</p>
+            <h2 class="text-base font-semibold text-on-surface mb-1">1. MCP Server Endpoint</h2>
+            <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector.</p>
             <div class="flex items-center gap-2">
                 <input type="text" readonly value="{mcp_endpoint}" id="mcpEndpointField" class="w-full font-mono text-xs bg-surface-container-low border border-border-muted p-2.5 rounded">
-                <button id="btnCopyEndpoint" onclick="copyToClipboard('{mcp_endpoint}', 'btnCopyEndpoint')" class="bg-surface-white text-on-surface px-4 py-2.5 rounded font-label-md text-xs whitespace-nowrap border border-[#050505]">Copy URL</button>
+                <button id="btnCopyEndpoint" onclick="copyToClipboard('{mcp_endpoint}', 'btnCopyEndpoint')" class="bg-surface-white text-on-surface px-4 py-2.5 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy URL</button>
             </div>
         </div>
 
         <!-- 2. Neon Connection String Settings -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
-            <h2 class="font-headline-md text-lg font-semibold text-on-surface mb-2">2. Neon Database Connection String</h2>
-            <p class="font-body-sm text-sm text-text-secondary mb-4">Paste the same PostgreSQL connection string your mobile notes app uses to sync.</p>
+            <h2 class="text-base font-semibold text-on-surface mb-1">2. Neon Database Connection String</h2>
+            <p class="text-xs text-text-secondary mb-3">Paste the same PostgreSQL connection string your mobile notes app uses to sync.</p>
             {conn_status}
             <form method="POST" action="/dashboard/connection-string" class="mt-4">
-                <div class="mb-4">
-                    <input type="text" name="connection_string" placeholder="postgresql://user:password@ep-xxx.neon.tech/dbname" required class="w-full px-4 py-2.5 border border-border-muted rounded text-sm font-mono focus:outline-none focus:border-primary">
+                <div class="mb-3">
+                    <input type="text" name="connection_string" placeholder="postgresql://user:password@ep-xxx.neon.tech/dbname" required class="w-full px-4 py-2.5 border border-border-muted rounded text-xs font-mono focus:outline-none focus:border-primary">
                 </div>
-                <button type="submit" class="bg-secondary-container text-on-surface px-6 py-2.5 rounded font-label-md text-xs border border-[#050505]">Save Connection String</button>
+                <button type="submit" class="bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505]">Save Connection String</button>
             </form>
         </div>
 
         <!-- 3. API Keys Management -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
-            <h2 class="font-headline-md text-lg font-semibold text-on-surface mb-2">3. MCP API Keys</h2>
-            <p class="font-body-sm text-sm text-text-secondary mb-4">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps.</p>
-            <div class="divide-y divide-border-muted mb-6">
+            <h2 class="text-base font-semibold text-on-surface mb-1">3. MCP API Keys</h2>
+            <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps.</p>
+            <div class="divide-y divide-border-muted mb-4">
                 {rows}
             </div>
             <form method="POST" action="/dashboard/api-key/create">
-                <button type="submit" class="bg-surface-white text-on-surface px-6 py-2.5 rounded font-label-md text-xs border border-[#050505] hover:bg-surface-container-low transition-colors">Generate New Manual API Key</button>
+                <button type="submit" class="bg-surface-white text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors">Generate New Manual API Key</button>
             </form>
         </div>
     </div>
@@ -675,18 +654,17 @@ async def revoke_api_key(request: Request):
 
 def _dashboard_error(message: str) -> HTMLResponse:
     body = f"""
-<main class="flex-grow flex items-center justify-center py-20 px-6">
+<main class="flex-grow flex items-center justify-center py-16 px-6">
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm text-center">
-        <h2 class="font-headline-md text-lg font-bold text-error mb-2">Error</h2>
-        <div class="error mb-6">{message}</div>
-        <a href="/dashboard" class="inline-block bg-secondary-container text-on-surface px-6 py-2.5 rounded font-label-md text-xs border border-[#050505] no-underline">Back to Dashboard</a>
+        <h2 class="text-lg font-bold text-error mb-2">Error</h2>
+        <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-6 border border-red-200">{message}</div>
+        <a href="/dashboard" class="inline-block bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] no-underline">Back to Dashboard</a>
     </div>
 </main>
 """
     return _page("Error", body)
 
 
-# Route registry
 routes = [
     Route("/", landing_page, methods=["GET"]),
     Route("/signup", signup_get, methods=["GET"]),
