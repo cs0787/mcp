@@ -202,7 +202,7 @@ def _navbar(request: Request, user_email: str | None = None) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Landing Page (Tighter spacing, higher text placement)
+# Landing Page
 # ---------------------------------------------------------------------------
 async def landing_page(request: Request):
     user_id = _require_login(request)
@@ -218,8 +218,8 @@ async def landing_page(request: Request):
     body = f"""
 {nav_html}
 <main class="flex-grow">
-    <!-- Hero Section (Adjusted top padding from pt-32 to pt-10) -->
-    <section class="relative pt-10 pb-16 overflow-hidden border-b border-border-muted hero-pattern">
+    <!-- Hero Section (Balanced pt-20 pb-20) -->
+    <section class="relative pt-20 pb-20 overflow-hidden border-b border-border-muted hero-pattern">
         <div class="max-w-6xl mx-auto px-6 lg:px-12 relative z-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
             <div class="flex-1 space-y-4 text-center lg:text-left">
                 <h1 class="text-4xl lg:text-[54px] lg:leading-[60px] font-bold text-on-surface tracking-tight max-w-2xl">
@@ -590,7 +590,7 @@ async def dashboard_get(request: Request):
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">3. MCP API Keys</h2>
             <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps.</p>
-            <div class="divide-y divide-border-muted mb-4">
+            <div class="divide-y border-border-muted mb-4">
                 {rows}
             </div>
             <form method="POST" action="/dashboard/api-key/create">
