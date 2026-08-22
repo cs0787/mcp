@@ -1,6 +1,6 @@
 """
 Memory Notes for AI - Web Application
-Integrated with the custom Monochromatic Tailwind CSS Frontend design.
+Integrated with the custom Monochromatic Tailwind CSS Frontend design and inline SVG vector illustrations.
 """
 
 import asyncpg
@@ -202,7 +202,7 @@ def _navbar(request: Request, user_email: str | None = None) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Landing Page
+# Landing Page (Hero + Bento Grid with Inline Vector SVGs)
 # ---------------------------------------------------------------------------
 async def landing_page(request: Request):
     user_id = _require_login(request)
@@ -218,7 +218,7 @@ async def landing_page(request: Request):
     body = f"""
 {nav_html}
 <main class="flex-grow">
-    <!-- Hero Section (Balanced pt-20 pb-20) -->
+    <!-- Hero Section -->
     <section class="relative pt-20 pb-20 overflow-hidden border-b border-border-muted hero-pattern">
         <div class="max-w-6xl mx-auto px-6 lg:px-12 relative z-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
             <div class="flex-1 space-y-4 text-center lg:text-left">
@@ -248,7 +248,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- Features Section (Bento Grid) -->
+    <!-- Features Section (Bento Grid with Built-in SVGs) -->
     <section id="features" class="py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-6 lg:px-12">
             <div class="mb-12">
@@ -256,6 +256,8 @@ async def landing_page(request: Request):
                 <p class="text-sm text-on-surface-variant max-w-2xl">Tools designed for deep intellectual focus, stripping away the superfluous to leave only what matters.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- 1. Non-Linear Connectivity (Interactive Graph SVG) -->
                 <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-6 flex flex-col justify-between group rounded">
                     <div class="mb-6">
                         <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors">
@@ -264,37 +266,58 @@ async def landing_page(request: Request):
                         <h3 class="text-xl font-semibold text-on-surface mb-1">Non-Linear Connectivity</h3>
                         <p class="text-sm text-on-surface-variant">Build an intricate web of knowledge. Link notes effortlessly to visualize relationships and emergent ideas.</p>
                     </div>
-                    <div class="h-36 bg-surface-container-low border border-border-muted rounded flex items-center justify-center text-xs font-mono text-text-secondary">
-                        [Interactive Graph Visualization]
+                    <div class="h-36 bg-surface-container-low border border-border-muted rounded flex items-center justify-center relative overflow-hidden p-4">
+                        <svg class="w-full h-full text-border-muted" viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <line x1="50" y1="60" x2="160" y2="30" stroke="#737783" stroke-width="1.5" stroke-dasharray="3 3"/>
+                            <line x1="160" y1="30" x2="280" y2="80" stroke="#1c1b1b" stroke-width="1.5"/>
+                            <line x1="160" y1="30" x2="350" y2="40" stroke="#1c1b1b" stroke-width="1.5"/>
+                            <line x1="50" y1="60" x2="200" y2="90" stroke="#737783" stroke-width="1.5"/>
+                            <circle cx="50" cy="60" r="14" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
+                            <circle cx="160" cy="30" r="18" fill="#fdd400" stroke="#1c1b1b" stroke-width="2"/>
+                            <circle cx="280" cy="80" r="14" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
+                            <circle cx="350" cy="40" r="12" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
+                            <circle cx="200" cy="90" r="10" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
+                        </svg>
                     </div>
                 </div>
                 
+                <!-- 2. Zen Canvas (Minimalist Editor SVG) -->
                 <div class="feature-card bg-surface-white border border-border-muted p-6 flex flex-col group rounded">
                     <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
                         <span class="material-symbols-outlined text-primary" data-icon="format_ink_highlighter">format_ink_highlighter</span>
                     </span>
                     <h3 class="text-xl font-semibold text-on-surface mb-1">Zen Canvas</h3>
                     <p class="text-sm text-on-surface-variant mb-6">A distraction-free writing environment that centers your thoughts and fades UI elements away.</p>
-                    <div class="mt-auto h-24 bg-surface-container-low border border-border-muted rounded flex flex-col justify-center px-4">
-                        <div class="w-3/4 h-1.5 bg-border-muted rounded-full mb-2"></div>
-                        <div class="w-1/2 h-1.5 bg-border-muted rounded-full"></div>
+                    <div class="mt-auto h-36 bg-surface-container-low border border-border-muted rounded flex items-center justify-center p-4">
+                        <svg class="w-full h-24" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="10" y="10" width="180" height="60" rx="4" fill="#ffffff" stroke="#E2E2E7" stroke-width="1"/>
+                            <rect x="25" y="24" width="90" height="6" rx="2" fill="#1c1b1b"/>
+                            <rect x="25" y="38" width="150" height="4" rx="2" fill="#71717A"/>
+                            <rect x="25" y="48" width="120" height="4" rx="2" fill="#E2E2E7"/>
+                            <line x1="120" y1="23" x2="120" y2="31" stroke="#003178" stroke-width="2"/>
+                        </svg>
                     </div>
                 </div>
 
+                <!-- 3. Lightning Search (Search Index SVG) -->
                 <div class="feature-card bg-surface-white border border-border-muted p-6 flex flex-col group rounded">
                     <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
                         <span class="material-symbols-outlined text-primary" data-icon="search">search</span>
                     </span>
                     <h3 class="text-xl font-semibold text-on-surface mb-1">Lightning Search</h3>
                     <p class="text-sm text-on-surface-variant mb-6">Instantly retrieve any thought with our fast, full-text fuzzy search engine.</p>
-                    <div class="mt-auto">
-                        <div class="flex items-center gap-2 p-2 border border-border-muted rounded bg-surface-white text-xs text-outline">
-                            <span class="material-symbols-outlined text-base" data-icon="search">search</span>
-                            <span>Search query...</span>
+                    <div class="mt-auto h-36 bg-surface-container-low border border-border-muted rounded flex flex-col justify-center p-3">
+                        <div class="flex items-center gap-2 px-3 py-2 border border-border-muted rounded bg-surface-white text-xs text-on-surface shadow-xs">
+                            <span class="material-symbols-outlined text-sm text-primary" data-icon="search">search</span>
+                            <span class="font-mono text-xs font-semibold">trgm.match("query")</span>
+                        </div>
+                        <div class="mt-2 text-[10px] font-mono text-text-secondary px-1">
+                            &gt; 3 matches indexed in 4ms
                         </div>
                     </div>
                 </div>
 
+                <!-- 4. MCP Sync Code Block (Terminal Output SVG) -->
                 <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-6 flex flex-col md:flex-row gap-6 items-center group rounded">
                     <div class="flex-1">
                         <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors">
@@ -303,8 +326,11 @@ async def landing_page(request: Request):
                         <h3 class="text-xl font-semibold text-on-surface mb-1">MCP Bi-directional Sync</h3>
                         <p class="text-sm text-on-surface-variant">Connect AI models directly to your notes database. Read and write thoughts dynamically with seamless local sync.</p>
                     </div>
-                    <div class="flex-1 w-full h-36 bg-surface-container-low border border-border-muted rounded flex items-center justify-center font-mono text-xs text-text-secondary p-3">
-                        POST /mcp HTTP/1.1<br>Host: memory-notes.vercel.app<br>Authorization: Bearer sbmcp_...
+                    <div class="flex-1 w-full h-36 bg-surface-container-low border border-border-muted rounded flex flex-col justify-center p-4 font-mono text-xs text-text-secondary leading-relaxed">
+                        <div class="text-primary font-bold mb-1">// FastMCP Protocol</div>
+                        <div>&gt; POST /mcp HTTP/1.1</div>
+                        <div>&gt; Authorization: Bearer sbmcp_...</div>
+                        <div class="text-green-600 font-semibold mt-1">✓ 200 OK (Sync complete)</div>
                     </div>
                 </div>
             </div>
@@ -665,6 +691,7 @@ def _dashboard_error(message: str) -> HTMLResponse:
     return _page("Error", body)
 
 
+# Route registry
 routes = [
     Route("/", landing_page, methods=["GET"]),
     Route("/signup", signup_get, methods=["GET"]),
