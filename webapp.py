@@ -1,7 +1,8 @@
 """
 Memory Notes for AI - Web Application
-Features an interactive terminal quick-start, architecture data flow,
-bento capabilities, and developer-first deep-dive spotlight sections.
+Integrated with the custom Monochromatic Tailwind CSS Frontend design,
+interactive spotlight grid background, quick-start terminal, architecture flow,
+and developer feature deep dives.
 """
 
 import asyncpg
@@ -104,10 +105,37 @@ def _page(title: str, body: str) -> HTMLResponse:
         }}
     </script>
 <style>
-        .hero-pattern {{
-            background-image: radial-gradient(var(--tw-colors-border-muted) 1px, transparent 1px);
-            background-size: 24px 24px;
+        /* Hero Interactive Grid & Spotlight */
+        .hero-interactive-grid {{
+            --color: #E1E1E1;
+            background-color: #F8F8F8;
+            background-image: 
+                linear-gradient(0deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%, transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%, transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%, transparent);
+            background-size: 55px 55px;
+            position: relative;
+            overflow: hidden;
         }}
+
+        .hero-interactive-grid::after {{
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background-image: 
+                linear-gradient(0deg, transparent 24%, #1a1313 25%, #756e6e 26%, transparent 27%, transparent 74%, #000000 75%, #000000 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, #000000 25%, #000000 26%, transparent 27%, transparent 74%, #000000 75%, #000000 76%, transparent 77%, transparent);
+            background-size: 55px 55px;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            -webkit-mask-image: radial-gradient(circle 160px at var(--x, -999px) var(--y, -999px), rgb(16, 15, 15) 0%, transparent 100%);
+            mask-image: radial-gradient(circle 160px at var(--x, -999px) var(--y, -999px), rgb(36, 35, 35) 0%, transparent 100%);
+        }}
+
+        .hero-interactive-grid:hover::after {{
+            opacity: 1;
+        }}
+
         .feature-card {{
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }}
@@ -264,11 +292,12 @@ async def landing_page(request: Request):
     body = f"""
 {nav_html}
 <main class="flex-grow">
-    <!-- Hero Section -->
-    <section class="relative pt-20 pb-16 overflow-hidden border-b border-border-muted hero-pattern">
+    <!-- Hero Section (Interactive Grid & Spotlight Effect) -->
+    <section class="relative pt-20 pb-20 border-b border-border-muted hero-interactive-grid"
+             onmousemove="const r = this.getBoundingClientRect(); this.style.setProperty('--x', (event.clientX - r.left) + 'px'); this.style.setProperty('--y', (event.clientY - r.top) + 'px');">
         <div class="max-w-6xl mx-auto px-6 lg:px-12 relative z-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
             <div class="flex-1 space-y-4 text-center lg:text-left">
-                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-surface-container border border-border-muted text-xs font-mono text-on-surface-variant mb-2">
+                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-surface-white border border-border-muted text-xs font-mono text-on-surface-variant mb-2 shadow-xs">
                     <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                     Model Context Protocol Active
                 </div>
@@ -279,13 +308,13 @@ async def landing_page(request: Request):
                     A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents. Read and write thoughts dynamically.
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-3">
-                    <a href="{' /dashboard' if user_id else '/signup'}" class="bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline">Start Writing Now</a>
-                    <a href="#quickstart" class="bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline">Try in 30 Seconds</a>
+                    <a href="{' /dashboard' if user_id else '/signup'}" class="bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Start Writing Now</a>
+                    <a href="#quickstart" class="bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline shadow-sm">Try in 30 Seconds</a>
                 </div>
             </div>
             
             <div class="flex-1 w-full max-w-md lg:max-w-none flex items-center justify-center">
-                <div class="p-6 bg-surface-container-low border border-border-muted rounded-xl shadow-sm text-left w-full max-w-md font-mono text-xs">
+                <div class="p-6 bg-surface-white border border-border-muted rounded-xl shadow-md text-left w-full max-w-md font-mono text-xs">
                     <div class="flex items-center justify-between pb-3 mb-3 border-b border-border-muted">
                         <span class="font-bold text-primary">● MCP MEMORY GATEWAY</span>
                         <span class="text-text-secondary">Connected</span>
@@ -298,7 +327,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 1. Live Interactive Code / Terminal Block ("Try It in 30 Seconds") -->
+    <!-- 1. Live Interactive Code / Terminal Block -->
     <section id="quickstart" class="py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-6 lg:px-12">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
@@ -337,7 +366,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. "Architecture & Data Flow" Diagram Section -->
+    <!-- 2. Architecture & Data Flow Diagram -->
     <section class="py-16 bg-surface-container-low border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-6 lg:px-12">
             <div class="text-center max-w-2xl mx-auto mb-12">
@@ -395,7 +424,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 3. Developer-First Feature Sub-sections (Deep Dives) -->
+    <!-- 3. Developer Feature Deep Dives -->
     <section class="py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-6 lg:px-12 space-y-16">
             
@@ -462,7 +491,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- Core Bento Capabilities Grid -->
+    <!-- Core Bento Grid Capabilities -->
     <section id="features" class="py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-6 lg:px-12">
             <div class="mb-12">
@@ -471,7 +500,7 @@ async def landing_page(request: Request):
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 
-                <!-- 1. Non-Linear Connectivity (Interactive Graph SVG) -->
+                <!-- 1. Non-Linear Connectivity -->
                 <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-6 flex flex-col justify-between group rounded">
                     <div class="mb-6">
                         <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors">
@@ -495,7 +524,7 @@ async def landing_page(request: Request):
                     </div>
                 </div>
                 
-                <!-- 2. Zen Canvas (Minimalist Editor SVG) -->
+                <!-- 2. Zen Canvas -->
                 <div class="feature-card bg-surface-white border border-border-muted p-6 flex flex-col group rounded">
                     <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
                         <span class="material-symbols-outlined text-primary" data-icon="format_ink_highlighter">format_ink_highlighter</span>
@@ -513,7 +542,7 @@ async def landing_page(request: Request):
                     </div>
                 </div>
 
-                <!-- 3. Lightning Search (Search Index SVG) -->
+                <!-- 3. Lightning Search -->
                 <div class="feature-card bg-surface-white border border-border-muted p-6 flex flex-col group rounded">
                     <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
                         <span class="material-symbols-outlined text-primary" data-icon="search">search</span>
