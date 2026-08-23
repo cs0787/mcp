@@ -1,6 +1,7 @@
 """
 Memory Notes for AI - Web Application
-Integrated with the custom Monochromatic Tailwind CSS Frontend design and inline SVG vector illustrations.
+Features an interactive terminal quick-start, architecture data flow,
+bento capabilities, and developer-first deep-dive spotlight sections.
 """
 
 import asyncpg
@@ -148,6 +149,20 @@ def _page(title: str, body: str) -> HTMLResponse:
             setTimeout(() => btn.innerText = orig, 2000);
         }});
     }}
+    function setTerminalTab(tab) {{
+        const tabs = ['claude', 'cursor', 'curl'];
+        tabs.forEach(t => {{
+            const btn = document.getElementById('tab-' + t);
+            const block = document.getElementById('snippet-' + t);
+            if (t === tab) {{
+                btn.className = 'px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors';
+                block.classList.remove('hidden');
+            }} else {{
+                btn.className = 'px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors';
+                block.classList.add('hidden');
+            }}
+        }});
+    }}
 </script>
 </body>
 </html>
@@ -202,7 +217,7 @@ def _navbar(request: Request, user_email: str | None = None) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Landing Page (Hero + Bento Grid with Inline Vector SVGs)
+# Landing Page
 # ---------------------------------------------------------------------------
 async def landing_page(request: Request):
     user_id = _require_login(request)
@@ -213,24 +228,59 @@ async def landing_page(request: Request):
         if user:
             user_email = user["email"]
 
+    base_url = str(request.base_url).rstrip("/")
     nav_html = _navbar(request, user_email)
+
+    claude_config_snippet = f"""{{
+  "mcpServers": {{
+    "memory-notes": {{
+      "url": "{base_url}/mcp",
+      "headers": {{
+        "Authorization": "Bearer sbmcp_your_api_key_here"
+      }}
+    }}
+  }}
+}}"""
+
+    cursor_config_snippet = f"""// Cursor / Roo Code mcp.json
+{{
+  "servers": [
+    {{
+      "name": "memory-notes",
+      "transport": "sse",
+      "url": "{base_url}/mcp",
+      "headers": {{
+        "Authorization": "Bearer sbmcp_your_api_key_here"
+      }}
+    }}
+  ]
+}}"""
+
+    curl_config_snippet = f"""curl -X POST "{base_url}/mcp" \\
+  -H "Authorization: Bearer sbmcp_your_api_key_here" \\
+  -H "Content-Type: application/json" \\
+  -d '{{"jsonrpc": "2.0", "method": "tools/call", "params": {{"name": "search_notes", "arguments": {{"query": "architecture"}}}}, "id": 1}}'"""
 
     body = f"""
 {nav_html}
 <main class="flex-grow">
     <!-- Hero Section -->
-    <section class="relative pt-20 pb-20 overflow-hidden border-b border-border-muted hero-pattern">
+    <section class="relative pt-20 pb-16 overflow-hidden border-b border-border-muted hero-pattern">
         <div class="max-w-6xl mx-auto px-6 lg:px-12 relative z-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
             <div class="flex-1 space-y-4 text-center lg:text-left">
+                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-surface-container border border-border-muted text-xs font-mono text-on-surface-variant mb-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    Model Context Protocol Active
+                </div>
                 <h1 class="text-4xl lg:text-[54px] lg:leading-[60px] font-bold text-on-surface tracking-tight max-w-2xl">
                     Structured Freedom for Your Thoughts.
                 </h1>
                 <p class="text-base lg:text-lg text-on-surface-variant max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                    A distraction-free environment for knowledge workers. Capture, connect, and crystallize complex ideas with unparalleled clarity.
+                    A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents. Read and write thoughts dynamically.
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-3">
                     <a href="{' /dashboard' if user_id else '/signup'}" class="bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline">Start Writing Now</a>
-                    <a href="#features" class="bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline">Explore Features</a>
+                    <a href="#quickstart" class="bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline">Try in 30 Seconds</a>
                 </div>
             </div>
             
@@ -248,7 +298,171 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- Features Section (Bento Grid with Built-in SVGs) -->
+    <!-- 1. Live Interactive Code / Terminal Block ("Try It in 30 Seconds") -->
+    <section id="quickstart" class="py-16 bg-surface-white border-b border-border-muted">
+        <div class="max-w-6xl mx-auto px-6 lg:px-12">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
+                <div>
+                    <h2 class="text-2xl lg:text-3xl font-bold text-on-surface mb-2">Connect in 30 Seconds</h2>
+                    <p class="text-sm text-on-surface-variant">Add your MCP Memory endpoint to your AI client configuration file.</p>
+                </div>
+                <!-- Interactive Tabs -->
+                <div class="flex items-center bg-surface-container-low border border-border-muted p-1 rounded-lg gap-1">
+                    <button id="tab-claude" onclick="setTerminalTab('claude')" class="px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors">Claude Desktop</button>
+                    <button id="tab-cursor" onclick="setTerminalTab('cursor')" class="px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors">Cursor / IDE</button>
+                    <button id="tab-curl" onclick="setTerminalTab('curl')" class="px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors">cURL / HTTP</button>
+                </div>
+            </div>
+
+            <!-- Terminal Snippet Card -->
+            <div class="bg-[#0f0f11] text-neutral-100 rounded-xl border border-neutral-800 shadow-xl overflow-hidden font-mono text-xs">
+                <div class="flex items-center justify-between px-4 py-3 bg-[#17171a] border-b border-neutral-800">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-[#ff5f56] inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-[#ffbd2e] inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-[#27c93f] inline-block"></span>
+                        <span class="ml-2 text-neutral-400 text-[11px]">mcp_configuration.json</span>
+                    </div>
+                    <button id="btnCopySnippet" onclick="copyToClipboard(document.querySelector('#snippet-container pre:not(.hidden)').innerText, 'btnCopySnippet')" class="px-3 py-1 rounded bg-[#26262b] hover:bg-[#323238] text-neutral-300 text-[11px] border border-neutral-700 transition-colors">
+                        Copy Snippet
+                    </button>
+                </div>
+
+                <div id="snippet-container" class="p-5 overflow-x-auto text-neutral-300 leading-relaxed">
+                    <pre id="snippet-claude"><code>{claude_config_snippet}</code></pre>
+                    <pre id="snippet-cursor" class="hidden"><code>{cursor_config_snippet}</code></pre>
+                    <pre id="snippet-curl" class="hidden"><code>{curl_config_snippet}</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. "Architecture & Data Flow" Diagram Section -->
+    <section class="py-16 bg-surface-container-low border-b border-border-muted">
+        <div class="max-w-6xl mx-auto px-6 lg:px-12">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <h2 class="text-2xl lg:text-3xl font-bold text-on-surface mb-2">Architecture & Data Flow</h2>
+                <p class="text-sm text-on-surface-variant">A decentralized pipeline connecting local Android memory, serverless cloud databases, and AI models.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+                <!-- Step 1: Capture -->
+                <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-xs flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center mb-4 border border-border-muted">
+                            <span class="material-symbols-outlined text-primary" data-icon="edit_note">edit_note</span>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-primary block mb-1">01 / CAPTURE</span>
+                        <h3 class="text-lg font-bold text-on-surface mb-2">Local Canvas & App</h3>
+                        <p class="text-xs text-on-surface-variant leading-relaxed">Thoughts are captured distraction-free inside the Android app canvas and persisted locally in SQLite Room DB.</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-border-muted text-[11px] font-mono text-text-secondary">
+                        Storage: SQLite / Room DB<br>Timestamp: Epoch ms (bigint)
+                    </div>
+                </div>
+
+                <!-- Step 2: Sync Protocol -->
+                <div class="bg-surface-white border-2 border-on-surface p-6 rounded-xl shadow-xs flex flex-col justify-between relative">
+                    <span class="absolute -top-3 right-4 px-2 py-0.5 bg-secondary-container text-on-surface text-[10px] font-mono font-bold rounded border border-on-surface">BRIDGE</span>
+                    <div>
+                        <div class="w-10 h-10 rounded-lg bg-secondary-container flex items-center justify-center mb-4 border border-border-muted">
+                            <span class="material-symbols-outlined text-on-surface" data-icon="sync_alt">sync_alt</span>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-on-surface block mb-1">02 / SYNC</span>
+                        <h3 class="text-lg font-bold text-on-surface mb-2">FastMCP Protocol</h3>
+                        <p class="text-xs text-on-surface-variant leading-relaxed">Vercel serverless functions route authenticated requests over streamable HTTP SSE. Last-Write-Wins resolves conflicts.</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-border-muted text-[11px] font-mono text-text-secondary">
+                        Route: POST /mcp<br>Auth: Bearer Token (OAuth 2.1)
+                    </div>
+                </div>
+
+                <!-- Step 3: Persistence -->
+                <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-xs flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center mb-4 border border-border-muted">
+                            <span class="material-symbols-outlined text-primary" data-icon="database">database</span>
+                        </div>
+                        <span class="text-xs font-mono font-bold text-primary block mb-1">03 / PERSIST</span>
+                        <h3 class="text-lg font-bold text-on-surface mb-2">Neon Cloud Postgres</h3>
+                        <p class="text-xs text-on-surface-variant leading-relaxed">Dedicated user database instances with pg_trgm indices enable sub-10ms fuzzy similarity queries and instant AI context recall.</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-border-muted text-[11px] font-mono text-text-secondary">
+                        Driver: asyncpg pool<br>Extension: pg_trgm similarity
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Developer-First Feature Sub-sections (Deep Dives) -->
+    <section class="py-16 bg-surface-white border-b border-border-muted">
+        <div class="max-w-6xl mx-auto px-6 lg:px-12 space-y-16">
+            
+            <!-- Spotlight 1: Zero-Latency Trigram Search -->
+            <div class="flex flex-col lg:flex-row items-center gap-10">
+                <div class="flex-1 space-y-3">
+                    <div class="inline-block px-2 py-1 bg-surface-container rounded text-xs font-mono font-semibold text-primary">FULL-TEXT RECALL</div>
+                    <h3 class="text-2xl font-bold text-on-surface">Zero-Latency Trigram Search</h3>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">
+                        Traditional LLM retrieval fails when queries have typos or fragmented terms. Memory Notes harnesses PostgreSQL trigram matching (<code class="font-mono text-xs text-on-surface bg-surface-container-low px-1 py-0.5 rounded">pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds.
+                    </p>
+                    <ul class="text-xs font-mono text-text-secondary space-y-1 pt-2">
+                        <li>✓ Typo-tolerant substring & fuzzy similarity score</li>
+                        <li>✓ Automatic fallback to ILIKE if extensions are missing</li>
+                    </ul>
+                </div>
+                <div class="flex-1 w-full">
+                    <div class="bg-[#0f0f11] text-neutral-200 p-5 rounded-xl border border-neutral-800 font-mono text-xs shadow-md">
+                        <div class="text-neutral-500 mb-2">// SQL Query Execution</div>
+                        <div class="text-yellow-400">SELECT <span class="text-neutral-200">id, title, similarity(title, $1) AS score</span></div>
+                        <div class="text-yellow-400">FROM <span class="text-neutral-200">notes</span></div>
+                        <div class="text-yellow-400">WHERE <span class="text-neutral-200">title % $1 OR content ILIKE '%'||$1||'%'</span></div>
+                        <div class="text-yellow-400">ORDER BY <span class="text-neutral-200">score DESC LIMIT 10;</span></div>
+                        <div class="mt-3 pt-3 border-t border-neutral-800 text-green-400 text-[11px]">
+                            ⚡ Query Execution: 3.4ms | 10 rows retrieved
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-border-muted">
+
+            <!-- Spotlight 2: Autonomous AI Memory Sync -->
+            <div class="flex flex-col lg:flex-row-reverse items-center gap-10">
+                <div class="flex-1 space-y-3">
+                    <div class="inline-block px-2 py-1 bg-secondary-container rounded text-xs font-mono font-semibold text-on-surface">BI-DIRECTIONAL WRITES</div>
+                    <h3 class="text-2xl font-bold text-on-surface">Autonomous AI Memory Sync</h3>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">
+                        Claude and Cursor can not only inspect your past notes—they can create new workspace folders, append structured summaries, or update existing documents directly from conversation prompts.
+                    </p>
+                    <ul class="text-xs font-mono text-text-secondary space-y-1 pt-2">
+                        <li>✓ Explicit bigint epoch timestamping for Last-Write-Wins</li>
+                        <li>✓ Reactive Jetpack Compose Room sync down to Android</li>
+                    </ul>
+                </div>
+                <div class="flex-1 w-full">
+                    <div class="bg-[#0f0f11] text-neutral-200 p-5 rounded-xl border border-neutral-800 font-mono text-xs shadow-md">
+                        <div class="text-neutral-500 mb-2">// MCP Tool Invocation Output</div>
+                        <div class="text-blue-400">&gt; create_note(<span class="text-neutral-300">title="Sprint Specs", workspace="Dev"</span>)</div>
+                        <div class="text-neutral-400 mt-2">
+                            {{<br>
+                            &nbsp;&nbsp;"id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",<br>
+                            &nbsp;&nbsp;"title": "Sprint Specs",<br>
+                            &nbsp;&nbsp;"updated_at": 1786675973594<br>
+                            }}
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-neutral-800 text-green-400 text-[11px]">
+                            ✓ Database record created • Dispatched to mobile sync engine
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Core Bento Capabilities Grid -->
     <section id="features" class="py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-6 lg:px-12">
             <div class="mb-12">
@@ -317,20 +531,19 @@ async def landing_page(request: Request):
                     </div>
                 </div>
 
-                <!-- 4. MCP Sync Code Block (Terminal Output SVG) -->
+                <!-- 4. Extensible Architecture -->
                 <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-6 flex flex-col md:flex-row gap-6 items-center group rounded">
                     <div class="flex-1">
                         <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors">
-                            <span class="material-symbols-outlined text-primary" data-icon="data_object">data_object</span>
+                            <span class="material-symbols-outlined text-primary" data-icon="code">code</span>
                         </span>
-                        <h3 class="text-xl font-semibold text-on-surface mb-1">MCP Bi-directional Sync</h3>
-                        <p class="text-sm text-on-surface-variant">Connect AI models directly to your notes database. Read and write thoughts dynamically with seamless local sync.</p>
+                        <h3 class="text-xl font-semibold text-on-surface mb-1">Open Protocol Standards</h3>
+                        <p class="text-sm text-on-surface-variant">Built directly on top of Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer extensibility.</p>
                     </div>
                     <div class="flex-1 w-full h-36 bg-surface-container-low border border-border-muted rounded flex flex-col justify-center p-4 font-mono text-xs text-text-secondary leading-relaxed">
-                        <div class="text-primary font-bold mb-1">// FastMCP Protocol</div>
-                        <div>&gt; POST /mcp HTTP/1.1</div>
-                        <div>&gt; Authorization: Bearer sbmcp_...</div>
-                        <div class="text-green-600 font-semibold mt-1">✓ 200 OK (Sync complete)</div>
+                        <div>Server: FastMCP / Python 3.12</div>
+                        <div>Protocol: Streamable HTTP (SSE)</div>
+                        <div class="text-primary font-semibold mt-1">Multi-Tenant Tenant Isolation</div>
                     </div>
                 </div>
             </div>
