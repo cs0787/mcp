@@ -2,8 +2,13 @@
 Memory Notes for AI - Web Application
 Integrated with the custom Monochromatic Tailwind CSS Frontend design,
 interactive spotlight grid background, quick-start terminal, developer deep dives,
-and the Neon-style 2-phase synchronized architecture animation:
-Left-to-Right -> Rest -> Right-to-Left -> Rest -> Loop.
+and the Neon-style synchronized architecture animation:
+- At start: Only 'Memory Notes' is present.
+- Phase 1 (Left to Right): Green pulse travels from Memory Notes -> neon db -> mcp-server,
+  dynamically drawing the branch, popping in request data, negotiation checkpoints, and resting.
+- Phase 2 (Right to Left): 'ai apps' appears on the right, pulse travels into mcp-server while
+  drawing request tools, access granted, and the bottom write note -> neon db -> sync return loop.
+- Rests, then smoothly loops.
 """
 
 import asyncpg
@@ -137,25 +142,25 @@ def _page(title: str, body: str) -> HTMLResponse:
             opacity: 1;
         }}
 
-        /* Smooth Path Stroke Travel & Resting Transitions */
+        /* Neon Timeline Progressive Transitions */
         .anim-path {{
-            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease, opacity 0.4s ease;
+            transition: stroke-dashoffset 1.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
         }}
-        .node-check {{
-            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
-            transform-origin: center;
-        }}
-        .node-check.hidden-node {{
-            transform: scale(0);
+        
+        .timeline-elem {{
+            transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
             opacity: 0;
+            transform: scale(0.6);
+            pointer-events: none;
         }}
-        .pill-badge {{
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        .timeline-elem.visible {{
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
         }}
-        .pill-badge.pill-active {{
-            transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(0, 229, 153, 0.4);
-            border-color: #00e599 !important;
+        .pill-memory-start {{
+            opacity: 1 !important;
+            transform: scale(1) !important;
         }}
 
         .feature-card {{
@@ -216,11 +221,31 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
 
     // =========================================================================
-    // 2-PHASE ARCHITECTURE ANIMATION: Left-to-Right -> Rest -> Right-to-Left -> Rest
+    // EXACT NEON-STYLE ANIMATION ENGINE
+    // At start: Only Memory notes is present.
+    // 1. Left-to-right pulse travels on scale -> branches draw -> checkpoints pop -> rests.
+    // 2. Right-to-left pulse travels from AI apps on scale -> request tools & bottom write return loop -> rests.
     // =========================================================================
     let currentAnimPhase = 1;
     let animTimer = null;
     let autoPlay = true;
+
+    function resetAllTimelineElements() {{
+        // Reset scale beams
+        document.getElementById('beam-main-left').style.strokeDashoffset = '400';
+        document.getElementById('beam-main-right').style.strokeDashoffset = '400';
+        
+        // Reset branches
+        document.getElementById('branch-top-left').style.strokeDashoffset = '600';
+        document.getElementById('branch-top-right').style.strokeDashoffset = '600';
+        document.getElementById('branch-bottom-write').style.strokeDashoffset = '300';
+        document.getElementById('branch-bottom-return').style.strokeDashoffset = '700';
+
+        // Hide all dynamic elements (keep only Memory Notes visible)
+        document.querySelectorAll('.timeline-elem:not(.pill-memory-start)').forEach(el => {{
+            el.classList.remove('visible');
+        }});
+    }}
 
     function runPhase(phase, manual = false) {{
         if (manual) {{
@@ -234,120 +259,88 @@ def _page(title: str, body: str) -> HTMLResponse:
         const btn2 = document.getElementById('phase-btn-2');
         const statusText = document.getElementById('anim-status-indicator');
 
-        // Path references
-        const beamLeft = document.getElementById('beam-main-left');
-        const beamRight = document.getElementById('beam-main-right');
-        const branchTopLeft = document.getElementById('branch-top-left');
-        const branchTopRight = document.getElementById('branch-top-right');
-        const branchBottomWrite = document.getElementById('branch-bottom-write');
-        const branchBottomReturn = document.getElementById('branch-bottom-return');
-
-        // Checkpoints
-        const chkNegStart = document.getElementById('chk-neg-start');
-        const chkNegComplete = document.getElementById('chk-neg-complete');
-        const chkAccessGranted = document.getElementById('chk-access-granted');
-        const chkNoteProcessed = document.getElementById('chk-note-processed');
-        const chkNoteSaved = document.getElementById('chk-note-saved');
-        const chkSyncFinal = document.getElementById('chk-sync-final');
-
-        // Badges
-        const pillMemNotes = document.getElementById('pill-memory-notes');
-        const pillNeon = document.getElementById('pill-neon-db');
-        const pillMcp = document.getElementById('pill-mcp-server');
-        const pillAi = document.getElementById('pill-ai-apps');
-
         if (phase === 1) {{
-            // Button styles
             btn1.className = 'px-3.5 py-1.5 rounded-lg border border-[#00e599] bg-[#00e599]/10 text-[#00e599] mono text-xs font-semibold shadow-[0_0_10px_rgba(0,229,153,0.2)]';
             btn2.className = 'px-3.5 py-1.5 rounded-lg border border-white/10 bg-white/5 text-white/50 hover:text-white mono text-xs font-medium';
 
-            statusText.innerHTML = '<span class="text-[#00e599] font-bold">1. Left to Right:</span> Memory Notes &rarr; neon db &rarr; mcp-server. Negotiation protocols execute along the branch.';
+            statusText.innerHTML = '<span class="text-[#00e599] font-bold">Phase 1:</span> Main green pulse rides from Memory Notes &rarr; neon db &rarr; mcp-server while branches &amp; negotiation protocols execute.';
 
-            // Reset Right-Side (Phase 2) paths and nodes
-            beamRight.style.strokeDashoffset = '400';
-            branchTopRight.style.strokeDashoffset = '600';
-            branchBottomWrite.style.strokeDashoffset = '300';
-            branchBottomReturn.style.strokeDashoffset = '700';
+            // Clean reset to initial state
+            resetAllTimelineElements();
 
-            chkAccessGranted.classList.add('hidden-node');
-            chkNoteProcessed.classList.add('hidden-node');
-            chkNoteSaved.classList.add('hidden-node');
-            chkSyncFinal.classList.add('hidden-node');
-            pillAi.classList.remove('pill-active');
-
-            // Reset Left-Side paths before firing
-            beamLeft.style.strokeDashoffset = '400';
-            branchTopLeft.style.strokeDashoffset = '600';
-            chkNegStart.classList.add('hidden-node');
-            chkNegComplete.classList.add('hidden-node');
-
-            // Trigger Left to Right animation
+            // Step 1: Pulse rides along main scale from Memory Notes to MCP Server
             setTimeout(() => {{
-                beamLeft.style.strokeDashoffset = '0';
-                branchTopLeft.style.strokeDashoffset = '0';
-                pillMemNotes.classList.add('pill-active');
-                pillNeon.classList.add('pill-active');
-            }}, 50);
+                document.getElementById('beam-main-left').style.strokeDashoffset = '0';
+            }}, 100);
 
-            // Pop in nodes as the signal travels
-            setTimeout(() => chkNegStart.classList.remove('hidden-node'), 650);
+            // As pulse reaches neon db (~400ms): pop neon db & trigger branch
             setTimeout(() => {{
-                chkNegComplete.classList.remove('hidden-node');
-                pillMcp.classList.add('pill-active');
+                document.getElementById('elem-neon-db').classList.add('visible');
+                document.getElementById('elem-db-icon').classList.add('visible');
+                document.getElementById('branch-top-left').style.strokeDashoffset = '0';
+            }}, 400);
+
+            // As branch draws: pop request data, mcp hub, checkpoints
+            setTimeout(() => {{
+                document.getElementById('elem-request-data').classList.add('visible');
+            }}, 700);
+
+            setTimeout(() => {{
+                document.getElementById('chk-neg-start').classList.add('visible');
+            }}, 900);
+
+            setTimeout(() => {{
+                document.getElementById('elem-mcp-server').classList.add('visible');
+                document.getElementById('elem-gear').classList.add('visible');
+            }}, 1100);
+
+            setTimeout(() => {{
+                document.getElementById('chk-neg-complete').classList.add('visible');
             }}, 1300);
 
-            // After animation finishes (~1.5s), it RESTS until 3.8s, then triggers Phase 2
+            // Animation complete -> REST until 3.8s, then trigger Phase 2
             if (autoPlay) {{
                 clearTimeout(animTimer);
                 animTimer = setTimeout(() => runPhase(2, false), 3800);
             }}
         }} 
         else if (phase === 2) {{
-            // Button styles
             btn2.className = 'px-3.5 py-1.5 rounded-lg border border-[#00e599] bg-[#00e599]/10 text-[#00e599] mono text-xs font-semibold shadow-[0_0_10px_rgba(0,229,153,0.2)]';
             btn1.className = 'px-3.5 py-1.5 rounded-lg border border-white/10 bg-white/5 text-white/50 hover:text-white mono text-xs font-medium';
 
-            statusText.innerHTML = '<span class="text-[#fde047] font-bold">2. Right to Left:</span> AI Apps request tools &rarr; Context granted &rarr; Notes written back to neon db & Memory Notes.';
+            statusText.innerHTML = '<span class="text-[#fde047] font-bold">Phase 2:</span> AI Apps activate &rarr; Green pulse rides to mcp-server while tools are granted &amp; notes write back to mobile.';
 
-            // Reset Left-Side (Phase 1) paths and nodes
-            beamLeft.style.strokeDashoffset = '400';
-            branchTopLeft.style.strokeDashoffset = '600';
-            chkNegStart.classList.add('hidden-node');
-            chkNegComplete.classList.add('hidden-node');
-            pillMemNotes.classList.remove('pill-active');
-            pillNeon.classList.remove('pill-active');
+            // Step 1: AI Apps appears on the right
+            document.getElementById('elem-ai-apps').classList.add('visible');
 
-            // Reset Right-Side paths before firing
-            beamRight.style.strokeDashoffset = '400';
-            branchTopRight.style.strokeDashoffset = '600';
-            branchBottomWrite.style.strokeDashoffset = '300';
-            branchBottomReturn.style.strokeDashoffset = '700';
-
-            chkAccessGranted.classList.add('hidden-node');
-            chkNoteProcessed.classList.add('hidden-node');
-            chkNoteSaved.classList.add('hidden-node');
-            chkSyncFinal.classList.add('hidden-node');
-
-            // Trigger Right to Left animation
+            // Step 2: Pulse rides along main scale from AI Apps to MCP Server
             setTimeout(() => {{
-                beamRight.style.strokeDashoffset = '0';
-                branchTopRight.style.strokeDashoffset = '0';
-                branchBottomWrite.style.strokeDashoffset = '0';
-                branchBottomReturn.style.strokeDashoffset = '0';
-                pillAi.classList.add('pill-active');
-                pillMcp.classList.add('pill-active');
-            }}, 50);
+                document.getElementById('beam-main-right').style.strokeDashoffset = '0';
+                document.getElementById('elem-robot-icon').classList.add('visible');
+                document.getElementById('branch-top-right').style.strokeDashoffset = '0';
+                document.getElementById('branch-bottom-write').style.strokeDashoffset = '0';
+            }}, 200);
 
-            // Pop in nodes sequentially
-            setTimeout(() => chkAccessGranted.classList.remove('hidden-node'), 750);
-            setTimeout(() => chkNoteProcessed.classList.remove('hidden-node'), 950);
-            setTimeout(() => chkNoteSaved.classList.remove('hidden-node'), 1350);
             setTimeout(() => {{
-                chkSyncFinal.classList.remove('hidden-node');
-                pillMemNotes.classList.add('pill-active');
-            }}, 1650);
+                document.getElementById('elem-request-tools').classList.add('visible');
+                document.getElementById('elem-write-note').classList.add('visible');
+                document.getElementById('branch-bottom-return').style.strokeDashoffset = '0';
+            }}, 600);
 
-            // After animation finishes (~1.7s), it RESTS until 4.2s, then loops back to Phase 1
+            setTimeout(() => {{
+                document.getElementById('chk-access-granted').classList.add('visible');
+                document.getElementById('chk-note-processed').classList.add('visible');
+            }}, 900);
+
+            setTimeout(() => {{
+                document.getElementById('chk-note-saved').classList.add('visible');
+            }}, 1250);
+
+            setTimeout(() => {{
+                document.getElementById('chk-sync-final').classList.add('visible');
+            }}, 1550);
+
+            // Animation complete -> REST until 4.2s, then loop back to Phase 1
             if (autoPlay) {{
                 clearTimeout(animTimer);
                 animTimer = setTimeout(() => runPhase(1, false), 4200);
@@ -544,7 +537,7 @@ async def landing_page(request: Request):
     </section>
 
     <!-- ========================================================================= -->
-    <!-- 2. EXACT NEON ARCHITECTURE & DATAFLOW BRANCHING CANVAS -->
+    <!-- 2. EXACT NEON ARCHITECTURE & DATAFLOW BRANCHING CANVAS (DYNAMIC SEQUENCING) -->
     <!-- ========================================================================= -->
     <section class="py-20 bg-[#000000] text-white border-b border-neutral-800 overflow-hidden select-none">
         <div class="max-w-6xl mx-auto px-6 lg:px-12">
@@ -584,7 +577,7 @@ async def landing_page(request: Request):
                             <pattern id="neonGridPattern" width="36" height="520" patternUnits="userSpaceOnUse">
                                 <line x1="0" y1="0" x2="0" y2="520" stroke="#ffffff" stroke-opacity="0.035" stroke-width="1" stroke-dasharray="2 5"/>
                             </pattern>
-                            <!-- Glow Filters -->
+                            <!-- Glow Filter -->
                             <filter id="neonGreenGlow" x="-20%" y="-400%" width="140%" height="900%">
                                 <feGaussianBlur in="SourceGraphic" stdDeviation="3.8" result="blur"/>
                                 <feMerge>
@@ -621,17 +614,17 @@ async def landing_page(request: Request):
                             <line x1="856" y1="256" x2="856" y2="264"/>
                         </g>
 
-                        <!-- Base Background Inactive Line -->
+                        <!-- Base Gray Background Ruler Line -->
                         <line x1="130" y1="260" x2="980" y2="260" stroke="#1f1f23" stroke-width="2"/>
 
                         <!-- ================= 1. MAIN GREEN SCALE BEAMS ================= -->
-                        <!-- Phase 1 Scale Beam: Memory Notes -> Neon DB -> MCP Server -->
+                        <!-- Phase 1: Left to Right scale beam from Memory Notes to MCP Server -->
                         <path id="beam-main-left" class="anim-path"
                               d="M 130 260 H 518"
-                              stroke="#00e599" stroke-width="2.8" stroke-dasharray="400" stroke-dashoffset="0"
+                              stroke="#00e599" stroke-width="2.8" stroke-dasharray="400" stroke-dashoffset="400"
                               filter="url(#neonGreenGlow)" fill="none"/>
 
-                        <!-- Phase 2 Scale Beam: AI Apps -> MCP Server -->
+                        <!-- Phase 2: Right to Left scale beam from AI Apps to MCP Server -->
                         <path id="beam-main-right" class="anim-path"
                               d="M 915 260 H 518"
                               stroke="#00e599" stroke-width="2.8" stroke-dasharray="400" stroke-dashoffset="400"
@@ -643,79 +636,81 @@ async def landing_page(request: Request):
                         <!-- ================= 2. TOP LEFT BRANCH (Phase 1 Sync) ================= -->
                         <path id="branch-top-left" class="anim-path"
                               d="M 226 260 V 185 M 226 158 C 226 120 250 120 270 120 H 400 C 430 120 440 170 455 170 H 500"
-                              stroke="#52525b" stroke-width="1.6" stroke-dasharray="600" stroke-dashoffset="0" fill="none"/>
+                              stroke="#52525b" stroke-width="1.6" stroke-dasharray="600" stroke-dashoffset="600" fill="none"/>
 
-                        <circle cx="226" cy="260" r="3.5" fill="#000000" stroke="#00e599" stroke-width="2"/>
                         <!-- Database Circle Icon -->
-                        <circle cx="226" cy="172" r="14" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
-                        <path d="M221 167 C221 165 223 164 226 164 C229 164 231 165 231 167 C231 169 229 170 226 170 C223 170 221 169 221 167 Z M221 172 C221 174 223 175 226 175 C229 175 231 174 231 172 M221 177 C221 179 223 180 226 180 C229 180 231 179 231 177" stroke="#ffffff" stroke-width="1.2" fill="none"/>
+                        <g id="elem-db-icon" class="timeline-elem">
+                            <circle cx="226" cy="260" r="3.5" fill="#000000" stroke="#00e599" stroke-width="2"/>
+                            <circle cx="226" cy="172" r="14" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
+                            <path d="M221 167 C221 165 223 164 226 164 C229 164 231 165 231 167 C231 169 229 170 226 170 C223 170 221 169 221 167 Z M221 172 C221 174 223 175 226 175 C229 175 231 174 231 172 M221 177 C221 179 223 180 226 180 C229 180 231 179 231 177" stroke="#ffffff" stroke-width="1.2" fill="none"/>
+                        </g>
 
-                        <!-- Top Negotiation Checkpoints -->
-                        <g id="chk-neg-start" class="node-check">
+                        <!-- Negotiation Checkpoints -->
+                        <g id="chk-neg-start" class="timeline-elem">
                             <line x1="450" y1="170" x2="450" y2="92" stroke="#00e599" stroke-width="1.2" stroke-dasharray="3 3"/>
                             <circle cx="450" cy="115" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
                             <path d="M447 115 L449 117 L453 113" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                             <text x="450" y="65" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">negotiation<tspan x="450" dy="14">started</tspan></text>
                         </g>
 
-                        <g id="chk-neg-complete" class="node-check">
+                        <g id="chk-neg-complete" class="timeline-elem">
                             <line x1="590" y1="170" x2="590" y2="92" stroke="#00e599" stroke-width="1.2" stroke-dasharray="3 3"/>
                             <circle cx="590" cy="115" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
                             <path d="M587 115 L589 117 L593 113" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                             <text x="590" y="65" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">negotiation<tspan x="590" dy="14">complete</tspan></text>
                         </g>
 
-                        <!-- Center Protocol Negotiation Gear -->
-                        <line x1="518" y1="190" x2="518" y2="310" stroke="#ffffff" stroke-width="1.4" stroke-dasharray="3 3"/>
-                        <circle cx="518" cy="326" r="14" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
-                        <path d="M518 321 A5 5 0 1 0 518 331 A5 5 0 1 0 518 321 M518 318 V320 M518 332 V334 M510 326 H512 M524 326 H526" stroke="#ffffff" stroke-width="1.4" fill="none"/>
-                        <text x="518" y="358" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">protocol<tspan x="518" dy="14">negotiation</tspan></text>
+                        <!-- Protocol Gear Center Drop -->
+                        <g id="elem-gear" class="timeline-elem">
+                            <line x1="518" y1="190" x2="518" y2="310" stroke="#ffffff" stroke-width="1.4" stroke-dasharray="3 3"/>
+                            <circle cx="518" cy="326" r="14" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
+                            <path d="M518 321 A5 5 0 1 0 518 331 A5 5 0 1 0 518 321 M518 318 V320 M518 332 V334 M510 326 H512 M524 326 H526" stroke="#ffffff" stroke-width="1.4" fill="none"/>
+                            <text x="518" y="358" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">protocol<tspan x="518" dy="14">negotiation</tspan></text>
+                        </g>
 
                         <!-- ================= 3. TOP RIGHT BRANCH (Phase 2 AI Tool Request) ================= -->
                         <path id="branch-top-right" class="anim-path"
                               d="M 825 260 V 185 M 825 158 C 825 120 805 120 780 120 H 640 C 605 120 595 170 580 170 H 536"
                               stroke="#52525b" stroke-width="1.6" stroke-dasharray="600" stroke-dashoffset="600" fill="none"/>
 
-                        <circle cx="825" cy="260" r="3.5" fill="#000000" stroke="#00e599" stroke-width="2"/>
-                        <!-- Robot Circle Icon -->
-                        <circle cx="825" cy="172" r="14" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
-                        <path d="M821 169 H829 V177 H821 Z M825 165 V169 M818 173 H821 M829 173 H832 M823 172 H824 M826 172 H827" stroke="#ffffff" stroke-width="1.2" fill="none"/>
+                        <g id="elem-robot-icon" class="timeline-elem">
+                            <circle cx="825" cy="260" r="3.5" fill="#000000" stroke="#00e599" stroke-width="2"/>
+                            <circle cx="825" cy="172" r="14" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
+                            <path d="M821 169 H829 V177 H821 Z M825 165 V169 M818 173 H821 M829 173 H832 M823 172 H824 M826 172 H827" stroke="#ffffff" stroke-width="1.2" fill="none"/>
+                        </g>
 
-                        <!-- Tools & Data Access Granted Node -->
-                        <g id="chk-access-granted" class="node-check hidden-node">
+                        <!-- Access Granted Node -->
+                        <g id="chk-access-granted" class="timeline-elem">
                             <path d="M 570 170 C 625 170 625 250 625 290" stroke="#71717a" stroke-width="1.5" fill="none"/>
                             <circle cx="625" cy="290" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
                             <path d="M622 290 L624 292 L628 288" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                             <text x="625" y="322" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">tools &amp; data<tspan x="625" dy="14">access granted</tspan></text>
                         </g>
 
-                        <!-- ================= 4. BOTTOM RETURN PIPELINE (Phase 2 Write Note & Sync) ================= -->
+                        <!-- ================= 4. BOTTOM RETURN PIPELINE (Phase 2 Write & Sync Return) ================= -->
                         <path id="branch-bottom-write" class="anim-path"
                               d="M 915 275 V 370 H 880 M 770 370 C 740 370 740 430 710 430"
                               stroke="#52525b" stroke-width="1.6" stroke-dasharray="300" stroke-dashoffset="300" fill="none"/>
 
-                        <!-- Full bottom return line across to Memory Notes -->
                         <path id="branch-bottom-return" class="anim-path"
                               d="M 710 430 H 75"
                               stroke="#00e599" stroke-width="1.8" stroke-dasharray="700" stroke-dashoffset="700" fill="none"/>
 
-                        <!-- Node 1: note processed by mcp-server -->
-                        <g id="chk-note-processed" class="node-check hidden-node">
+                        <!-- Return Nodes -->
+                        <g id="chk-note-processed" class="timeline-elem">
                             <circle cx="625" cy="430" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
                             <path d="M622 430 L624 432 L628 428" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                             <text x="625" y="462" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">note processed<tspan x="625" dy="14">by mcp-server</tspan></text>
                         </g>
 
-                        <!-- Node 2: note saved in neon db -->
-                        <g id="chk-note-saved" class="node-check hidden-node">
+                        <g id="chk-note-saved" class="timeline-elem">
                             <line x1="265" y1="430" x2="265" y2="280" stroke="#00e599" stroke-width="1.4" stroke-dasharray="3 3" marker-end="url(#greenArrow)"/>
                             <circle cx="265" cy="430" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
                             <path d="M262 430 L264 432 L268 428" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                             <text x="265" y="462" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">note saved<tspan x="265" dy="14">in neon db</tspan></text>
                         </g>
 
-                        <!-- Node 3: sync (auto / manual) -->
-                        <g id="chk-sync-final" class="node-check hidden-node">
+                        <g id="chk-sync-final" class="timeline-elem">
                             <line x1="75" y1="430" x2="75" y2="280" stroke="#00e599" stroke-width="1.4" stroke-dasharray="3 3" marker-end="url(#greenArrow)"/>
                             <circle cx="75" cy="430" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
                             <path d="M72 430 L74 432 L78 428" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
@@ -725,8 +720,8 @@ async def landing_page(request: Request):
 
                     <!-- ================= HTML CAPSULE PILLS OVERLAY ================= -->
 
-                    <!-- 1. Memory Notes (Origin Left) -->
-                    <div id="pill-memory-notes" class="pill-badge absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent select-none"
+                    <!-- 1. Memory Notes (ALWAYS PRESENT AT START) -->
+                    <div id="pill-memory-notes" class="timeline-elem pill-memory-start absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent select-none z-10"
                          style="left:1.5%; top:50%;">
                         <svg class="w-3.5 h-3.5 text-[#0a0a0a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                         Memory Notes
@@ -738,8 +733,8 @@ async def landing_page(request: Request):
                         sync
                     </div>
 
-                    <!-- 2. Neon DB (Middle Left) -->
-                    <div id="pill-neon-db" class="pill-badge absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent select-none"
+                    <!-- 2. Neon DB (Pops when beam crosses left scale) -->
+                    <div id="elem-neon-db" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent select-none z-10"
                          style="left:18.5%; top:50%;">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 3.79 2 6v12c0 2.21 4.48 4 10 4s10-1.79 10-4V6c0-2.21-4.48-4-10-4zm0 2c4.97 0 8 1.46 8 2s-3.03 2-8 2-8-1.46-8-2 3.03-2 8-2zm0 16c-4.97 0-8-1.46-8-2v-2.23c2.08 1.34 5.09 2.23 8 2.23s5.92-.89 8-2.23V18c0 .54-3.03 2-8 2z"/></svg>
                         neon db
@@ -749,28 +744,28 @@ async def landing_page(request: Request):
                     </div>
 
                     <!-- 3. Request Data (Top Left Pill) -->
-                    <div class="absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md"
+                    <div id="elem-request-data" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md z-10"
                          style="left:26.5%; top:23.1%;">
                         <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 3.79 2 6v12c0 2.21 4.48 4 10 4s10-1.79 10-4V6c0-2.21-4.48-4-10-4zm0 2c4.97 0 8 1.46 8 2s-3.03 2-8 2-8-1.46-8-2 3.03-2 8-2zm0 16c-4.97 0-8-1.46-8-2v-2.23c2.08 1.34 5.09 2.23 8 2.23s5.92-.89 8-2.23V18c0 .54-3.03 2-8 2z"/></svg>
                         request data
                     </div>
 
                     <!-- 4. MCP Server (Center Yellow Hub) -->
-                    <div id="pill-mcp-server" class="pill-badge absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-[#fde047] text-[#0a0a0a] mono text-xs font-extrabold shadow-[0_0_25px_rgba(253,224,71,0.4)] select-none border-2 border-white/40"
+                    <div id="elem-mcp-server" class="timeline-elem absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-[#fde047] text-[#0a0a0a] mono text-xs font-extrabold shadow-[0_0_25px_rgba(253,224,71,0.4)] select-none border-2 border-white/40 z-20"
                          style="left:51%; top:32.7%;">
                         <svg class="w-4 h-4 text-[#0a0a0a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
                         mcp-server
                     </div>
 
                     <!-- 5. Request Tools (Top Right Pill) -->
-                    <div class="absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md"
+                    <div id="elem-request-tools" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md z-10"
                          style="left:64.5%; top:23.1%;">
                         <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                         request tools
                     </div>
 
                     <!-- 6. AI Apps (Right Endpoint) -->
-                    <div id="pill-ai-apps" class="pill-badge absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent select-none"
+                    <div id="elem-ai-apps" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent select-none z-10"
                          style="left:86.5%; top:50%;">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
                         ai apps
@@ -780,7 +775,7 @@ async def landing_page(request: Request):
                     </div>
 
                     <!-- 7. Write Note (Bottom Right Pill) -->
-                    <div class="absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md"
+                    <div id="elem-write-note" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md z-10"
                          style="left:76.5%; top:71.2%;">
                         <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
                         write note
@@ -796,7 +791,7 @@ async def landing_page(request: Request):
                 <!-- Animated Status Ribbon -->
                 <div class="px-6 py-3 bg-[#09090b] border-t border-white/5 flex items-center justify-between mono text-xs">
                     <div id="anim-status-indicator" class="text-white/80">
-                        <span class="text-[#00e599] font-bold">1. Left to Right:</span> Memory Notes &rarr; neon db &rarr; mcp-server. Negotiation protocols execute along the branch.
+                        <span class="text-[#00e599] font-bold">Phase 1:</span> Main green pulse rides from Memory Notes &rarr; neon db &rarr; mcp-server while branches &amp; negotiation protocols execute.
                     </div>
                     <span class="text-white/30 hidden sm:inline">Model Context Protocol 2.0</span>
                 </div>
