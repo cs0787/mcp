@@ -1,8 +1,8 @@
 """
 Memory Notes for AI - Web Application
 Integrated with the custom Monochromatic Tailwind CSS Frontend design,
-interactive spotlight grid background, custom animated hero action buttons,
-quick-start terminal, developer deep dives, and the progressive emerging architecture animation.
+interactive spotlight grid background, customized matching hero action buttons (Green Theme),
+quick-start terminal, developer deep dives, and progressive emerging architecture animation.
 """
 
 import asyncpg
@@ -228,7 +228,6 @@ def _page(title: str, body: str) -> HTMLResponse:
 
     // =========================================================================
     // PROGRESSIVE EMERGING ARCHITECTURE ANIMATION
-    // Each path segment draws sequentially outward from the scale junction.
     // =========================================================================
     function resetTimelineToStart() {{
         document.querySelectorAll('.seg-path').forEach(p => {{
@@ -259,7 +258,7 @@ def _page(title: str, body: str) -> HTMLResponse:
         const pillAi = document.getElementById('elem-ai-apps');
 
         // =====================================================================
-        // PHASE 1: Left to Right (Emerge from scale outwards)
+        // PHASE 1: Left to Right
         // =====================================================================
         if (statusText) statusText.innerHTML = '<span class="text-[#00e599] font-bold">1. Ingestion:</span> Memory Notes sparkles &amp; shoots beam along scale to neon db &amp; mcp-server.';
 
@@ -306,10 +305,8 @@ def _page(title: str, body: str) -> HTMLResponse:
             document.getElementById('elem-gear').classList.add('visible');
         }}, 4400);
 
-        // --- REST PERIOD ---
-
         // =====================================================================
-        // PHASE 2: Right to Left (Emerge from scale & return loop)
+        // PHASE 2: Right to Left
         // =====================================================================
         setTimeout(() => {{
             if (statusText) statusText.innerHTML = '<span class="text-[#fde047] font-bold">2. Tool Request &amp; Sync:</span> AI Apps sparkles, beam enters mcp-server while tools are granted &amp; notes write back.';
@@ -485,7 +482,7 @@ async def landing_page(request: Request):
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-3">
                     
-                    <!-- 1. Get Started Button with Green Expanding Multi-Layer Circles -->
+                    <!-- 1. Get Started Button -->
                     <a href="{' /dashboard' if user_id else '/signup'}" class="overflow-hidden relative w-56 h-14 p-2 bg-yellow-500 text-white border-none rounded-md text-sm font-bold cursor-pointer z-10 group flex justify-center items-center no-underline shadow-sm">
                         <span class="relative z-10 text-white group-hover:opacity-0 transition-opacity duration-300">Get Started</span>
                         <span class="absolute w-72 h-64 -top-16 -left-8 bg-green-200 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-500 duration-1000 origin-bottom"></span>
@@ -494,13 +491,13 @@ async def landing_page(request: Request):
                         <span class="group-hover:opacity-100 group-hover:duration-1000 duration-100 opacity-0 absolute inset-0 flex items-center justify-center z-10 text-white font-bold text-sm">Explore!</span>
                     </a>
                     
-                    <!-- 2. See more Button with Sky Blue Multi-Layer Bubble Animation -->
-                    <a href="#quickstart" class="border hover:scale-95 duration-300 relative group cursor-pointer text-sky-50 overflow-hidden h-14 w-56 rounded-md bg-sky-200 p-2 flex justify-center items-center font-extrabold no-underline shadow-sm">
-                        <div class="absolute right-32 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-40 h-40 rounded-full group-hover:scale-150 duration-500 bg-sky-900"></div>
-                        <div class="absolute right-2 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-32 h-32 rounded-full group-hover:scale-150 duration-500 bg-sky-800"></div>
-                        <div class="absolute -right-12 top-4 group-hover:top-1 group-hover:right-2 z-10 w-24 h-24 rounded-full group-hover:scale-150 duration-500 bg-sky-700"></div>
-                        <div class="absolute right-20 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-16 h-16 rounded-full group-hover:scale-150 duration-500 bg-sky-600"></div>
-                        <p class="z-10 text-sm font-bold">See more</p>
+                    <!-- 2. See more Button (Green Theme matching size) -->
+                    <a href="#quickstart" class="border hover:scale-95 duration-300 relative group cursor-pointer text-emerald-50 overflow-hidden h-14 w-56 rounded-md bg-emerald-200 p-2 flex justify-center items-center font-extrabold no-underline shadow-sm">
+                        <div class="absolute right-32 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-40 h-40 rounded-full group-hover:scale-150 duration-500 bg-emerald-900"></div>
+                        <div class="absolute right-2 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-32 h-32 rounded-full group-hover:scale-150 duration-500 bg-emerald-800"></div>
+                        <div class="absolute -right-12 top-4 group-hover:top-1 group-hover:right-2 z-10 w-24 h-24 rounded-full group-hover:scale-150 duration-500 bg-emerald-700"></div>
+                        <div class="absolute right-20 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-16 h-16 rounded-full group-hover:scale-150 duration-500 bg-emerald-600"></div>
+                        <p class="z-10 text-sm font-bold text-white">See more</p>
                     </a>
                 </div>
             </div>
@@ -608,7 +605,7 @@ async def landing_page(request: Request):
                         <!-- Background Grid -->
                         <rect x="0" y="0" width="1184" height="500" fill="url(#neonGridPattern)"/>
 
-                        <!-- Center Baseline Ruler Ticks (Positioned exactly on scale y=250) -->
+                        <!-- Center Baseline Ruler Ticks on Scale Line y=250 -->
                         <g stroke="#ffffff" stroke-opacity="0.16">
                             <line x1="320" y1="246" x2="320" y2="254"/>
                             <line x1="356" y1="246" x2="356" y2="254"/>
@@ -836,7 +833,7 @@ async def landing_page(request: Request):
                     <!-- 5. Request Tools (Top Right Pill) -->
                     <div id="elem-request-tools" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md z-10"
                          style="left:64%; top:22%;">
-                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                         request tools
                     </div>
 
