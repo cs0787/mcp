@@ -1,8 +1,8 @@
 """
 Memory Notes for AI - Web Application
 Integrated with the custom Monochromatic Tailwind CSS Frontend design,
-interactive spotlight grid background, custom animated hero button, quick-start terminal,
-developer deep dives, and the progressive emerging architecture animation.
+interactive spotlight grid background, custom animated hero action buttons,
+quick-start terminal, developer deep dives, and the progressive emerging architecture animation.
 """
 
 import asyncpg
@@ -405,7 +405,7 @@ def _navbar(request: Request, user_email: str | None = None) -> str:
     else:
         right_actions = """
         <a href="/login" class="bg-surface-white text-on-surface px-4 py-2 rounded text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors no-underline">Log In</a>
-        <a href="/signup" class="bg-secondary-container text-on-surface px-4 py-2 rounded text-sm font-semibold hover:bg-secondary-fixed transition-colors no-underline">Get Started</a>
+        <a href="/signup" class="bg-secondary-container text-on-surface px-4 py-2 rounded text-sm font-semibold hover:bg-secondary-fixed transition-colors no-underline">Sign Up</a>
         """
 
     return f"""
@@ -484,15 +484,23 @@ async def landing_page(request: Request):
                     A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents. Read and write thoughts dynamically.
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-3">
-                    <a href="{' /dashboard' if user_id else '/signup'}" class="bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Start Writing Now</a>
                     
-                    <!-- Replaced Try in 30 Seconds with Custom Animated Button -->
-                    <a href="#quickstart" class="border hover:scale-95 duration-300 relative group cursor-pointer text-sky-50 overflow-hidden h-14 w-60 rounded-md bg-sky-200 p-2 flex justify-center items-center font-extrabold no-underline shadow-sm">
+                    <!-- 1. Get Started Button with Green Expanding Multi-Layer Circles -->
+                    <a href="{' /dashboard' if user_id else '/signup'}" class="overflow-hidden relative w-56 h-14 p-2 bg-yellow-500 text-white border-none rounded-md text-sm font-bold cursor-pointer z-10 group flex justify-center items-center no-underline shadow-sm">
+                        <span class="relative z-10 text-white group-hover:opacity-0 transition-opacity duration-300">Get Started</span>
+                        <span class="absolute w-72 h-64 -top-16 -left-8 bg-green-200 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-500 duration-1000 origin-bottom"></span>
+                        <span class="absolute w-72 h-64 -top-16 -left-8 bg-green-400 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-700 duration-700 origin-bottom"></span>
+                        <span class="absolute w-72 h-64 -top-16 -left-8 bg-green-600 rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform group-hover:duration-1000 duration-500 origin-bottom"></span>
+                        <span class="group-hover:opacity-100 group-hover:duration-1000 duration-100 opacity-0 absolute inset-0 flex items-center justify-center z-10 text-white font-bold text-sm">Explore!</span>
+                    </a>
+                    
+                    <!-- 2. See more Button with Sky Blue Multi-Layer Bubble Animation -->
+                    <a href="#quickstart" class="border hover:scale-95 duration-300 relative group cursor-pointer text-sky-50 overflow-hidden h-14 w-56 rounded-md bg-sky-200 p-2 flex justify-center items-center font-extrabold no-underline shadow-sm">
                         <div class="absolute right-32 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-40 h-40 rounded-full group-hover:scale-150 duration-500 bg-sky-900"></div>
                         <div class="absolute right-2 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-32 h-32 rounded-full group-hover:scale-150 duration-500 bg-sky-800"></div>
                         <div class="absolute -right-12 top-4 group-hover:top-1 group-hover:right-2 z-10 w-24 h-24 rounded-full group-hover:scale-150 duration-500 bg-sky-700"></div>
                         <div class="absolute right-20 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-16 h-16 rounded-full group-hover:scale-150 duration-500 bg-sky-600"></div>
-                        <p class="z-10 text-sm">See more</p>
+                        <p class="z-10 text-sm font-bold">See more</p>
                     </a>
                 </div>
             </div>
@@ -600,7 +608,7 @@ async def landing_page(request: Request):
                         <!-- Background Grid -->
                         <rect x="0" y="0" width="1184" height="500" fill="url(#neonGridPattern)"/>
 
-                        <!-- Center Baseline Ruler Ticks on Scale Line y=250 -->
+                        <!-- Center Baseline Ruler Ticks (Positioned exactly on scale y=250) -->
                         <g stroke="#ffffff" stroke-opacity="0.16">
                             <line x1="320" y1="246" x2="320" y2="254"/>
                             <line x1="356" y1="246" x2="356" y2="254"/>
