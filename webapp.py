@@ -1,17 +1,8 @@
 """
 Memory Notes for AI - Web Application
 Integrated with the custom Monochromatic Tailwind CSS Frontend design,
-interactive spotlight grid background, quick-start terminal, developer deep dives,
-and the deliberate Neon-style progressive emerging architecture animation:
-- At start: Only 'Memory Notes' is present.
-- Phase 1 (Left to Right): 'Memory Notes' sparkles, the central scale beam extends outward,
-  and upward branch lines physically emerge from the scale junction -> drawing sequentially
-  through the database icon, request data, negotiation checkpoints, and protocol gear.
-- Rest period.
-- Phase 2 (Right to Left): 'ai apps' activates and sparkles, the central scale beam shoots
-  leftwards, while branch lines emerge sequentially from the scale (request tools, access granted)
-  and drop down into the bottom return pipeline (write note -> neon db -> sync arrows).
-- Rests permanently in its completed visual state (repeats only upon page reload or replay button).
+interactive spotlight grid background, custom animated hero button, quick-start terminal,
+developer deep dives, and the progressive emerging architecture animation.
 """
 
 import asyncpg
@@ -240,7 +231,6 @@ def _page(title: str, body: str) -> HTMLResponse:
     // Each path segment draws sequentially outward from the scale junction.
     // =========================================================================
     function resetTimelineToStart() {{
-        // Reset all individual stroke-dashoffset lines
         document.querySelectorAll('.seg-path').forEach(p => {{
             const len = p.getAttribute('data-len') || '300';
             p.style.strokeDasharray = len;
@@ -273,59 +263,50 @@ def _page(title: str, body: str) -> HTMLResponse:
         // =====================================================================
         if (statusText) statusText.innerHTML = '<span class="text-[#00e599] font-bold">1. Ingestion:</span> Memory Notes sparkles &amp; shoots beam along scale to neon db &amp; mcp-server.';
 
-        // 1. Sparkle on Memory Notes
         setTimeout(() => {{
             if (pillMem) pillMem.classList.add('sparkle-burst');
         }}, 200);
 
-        // 2. Beam extends from Memory Notes to Neon DB junction along scale (x: 140 -> 268)
         setTimeout(() => {{
             drawSeg('seg-scale-p1-a');
         }}, 700);
 
-        // 3. Beam hits Neon DB junction -> neon db pill blossoms & vertical branch emerges upwards (y: 250 -> 162)
         setTimeout(() => {{
             document.getElementById('elem-neon-db').classList.add('visible');
             document.getElementById('elem-junc-neon').classList.add('visible');
             drawSeg('seg-branch-p1-up');
         }}, 1400);
 
-        // 4. Vertical branch reaches database icon -> icon pops & curve extends through request data into mcp-server
         setTimeout(() => {{
             document.getElementById('elem-db-icon').classList.add('visible');
             drawSeg('seg-branch-p1-curve');
         }}, 2000);
 
-        // 5. As curve passes x: 320 -> request data pill blossoms
         setTimeout(() => {{
             document.getElementById('elem-request-data').classList.add('visible');
         }}, 2500);
 
-        // 6. Scale continues from Neon DB junction to MCP Server junction (x: 268 -> 592)
         setTimeout(() => {{
             drawSeg('seg-scale-p1-b');
         }}, 2800);
 
-        // 7. Curve enters MCP Server -> mcp-server hub blossoms
         setTimeout(() => {{
             document.getElementById('elem-mcp-server').classList.add('visible');
         }}, 3400);
 
-        // 8. Checkpoint lines emerge upwards & downwards from the server connections
         setTimeout(() => {{
             drawSeg('seg-branch-p1-chk1');
             drawSeg('seg-branch-p1-chk2');
             drawSeg('seg-branch-p1-gear');
         }}, 3800);
 
-        // 9. Checkpoint badges & protocol gear blossom at tips of the emerged lines
         setTimeout(() => {{
             document.getElementById('chk-neg-start').classList.add('visible');
             document.getElementById('chk-neg-complete').classList.add('visible');
             document.getElementById('elem-gear').classList.add('visible');
         }}, 4400);
 
-        // --- REST PERIOD (Phase 1 finishes at ~4.5s, rests until 6.5s) ---
+        // --- REST PERIOD ---
 
         // =====================================================================
         // PHASE 2: Right to Left (Emerge from scale & return loop)
@@ -333,56 +314,47 @@ def _page(title: str, body: str) -> HTMLResponse:
         setTimeout(() => {{
             if (statusText) statusText.innerHTML = '<span class="text-[#fde047] font-bold">2. Tool Request &amp; Sync:</span> AI Apps sparkles, beam enters mcp-server while tools are granted &amp; notes write back.';
             
-            // 1. AI Apps blossoms & sparkles on the right
             if (pillAi) {{
                 pillAi.classList.add('visible');
                 pillAi.classList.add('sparkle-burst');
             }}
 
-            // 2. Central scale beam extends right-to-left toward MCP Server (x: 1020 -> 592)
             setTimeout(() => {{
                 drawSeg('seg-scale-p2');
             }}, 600);
 
-            // 3. Upward branch line emerges from scale junction (y: 250 -> 162) & downward branch drops to write note (y: 250 -> 360)
             setTimeout(() => {{
                 document.getElementById('elem-junc-ai').classList.add('visible');
                 drawSeg('seg-branch-p2-up');
                 drawSeg('seg-branch-p2-down');
             }}, 1100);
 
-            // 4. Robot icon pops & top-right curve extends through request tools into MCP server
             setTimeout(() => {{
                 document.getElementById('elem-robot-icon').classList.add('visible');
                 drawSeg('seg-branch-p2-curve');
                 document.getElementById('elem-write-note').classList.add('visible');
             }}, 1600);
 
-            // 5. Request tools blossoms as top curve passes; bottom return curve draws to baseline
             setTimeout(() => {{
                 document.getElementById('elem-request-tools').classList.add('visible');
                 drawSeg('seg-branch-p2-write-curve');
             }}, 2100);
 
-            // 6. Access granted branch emerges down from MCP server & bottom return baseline draws leftwards (x: 790 -> 85)
             setTimeout(() => {{
                 drawSeg('seg-branch-p2-access');
                 drawSeg('seg-branch-p2-return');
             }}, 2600);
 
-            // 7. Access granted & Note processed blossom as lines arrive
             setTimeout(() => {{
                 document.getElementById('chk-access-granted').classList.add('visible');
                 document.getElementById('chk-note-processed').classList.add('visible');
             }}, 3100);
 
-            // 8. Return baseline reaches Neon DB -> Note saved blossoms & vertical arrow line emerges up into Neon DB
             setTimeout(() => {{
                 document.getElementById('chk-note-saved').classList.add('visible');
                 drawSeg('seg-branch-p2-arrow-neon');
             }}, 3700);
 
-            // 9. Return baseline reaches Memory Notes -> Sync blossoms & vertical arrow line emerges up into Memory Notes
             setTimeout(() => {{
                 document.getElementById('chk-sync-final').classList.add('visible');
                 drawSeg('seg-branch-p2-arrow-mem');
@@ -511,9 +483,17 @@ async def landing_page(request: Request):
                 <p class="text-base lg:text-lg text-on-surface-variant max-w-xl mx-auto lg:mx-0 leading-relaxed">
                     A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents. Read and write thoughts dynamically.
                 </p>
-                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-3">
+                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-3">
                     <a href="{' /dashboard' if user_id else '/signup'}" class="bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Start Writing Now</a>
-                    <a href="#quickstart" class="bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline shadow-sm">Try in 30 Seconds</a>
+                    
+                    <!-- Replaced Try in 30 Seconds with Custom Animated Button -->
+                    <a href="#quickstart" class="border hover:scale-95 duration-300 relative group cursor-pointer text-sky-50 overflow-hidden h-14 w-60 rounded-md bg-sky-200 p-2 flex justify-center items-center font-extrabold no-underline shadow-sm">
+                        <div class="absolute right-32 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-40 h-40 rounded-full group-hover:scale-150 duration-500 bg-sky-900"></div>
+                        <div class="absolute right-2 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-32 h-32 rounded-full group-hover:scale-150 duration-500 bg-sky-800"></div>
+                        <div class="absolute -right-12 top-4 group-hover:top-1 group-hover:right-2 z-10 w-24 h-24 rounded-full group-hover:scale-150 duration-500 bg-sky-700"></div>
+                        <div class="absolute right-20 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-16 h-16 rounded-full group-hover:scale-150 duration-500 bg-sky-600"></div>
+                        <p class="z-10 text-sm">See more</p>
+                    </a>
                 </div>
             </div>
             
@@ -569,7 +549,7 @@ async def landing_page(request: Request):
     </section>
 
     <!-- ========================================================================= -->
-    <!-- 2. EXACT NEON ARCHITECTURE CANVAS (PROGRESSIVE LINE DRAWING) -->
+    <!-- 2. EXACT NEON-STYLE ARCHITECTURE CANVAS (ASPECT 1184/500 CONTAINER) -->
     <!-- ========================================================================= -->
     <section class="py-20 bg-[#000000] text-white border-b border-neutral-800 overflow-hidden select-none">
         <div class="max-w-7xl mx-auto px-6 lg:px-12">
@@ -594,7 +574,7 @@ async def landing_page(request: Request):
                 </div>
             </div>
 
-            <!-- Neon Wrapper Frame: aspect-[1184/500] responsive container -->
+            <!-- Neon Wrapper: aspect-[1184/500] responsive canvas container -->
             <div class="transition-opacity opacity-100 relative w-full rounded-2xl border border-white/[0.08] bg-[#000000] shadow-2xl p-2 overflow-x-auto">
                 <div class="size-full aspect-[1184/500] min-w-[1050px] relative w-full">
 
