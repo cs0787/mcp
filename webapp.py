@@ -1,9 +1,9 @@
 """
 Memory Notes for AI - Web Application
-Integrated with the custom Monochromatic Tailwind CSS Frontend design,
-interactive spotlight grid background, quick-start terminal, live architecture
-branching pipeline diagram (Android -> Neon DB -> FastMCP Broker -> AI Apps),
-and developer feature deep dives.
+Features Neon-style interactive animated pipeline architecture:
+1. Android App -> Neon DB sync
+2. AI Apps -> FastMCP Server requests
+3. FastMCP -> Neon DB context retrieval & streaming
 """
 
 import asyncpg
@@ -25,7 +25,7 @@ def _page(title: str, body: str) -> HTMLResponse:
 <title>{title} - Memory Notes</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {{
             darkMode: "class",
@@ -108,7 +108,7 @@ def _page(title: str, body: str) -> HTMLResponse:
 <style>
         .mono {{ font-family: 'JetBrains Mono', monospace; }}
 
-        /* Hero Interactive Grid & Spotlight */
+        /* Hero Spotlight Grid */
         .hero-interactive-grid {{
             --color: #E1E1E1;
             background-color: #F8F8F8;
@@ -119,7 +119,6 @@ def _page(title: str, body: str) -> HTMLResponse:
             position: relative;
             overflow: hidden;
         }}
-
         .hero-interactive-grid::after {{
             content: '';
             position: absolute;
@@ -134,41 +133,32 @@ def _page(title: str, body: str) -> HTMLResponse:
             -webkit-mask-image: radial-gradient(circle 160px at var(--x, -999px) var(--y, -999px), rgb(16, 15, 15) 0%, transparent 100%);
             mask-image: radial-gradient(circle 160px at var(--x, -999px) var(--y, -999px), rgb(36, 35, 35) 0%, transparent 100%);
         }}
-
         .hero-interactive-grid:hover::after {{
             opacity: 1;
         }}
 
-        /* Architecture Pipeline Styles */
-        .branch-path {{
-            transition: stroke-width .25s ease, filter .25s ease, opacity .25s ease;
+        /* Neon Animated Timeline Lines */
+        .pipeline-line {{
+            transition: stroke-dashoffset 0.8s ease-in-out, opacity 0.4s ease, stroke 0.4s ease;
         }}
-        .branch-path:hover,
-        .branch-path.branch-active {{
-            filter: brightness(1.5);
+        .pulse-node {{
+            transition: transform 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
         }}
-        .branch-dashed:hover,
-        .branch-dashed.branch-active {{
-            stroke-width: 2.2;
+        .pill-badge {{
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
         }}
-        .branch-solid:hover,
-        .branch-solid.branch-active {{
-            stroke-width: 2.6;
-        }}
-
-        .pill-badge {{ 
-            transition: background-color .25s ease, border-color .25s ease, box-shadow .25s ease, transform .2s ease; 
-        }}
-        .pill-badge:hover {{ 
-            transform: translateY(-1px); 
+        .pill-badge.active-badge {{
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 0 20px rgba(0, 229, 153, 0.4);
+            border-color: #00e599 !important;
         }}
 
-        @keyframes flowdash {{ 
-            to {{ stroke-dashoffset: -40; }} 
+        @keyframes beamFlow {{
+            to {{ stroke-dashoffset: -30; }}
         }}
-        .flow-anim {{ 
-            stroke-dasharray: 6 8; 
-            animation: flowdash 1.4s linear infinite; 
+        .flow-active {{
+            stroke-dasharray: 6 6;
+            animation: beamFlow 1s linear infinite;
         }}
 
         .feature-card {{
@@ -179,6 +169,7 @@ def _page(title: str, body: str) -> HTMLResponse:
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
             border-color: #050505;
         }}
+
         .settings-dropdown {{
             display: none;
             position: absolute;
@@ -227,16 +218,123 @@ def _page(title: str, body: str) -> HTMLResponse:
         }});
     }}
 
-    // Sync hover brightness between pipeline badges and SVG branch paths
-    document.querySelectorAll('[data-branch].branch-trigger').forEach(function(badge){{
-        var id = badge.getAttribute('data-branch');
-        var els = document.querySelectorAll('[data-branch="' + id + '"].branch-path');
-        badge.addEventListener('mouseenter', function(){{
-            els.forEach(function(el){{ el.classList.add('branch-active'); }});
+    // ==========================================
+    // NEON-STYLE ANIMATED PIPELINE LOGIC
+    // ==========================================
+    let currentStep = 1;
+    let autoPlay = true;
+    let animTimer = null;
+
+    function setPipelineStep(step, manual = false) {{
+        if (manual) {{
+            autoPlay = false;
+            document.getElementById('playPauseBtn').innerText = '▶ Play';
+        }}
+        currentStep = step;
+
+        // Update Controller Buttons
+        [1, 2, 3].forEach(s => {{
+            const btn = document.getElementById('step-btn-' + s);
+            if (s === step) {{
+                btn.className = 'px-3.5 py-1.5 rounded-lg border border-[#00e599] bg-[#00e599]/10 text-[#00e599] mono text-xs font-semibold shadow-[0_0_10px_rgba(0,229,153,0.2)] transition-all';
+            }} else {{
+                btn.className = 'px-3.5 py-1.5 rounded-lg border border-white/10 bg-white/5 text-white/50 hover:text-white mono text-xs font-medium transition-all';
+            }}
         }});
-        badge.addEventListener('mouseleave', function(){{
-            els.forEach(function(el){{ el.classList.remove('branch-active'); }});
-        }});
+
+        // Badges & Paths references
+        const p1 = document.getElementById('path-android-neon');
+        const p2a = document.getElementById('path-ai-claude');
+        const p2b = document.getElementById('path-ai-chatgpt');
+        const p3 = document.getElementById('path-mcp-neon-broker');
+
+        const badgeAndroid = document.getElementById('badge-android');
+        const badgeNeon = document.getElementById('badge-neon');
+        const badgeMcp = document.getElementById('badge-mcp');
+        const badgeClaude = document.getElementById('badge-claude');
+        const badgeGpt = document.getElementById('badge-gpt');
+        const statusText = document.getElementById('pipeline-status-text');
+
+        // Reset active highlights
+        [badgeAndroid, badgeNeon, badgeMcp, badgeClaude, badgeGpt].forEach(b => b.classList.remove('active-badge'));
+
+        if (step === 1) {{
+            // 1. Android Note Creation & Sync to Neon DB
+            p1.setAttribute('stroke', '#00e599');
+            p1.setAttribute('stroke-width', '2.5');
+            p1.classList.add('flow-active');
+
+            p2a.classList.remove('flow-active');
+            p2a.setAttribute('stroke', '#27272a');
+            p2b.classList.remove('flow-active');
+            p2b.setAttribute('stroke', '#27272a');
+
+            p3.classList.remove('flow-active');
+            p3.setAttribute('stroke', '#27272a');
+
+            badgeAndroid.classList.add('active-badge');
+            badgeNeon.classList.add('active-badge');
+            statusText.innerHTML = '<span class="text-[#00e599]">Step 1:</span> Note created in Android app &rarr; Synced with epoch timestamp to Neon Postgres.';
+        }} 
+        else if (step === 2) {{
+            // 2. AI Apps send tool request to MCP Broker
+            p1.classList.remove('flow-active');
+            p1.setAttribute('stroke', '#00e599');
+            p1.setAttribute('stroke-width', '1.5');
+
+            p2a.classList.add('flow-active');
+            p2a.setAttribute('stroke', '#f5c14e');
+            p2a.setAttribute('stroke-width', '2.2');
+
+            p2b.classList.add('flow-active');
+            p2b.setAttribute('stroke', '#22d3ee');
+            p2b.setAttribute('stroke-width', '2.2');
+
+            p3.classList.remove('flow-active');
+            p3.setAttribute('stroke', '#27272a');
+
+            badgeClaude.classList.add('active-badge');
+            badgeGpt.classList.add('active-badge');
+            badgeMcp.classList.add('active-badge');
+            statusText.innerHTML = '<span class="text-[#f5c14e]">Step 2:</span> Claude & Cursor trigger tool calls (<code class="text-white">search_notes</code>) &rarr; Received by FastMCP Server.';
+        }} 
+        else if (step === 3) {{
+            // 3. FastMCP pulls context from Neon DB & streams to AI
+            p1.classList.remove('flow-active');
+            p1.setAttribute('stroke', '#00e599');
+
+            p2a.classList.add('flow-active');
+            p2a.setAttribute('stroke', '#00e599');
+            p2b.classList.add('flow-active');
+            p2b.setAttribute('stroke', '#00e599');
+
+            p3.classList.add('flow-active');
+            p3.setAttribute('stroke', '#00e599');
+            p3.setAttribute('stroke-width', '3');
+
+            badgeMcp.classList.add('active-badge');
+            badgeNeon.classList.add('active-badge');
+            badgeClaude.classList.add('active-badge');
+            badgeGpt.classList.add('active-badge');
+            statusText.innerHTML = '<span class="text-[#00e599]">Step 3:</span> FastMCP retrieves fuzzy trigram context from Neon DB &rarr; Streams payload directly into LLM context window.';
+        }}
+    }}
+
+    function toggleAutoPlay() {{
+        autoPlay = !autoPlay;
+        document.getElementById('playPauseBtn').innerText = autoPlay ? '⏸ Pause' : '▶ Play';
+    }}
+
+    function runPipelineLoop() {{
+        if (autoPlay) {{
+            currentStep = (currentStep % 3) + 1;
+            setPipelineStep(currentStep, false);
+        }}
+    }}
+
+    document.addEventListener('DOMContentLoaded', () => {{
+        setPipelineStep(1, false);
+        animTimer = setInterval(runPipelineLoop, 3200);
     }});
 </script>
 </body>
@@ -339,7 +437,7 @@ async def landing_page(request: Request):
     body = f"""
 {nav_html}
 <main class="flex-grow">
-    <!-- Hero Section (Interactive Grid & Spotlight Effect) -->
+    <!-- Hero Section -->
     <section class="relative pt-20 pb-20 border-b border-border-muted hero-interactive-grid"
              onmousemove="const r = this.getBoundingClientRect(); this.style.setProperty('--x', (event.clientX - r.left) + 'px'); this.style.setProperty('--y', (event.clientY - r.top) + 'px');">
         <div class="max-w-6xl mx-auto px-6 lg:px-12 relative z-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
@@ -382,7 +480,6 @@ async def landing_page(request: Request):
                     <h2 class="text-2xl lg:text-3xl font-bold text-on-surface mb-2">Connect in 30 Seconds</h2>
                     <p class="text-sm text-on-surface-variant">Add your MCP Memory endpoint to your AI client configuration file.</p>
                 </div>
-                <!-- Interactive Tabs -->
                 <div class="flex items-center bg-surface-container-low border border-border-muted p-1 rounded-lg gap-1">
                     <button id="tab-claude" onclick="setTerminalTab('claude')" class="px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors">Claude Desktop</button>
                     <button id="tab-cursor" onclick="setTerminalTab('cursor')" class="px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors">Cursor / IDE</button>
@@ -390,7 +487,6 @@ async def landing_page(request: Request):
                 </div>
             </div>
 
-            <!-- Terminal Snippet Card -->
             <div class="bg-[#0f0f11] text-neutral-100 rounded-xl border border-neutral-800 shadow-xl overflow-hidden font-mono text-xs">
                 <div class="flex items-center justify-between px-4 py-3 bg-[#17171a] border-b border-neutral-800">
                     <div class="flex items-center gap-2">
@@ -413,36 +509,54 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. Architecture & Live Branching Pipeline Section (FastMCP Broker) -->
-    <section class="py-16 bg-[#070709] border-b border-neutral-800">
+    <!-- ========================================================================= -->
+    <!-- 2. NEON-STYLE LIVE ARCHITECTURE PIPELINE CANVAS -->
+    <!-- ========================================================================= -->
+    <section class="py-20 bg-[#050505] text-white border-b border-neutral-800">
         <div class="max-w-6xl mx-auto px-6 lg:px-12">
             
-            <div class="mb-8 flex items-end justify-between flex-wrap gap-4">
+            <!-- Section Header & Interactive Controls -->
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mb-8">
                 <div>
                     <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-2 flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#00e599] shadow-[0_0_8px_#00e599]"></span>
-                        Live Architecture Pipeline
+                        <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
+                        Live Context Pipeline
                     </p>
-                    <h2 class="text-white text-2xl md:text-[28px] font-bold tracking-tight">
-                        Android App &rarr; Neon DB &rarr; FastMCP Broker &rarr; AI Context Delivery
+                    <h2 class="text-white text-3xl font-bold tracking-tight">
+                        Instant Context Gateway
                     </h2>
                 </div>
-                <p class="mono text-xs text-white/40 max-w-[34ch] text-right hidden md:block">
-                    FastMCP acts as the broker: it connects directly to Neon DB, intercepts AI tool calls, and streams note context to LLMs.
-                </p>
+
+                <!-- Interactive Step Controller -->
+                <div class="flex flex-wrap items-center gap-2 bg-[#121214] border border-white/10 p-1.5 rounded-xl">
+                    <button id="step-btn-1" onclick="setPipelineStep(1, true)" class="px-3.5 py-1.5 rounded-lg mono text-xs font-semibold transition-all">
+                        1. Mobile &rarr; Neon DB
+                    </button>
+                    <button id="step-btn-2" onclick="setPipelineStep(2, true)" class="px-3.5 py-1.5 rounded-lg mono text-xs font-medium transition-all">
+                        2. AI &rarr; MCP Server
+                    </button>
+                    <button id="step-btn-3" onclick="setPipelineStep(3, true)" class="px-3.5 py-1.5 rounded-lg mono text-xs font-medium transition-all">
+                        3. Context Stream
+                    </button>
+                    <button id="playPauseBtn" onclick="toggleAutoPlay()" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 mono text-xs text-white/70 transition-colors ml-1">
+                        ⏸ Pause
+                    </button>
+                </div>
             </div>
 
-            <!-- Pipeline Diagram Container -->
-            <div class="w-full overflow-x-auto rounded-2xl border border-white/[0.08] bg-[#0d0d0f]">
+            <!-- Pipeline Visual Display Frame -->
+            <div class="w-full overflow-x-auto rounded-2xl border border-white/[0.08] bg-[#09090b] relative shadow-2xl select-none">
                 <div class="relative min-w-[980px] w-full" style="aspect-ratio:1000/380;">
 
                     <svg viewBox="0 0 1000 380" preserveAspectRatio="xMidYMid meet" class="absolute inset-0 w-full h-full">
                         <defs>
-                            <pattern id="vgrid" width="42" height="380" patternUnits="userSpaceOnUse">
-                                <line x1="0" y1="0" x2="0" y2="380" stroke="#ffffff" stroke-opacity="0.055" stroke-width="1" stroke-dasharray="2 5"/>
+                            <!-- Subtle Grid Pattern -->
+                            <pattern id="neonGrid" width="40" height="380" patternUnits="userSpaceOnUse">
+                                <line x1="0" y1="0" x2="0" y2="380" stroke="#ffffff" stroke-opacity="0.04" stroke-width="1" stroke-dasharray="2 4"/>
                             </pattern>
-                            <filter id="trunkGlow" x="-20%" y="-400%" width="140%" height="900%">
-                                <feGaussianBlur in="SourceGraphic" stdDeviation="4.2" result="blur"/>
+                            <!-- Glow Filters -->
+                            <filter id="neonGreenGlow" x="-20%" y="-400%" width="140%" height="900%">
+                                <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
                                 <feMerge>
                                     <feMergeNode in="blur"/>
                                     <feMergeNode in="SourceGraphic"/>
@@ -450,144 +564,115 @@ async def landing_page(request: Request):
                             </filter>
                         </defs>
 
-                        <!-- Background grid -->
-                        <rect x="0" y="0" width="1000" height="380" fill="url(#vgrid)"/>
+                        <!-- Background vertical ticks -->
+                        <rect x="0" y="0" width="1000" height="380" fill="url(#neonGrid)"/>
 
-                        <!-- Baseline ruler ticks -->
-                        <g stroke="#ffffff" stroke-opacity="0.18">
-                            <line x1="170" y1="196" x2="170" y2="204"/><line x1="210" y1="196" x2="210" y2="204"/>
-                            <line x1="270" y1="196" x2="270" y2="204"/><line x1="330" y1="196" x2="330" y2="204"/>
-                            <line x1="410" y1="196" x2="410" y2="204"/><line x1="470" y1="196" x2="470" y2="204"/>
-                            <line x1="570" y1="196" x2="570" y2="204"/><line x1="630" y1="196" x2="630" y2="204"/>
-                            <line x1="710" y1="196" x2="710" y2="204"/><line x1="770" y1="196" x2="770" y2="204"/>
-                            <line x1="850" y1="196" x2="850" y2="204"/><line x1="910" y1="196" x2="910" y2="204"/>
+                        <!-- Center Baseline Ruler Ticks -->
+                        <g stroke="#ffffff" stroke-opacity="0.15">
+                            <line x1="80" y1="195" x2="80" y2="205"/>
+                            <line x1="160" y1="195" x2="160" y2="205"/>
+                            <line x1="240" y1="195" x2="240" y2="205"/>
+                            <line x1="320" y1="195" x2="320" y2="205"/>
+                            <line x1="400" y1="195" x2="400" y2="205"/>
+                            <line x1="480" y1="195" x2="480" y2="205"/>
+                            <line x1="560" y1="195" x2="560" y2="205"/>
+                            <line x1="640" y1="195" x2="640" y2="205"/>
+                            <line x1="720" y1="195" x2="720" y2="205"/>
+                            <line x1="800" y1="195" x2="800" y2="205"/>
+                            <line x1="880" y1="195" x2="880" y2="205"/>
+                            <line x1="960" y1="195" x2="960" y2="205"/>
                         </g>
 
-                        <!-- ================= 1. INGESTION TRUNK: Android App -> Neon DB -> FastMCP ================= -->
-                        <path d="M120,200 H490" stroke="#00e599" stroke-width="2.8" fill="none" filter="url(#trunkGlow)"/>
-                        <path d="M120,200 H490" stroke="#00e599" stroke-width="1.2" fill="none" opacity="0.9" class="flow-anim"/>
+                        <!-- ================= PIPELINE PATHS ================= -->
+                        <!-- Base Trunk Gray Guideline -->
+                        <line x1="80" y1="200" x2="940" y2="200" stroke="#1f1f23" stroke-width="2"/>
 
-                        <!-- Junction 1: Neon DB Persistence -->
-                        <circle cx="290" cy="200" r="5" fill="#050505" stroke="#00e599" stroke-width="2"/>
+                        <!-- 1. Android -> Neon DB Connection Line -->
+                        <path id="path-android-neon" class="pipeline-line"
+                              d="M 170 200 H 340" stroke="#00e599" stroke-width="2.5" fill="none" filter="url(#neonGreenGlow)"/>
 
-                        <!-- Junction 2: FastMCP Broker Hub -->
-                        <circle cx="490" cy="200" r="7" fill="#050505" stroke="#00e599" stroke-width="2.5"/>
-                        <circle cx="490" cy="200" r="3" fill="#00e599"/>
+                        <!-- 2. Neon DB <-> FastMCP Broker Context Channel Line -->
+                        <path id="path-mcp-neon-broker" class="pipeline-line"
+                              d="M 430 200 H 570" stroke="#27272a" stroke-width="2" fill="none"/>
 
-                        <!-- ================= 2. BROKER DISTRIBUTION BRANCHES TO AI APPS ================= -->
-                        
-                        <!-- Branch A: Claude AI (Top Branch) -->
-                        <path id="b1-drop" data-branch="b1" class="branch-path branch-dashed"
-                              d="M490,200 C530,200 560,78 600,78"
-                              stroke="#f5c14e" stroke-width="1.6" stroke-dasharray="4 5" fill="none" opacity="0.85"/>
-                        <path id="b1-line" data-branch="b1" class="branch-path branch-solid"
-                              d="M600,78 H940" stroke="#f5c14e" stroke-width="1.6" fill="none" opacity="0.9"/>
+                        <!-- 3. AI Claude -> FastMCP Curve -->
+                        <path id="path-ai-claude" class="pipeline-line"
+                              d="M 810 90 C 700 90, 640 160, 580 200" stroke="#27272a" stroke-width="2" fill="none"/>
 
-                        <!-- Checkpoints on Claude Branch -->
-                        <line x1="740" y1="78" x2="740" y2="104" stroke="#f5c14e" stroke-width="1.2" stroke-dasharray="3 4" opacity="0.6"/>
-                        <circle cx="740" cy="78" r="4.5" fill="#3a2c0d" stroke="#f5c14e" stroke-width="2"/>
-                        <circle cx="870" cy="78" r="4.5" fill="#3a2c0d" stroke="#f5c14e" stroke-width="2"/>
+                        <!-- 4. AI ChatGPT / Cursor -> FastMCP Curve -->
+                        <path id="path-ai-chatgpt" class="pipeline-line"
+                              d="M 810 310 C 700 310, 640 240, 580 200" stroke="#27272a" stroke-width="2" fill="none"/>
 
-                        <!-- Branch B: Cursor / IDE Agents (Middle Branch) -->
-                        <path id="b2-line" data-branch="b2" class="branch-path branch-solid"
-                              d="M490,200 H940" stroke="#a78bfa" stroke-width="1.8" fill="none" opacity="0.9"/>
-                        <circle cx="720" cy="200" r="4.5" fill="#171324" stroke="#a78bfa" stroke-width="2"/>
-
-                        <!-- Branch C: ChatGPT / Custom Agents (Bottom Branch) -->
-                        <path id="b3-drop" data-branch="b3" class="branch-path branch-dashed"
-                              d="M490,200 C530,200 560,322 600,322"
-                              stroke="#22d3ee" stroke-width="1.6" stroke-dasharray="4 5" fill="none" opacity="0.85"/>
-                        <path id="b3-line" data-branch="b3" class="branch-path branch-solid"
-                              d="M600,322 H940" stroke="#22d3ee" stroke-width="1.6" fill="none" opacity="0.9"/>
-
-                        <!-- Checkpoints on ChatGPT Branch -->
-                        <line x1="730" y1="322" x2="730" y2="296" stroke="#22d3ee" stroke-width="1.2" stroke-dasharray="3 4" opacity="0.6"/>
-                        <circle cx="730" cy="322" r="4.5" fill="#0d2f36" stroke="#22d3ee" stroke-width="2"/>
-                        <circle cx="870" cy="322" r="4.5" fill="#0d2f36" stroke="#22d3ee" stroke-width="2"/>
+                        <!-- Junction Points -->
+                        <circle cx="340" cy="200" r="4.5" fill="#050505" stroke="#00e599" stroke-width="2"/>
+                        <circle cx="580" cy="200" r="5" fill="#050505" stroke="#00e599" stroke-width="2.5"/>
                     </svg>
 
-                    <!-- HTML Overlay Elements -->
-                    <!-- Origin: Android App -->
-                    <div class="absolute -translate-y-1/2 flex items-center gap-2 pl-2.5 pr-3.5 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-semibold shadow-[0_0_15px_rgba(255,255,255,0.2)]"
-                         style="left:1.2%; top:52.6%;">
-                        <span class="relative flex h-2 w-2">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00e599] opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#00e599]"></span>
-                        </span>
-                        Android App
-                    </div>
-                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] text-white/40" style="left:12%; top:62%;">
-                        Local Room DB
+                    <!-- ================= OVERLAY PILL BADGES ================= -->
+                    
+                    <!-- 1. Android App Badge -->
+                    <div id="badge-android" class="pill-badge absolute -translate-y-1/2 flex items-center gap-2 pl-3 pr-4 py-2 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_15px_rgba(255,255,255,0.15)] border-2 border-transparent"
+                         style="left:2.5%; top:52.6%;">
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#00e599]"></span>
+                        📱 Android App
                     </div>
 
-                    <!-- Database: Neon Postgres -->
-                    <div class="absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0c1a14] border border-[#00e599]/40 mono text-xs font-semibold text-[#6ff7c9] shadow-sm"
-                         style="left:29%; top:52.6%;">
+                    <!-- 2. Neon DB Badge -->
+                    <div id="badge-neon" class="pill-badge absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-[#0e1713] text-[#00e599] border border-[#00e599]/30 mono text-xs font-semibold shadow-lg"
+                         style="left:38%; top:52.6%;">
+                        <span class="w-2 h-2 rounded-full bg-[#00e599]"></span>
                         ☁️ Neon DB
                     </div>
-                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] text-[#6ff7c9]/70" style="left:29%; top:63%;">
-                        pg_trgm storage
+
+                    <!-- 3. FastMCP Broker Hub Badge -->
+                    <div id="badge-mcp" class="pill-badge absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-[#18181b] text-white border border-white/20 mono text-xs font-bold shadow-xl"
+                         style="left:61%; top:52.6%;">
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#00e599] animate-pulse"></span>
+                        ⚡ FastMCP Broker
                     </div>
 
-                    <!-- Central Broker: FastMCP Server -->
-                    <div class="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1"
-                         style="left:49%; top:39%;">
-                        <div class="px-3.5 py-1.5 rounded-full bg-white text-[#0a0a0a] border-2 border-[#00e599] mono text-xs font-bold shadow-[0_0_15px_rgba(0,229,153,0.3)]">
-                            ⚡ FastMCP Broker
-                        </div>
-                        <span class="mono text-[9px] text-[#00e599] font-medium tracking-wide uppercase">
-                            Context Hub & Auth
-                        </span>
+                    <!-- 4. Claude AI Badge (Top Right) -->
+                    <div id="badge-claude" class="pill-badge absolute -translate-y-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-[#1a1712] text-[#f5c14e] border border-[#f5c14e]/30 mono text-xs font-semibold shadow-md"
+                         style="left:81%; top:23.6%;">
+                        <span class="w-2 h-2 rounded-full bg-[#f5c14e]"></span>
+                        🤖 Claude Desktop
                     </div>
 
-                    <!-- Branch 1: Claude AI -->
-                    <div data-branch="b1" class="pill-badge branch-trigger absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1a1712] border border-[#f5c14e]/30 mono text-xs text-white cursor-default"
-                         style="left:59%; top:20.5%;">
-                        <span class="w-2 h-2 rounded-full bg-[#f5c14e] shadow-[0_0_6px_#f5c14e]"></span>
-                        Claude AI
-                    </div>
-                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] text-[#f5c14e]/90 font-medium" style="left:74%; top:30.5%;">
-                        &gt; AI sends tool call
-                    </div>
-                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] px-2 py-0.5 rounded border border-[#f5c14e]/30 bg-[#f5c14e]/10 text-[#f5c14e]" style="left:87%; top:20.5%;">
-                        ✓ Context Streamed
-                    </div>
-
-                    <!-- Branch 2: Cursor IDE -->
-                    <div data-branch="b2" class="pill-badge branch-trigger absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#171324] border border-[#a78bfa]/30 mono text-xs text-white cursor-default"
-                         style="left:59%; top:52.6%;">
-                        <span class="relative flex h-2 w-2">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#a78bfa] opacity-70"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#a78bfa]"></span>
-                        </span>
-                        Cursor / IDEs
-                    </div>
-                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] px-2 py-0.5 rounded border border-[#a78bfa]/30 bg-[#a78bfa]/10 text-[#d8b4fe]" style="left:78%; top:52.6%;">
-                        search_notes() &rarr; SSE Stream
-                    </div>
-
-                    <!-- Branch 3: ChatGPT & Agents -->
-                    <div data-branch="b3" class="pill-badge branch-trigger absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0c1a1c] border border-[#22d3ee]/30 mono text-xs text-white cursor-default"
-                         style="left:59%; top:84.7%;">
-                        <span class="w-2 h-2 rounded-full bg-[#22d3ee] shadow-[0_0_6px_#22d3ee]"></span>
-                        ChatGPT / Agents
-                    </div>
-                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] text-[#22d3ee]/90 font-medium" style="left:73%; top:74.5%;">
-                        &gt; Trigram DB lookup
-                    </div>
-                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] px-2 py-0.5 rounded border border-[#22d3ee]/30 bg-[#22d3ee]/10 text-[#67e3f5]" style="left:87%; top:84.7%;">
-                        ⚡ 3.4ms Injected
+                    <!-- 5. ChatGPT / Cursor Badge (Bottom Right) -->
+                    <div id="badge-gpt" class="pill-badge absolute -translate-y-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-[#0c1a1c] text-[#22d3ee] border border-[#22d3ee]/30 mono text-xs font-semibold shadow-md"
+                         style="left:81%; top:81.5%;">
+                        <span class="w-2 h-2 rounded-full bg-[#22d3ee]"></span>
+                        ✨ Cursor & ChatGPT
                     </div>
 
                 </div>
+
+                <!-- Active Status Ribbon Banner -->
+                <div class="px-6 py-3 bg-[#0d0d10] border-t border-white/5 flex items-center justify-between mono text-xs">
+                    <div id="pipeline-status-text" class="text-white/80">
+                        <span class="text-[#00e599]">Step 1:</span> Note created in Android app &rarr; Synced with epoch timestamp to Neon Postgres.
+                    </div>
+                    <span class="text-white/30 hidden sm:inline">SSE / FastMCP Protocol</span>
+                </div>
             </div>
 
-            <!-- Legend / Flow Steps -->
-            <div class="mt-6 flex flex-wrap gap-x-8 gap-y-3 mono text-[11px] text-white/40">
-                <span class="flex items-center gap-2"><i class="w-3 h-[2px] bg-[#00e599] inline-block"></i>1. Android notes sync directly to Neon DB</span>
-                <span class="flex items-center gap-2"><i class="w-3 h-[2px] bg-white inline-block"></i>2. FastMCP acts as broker with direct DB access</span>
-                <span class="flex items-center gap-2"><i class="w-3 h-[2px] bg-[#f5c14e] inline-block"></i>3. AI apps request tools via FastMCP</span>
-                <span class="flex items-center gap-2"><i class="w-3 h-[2px] bg-[#22d3ee] inline-block"></i>4. FastMCP extracts DB context & streams to AI</span>
+            <!-- 3 Neon-Style Value Props Below Canvas -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                <div class="p-5 rounded-xl bg-[#09090b] border border-white/5">
+                    <div class="mono text-xs text-[#00e599] font-bold mb-1">01 / LOCAL-FIRST SYNC</div>
+                    <h3 class="text-sm font-semibold text-white mb-2">Instant Room Ingestion</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">Notes written on mobile save offline instantly to SQLite Room DB and stream upstream to Neon Postgres upon reconnect.</p>
+                </div>
+                <div class="p-5 rounded-xl bg-[#09090b] border border-white/5">
+                    <div class="mono text-xs text-[#f5c14e] font-bold mb-1">02 / PROTOCOL BROKER</div>
+                    <h3 class="text-sm font-semibold text-white mb-2">FastMCP Gateway</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">Serverless MCP server intercepts incoming tool calls from Claude or Cursor with OAuth / Bearer token validation.</p>
+                </div>
+                <div class="p-5 rounded-xl bg-[#09090b] border border-white/5">
+                    <div class="mono text-xs text-[#22d3ee] font-bold mb-1">03 / CONTEXT INJECTION</div>
+                    <h3 class="text-sm font-semibold text-white mb-2">Sub-10ms Trigram Recall</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">Executes pg_trgm similarity queries on Neon Postgres and injects matching notes directly into LLM prompts.</p>
+                </div>
             </div>
 
         </div>
@@ -660,7 +745,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- Core Bento Grid Capabilities -->
+    <!-- Core Bento Capabilities -->
     <section id="features" class="py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-6 lg:px-12">
             <div class="mb-12">
