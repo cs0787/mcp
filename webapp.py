@@ -1,7 +1,13 @@
 """
 Memory Notes for AI - Web Application
-Integrated with Neon's exact responsive canvas wrapper aspect ratio (1184/500),
-sparkle-beam initiation, and single-pass architecture animation.
+Integrated with the custom Monochromatic Tailwind CSS Frontend design,
+interactive spotlight grid background, quick-start terminal, developer deep dives,
+and the deliberate, slow-motion Neon-style single-pass architecture animation:
+- Initial state: Only 'Memory Notes' is present.
+- Phase 1 (Slow Left to Right): 'Memory Notes' sparkles, shoots a deliberate green beam on the central scale toward 'mcp-server'. As it advances, neon db, request data, negotiation checkpoints, and protocol gear reveal sequentially.
+- Generous rest period.
+- Phase 2 (Slow Right to Left): 'ai apps' activates, sparkles, and shoots a beam leftwards on the central scale toward 'mcp-server' while request tools, access granted, and the bottom return path (write note -> neon db -> sync) execute at a slow, readable pace.
+- Rests permanently in its completed visual state (repeats only on page reload or replay button).
 """
 
 import asyncpg
@@ -135,13 +141,13 @@ def _page(title: str, body: str) -> HTMLResponse:
             opacity: 1;
         }}
 
-        /* Timeline Transition Effects */
+        /* Slow, Deliberate Timeline Transitions */
         .anim-path {{
-            transition: stroke-dashoffset 1.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            transition: stroke-dashoffset 2.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
         }}
         
         .timeline-elem {{
-            transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
             opacity: 0;
             transform: scale(0.6);
             pointer-events: none;
@@ -157,14 +163,14 @@ def _page(title: str, body: str) -> HTMLResponse:
             pointer-events: auto !important;
         }}
 
-        /* Sparkle Pulse Burst Effects */
-        @keyframes sparkleBurst {{
+        /* Slow-motion Sparkle Pulse Burst Effects */
+        @keyframes sparkleBurstSlow {{
             0% {{ transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 229, 153, 0.9); }}
-            40% {{ transform: scale(1.15); box-shadow: 0 0 32px 10px rgba(0, 229, 153, 1); filter: brightness(1.5); }}
+            40% {{ transform: scale(1.15); box-shadow: 0 0 35px 12px rgba(0, 229, 153, 1); filter: brightness(1.5); }}
             100% {{ transform: scale(1); box-shadow: 0 0 18px 2px rgba(0, 229, 153, 0.4); }}
         }}
         .sparkle-burst {{
-            animation: sparkleBurst 0.65s ease-out forwards;
+            animation: sparkleBurstSlow 1.2s ease-out forwards;
         }}
 
         .feature-card {{
@@ -225,10 +231,10 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
 
     // =========================================================================
-    // SINGLE-PASS 2-PHASE ARCHITECTURE ANIMATION
+    // DELIBERATE SLOW-MOTION 2-PHASE ARCHITECTURE ANIMATION
     // 1. Initial State: Only 'Memory Notes' is present.
-    // 2. Phase 1 (Left to Right): Memory Notes sparkles -> shoots green beam on central scale -> branch draws -> rests.
-    // 3. Phase 2 (Right to Left): AI Apps activates, sparkles -> shoots green beam on scale -> tools & return loop draw -> rests permanently.
+    // 2. Phase 1 (Left to Right): Memory Notes sparkles -> shoots beam on scale -> branches draw slowly -> rests.
+    // 3. Phase 2 (Right to Left): AI Apps activates, sparkles -> shoots beam on scale -> tools & return loop draw slowly -> rests permanently.
     // =========================================================================
     function resetTimelineToStart() {{
         document.getElementById('beam-main-left').style.strokeDashoffset = '500';
@@ -254,42 +260,42 @@ def _page(title: str, body: str) -> HTMLResponse:
         const pillMem = document.getElementById('pill-memory-notes');
         const pillAi = document.getElementById('elem-ai-apps');
 
-        // --- 1. PHASE 1: Left to Right ---
-        if (statusText) statusText.innerHTML = '<span class="text-[#00e599] font-bold">1. Ingestion:</span> Memory Notes sparkles &amp; shoots beam along central scale to mcp-server.';
+        // --- 1. PHASE 1: Slow Left to Right ---
+        if (statusText) statusText.innerHTML = '<span class="text-[#00e599] font-bold">1. Ingestion:</span> Memory Notes sparkles &amp; shoots green beam along central scale to mcp-server.';
 
         // Step 1A: Memory Notes Sparkle
         setTimeout(() => {{
             if (pillMem) pillMem.classList.add('sparkle-burst');
-        }}, 150);
+        }}, 300);
 
-        // Step 1B: Shoot green beam along central scale
+        // Step 1B: Slow green beam starts traveling along scale
         setTimeout(() => {{
             document.getElementById('beam-main-left').style.strokeDashoffset = '0';
-        }}, 450);
+        }}, 1000);
 
-        // Step 1C: Crosses neon db -> pop neon db & launch top-left branch
+        // Step 1C: Crosses neon db -> pop neon db & slowly launch top-left branch
         setTimeout(() => {{
             document.getElementById('elem-neon-db').classList.add('visible');
             document.getElementById('elem-db-icon').classList.add('visible');
             document.getElementById('branch-top-left').style.strokeDashoffset = '0';
-        }}, 700);
+        }}, 1800);
 
-        // Step 1D: Top branch progress -> pop request data & negotiation started
+        // Step 1D: Top branch progresses -> pop request data & negotiation started
         setTimeout(() => {{
             document.getElementById('elem-request-data').classList.add('visible');
             document.getElementById('chk-neg-start').classList.add('visible');
-        }}, 1050);
+        }}, 2800);
 
         // Step 1E: Reaches mcp-server on scale -> pop mcp-server, gear & negotiation complete
         setTimeout(() => {{
             document.getElementById('elem-mcp-server').classList.add('visible');
             document.getElementById('elem-gear').classList.add('visible');
             document.getElementById('chk-neg-complete').classList.add('visible');
-        }}, 1400);
+        }}, 3800);
 
-        // --- REST PERIOD ---
+        // --- EXTENDED REST PERIOD (Phase 1 finishes at ~3.8s, rests until 6.8s) ---
 
-        // --- 2. PHASE 2: Right to Left ---
+        // --- 2. PHASE 2: Slow Right to Left ---
         setTimeout(() => {{
             if (statusText) statusText.innerHTML = '<span class="text-[#fde047] font-bold">2. Tool Execution &amp; Sync:</span> AI Apps sparkles &amp; shoots beam to mcp-server while tools are granted and note writes back.';
             
@@ -305,33 +311,33 @@ def _page(title: str, body: str) -> HTMLResponse:
                 document.getElementById('elem-robot-icon').classList.add('visible');
                 document.getElementById('branch-top-right').style.strokeDashoffset = '0';
                 document.getElementById('branch-bottom-write').style.strokeDashoffset = '0';
-            }}, 400);
+            }}, 900);
 
             // Step 2C: Draw request tools and bottom return pipeline
             setTimeout(() => {{
                 document.getElementById('elem-request-tools').classList.add('visible');
                 document.getElementById('elem-write-note').classList.add('visible');
                 document.getElementById('branch-bottom-return').style.strokeDashoffset = '0';
-            }}, 800);
+            }}, 1900);
 
             // Step 2D: Pop access granted & note processed
             setTimeout(() => {{
                 document.getElementById('chk-access-granted').classList.add('visible');
                 document.getElementById('chk-note-processed').classList.add('visible');
-            }}, 1150);
+            }}, 2900);
 
             // Step 2E: Pop note saved in neon db
             setTimeout(() => {{
                 document.getElementById('chk-note-saved').classList.add('visible');
-            }}, 1500);
+            }}, 3800);
 
-            // Step 2F: Pop final sync to Memory Notes and rest permanently
+            // Step 2F: Pop final sync to Memory Notes and complete
             setTimeout(() => {{
                 document.getElementById('chk-sync-final').classList.add('visible');
                 if (statusText) statusText.innerHTML = '<span class="text-[#00e599] font-bold">✓ Complete:</span> Real-time bidirectional memory pipeline active across Android, Neon, and AI models.';
-            }}, 1800);
+            }}, 4600);
 
-        }}, 2800);
+        }}, 6800);
     }}
 
     document.addEventListener('DOMContentLoaded', () => {{
@@ -731,7 +737,7 @@ async def landing_page(request: Request):
                     <!-- 5. Request Tools (Top Right Pill) -->
                     <div id="elem-request-tools" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md z-10"
                          style="left:64%; top:22%;">
-                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                         request tools
                     </div>
 
