@@ -1,8 +1,8 @@
 """
 Memory Notes for AI - Web Application
-Full production SaaS landing page featuring custom brutalist profile cards,
-interactive manifesto switcher, layered depth cards, magnetic corner CTA buttons,
-live terminal switcher, architecture pipeline, and developer deep dives.
+Integrated with the custom Monochromatic Tailwind CSS Frontend design,
+interactive spotlight grid background, quick-start terminal, architecture flow,
+and developer feature deep dives.
 """
 
 import asyncpg
@@ -24,8 +24,7 @@ def _page(title: str, body: str) -> HTMLResponse:
 <title>{title} - Memory Notes</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Hanken+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Poppins:wght@500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet"/>
-
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {{
             darkMode: "class",
@@ -105,9 +104,8 @@ def _page(title: str, body: str) -> HTMLResponse:
             }}
         }}
     </script>
-
 <style>
-        /* ---------------- HERO SPOTLIGHT GRID ---------------- */
+        /* Hero Interactive Grid & Spotlight */
         .hero-interactive-grid {{
             --color: #E1E1E1;
             background-color: #F8F8F8;
@@ -136,503 +134,6 @@ def _page(title: str, body: str) -> HTMLResponse:
 
         .hero-interactive-grid:hover::after {{
             opacity: 1;
-        }}
-
-        /* ---------------- STYLE 1: BRUTALIST PROFILE CARD ---------------- */
-        .card-profile {{
-            background: #f5f5f0;
-            border: 4px solid #0a0a0a;
-            box-shadow: 6px 6px 0 #0a0a0a;
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-            max-width: 320px;
-            margin: 0 auto;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }}
-        .card-profile:hover {{
-            transform: translate(-3px, -3px);
-            box-shadow: 9px 9px 0 #0a0a0a;
-        }}
-        .prof-photo {{
-            height: 120px;
-            background: #f5e642;
-            border-bottom: 4px solid #0a0a0a;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: flex-end;
-        }}
-        .prof-photo::before {{
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: repeating-linear-gradient(
-                45deg,
-                transparent 0px,
-                transparent 8px,
-                rgba(0, 0, 0, 0.12) 8px,
-                rgba(0, 0, 0, 0.12) 10px
-            );
-        }}
-        .prof-photo-num {{
-            font-family: "Bebas Neue", sans-serif;
-            font-size: 5.5rem;
-            line-height: 0.85;
-            color: rgba(0, 0, 0, 0.08);
-            position: absolute;
-            right: -8px;
-            bottom: -10px;
-            letter-spacing: -0.02em;
-            pointer-events: none;
-        }}
-        .prof-avatar {{
-            width: 60px;
-            height: 60px;
-            background: #0a0a0a;
-            border: 4px solid #0a0a0a;
-            border-bottom: none;
-            border-left: none;
-            margin-left: 16px;
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: "Bebas Neue", sans-serif;
-            font-size: 1.6rem;
-            color: #f5e642;
-            flex-shrink: 0;
-        }}
-        .prof-status-badge {{
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 2;
-            background: #00e060;
-            border: 2px solid #0a0a0a;
-            box-shadow: 2px 2px 0 #0a0a0a;
-            font-size: 0.55rem;
-            font-weight: 800;
-            letter-spacing: 0.15em;
-            padding: 2px 6px;
-            text-transform: uppercase;
-        }}
-        .prof-body {{
-            padding: 14px 16px 0;
-        }}
-        .prof-handle {{
-            font-size: 0.55rem;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            color: #71717A;
-            text-transform: uppercase;
-            margin-bottom: 2px;
-        }}
-        .prof-name {{
-            font-family: "Bebas Neue", sans-serif;
-            font-size: 1.9rem;
-            line-height: 0.9;
-            color: #0a0a0a;
-            letter-spacing: -0.01em;
-            margin-bottom: 8px;
-        }}
-        .prof-bio {{
-            font-size: 0.72rem;
-            font-weight: 500;
-            color: #1c1b1b;
-            border-left: 4px solid #e8180a;
-            padding-left: 8px;
-            line-height: 1.45;
-            margin-bottom: 12px;
-        }}
-        .prof-stats {{
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            border-top: 3px solid #0a0a0a;
-        }}
-        .pstat {{
-            padding: 8px 6px;
-            border-right: 2px solid #0a0a0a;
-            text-align: center;
-        }}
-        .pstat:last-child {{
-            border-right: none;
-        }}
-        .pstat .psv {{
-            font-family: "Bebas Neue", sans-serif;
-            font-size: 1.4rem;
-            line-height: 1;
-            color: #0a0a0a;
-            display: block;
-        }}
-        .pstat .psl {{
-            font-size: 0.46rem;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            color: #71717A;
-            text-transform: uppercase;
-            display: block;
-            margin-top: 2px;
-        }}
-        .prof-btn {{
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background: #0a0a0a;
-            color: #f5e642;
-            border: none;
-            border-top: 3px solid #0a0a0a;
-            font-family: "Bebas Neue", sans-serif;
-            font-size: 1rem;
-            letter-spacing: 0.18em;
-            cursor: pointer;
-            text-align: center;
-            transition: background 0.15s, color 0.15s;
-        }}
-        .prof-btn:hover {{
-            background: #f5e642;
-            color: #0a0a0a;
-        }}
-
-        /* ---------------- STYLE 2: MANIFESTO & ACID TOGGLE ---------------- */
-        .manifesto-showcase {{
-            --bg-outer: transparent;
-            --bg-inner: #fdfdfa;
-            --text-main: #0a0a0a;
-            --accent: #ff2a00;
-            --shadow-color: #0a0a0a;
-            --geo-radius: 0%;
-            --geo-bg: repeating-linear-gradient(45deg, var(--text-main) 0 2px, transparent 2px 10px);
-            --geo-pos-x: -10%;
-            --geo-pos-y: -10%;
-            --font-display: "Impact", "Arial Black", sans-serif;
-            --font-body: "Inter", sans-serif;
-            --font-mono: "JetBrains Mono", monospace;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-sizing: border-box;
-        }}
-        .manifesto-showcase:has(.rebel-toggle:checked) {{
-            --bg-inner: #111111;
-            --text-main: #ccff00;
-            --accent: #ff007f;
-            --shadow-color: #ff007f;
-            --geo-radius: 50%;
-            --geo-bg: radial-gradient(circle, var(--accent) 0%, transparent 70%);
-            --geo-pos-x: 20%;
-            --geo-pos-y: 20%;
-        }}
-        .manifesto-showcase .rebel-toggle {{
-            display: none;
-        }}
-        .manifesto-showcase .presentation-stage {{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            padding: 10px;
-            perspective: 1000px;
-        }}
-        .manifesto-showcase .aesthetic-switch {{
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8px 16px;
-            margin-bottom: 1.2rem;
-            background: var(--text-main);
-            color: var(--bg-inner);
-            font-family: var(--font-mono);
-            font-weight: bold;
-            font-size: 0.72rem;
-            letter-spacing: 1px;
-            cursor: pointer;
-            border: 2px solid var(--text-main);
-            box-shadow: 3px 3px 0px var(--accent);
-            transition: all 0.25s ease;
-            z-index: 50;
-            text-transform: uppercase;
-        }}
-        .manifesto-showcase .aesthetic-switch:hover {{
-            transform: translate(-2px, -2px);
-            box-shadow: 5px 5px 0px var(--accent);
-        }}
-        .manifesto-showcase .mode-chaos {{
-            display: none;
-        }}
-        .manifesto-showcase .rebel-toggle:checked ~ .presentation-stage .mode-clean {{
-            display: none;
-        }}
-        .manifesto-showcase .rebel-toggle:checked ~ .presentation-stage .mode-chaos {{
-            display: inline;
-        }}
-        .manifesto-showcase .poster-card {{
-            position: relative;
-            width: 260px;
-            height: 360px;
-            background-color: var(--bg-inner);
-            border: 3px solid var(--text-main);
-            box-shadow: 8px 8px 0px var(--shadow-color);
-            overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.83, 0, 0.17, 1);
-            transform-style: preserve-3d;
-        }}
-        .manifesto-showcase .poster-card:hover {{
-            transform: rotateY(5deg) rotateX(2deg) scale(1.02);
-            box-shadow: 12px 12px 0px var(--shadow-color);
-        }}
-        .manifesto-showcase .css-mesh-grain {{
-            position: absolute;
-            inset: 0;
-            background-image: radial-gradient(var(--text-main) 1px, transparent 1px);
-            background-size: 4px 4px;
-            opacity: 0.15;
-            pointer-events: none;
-            z-index: 10;
-        }}
-        .manifesto-showcase .drafting-grid {{
-            position: absolute;
-            inset: 0;
-            background-image: linear-gradient(to right, var(--text-main) 1px, transparent 1px),
-                              linear-gradient(to bottom, var(--text-main) 1px, transparent 1px);
-            background-size: 20% 20%;
-            opacity: 0.1;
-            pointer-events: none;
-        }}
-        .manifesto-showcase .geo-orb {{
-            position: absolute;
-            top: var(--geo-pos-y);
-            right: var(--geo-pos-x);
-            width: 60%;
-            height: 45%;
-            background: var(--geo-bg);
-            border-radius: var(--geo-radius);
-            transition: all 0.8s cubic-bezier(0.83, 0, 0.17, 1);
-            mix-blend-mode: multiply;
-            opacity: 0.8;
-        }}
-        .manifesto-showcase .type-container {{
-            position: absolute;
-            top: 10%;
-            left: 5%;
-            display: flex;
-            flex-direction: column;
-            z-index: 5;
-        }}
-        .manifesto-showcase .huge-text {{
-            font-family: var(--font-display);
-            font-size: 3.3rem;
-            line-height: 0.82;
-            letter-spacing: -0.04em;
-            color: var(--text-main);
-            text-transform: uppercase;
-            mix-blend-mode: exclusion;
-            position: relative;
-            transition: color 0.5s ease;
-        }}
-        .manifesto-showcase .word-2 {{
-            margin-left: 10%;
-            color: transparent;
-            -webkit-text-stroke: 2px var(--text-main);
-        }}
-        .manifesto-showcase .tape-ribbon {{
-            position: absolute;
-            top: 50%;
-            left: -30%;
-            width: 160%;
-            background: var(--accent);
-            color: var(--bg-inner);
-            transform: rotate(-12deg) scale(1.05);
-            padding: 0.5rem 0;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            font-weight: 900;
-            white-space: nowrap;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            z-index: 20;
-            display: flex;
-            overflow: hidden;
-            transition: all 0.5s ease;
-        }}
-        .manifesto-showcase .tape-scroll {{
-            display: flex;
-            width: max-content;
-            animation: manifestoScrollText 10s linear infinite;
-        }}
-        .manifesto-showcase .tape-scroll span {{
-            padding-right: 1rem;
-        }}
-        @keyframes manifestoScrollText {{
-            to {{
-                transform: translateX(-50%);
-            }}
-        }}
-        .manifesto-showcase .poster-footer {{
-            position: absolute;
-            bottom: 5%;
-            left: 5%;
-            right: 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            z-index: 5;
-            border-top: 2px solid var(--text-main);
-            padding-top: 0.5rem;
-        }}
-        .manifesto-showcase .barcode {{
-            width: 48px;
-            height: 22px;
-            background: repeating-linear-gradient(to right, var(--text-main) 0, var(--text-main) 2px, transparent 2px, transparent 4px, var(--text-main) 4px, var(--text-main) 6px, transparent 6px, transparent 10px, var(--text-main) 10px, var(--text-main) 11px, transparent 11px, transparent 15px);
-        }}
-        .manifesto-showcase .manifesto-text {{
-            max-width: 65%;
-            text-align: right;
-            color: var(--text-main);
-        }}
-        .manifesto-showcase .vol {{
-            font-family: var(--font-mono);
-            font-weight: bold;
-            font-size: 0.52rem;
-            text-transform: uppercase;
-            margin-bottom: 2px;
-        }}
-        .manifesto-showcase .desc {{
-            font-size: 0.48rem;
-            line-height: 1.25;
-            opacity: 0.85;
-            margin: 0;
-        }}
-        .manifesto-showcase .rebel-toggle:checked ~ .presentation-stage .huge-text {{
-            text-shadow: 3px 3px 0px var(--accent), -2px -2px 0px #00ffff;
-            mix-blend-mode: normal;
-        }}
-
-        /* ---------------- STYLE 4: MAGNETIC CORNER DRAWER CTA BUTTON ---------------- */
-        .btn-container {{
-            --btn-color: #d8ff7c;
-            --corner-color: #00000040;
-            --corner-dist: 24px;
-            --corner-multiplier: 1.5;
-            --timing-function: cubic-bezier(0, 0, 0, 2.5);
-            --duration: 250ms;
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px 0;
-        }}
-        .btn {{
-            position: relative;
-            min-width: 170px;
-            min-height: calc(var(--corner-dist) * 2);
-            border-radius: 14px;
-            border: 2px solid #0a0a0a;
-            padding: 0.4em 1.2em;
-            background: linear-gradient(#fff4, #0001), var(--btn-color);
-            box-shadow: 1px 1px 2px -1px #fff inset, 0 4px 6px #00000018;
-            transition: transform var(--duration) var(--timing-function), filter var(--duration) var(--timing-function);
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }}
-        .btn-drawer {{
-            position: absolute;
-            display: flex;
-            justify-content: center;
-            min-height: 28px;
-            border-radius: 12px;
-            border: 1px solid #0a0a0a;
-            padding: 0.2em 0.8em;
-            font-size: 0.72em;
-            font-weight: 700;
-            font-family: "Poppins", monospace;
-            color: #0a0a0a;
-            background-color: #fbff13;
-            opacity: 0;
-            transition: transform calc(0.5 * var(--duration)) ease, filter var(--duration) var(--timing-function), opacity calc(0.5 * var(--duration)) ease;
-            filter: blur(2px);
-            pointer-events: none;
-            white-space: nowrap;
-        }}
-        .transition-top {{
-            top: 0;
-            left: 0;
-            border-radius: 10px 10px 0 0;
-            align-items: start;
-        }}
-        .transition-bottom {{
-            bottom: 0;
-            right: 0;
-            border-radius: 0 0 10px 10px;
-            align-items: end;
-        }}
-        .btn-text {{
-            display: inline-block;
-            font-size: 1.15em;
-            font-family: "Syne", "Inter", sans-serif;
-            font-weight: 800;
-            color: #0a0a0a;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }}
-        .btn-corner {{
-            position: absolute;
-            width: 28px;
-            fill: none;
-            stroke: var(--corner-color);
-            transition: transform var(--duration) var(--timing-function), filter var(--duration) var(--timing-function);
-            pointer-events: none;
-        }}
-        .btn-corner:nth-of-type(1) {{
-            top: 0;
-            left: 0;
-            transform: translate(calc(-1 * var(--corner-dist)), calc(-1 * var(--corner-dist))) rotate(90deg);
-        }}
-        .btn-corner:nth-of-type(2) {{
-            top: 0;
-            right: 0;
-            transform: translate(var(--corner-dist), calc(-1 * var(--corner-dist))) rotate(180deg);
-        }}
-        .btn-corner:nth-of-type(3) {{
-            bottom: 0;
-            right: 0;
-            transform: translate(var(--corner-dist), var(--corner-dist)) rotate(-90deg);
-        }}
-        .btn-corner:nth-of-type(4) {{
-            bottom: 0;
-            left: 0;
-            transform: translate(calc(-1 * var(--corner-dist)), var(--corner-dist)) rotate(0deg);
-        }}
-        .btn-container:hover .btn {{
-            transform: scale(1.04);
-            filter: drop-shadow(0 10px 12px rgba(0,0,0,0.15));
-        }}
-        .btn-container:hover .transition-top {{
-            transform: translateY(-22px) rotateZ(3deg);
-            filter: blur(0px);
-            opacity: 1;
-        }}
-        .btn-container:hover .transition-bottom {{
-            transform: translateY(22px) rotateZ(3deg);
-            filter: blur(0px);
-            opacity: 1;
-        }}
-        .btn-container:hover .btn-corner:first-of-type {{
-            transform: translate(calc(-1 * var(--corner-multiplier) * var(--corner-dist)), calc(-1 * var(--corner-multiplier) * var(--corner-dist))) rotate(90deg);
-        }}
-        .btn-container:hover .btn-corner:nth-of-type(2) {{
-            transform: translate(calc(var(--corner-multiplier) * var(--corner-dist)), calc(-1 * var(--corner-multiplier) * var(--corner-dist))) rotate(180deg);
-        }}
-        .btn-container:hover .btn-corner:nth-of-type(3) {{
-            transform: translate(calc(var(--corner-multiplier) * var(--corner-dist)), calc(var(--corner-multiplier) * var(--corner-dist))) rotate(-90deg);
-        }}
-        .btn-container:hover .btn-corner:nth-of-type(4) {{
-            transform: translate(calc(-1 * var(--corner-multiplier) * var(--corner-dist)), calc(var(--corner-multiplier) * var(--corner-dist))) rotate(0deg);
         }}
 
         .feature-card {{
@@ -744,7 +245,7 @@ def _navbar(request: Request, user_email: str | None = None) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Landing Page (All 4 Card & Button Widgets + Full SaaS Sections)
+# Landing Page
 # ---------------------------------------------------------------------------
 async def landing_page(request: Request):
     user_id = _require_login(request)
@@ -791,7 +292,7 @@ async def landing_page(request: Request):
     body = f"""
 {nav_html}
 <main class="flex-grow">
-    <!-- Hero Section (Interactive Spotlight Grid) -->
+    <!-- Hero Section (Interactive Grid & Spotlight Effect) -->
     <section class="relative pt-20 pb-20 border-b border-border-muted hero-interactive-grid"
              onmousemove="const r = this.getBoundingClientRect(); this.style.setProperty('--x', (event.clientX - r.left) + 'px'); this.style.setProperty('--y', (event.clientY - r.top) + 'px');">
         <div class="max-w-6xl mx-auto px-6 lg:px-12 relative z-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
@@ -806,38 +307,27 @@ async def landing_page(request: Request):
                 <p class="text-base lg:text-lg text-on-surface-variant max-w-xl mx-auto lg:mx-0 leading-relaxed">
                     A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents. Read and write thoughts dynamically.
                 </p>
-                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-3">
-                    <!-- Widget 4: Magnetic Corner Button (CTA) -->
-                    <div class="btn-container">
-                        <div class="btn-drawer transition-top">free tier active</div>
-                        <div class="btn-drawer transition-bottom">...100% private</div>
-                        <a href="{' /dashboard' if user_id else '/signup'}" class="btn">
-                            <span class="btn-text">{'Go to Canvas' if user_id else 'Start Writing'}</span>
-                        </a>
-                        <svg class="btn-corner" xmlns="http://www.w3.org/2000/svg" viewBox="-1 1 32 32"><path d="M32,32C14.355,32,0,17.645,0,0h.985c0,17.102,13.913,31.015,31.015,31.015v.985Z"></path></svg>
-                        <svg class="btn-corner" xmlns="http://www.w3.org/2000/svg" viewBox="-1 1 32 32"><path d="M32,32C14.355,32,0,17.645,0,0h.985c0,17.102,13.913,31.015,31.015,31.015v.985Z"></path></svg>
-                        <svg class="btn-corner" xmlns="http://www.w3.org/2000/svg" viewBox="-1 1 32 32"><path d="M32,32C14.355,32,0,17.645,0,0h.985c0,17.102,13.913,31.015,31.015,31.015v.985Z"></path></svg>
-                        <svg class="btn-corner" xmlns="http://www.w3.org/2000/svg" viewBox="-1 1 32 32"><path d="M32,32C14.355,32,0,17.645,0,0h.985c0,17.102,13.913,31.015,31.015,31.015v.985Z"></path></svg>
-                    </div>
-                    <a href="#quickstart" class="bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline shadow-sm rounded">Try in 30 Seconds</a>
+                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-3">
+                    <a href="{' /dashboard' if user_id else '/signup'}" class="bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Start Writing Now</a>
+                    <a href="#quickstart" class="bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline shadow-sm">Try in 30 Seconds</a>
                 </div>
             </div>
             
             <div class="flex-1 w-full max-w-md lg:max-w-none flex items-center justify-center">
-                <div class="p-6 bg-surface-white border-2 border-on-surface rounded-xl shadow-[6px_6px_0px_#0a0a0a] text-left w-full max-w-md font-mono text-xs">
+                <div class="p-6 bg-surface-white border border-border-muted rounded-xl shadow-md text-left w-full max-w-md font-mono text-xs">
                     <div class="flex items-center justify-between pb-3 mb-3 border-b border-border-muted">
                         <span class="font-bold text-primary">● MCP MEMORY GATEWAY</span>
                         <span class="text-text-secondary">Connected</span>
                     </div>
                     <p class="text-text-secondary mb-1">&gt; AI Model query sync:</p>
                     <p class="text-on-surface font-semibold">&gt; search_notes(query="architecture design")</p>
-                    <p class="text-green-600 font-semibold mt-2">✓ Synced instantly to local client.</p>
+                    <p class="text-primary mt-2">✓ Synced instantly to local client.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Interactive Code / Terminal Block -->
+    <!-- 1. Live Interactive Code / Terminal Block -->
     <section id="quickstart" class="py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-6 lg:px-12">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
@@ -845,6 +335,7 @@ async def landing_page(request: Request):
                     <h2 class="text-2xl lg:text-3xl font-bold text-on-surface mb-2">Connect in 30 Seconds</h2>
                     <p class="text-sm text-on-surface-variant">Add your MCP Memory endpoint to your AI client configuration file.</p>
                 </div>
+                <!-- Interactive Tabs -->
                 <div class="flex items-center bg-surface-container-low border border-border-muted p-1 rounded-lg gap-1">
                     <button id="tab-claude" onclick="setTerminalTab('claude')" class="px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors">Claude Desktop</button>
                     <button id="tab-cursor" onclick="setTerminalTab('cursor')" class="px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors">Cursor / IDE</button>
@@ -852,6 +343,7 @@ async def landing_page(request: Request):
                 </div>
             </div>
 
+            <!-- Terminal Snippet Card -->
             <div class="bg-[#0f0f11] text-neutral-100 rounded-xl border border-neutral-800 shadow-xl overflow-hidden font-mono text-xs">
                 <div class="flex items-center justify-between px-4 py-3 bg-[#17171a] border-b border-neutral-800">
                     <div class="flex items-center gap-2">
@@ -874,7 +366,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- Architecture & Data Flow -->
+    <!-- 2. Architecture & Data Flow Diagram -->
     <section class="py-16 bg-surface-container-low border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-6 lg:px-12">
             <div class="text-center max-w-2xl mx-auto mb-12">
@@ -883,6 +375,7 @@ async def landing_page(request: Request):
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+                <!-- Step 1: Capture -->
                 <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-xs flex flex-col justify-between">
                     <div>
                         <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center mb-4 border border-border-muted">
@@ -897,6 +390,7 @@ async def landing_page(request: Request):
                     </div>
                 </div>
 
+                <!-- Step 2: Sync Protocol -->
                 <div class="bg-surface-white border-2 border-on-surface p-6 rounded-xl shadow-xs flex flex-col justify-between relative">
                     <span class="absolute -top-3 right-4 px-2 py-0.5 bg-secondary-container text-on-surface text-[10px] font-mono font-bold rounded border border-on-surface">BRIDGE</span>
                     <div>
@@ -912,6 +406,7 @@ async def landing_page(request: Request):
                     </div>
                 </div>
 
+                <!-- Step 3: Persistence -->
                 <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-xs flex flex-col justify-between">
                     <div>
                         <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center mb-4 border border-border-muted">
@@ -929,78 +424,11 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- Visual Interactive Showcase (Widgets #2 & #3) -->
-    <section class="py-16 bg-surface-white border-b border-border-muted">
-        <div class="max-w-6xl mx-auto px-6 lg:px-12">
-            <div class="text-center max-w-2xl mx-auto mb-12">
-                <span class="text-xs font-mono font-bold text-primary tracking-widest uppercase mb-1 block">Aesthetic Engine</span>
-                <h2 class="text-2xl lg:text-3xl font-bold text-on-surface mb-2">Built for Pure Focus & Deep Utility</h2>
-                <p class="text-sm text-on-surface-variant">Switch aesthetic modes or explore 3D spatial canvas layers built for power users.</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-                <!-- Widget 2: Manifesto Showcase with Interactive Toggle -->
-                <div class="flex flex-col items-center justify-center bg-surface-container-low border border-border-muted p-8 rounded-2xl shadow-sm">
-                    <span class="text-xs font-mono text-text-secondary mb-4">// Interactive Aesthetic Switcher</span>
-                    <div class="manifesto-showcase">
-                        <input type="checkbox" id="rebel-toggle" class="rebel-toggle" />
-                        <div class="presentation-stage">
-                            <label for="rebel-toggle" class="aesthetic-switch">
-                                <span class="switch-text mode-clean">BRUTALIZE AESTHETIC — CLICK ME</span>
-                                <span class="switch-text mode-chaos">RESTORE MINIMALISM</span>
-                            </label>
-                            <div class="poster-card">
-                                <div class="css-mesh-grain"></div>
-                                <div class="drafting-grid"></div>
-                                <div class="geo-orb"></div>
-                                <div class="type-container">
-                                    <div class="huge-text word-1">MEMORY</div>
-                                    <div class="huge-text word-2">VAULT.</div>
-                                </div>
-                                <div class="tape-ribbon">
-                                    <div class="tape-scroll">
-                                        <span>NO JS // PURE SSE // BOLD AESTHETICS // REJECT MEDIOCRITY // </span>
-                                        <span>NO JS // PURE SSE // BOLD AESTHETICS // REJECT MEDIOCRITY // </span>
-                                    </div>
-                                </div>
-                                <div class="poster-footer">
-                                    <div class="barcode"></div>
-                                    <div class="manifesto-text">
-                                        <p class="vol">VOL. 01 / MCP GATEWAY</p>
-                                        <p class="desc">Structured memory context for AI models with zero lock-in.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Widget 3: 3D Depth Card Showcase -->
-                <div class="flex flex-col items-center justify-center bg-surface-container-low border border-border-muted p-8 rounded-2xl shadow-sm">
-                    <span class="text-xs font-mono text-text-secondary mb-6">// Spatial Workspace Canvas</span>
-                    <div class="cursor-pointer group overflow-hidden p-5 duration-1000 hover:duration-1000 relative w-72 h-72 bg-neutral-900 rounded-2xl border-2 border-neutral-800 shadow-xl">
-                        <div class="group-hover:-top-3 bg-transparent -top-12 -left-12 absolute shadow-yellow-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-24 h-24"></div>
-                        <div class="group-hover:top-60 bg-transparent top-44 left-14 absolute shadow-red-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-24 h-24"></div>
-                        <div class="group-hover:-left-12 bg-transparent top-24 left-56 absolute shadow-sky-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-24 h-24"></div>
-                        <div class="group-hover:-top-44 bg-transparent top-12 left-12 absolute shadow-red-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-12 h-12"></div>
-                        <div class="group-hover:left-44 bg-transparent top-12 left-12 absolute shadow-green-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-44 h-44"></div>
-                        <div class="group-hover:-left-2 bg-transparent -top-24 -left-12 absolute shadow-sky-800 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-64 h-64"></div>
-                        <div class="group-hover:top-44 bg-transparent top-24 left-12 absolute shadow-sky-500 shadow-inner rounded-xl transition-all ease-in-out group-hover:duration-1000 duration-1000 w-4 h-4"></div>
-                        <div class="w-full h-full shadow-xl shadow-neutral-950 p-4 bg-neutral-800/80 backdrop-blur-sm rounded-xl flex-col gap-2 flex justify-center border border-neutral-700/50">
-                            <span class="text-neutral-50 font-bold text-xl italic font-headline-md">Interactive Canvas</span>
-                            <p class="text-neutral-300 text-xs leading-relaxed">
-                                Move notes spatially across 2D coordinates. AI agents position contextually related thoughts together on your endless board.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Developer Deep Dives -->
+    <!-- 3. Developer Feature Deep Dives -->
     <section class="py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-6 lg:px-12 space-y-16">
+            
+            <!-- Spotlight 1: Zero-Latency Trigram Search -->
             <div class="flex flex-col lg:flex-row items-center gap-10">
                 <div class="flex-1 space-y-3">
                     <div class="inline-block px-2 py-1 bg-surface-container rounded text-xs font-mono font-semibold text-primary">FULL-TEXT RECALL</div>
@@ -1029,6 +457,7 @@ async def landing_page(request: Request):
 
             <hr class="border-border-muted">
 
+            <!-- Spotlight 2: Autonomous AI Memory Sync -->
             <div class="flex flex-col lg:flex-row-reverse items-center gap-10">
                 <div class="flex-1 space-y-3">
                     <div class="inline-block px-2 py-1 bg-secondary-container rounded text-xs font-mono font-semibold text-on-surface">BI-DIRECTIONAL WRITES</div>
@@ -1058,10 +487,11 @@ async def landing_page(request: Request):
                     </div>
                 </div>
             </div>
+
         </div>
     </section>
 
-    <!-- Bento Capabilities Grid -->
+    <!-- Core Bento Grid Capabilities -->
     <section id="features" class="py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-6 lg:px-12">
             <div class="mb-12">
@@ -1069,6 +499,8 @@ async def landing_page(request: Request):
                 <p class="text-sm text-on-surface-variant max-w-2xl">Tools designed for deep intellectual focus, stripping away the superfluous to leave only what matters.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- 1. Non-Linear Connectivity -->
                 <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-6 flex flex-col justify-between group rounded">
                     <div class="mb-6">
                         <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors">
@@ -1092,6 +524,7 @@ async def landing_page(request: Request):
                     </div>
                 </div>
                 
+                <!-- 2. Zen Canvas -->
                 <div class="feature-card bg-surface-white border border-border-muted p-6 flex flex-col group rounded">
                     <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
                         <span class="material-symbols-outlined text-primary" data-icon="format_ink_highlighter">format_ink_highlighter</span>
@@ -1109,6 +542,7 @@ async def landing_page(request: Request):
                     </div>
                 </div>
 
+                <!-- 3. Lightning Search -->
                 <div class="feature-card bg-surface-white border border-border-muted p-6 flex flex-col group rounded">
                     <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
                         <span class="material-symbols-outlined text-primary" data-icon="search">search</span>
@@ -1126,6 +560,7 @@ async def landing_page(request: Request):
                     </div>
                 </div>
 
+                <!-- 4. Extensible Architecture -->
                 <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-6 flex flex-col md:flex-row gap-6 items-center group rounded">
                     <div class="flex-1">
                         <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors">
@@ -1141,109 +576,6 @@ async def landing_page(request: Request):
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Community & Developer Testimonials (Featuring Widget #1) -->
-    <section class="py-16 bg-surface-container-low border-b border-border-muted">
-        <div class="max-w-6xl mx-auto px-6 lg:px-12">
-            <div class="text-center max-w-2xl mx-auto mb-12">
-                <span class="text-xs font-mono font-bold text-primary tracking-widest uppercase mb-1 block">Community & Builders</span>
-                <h2 class="text-2xl lg:text-3xl font-bold text-on-surface mb-2">Engineers & Creators on Memory Notes</h2>
-                <p class="text-sm text-on-surface-variant">Join developers plugging their second brain directly into autonomous LLM agents.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-                <!-- Widget 1: Brutalist Profile Card -->
-                <div class="card-profile">
-                    <div class="prof-photo">
-                        <div class="prof-photo-num">MK</div>
-                        <div class="prof-avatar">MK</div>
-                        <div class="prof-status-badge">● ONLINE</div>
-                    </div>
-                    <div class="prof-body">
-                        <div class="prof-handle">@matthieu.k</div>
-                        <div class="prof-name">MATTHIEU<br />KRANZ</div>
-                        <div class="prof-bio">
-                            Brutalist designer &amp; systems dev. Uses Memory Notes to sync daily project logs with Claude Desktop.
-                        </div>
-                    </div>
-                    <div class="prof-stats">
-                        <div class="pstat">
-                            <span class="psv">482</span>
-                            <span class="psl">Notes</span>
-                        </div>
-                        <div class="pstat">
-                            <span class="psv">28k</span>
-                            <span class="psl">Tokens</span>
-                        </div>
-                        <div class="pstat">
-                            <span class="psv">★ 4.9</span>
-                            <span class="psl">Rating</span>
-                        </div>
-                    </div>
-                    <button class="prof-btn" onclick="window.location='/signup'">+ CLONE WORKSPACE</button>
-                </div>
-
-                <!-- Testimonial 2 -->
-                <div class="bg-surface-white border-2 border-on-surface p-6 rounded-xl shadow-[4px_4px_0px_#0a0a0a]">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-full bg-surface-container border border-border-muted flex items-center justify-center font-bold text-xs">
-                            AL
-                        </div>
-                        <div>
-                            <div class="text-sm font-bold text-on-surface">Alex Liu</div>
-                            <div class="text-xs text-text-secondary font-mono">Backend Lead @ Scale</div>
-                        </div>
-                    </div>
-                    <p class="text-xs text-on-surface-variant leading-relaxed mb-4">
-                        "The fact that my notes stay in my own private Neon Postgres database while Claude can search them via MCP without any proprietary middleman is game-changing."
-                    </p>
-                    <div class="text-[10px] font-mono text-primary font-bold">✓ VERIFIED ARCHITECTURE</div>
-                </div>
-
-                <!-- Testimonial 3 -->
-                <div class="bg-surface-white border-2 border-on-surface p-6 rounded-xl shadow-[4px_4px_0px_#0a0a0a]">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-full bg-surface-container border border-border-muted flex items-center justify-center font-bold text-xs">
-                            SR
-                        </div>
-                        <div>
-                            <div class="text-sm font-bold text-on-surface">Sarah R.</div>
-                            <div class="text-xs text-text-secondary font-mono">Independent Researcher</div>
-                        </div>
-                    </div>
-                    <p class="text-xs text-on-surface-variant leading-relaxed mb-4">
-                        "Last-Write-Wins synchronization works flawlessly between my mobile phone and my desktop Cursor setup. Bidirectional MCP notes are the future."
-                    </p>
-                    <div class="text-[10px] font-mono text-primary font-bold">✓ 240+ WORKSPACES SYNCED</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing / Conversion Section (Featuring Widget #4) -->
-    <section class="py-16 bg-surface-white border-b border-border-muted text-center">
-        <div class="max-w-3xl mx-auto px-6">
-            <h2 class="text-3xl font-bold text-on-surface mb-3">Own Your Personal Memory Layer</h2>
-            <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">
-                Connect unlimited AI agents, store notes in your own database, and maintain absolute privacy.
-            </p>
-            
-            <div class="inline-block my-2">
-                <div class="btn-container">
-                    <div class="btn-drawer transition-top">instant access</div>
-                    <div class="btn-drawer transition-bottom">...free setup</div>
-                    <a href="{' /dashboard' if user_id else '/signup'}" class="btn">
-                        <span class="btn-text">{'Launch Gateway' if user_id else 'Create Free Account'}</span>
-                    </a>
-                    <svg class="btn-corner" xmlns="http://www.w3.org/2000/svg" viewBox="-1 1 32 32"><path d="M32,32C14.355,32,0,17.645,0,0h.985c0,17.102,13.913,31.015,31.015,31.015v.985Z"></path></svg>
-                    <svg class="btn-corner" xmlns="http://www.w3.org/2000/svg" viewBox="-1 1 32 32"><path d="M32,32C14.355,32,0,17.645,0,0h.985c0,17.102,13.913,31.015,31.015,31.015v.985Z"></path></svg>
-                    <svg class="btn-corner" xmlns="http://www.w3.org/2000/svg" viewBox="-1 1 32 32"><path d="M32,32C14.355,32,0,17.645,0,0h.985c0,17.102,13.913,31.015,31.015,31.015v.985Z"></path></svg>
-                    <svg class="btn-corner" xmlns="http://www.w3.org/2000/svg" viewBox="-1 1 32 32"><path d="M32,32C14.355,32,0,17.645,0,0h.985c0,17.102,13.913,31.015,31.015,31.015v.985Z"></path></svg>
-                </div>
-            </div>
-            <p class="text-[11px] font-mono text-text-secondary mt-3">No credit card required. Works with Claude Desktop & Cursor.</p>
         </div>
     </section>
 </main>
