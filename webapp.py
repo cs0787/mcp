@@ -2,7 +2,7 @@
 Memory Notes for AI - Web Application
 Integrated with the custom Monochromatic Tailwind CSS Frontend design,
 interactive spotlight grid background, quick-start terminal, developer deep dives,
-and the pixel-accurate Neon-style branching pipeline diagram.
+and the exact architectural branching pipeline diagram.
 """
 
 import asyncpg
@@ -136,13 +136,13 @@ def _page(title: str, body: str) -> HTMLResponse:
             opacity: 1;
         }}
 
-        /* Neon Style Live Branching Stream */
-        @keyframes neonBeamFlow {{
+        /* Continuous Ambient Stream Animation */
+        @keyframes flowBeam {{
             to {{ stroke-dashoffset: -32; }}
         }}
-        .neon-stream {{
+        .flow-dash {{
             stroke-dasharray: 6 8;
-            animation: neonBeamFlow 1.2s linear infinite;
+            animation: flowBeam 1.2s linear infinite;
         }}
 
         .feature-card {{
@@ -375,19 +375,19 @@ async def landing_page(request: Request):
     </section>
 
     <!-- ========================================================================= -->
-    <!-- 2. EXACT NEON-STYLE LIVE BRANCHING TIMELINE CANVAS -->
+    <!-- 2. EXACT NEON ARCHITECTURE & DATAFLOW BRANCHING CANVAS -->
     <!-- ========================================================================= -->
     <section class="py-20 bg-[#000000] text-white border-b border-neutral-800 overflow-hidden select-none">
         <div class="max-w-6xl mx-auto px-6 lg:px-12">
             
             <div class="w-full overflow-x-auto relative">
-                <div class="relative min-w-[1020px] w-full" style="aspect-ratio:1020/380;">
+                <div class="relative min-w-[1020px] w-full" style="aspect-ratio:1020/520;">
 
-                    <svg viewBox="0 0 1020 380" preserveAspectRatio="xMidYMid meet" class="absolute inset-0 w-full h-full">
+                    <svg viewBox="0 0 1020 520" preserveAspectRatio="xMidYMid meet" class="absolute inset-0 w-full h-full">
                         <defs>
-                            <!-- Subtle Vertical Grid Pattern -->
-                            <pattern id="neonGridPattern" width="36" height="380" patternUnits="userSpaceOnUse">
-                                <line x1="0" y1="0" x2="0" y2="380" stroke="#ffffff" stroke-opacity="0.035" stroke-width="1" stroke-dasharray="2 5"/>
+                            <!-- Vertical Grid Pattern -->
+                            <pattern id="neonGridPattern" width="36" height="520" patternUnits="userSpaceOnUse">
+                                <line x1="0" y1="0" x2="0" y2="520" stroke="#ffffff" stroke-opacity="0.035" stroke-width="1" stroke-dasharray="2 5"/>
                             </pattern>
                             <!-- Glow Filter -->
                             <filter id="neonTrunkGlow" x="-20%" y="-400%" width="140%" height="900%">
@@ -397,135 +397,178 @@ async def landing_page(request: Request):
                                     <feMergeNode in="SourceGraphic"/>
                                 </feMerge>
                             </filter>
+                            <marker id="greenArrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 1 L 8 5 L 0 9 z" fill="#00e599"/>
+                            </marker>
                         </defs>
 
-                        <!-- Background vertical grid ticks -->
-                        <rect x="0" y="0" width="1020" height="380" fill="url(#neonGridPattern)"/>
+                        <!-- Background Grid -->
+                        <rect x="0" y="0" width="1020" height="520" fill="url(#neonGridPattern)"/>
 
                         <!-- Center Baseline Ruler Ticks -->
                         <g stroke="#ffffff" stroke-opacity="0.16">
-                            <line x1="170" y1="216" x2="170" y2="224"/>
-                            <line x1="206" y1="216" x2="206" y2="224"/>
-                            <line x1="242" y1="216" x2="242" y2="224"/>
-                            <line x1="278" y1="216" x2="278" y2="224"/>
-                            <line x1="314" y1="216" x2="314" y2="224"/>
-                            <line x1="350" y1="216" x2="350" y2="224"/>
-                            <line x1="386" y1="216" x2="386" y2="224"/>
-                            <line x1="422" y1="216" x2="422" y2="224"/>
-                            <line x1="458" y1="216" x2="458" y2="224"/>
-                            <line x1="494" y1="216" x2="494" y2="224"/>
-                            <line x1="530" y1="216" x2="530" y2="224"/>
-                            <line x1="566" y1="216" x2="566" y2="224"/>
-                            <line x1="602" y1="216" x2="602" y2="224"/>
-                            <line x1="638" y1="216" x2="638" y2="224"/>
-                            <line x1="674" y1="216" x2="674" y2="224"/>
-                            <line x1="710" y1="216" x2="710" y2="224"/>
-                            <line x1="746" y1="216" x2="746" y2="224"/>
-                            <line x1="782" y1="216" x2="782" y2="224"/>
-                            <line x1="818" y1="216" x2="818" y2="224"/>
-                            <line x1="854" y1="216" x2="854" y2="224"/>
-                            <line x1="890" y1="216" x2="890" y2="224"/>
-                            <line x1="926" y1="216" x2="926" y2="224"/>
-                            <line x1="962" y1="216" x2="962" y2="224"/>
+                            <line x1="280" y1="256" x2="280" y2="264"/>
+                            <line x1="316" y1="256" x2="316" y2="264"/>
+                            <line x1="352" y1="256" x2="352" y2="264"/>
+                            <line x1="388" y1="256" x2="388" y2="264"/>
+                            <line x1="424" y1="256" x2="424" y2="264"/>
+                            <line x1="460" y1="256" x2="460" y2="264"/>
+                            <line x1="496" y1="256" x2="496" y2="264"/>
+                            <line x1="532" y1="256" x2="532" y2="264"/>
+                            <line x1="568" y1="256" x2="568" y2="264"/>
+                            <line x1="604" y1="256" x2="604" y2="264"/>
+                            <line x1="640" y1="256" x2="640" y2="264"/>
+                            <line x1="676" y1="256" x2="676" y2="264"/>
+                            <line x1="712" y1="256" x2="712" y2="264"/>
+                            <line x1="748" y1="256" x2="748" y2="264"/>
+                            <line x1="784" y1="256" x2="784" y2="264"/>
+                            <line x1="820" y1="256" x2="820" y2="264"/>
+                            <line x1="856" y1="256" x2="856" y2="264"/>
                         </g>
 
-                        <!-- ================= MAIN TRUNK: Android App ================= -->
-                        <line x1="160" y1="220" x2="980" y2="220" stroke="#00e599" stroke-width="2.5" filter="url(#neonTrunkGlow)"/>
-                        <line x1="160" y1="220" x2="980" y2="220" stroke="#00e599" stroke-width="1.2" opacity="0.9" class="neon-stream"/>
+                        <!-- ================= MAIN BASELINE (Center) ================= -->
+                        <line x1="130" y1="260" x2="980" y2="260" stroke="#00e599" stroke-width="2.5" filter="url(#neonTrunkGlow)"/>
+                        <line x1="130" y1="260" x2="980" y2="260" stroke="#00e599" stroke-width="1.2" opacity="0.9" class="flow-dash"/>
 
-                        <!-- ================= BRANCH 1: Neon DB Sync (Top-Left) ================= -->
-                        <!-- Vertical drop to junction circle -->
-                        <line x1="230" y1="220" x2="230" y2="160" stroke="#00e599" stroke-width="1.2" stroke-dasharray="3 3"/>
-                        <circle cx="230" cy="220" r="3.5" fill="#000000" stroke="#00e599" stroke-width="2"/>
-                        <!-- Circular junction icon (Vercel/Upload Triangle) -->
-                        <circle cx="230" cy="148" r="14" fill="#000000" stroke="#3f3f46" stroke-width="1.5"/>
-                        <path d="M230 141 L236 153 L224 153 Z" fill="#ffffff"/>
-                        <!-- Smooth Bezier into horizontal branch -->
-                        <path d="M230 134 C230 92 255 78 280 78 H 630" stroke="#52525b" stroke-width="1.5" fill="none"/>
-                        <!-- Node 1: note created -->
-                        <circle cx="430" cy="78" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
-                        <path d="M427 78 L429 80 L433 76" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                        <line x1="430" y1="71" x2="430" y2="52" stroke="#52525b" stroke-width="1" stroke-dasharray="2 3"/>
-                        <text x="430" y="44" fill="#a1a1aa" font-size="10" font-family="'JetBrains Mono', monospace" text-anchor="middle">note created</text>
-                        <!-- Node 2: synced to neon -->
-                        <circle cx="530" cy="78" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
-                        <path d="M527 78 L529 80 L533 76" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                        <line x1="530" y1="71" x2="530" y2="52" stroke="#52525b" stroke-width="1" stroke-dasharray="2 3"/>
-                        <text x="530" y="44" fill="#a1a1aa" font-size="10" font-family="'JetBrains Mono', monospace" text-anchor="middle">synced to neon</text>
-                        <text x="550" y="82" fill="#71717a" font-size="11" font-family="'JetBrains Mono', monospace">sync complete</text>
+                        <!-- Sync Arrow from Memory Notes to Neon DB -->
+                        <path d="M 135 260 H 180" stroke="#00e599" stroke-width="2" marker-end="url(#greenArrow)"/>
 
-                        <!-- ================= BRANCH 2: FastMCP Broker (Bottom) ================= -->
-                        <!-- Vertical drop to junction circle -->
-                        <line x1="400" y1="220" x2="400" y2="280" stroke="#00e599" stroke-width="1.2" stroke-dasharray="3 3"/>
-                        <circle cx="400" cy="220" r="3.5" fill="#000000" stroke="#00e599" stroke-width="2"/>
-                        <!-- Circular junction icon (GitHub/MCP Broker Cat) -->
-                        <circle cx="400" cy="294" r="14" fill="#000000" stroke="#3f3f46" stroke-width="1.5"/>
-                        <path d="M396 290 C396 288 398 286 400 286 C402 286 404 288 404 290 C404 294 402 296 400 299 C398 296 396 294 396 290 Z M393 294 C393 298 397 301 400 301 C403 301 407 298 407 294" stroke="#ffffff" stroke-width="1.4" fill="none"/>
-                        <!-- Smooth Bezier into horizontal branch -->
-                        <path d="M400 308 C400 348 425 362 450 362 H 840" stroke="#52525b" stroke-width="1.5" fill="none"/>
-                        <!-- Node 1: tools/call -->
-                        <circle cx="620" cy="362" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
-                        <path d="M617 362 L619 364 L623 360" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                        <line x1="620" y1="369" x2="620" y2="388" stroke="#52525b" stroke-width="1" stroke-dasharray="2 3"/>
-                        <text x="620" y="400" fill="#a1a1aa" font-size="10" font-family="'JetBrains Mono', monospace" text-anchor="middle">tools/call</text>
-                        <!-- Node 2: context retrieved -->
-                        <circle cx="760" cy="362" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
-                        <path d="M757 362 L759 364 L763 360" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                        <line x1="760" y1="369" x2="760" y2="388" stroke="#52525b" stroke-width="1" stroke-dasharray="2 3"/>
-                        <text x="760" y="400" fill="#a1a1aa" font-size="10" font-family="'JetBrains Mono', monospace" text-anchor="middle">context retrieved</text>
-                        <text x="780" y="366" fill="#71717a" font-size="11" font-family="'JetBrains Mono', monospace">stream ready</text>
+                        <!-- ================= TOP LEFT BRANCH: neon db -> request data -> mcp-server ================= -->
+                        <line x1="226" y1="260" x2="226" y2="185" stroke="#00e599" stroke-width="1.4" stroke-dasharray="3 3"/>
+                        <circle cx="226" cy="260" r="3.5" fill="#000000" stroke="#00e599" stroke-width="2"/>
+                        <!-- Database Circle Icon -->
+                        <circle cx="226" cy="172" r="14" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
+                        <path d="M221 167 C221 165 223 164 226 164 C229 164 231 165 231 167 C231 169 229 170 226 170 C223 170 221 169 221 167 Z M221 172 C221 174 223 175 226 175 C229 175 231 174 231 172 M221 177 C221 179 223 180 226 180 C229 180 231 179 231 177" stroke="#ffffff" stroke-width="1.2" fill="none"/>
+                        <!-- Bezier into request data and mcp-server -->
+                        <path d="M 226 158 C 226 120 250 120 270 120 H 400 C 430 120 440 170 455 170" stroke="#71717a" stroke-width="1.5" fill="none"/>
 
-                        <!-- ================= BRANCH 3: AI Apps (Claude / Cursor) (Top-Right) ================= -->
-                        <!-- Vertical drop to junction circle -->
-                        <line x1="680" y1="220" x2="680" y2="160" stroke="#00e599" stroke-width="1.2" stroke-dasharray="3 3"/>
-                        <circle cx="680" cy="220" r="3.5" fill="#000000" stroke="#00e599" stroke-width="2"/>
-                        <!-- Circular junction avatar icon -->
-                        <circle cx="680" cy="148" r="14" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
-                        <circle cx="680" cy="145" r="4.5" fill="#d4d4d8"/>
-                        <path d="M672 156 C672 151 676 150 680 150 C684 150 688 151 688 156" fill="#d4d4d8"/>
-                        <!-- Smooth Bezier into horizontal branch -->
-                        <path d="M680 134 C680 92 705 78 730 78 H 990" stroke="#ffffff" stroke-width="1.5" fill="none"/>
-                        <!-- Node 1: context active -->
-                        <circle cx="890" cy="78" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
-                        <path d="M887 78 L889 80 L893 76" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                        <line x1="890" y1="71" x2="890" y2="52" stroke="#52525b" stroke-width="1" stroke-dasharray="2 3"/>
-                        <text x="890" y="44" fill="#a1a1aa" font-size="10" font-family="'JetBrains Mono', monospace" text-anchor="middle">context streamed</text>
+                        <!-- Top Negotiation Checkpoints -->
+                        <line x1="450" y1="170" x2="450" y2="92" stroke="#00e599" stroke-width="1.2" stroke-dasharray="3 3"/>
+                        <circle cx="450" cy="115" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
+                        <path d="M447 115 L449 117 L453 113" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <text x="450" y="65" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">negotiation<tspan x="450" dy="14">started</tspan></text>
+
+                        <line x1="590" y1="170" x2="590" y2="92" stroke="#00e599" stroke-width="1.2" stroke-dasharray="3 3"/>
+                        <circle cx="590" cy="115" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
+                        <path d="M587 115 L589 117 L593 113" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <text x="590" y="65" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">negotiation<tspan x="590" dy="14">complete</tspan></text>
+
+                        <!-- ================= TOP RIGHT BRANCH: ai apps -> request tools -> mcp-server ================= -->
+                        <line x1="825" y1="260" x2="825" y2="185" stroke="#00e599" stroke-width="1.4" stroke-dasharray="3 3"/>
+                        <circle cx="825" cy="260" r="3.5" fill="#000000" stroke="#00e599" stroke-width="2"/>
+                        <!-- Robot Circle Icon -->
+                        <circle cx="825" cy="172" r="14" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
+                        <path d="M821 169 H829 V177 H821 Z M825 165 V169 M818 173 H821 M829 173 H832 M823 172 H824 M826 172 H827" stroke="#ffffff" stroke-width="1.2" fill="none"/>
+                        <!-- Bezier into request tools and mcp-server -->
+                        <path d="M 825 158 C 825 120 805 120 780 120 H 640 C 605 120 595 170 580 170" stroke="#71717a" stroke-width="1.5" fill="none"/>
+
+                        <!-- ================= CENTER DOWN: protocol negotiation gear ================= -->
+                        <line x1="518" y1="190" x2="518" y2="310" stroke="#ffffff" stroke-width="1.4" stroke-dasharray="3 3"/>
+                        <circle cx="518" cy="326" r="14" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
+                        <path d="M518 321 A5 5 0 1 0 518 331 A5 5 0 1 0 518 321 M518 318 V320 M518 332 V334 M510 326 H512 M524 326 H526" stroke="#ffffff" stroke-width="1.4" fill="none"/>
+                        <text x="518" y="358" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">protocol<tspan x="518" dy="14">negotiation</tspan></text>
+
+                        <!-- Solid line from mcp-server to tools & data access granted -->
+                        <path d="M 570 170 C 625 170 625 250 625 290" stroke="#71717a" stroke-width="1.5" fill="none"/>
+                        <circle cx="625" cy="290" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
+                        <path d="M622 290 L624 292 L628 288" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <text x="625" y="322" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">tools &amp; data<tspan x="625" dy="14">access granted</tspan></text>
+
+                        <!-- ================= BOTTOM PIPELINE: write note -> mcp-server -> neon db -> sync ================= -->
+                        <!-- From ai apps drop down through green ring -->
+                        <line x1="915" y1="275" x2="915" y2="370" stroke="#00e599" stroke-width="1.4" stroke-dasharray="3 3"/>
+                        <circle cx="915" cy="325" r="3.5" fill="#000000" stroke="#00e599" stroke-width="2"/>
+                        <!-- Smooth line into write note -->
+                        <path d="M 915 370 C 900 370 890 370 880 370" stroke="#71717a" stroke-width="1.5" fill="none"/>
+
+                        <!-- From write note curve down and flow left across bottom -->
+                        <path d="M 770 370 C 740 370 740 430 710 430 H 75" stroke="#00e599" stroke-width="1.6" stroke-dasharray="4 4" fill="none" class="flow-dash"/>
+
+                        <!-- Node 1: note processed by mcp-server -->
+                        <circle cx="625" cy="430" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
+                        <path d="M622 430 L624 432 L628 428" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <text x="625" y="462" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">note processed<tspan x="625" dy="14">by mcp-server</tspan></text>
+
+                        <!-- Node 2: note saved in neon db -->
+                        <line x1="265" y1="430" x2="265" y2="280" stroke="#00e599" stroke-width="1.4" stroke-dasharray="3 3" marker-end="url(#greenArrow)"/>
+                        <circle cx="265" cy="430" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
+                        <path d="M262 430 L264 432 L268 428" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <text x="265" y="462" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">note saved<tspan x="265" dy="14">in neon db</tspan></text>
+
+                        <!-- Node 3: sync (auto / manual) -->
+                        <line x1="75" y1="430" x2="75" y2="280" stroke="#00e599" stroke-width="1.4" stroke-dasharray="3 3" marker-end="url(#greenArrow)"/>
+                        <circle cx="75" cy="430" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
+                        <path d="M72 430 L74 432 L78 428" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <text x="75" y="462" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">sync<tspan x="75" dy="14">(auto / manual)</tspan></text>
                     </svg>
 
                     <!-- ================= HTML CAPSULE PILLS OVERLAY ================= -->
 
-                    <!-- 1. Android App Main Pill (White Capsule) -->
-                    <div class="absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] select-none"
-                         style="left:4.5%; top:57.8%;">
-                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 3.79 2 6v12c0 2.21 4.48 4 10 4s10-1.79 10-4V6c0-2.21-4.48-4-10-4zm0 2c4.97 0 8 1.46 8 2s-3.03 2-8 2-8-1.46-8-2 3.03-2 8-2zm0 16c-4.97 0-8-1.46-8-2v-2.23c2.08 1.34 5.09 2.23 8 2.23s5.92-.89 8-2.23V18c0 .54-3.03 2-8 2zm0-5c-4.97 0-8-1.46-8-2v-2.23c2.08 1.34 5.09 2.23 8 2.23s5.92-.89 8-2.23V13c0 .54-3.03 2-8 2z"/></svg>
-                        Android App
+                    <!-- 1. Memory Notes (Origin Left) -->
+                    <div class="absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] select-none"
+                         style="left:1.5%; top:50%;">
+                        <svg class="w-3.5 h-3.5 text-[#0a0a0a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        Memory Notes
+                    </div>
+                    <div class="absolute mono text-[11px] text-white/50 text-center" style="left:2.5%; top:54.5%;">
+                        Notes added<br>by you
+                    </div>
+                    <div class="absolute mono text-[10px] text-[#00e599] font-semibold" style="left:14.2%; top:51.8%;">
+                        sync
                     </div>
 
-                    <!-- 2. Neon DB Branch Pill (Gray Capsule) -->
-                    <div class="absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-semibold select-none border border-white/10 shadow-md"
-                         style="left:26.5%; top:20.5%;">
-                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 3.79 2 6v12c0 2.21 4.48 4 10 4s10-1.79 10-4V6c0-2.21-4.48-4-10-4zm0 2c4.97 0 8 1.46 8 2s-3.03 2-8 2-8-1.46-8-2 3.03-2 8-2zm0 16c-4.97 0-8-1.46-8-2v-2.23c2.08 1.34 5.09 2.23 8 2.23s5.92-.89 8-2.23V18c0 .54-3.03 2-8 2z"/></svg>
-                        neon-sync
-                    </div>
-
-                    <!-- 3. FastMCP Broker Branch Pill (Gray Capsule) -->
-                    <div class="absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-semibold select-none border border-white/10 shadow-md"
-                         style="left:42.5%; top:95.2%;">
-                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 3.79 2 6v12c0 2.21 4.48 4 10 4s10-1.79 10-4V6c0-2.21-4.48-4-10-4zm0 2c4.97 0 8 1.46 8 2s-3.03 2-8 2-8-1.46-8-2 3.03-2 8-2zm0 16c-4.97 0-8-1.46-8-2v-2.23c2.08 1.34 5.09 2.23 8 2.23s5.92-.89 8-2.23V18c0 .54-3.03 2-8 2z"/></svg>
-                        mcp-broker
-                    </div>
-
-                    <!-- 4. AI Clients Pill (White Capsule) -->
-                    <div class="absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] select-none"
-                         style="left:70.5%; top:20.5%;">
+                    <!-- 2. Neon DB (Middle Left) -->
+                    <div class="absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] select-none"
+                         style="left:18.5%; top:50%;">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 3.79 2 6v12c0 2.21 4.48 4 10 4s10-1.79 10-4V6c0-2.21-4.48-4-10-4zm0 2c4.97 0 8 1.46 8 2s-3.03 2-8 2-8-1.46-8-2 3.03-2 8-2zm0 16c-4.97 0-8-1.46-8-2v-2.23c2.08 1.34 5.09 2.23 8 2.23s5.92-.89 8-2.23V18c0 .54-3.03 2-8 2z"/></svg>
-                        claude-cursor
+                        neon db
+                    </div>
+                    <div class="absolute mono text-[11px] text-white/50 text-center" style="left:19.5%; top:54.5%;">
+                        Stores all notes
+                    </div>
+
+                    <!-- 3. Request Data (Top Left Pill) -->
+                    <div class="absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md"
+                         style="left:26.5%; top:23.1%;">
+                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 3.79 2 6v12c0 2.21 4.48 4 10 4s10-1.79 10-4V6c0-2.21-4.48-4-10-4zm0 2c4.97 0 8 1.46 8 2s-3.03 2-8 2-8-1.46-8-2 3.03-2 8-2zm0 16c-4.97 0-8-1.46-8-2v-2.23c2.08 1.34 5.09 2.23 8 2.23s5.92-.89 8-2.23V18c0 .54-3.03 2-8 2z"/></svg>
+                        request data
+                    </div>
+
+                    <!-- 4. MCP Server (Center Yellow Hub) -->
+                    <div class="absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-[#fde047] text-[#0a0a0a] mono text-xs font-extrabold shadow-[0_0_25px_rgba(253,224,71,0.4)] select-none border-2 border-white/40"
+                         style="left:51%; top:32.7%;">
+                        <svg class="w-4 h-4 text-[#0a0a0a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                        mcp-server
+                    </div>
+
+                    <!-- 5. Request Tools (Top Right Pill) -->
+                    <div class="absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md"
+                         style="left:64.5%; top:23.1%;">
+                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        request tools
+                    </div>
+
+                    <!-- 6. AI Apps (Right Endpoint) -->
+                    <div class="absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] select-none"
+                         style="left:86.5%; top:50%;">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+                        ai apps
+                    </div>
+                    <div class="absolute mono text-[11px] text-white/50 text-center" style="left:86.5%; top:54.5%;">
+                        AI Agents / Apps
+                    </div>
+
+                    <!-- 7. Write Note (Bottom Right Pill) -->
+                    <div class="absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md"
+                         style="left:76.5%; top:71.2%;">
+                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                        write note
                     </div>
 
                     <!-- Timestamps -->
-                    <div class="absolute -translate-x-1/2 mono text-[10px] text-white/35" style="left:22.5%; top:66%;">18:24:00</div>
-                    <div class="absolute -translate-x-1/2 mono text-[10px] text-white/35" style="left:39.2%; top:48%;">19:08:12</div>
-                    <div class="absolute -translate-x-1/2 mono text-[10px] text-white/35" style="left:66.6%; top:66%;">20:32:04</div>
+                    <div class="absolute -translate-x-1/2 mono text-[10px] text-white/35" style="left:21.8%; top:60.5%;">18:24:00</div>
+                    <div class="absolute -translate-x-1/2 mono text-[10px] text-white/35" style="left:40.8%; top:42.5%;">19:08:12</div>
+                    <div class="absolute -translate-x-1/2 mono text-[10px] text-white/35" style="left:73.5%; top:54.5%;">20:32:04</div>
 
                 </div>
             </div>
