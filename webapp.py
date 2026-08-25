@@ -2,7 +2,7 @@
 Memory Notes for AI - Web Application
 Integrated with the custom Monochromatic Tailwind CSS Frontend design,
 interactive spotlight grid background, quick-start terminal, live architecture
-branching pipeline diagram (Android App -> Neon DB -> FastMCP -> Claude/ChatGPT/Cursor),
+branching pipeline diagram (Android -> Neon DB -> FastMCP Broker -> AI Apps),
 and developer feature deep dives.
 """
 
@@ -413,7 +413,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. Architecture & Live Branching Pipeline Section -->
+    <!-- 2. Architecture & Live Branching Pipeline Section (FastMCP Broker) -->
     <section class="py-16 bg-[#070709] border-b border-neutral-800">
         <div class="max-w-6xl mx-auto px-6 lg:px-12">
             
@@ -424,17 +424,17 @@ async def landing_page(request: Request):
                         Live Architecture Pipeline
                     </p>
                     <h2 class="text-white text-2xl md:text-[28px] font-bold tracking-tight">
-                        Android App &rarr; Neon DB &rarr; MCP Server &rarr; AI Apps
+                        Android App &rarr; Neon DB &rarr; FastMCP Broker &rarr; AI Context Delivery
                     </h2>
                 </div>
-                <p class="mono text-xs text-white/40 max-w-[32ch] text-right hidden md:block">
-                    Notes captured in Android sync to Neon DB, exposed via FastMCP to Claude, ChatGPT, and Cursor.
+                <p class="mono text-xs text-white/40 max-w-[34ch] text-right hidden md:block">
+                    FastMCP acts as the broker: it connects directly to Neon DB, intercepts AI tool calls, and streams note context to LLMs.
                 </p>
             </div>
 
             <!-- Pipeline Diagram Container -->
             <div class="w-full overflow-x-auto rounded-2xl border border-white/[0.08] bg-[#0d0d0f]">
-                <div class="relative min-w-[950px] w-full" style="aspect-ratio:1000/380;">
+                <div class="relative min-w-[980px] w-full" style="aspect-ratio:1000/380;">
 
                     <svg viewBox="0 0 1000 380" preserveAspectRatio="xMidYMid meet" class="absolute inset-0 w-full h-full">
                         <defs>
@@ -456,56 +456,58 @@ async def landing_page(request: Request):
                         <!-- Baseline ruler ticks -->
                         <g stroke="#ffffff" stroke-opacity="0.18">
                             <line x1="170" y1="196" x2="170" y2="204"/><line x1="210" y1="196" x2="210" y2="204"/>
-                            <line x1="300" y1="196" x2="300" y2="204"/><line x1="340" y1="196" x2="340" y2="204"/>
-                            <line x1="430" y1="196" x2="430" y2="204"/><line x1="470" y1="196" x2="470" y2="204"/>
-                            <line x1="560" y1="196" x2="560" y2="204"/><line x1="600" y1="196" x2="600" y2="204"/>
-                            <line x1="690" y1="196" x2="690" y2="204"/><line x1="730" y1="196" x2="730" y2="204"/>
-                            <line x1="820" y1="196" x2="820" y2="204"/><line x1="860" y1="196" x2="860" y2="204"/>
-                            <line x1="910" y1="196" x2="910" y2="204"/>
+                            <line x1="270" y1="196" x2="270" y2="204"/><line x1="330" y1="196" x2="330" y2="204"/>
+                            <line x1="410" y1="196" x2="410" y2="204"/><line x1="470" y1="196" x2="470" y2="204"/>
+                            <line x1="570" y1="196" x2="570" y2="204"/><line x1="630" y1="196" x2="630" y2="204"/>
+                            <line x1="710" y1="196" x2="710" y2="204"/><line x1="770" y1="196" x2="770" y2="204"/>
+                            <line x1="850" y1="196" x2="850" y2="204"/><line x1="910" y1="196" x2="910" y2="204"/>
                         </g>
 
-                        <!-- ================= MAIN TRUNK: Android App -> Neon DB -> MCP ================= -->
-                        <path d="M150,200 H950" stroke="#00e599" stroke-width="2.5" fill="none" filter="url(#trunkGlow)"/>
-                        <path d="M150,200 H950" stroke="#00e599" stroke-width="1" fill="none" opacity="0.9" class="flow-anim"/>
+                        <!-- ================= 1. INGESTION TRUNK: Android App -> Neon DB -> FastMCP ================= -->
+                        <path d="M120,200 H490" stroke="#00e599" stroke-width="2.8" fill="none" filter="url(#trunkGlow)"/>
+                        <path d="M120,200 H490" stroke="#00e599" stroke-width="1.2" fill="none" opacity="0.9" class="flow-anim"/>
 
-                        <!-- Pipeline Junction Markers -->
-                        <circle cx="280" cy="200" r="4.5" fill="#050505" stroke="#00e599" stroke-width="2"/>
-                        <circle cx="530" cy="200" r="4.5" fill="#050505" stroke="#00e599" stroke-width="2"/>
-                        <circle cx="780" cy="200" r="4.5" fill="#050505" stroke="#00e599" stroke-width="2"/>
+                        <!-- Junction 1: Neon DB Persistence -->
+                        <circle cx="290" cy="200" r="5" fill="#050505" stroke="#00e599" stroke-width="2"/>
 
-                        <!-- ================= BRANCH 1: Claude AI Integration (Top-Left) ================= -->
+                        <!-- Junction 2: FastMCP Broker Hub -->
+                        <circle cx="490" cy="200" r="7" fill="#050505" stroke="#00e599" stroke-width="2.5"/>
+                        <circle cx="490" cy="200" r="3" fill="#00e599"/>
+
+                        <!-- ================= 2. BROKER DISTRIBUTION BRANCHES TO AI APPS ================= -->
+                        
+                        <!-- Branch A: Claude AI (Top Branch) -->
                         <path id="b1-drop" data-branch="b1" class="branch-path branch-dashed"
-                              d="M280,200 C280,145 320,72 350,72"
+                              d="M490,200 C530,200 560,78 600,78"
                               stroke="#f5c14e" stroke-width="1.6" stroke-dasharray="4 5" fill="none" opacity="0.85"/>
                         <path id="b1-line" data-branch="b1" class="branch-path branch-solid"
-                              d="M350,70 H640" stroke="#f5c14e" stroke-width="1.6" fill="none" opacity="0.9"/>
+                              d="M600,78 H940" stroke="#f5c14e" stroke-width="1.6" fill="none" opacity="0.9"/>
 
                         <!-- Checkpoints on Claude Branch -->
-                        <line x1="490" y1="70" x2="490" y2="96" stroke="#f5c14e" stroke-width="1.2" stroke-dasharray="3 4" opacity="0.6"/>
-                        <circle cx="490" cy="70" r="5" fill="#3a2c0d" stroke="#f5c14e" stroke-width="2"/>
-                        <line x1="600" y1="70" x2="600" y2="96" stroke="#f5c14e" stroke-width="1.2" stroke-dasharray="3 4" opacity="0.6"/>
-                        <circle cx="600" cy="70" r="5" fill="#3a2c0d" stroke="#f5c14e" stroke-width="2"/>
+                        <line x1="740" y1="78" x2="740" y2="104" stroke="#f5c14e" stroke-width="1.2" stroke-dasharray="3 4" opacity="0.6"/>
+                        <circle cx="740" cy="78" r="4.5" fill="#3a2c0d" stroke="#f5c14e" stroke-width="2"/>
+                        <circle cx="870" cy="78" r="4.5" fill="#3a2c0d" stroke="#f5c14e" stroke-width="2"/>
 
-                        <!-- ================= BRANCH 2: ChatGPT & Custom Agents (Bottom) ================= -->
-                        <path id="b2-drop" data-branch="b2" class="branch-path branch-dashed"
-                              d="M530,200 C530,255 570,328 600,328"
-                              stroke="#22d3ee" stroke-width="1.6" stroke-dasharray="4 5" fill="none" opacity="0.85"/>
+                        <!-- Branch B: Cursor / IDE Agents (Middle Branch) -->
                         <path id="b2-line" data-branch="b2" class="branch-path branch-solid"
-                              d="M600,330 H860" stroke="#22d3ee" stroke-width="1.6" fill="none" opacity="0.9"/>
+                              d="M490,200 H940" stroke="#a78bfa" stroke-width="1.8" fill="none" opacity="0.9"/>
+                        <circle cx="720" cy="200" r="4.5" fill="#171324" stroke="#a78bfa" stroke-width="2"/>
+
+                        <!-- Branch C: ChatGPT / Custom Agents (Bottom Branch) -->
+                        <path id="b3-drop" data-branch="b3" class="branch-path branch-dashed"
+                              d="M490,200 C530,200 560,322 600,322"
+                              stroke="#22d3ee" stroke-width="1.6" stroke-dasharray="4 5" fill="none" opacity="0.85"/>
+                        <path id="b3-line" data-branch="b3" class="branch-path branch-solid"
+                              d="M600,322 H940" stroke="#22d3ee" stroke-width="1.6" fill="none" opacity="0.9"/>
 
                         <!-- Checkpoints on ChatGPT Branch -->
-                        <circle cx="740" cy="330" r="5" fill="#0d2f36" stroke="#22d3ee" stroke-width="2"/>
-
-                        <!-- ================= BRANCH 3: Cursor & IDE Agents (Top-Right) ================= -->
-                        <path id="b3-drop" data-branch="b3" class="branch-path branch-dashed"
-                              d="M780,200 C780,145 810,72 840,72"
-                              stroke="#a78bfa" stroke-width="1.6" stroke-dasharray="4 5" fill="none" opacity="0.85"/>
-                        <path id="b3-line" data-branch="b3" class="branch-path branch-solid"
-                              d="M840,70 H985" stroke="#a78bfa" stroke-width="1.6" fill="none" opacity="0.9"/>
+                        <line x1="730" y1="322" x2="730" y2="296" stroke="#22d3ee" stroke-width="1.2" stroke-dasharray="3 4" opacity="0.6"/>
+                        <circle cx="730" cy="322" r="4.5" fill="#0d2f36" stroke="#22d3ee" stroke-width="2"/>
+                        <circle cx="870" cy="322" r="4.5" fill="#0d2f36" stroke="#22d3ee" stroke-width="2"/>
                     </svg>
 
                     <!-- HTML Overlay Elements -->
-                    <!-- Main Trunk Origin: Android App -->
+                    <!-- Origin: Android App -->
                     <div class="absolute -translate-y-1/2 flex items-center gap-2 pl-2.5 pr-3.5 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-semibold shadow-[0_0_15px_rgba(255,255,255,0.2)]"
                          style="left:1.2%; top:52.6%;">
                         <span class="relative flex h-2 w-2">
@@ -514,55 +516,67 @@ async def landing_page(request: Request):
                         </span>
                         Android App
                     </div>
-
-                    <!-- Trunk Milestones (Neon DB & FastMCP Gateway) -->
-                    <div class="absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#0c1a14] border border-[#00e599]/30 mono text-[10px] text-[#6ff7c9]"
-                         style="left:28%; top:62%;">
-                        ☁️ Neon DB (Sync)
+                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] text-white/40" style="left:12%; top:62%;">
+                        Local Room DB
                     </div>
 
-                    <div class="absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#111118] border border-[#00e599]/30 mono text-[10px] text-white"
-                         style="left:53%; top:43%;">
-                        ⚡ FastMCP Gateway
+                    <!-- Database: Neon Postgres -->
+                    <div class="absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0c1a14] border border-[#00e599]/40 mono text-xs font-semibold text-[#6ff7c9] shadow-sm"
+                         style="left:29%; top:52.6%;">
+                        ☁️ Neon DB
+                    </div>
+                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] text-[#6ff7c9]/70" style="left:29%; top:63%;">
+                        pg_trgm storage
+                    </div>
+
+                    <!-- Central Broker: FastMCP Server -->
+                    <div class="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1"
+                         style="left:49%; top:39%;">
+                        <div class="px-3.5 py-1.5 rounded-full bg-white text-[#0a0a0a] border-2 border-[#00e599] mono text-xs font-bold shadow-[0_0_15px_rgba(0,229,153,0.3)]">
+                            ⚡ FastMCP Broker
+                        </div>
+                        <span class="mono text-[9px] text-[#00e599] font-medium tracking-wide uppercase">
+                            Context Hub & Auth
+                        </span>
                     </div>
 
                     <!-- Branch 1: Claude AI -->
-                    <div data-branch="b1" class="pill-badge branch-trigger absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1a1712] border border-[#f5c14e]/30 mono text-xs text-white cursor-default"
-                         style="left:34%; top:18.4%;">
+                    <div data-branch="b1" class="pill-badge branch-trigger absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1a1712] border border-[#f5c14e]/30 mono text-xs text-white cursor-default"
+                         style="left:59%; top:20.5%;">
                         <span class="w-2 h-2 rounded-full bg-[#f5c14e] shadow-[0_0_6px_#f5c14e]"></span>
                         Claude AI
                     </div>
-                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] text-[#f5c14e]/90 font-medium" style="left:49%; top:28.5%;">
-                        create_note()
+                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] text-[#f5c14e]/90 font-medium" style="left:74%; top:30.5%;">
+                        &gt; AI sends tool call
                     </div>
-                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] text-white/50" style="left:54.5%; top:23%;">→</div>
-                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] text-[#f5c14e]/90 font-medium" style="left:60%; top:28.5%;">
-                        sync to android
-                    </div>
-
-                    <!-- Branch 2: ChatGPT & Agents -->
-                    <div data-branch="b2" class="pill-badge branch-trigger absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0c1a1c] border border-[#22d3ee]/30 mono text-xs text-white cursor-default"
-                         style="left:59%; top:86.8%;">
-                        <span class="w-2 h-2 rounded-full bg-[#22d3ee] shadow-[0_0_6px_#22d3ee]"></span>
-                        ChatGPT / Agents
-                    </div>
-                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] px-2 py-0.5 rounded border border-[#22d3ee]/30 bg-[#22d3ee]/10 text-[#67e3f5]"
-                         style="left:74%; top:86.8%;">
-                        ⚡ search_notes() · 3.4ms match
+                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] px-2 py-0.5 rounded border border-[#f5c14e]/30 bg-[#f5c14e]/10 text-[#f5c14e]" style="left:87%; top:20.5%;">
+                        ✓ Context Streamed
                     </div>
 
-                    <!-- Branch 3: Cursor & IDEs -->
-                    <div data-branch="b3" class="pill-badge branch-trigger absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#171324] border border-[#a78bfa]/30 mono text-xs text-white cursor-default"
-                         style="left:82%; top:18.4%;">
+                    <!-- Branch 2: Cursor IDE -->
+                    <div data-branch="b2" class="pill-badge branch-trigger absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#171324] border border-[#a78bfa]/30 mono text-xs text-white cursor-default"
+                         style="left:59%; top:52.6%;">
                         <span class="relative flex h-2 w-2">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#a78bfa] opacity-70"></span>
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-[#a78bfa]"></span>
                         </span>
-                        Cursor & IDEs
+                        Cursor / IDEs
                     </div>
-                    <div class="absolute -translate-y-1/2 mono text-[10px] px-2 py-0.5 rounded border border-[#a78bfa]/30 bg-[#a78bfa]/10 text-[#d8b4fe] whitespace-nowrap"
-                         style="left:82%; top:28.5%;">
-                        bi-directional sync active
+                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] px-2 py-0.5 rounded border border-[#a78bfa]/30 bg-[#a78bfa]/10 text-[#d8b4fe]" style="left:78%; top:52.6%;">
+                        search_notes() &rarr; SSE Stream
+                    </div>
+
+                    <!-- Branch 3: ChatGPT & Agents -->
+                    <div data-branch="b3" class="pill-badge branch-trigger absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0c1a1c] border border-[#22d3ee]/30 mono text-xs text-white cursor-default"
+                         style="left:59%; top:84.7%;">
+                        <span class="w-2 h-2 rounded-full bg-[#22d3ee] shadow-[0_0_6px_#22d3ee]"></span>
+                        ChatGPT / Agents
+                    </div>
+                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] text-[#22d3ee]/90 font-medium" style="left:73%; top:74.5%;">
+                        &gt; Trigram DB lookup
+                    </div>
+                    <div class="absolute -translate-x-1/2 -translate-y-1/2 mono text-[10px] px-2 py-0.5 rounded border border-[#22d3ee]/30 bg-[#22d3ee]/10 text-[#67e3f5]" style="left:87%; top:84.7%;">
+                        ⚡ 3.4ms Injected
                     </div>
 
                 </div>
@@ -570,11 +584,10 @@ async def landing_page(request: Request):
 
             <!-- Legend / Flow Steps -->
             <div class="mt-6 flex flex-wrap gap-x-8 gap-y-3 mono text-[11px] text-white/40">
-                <span class="flex items-center gap-2"><i class="w-3 h-[2px] bg-[#00e599] inline-block"></i>Android App · local capture & storage</span>
-                <span class="flex items-center gap-2"><i class="w-3 h-[2px] bg-[#00e599] inline-block"></i>Neon DB + FastMCP · cloud persistence & gateway</span>
-                <span class="flex items-center gap-2"><i class="w-3 h-[2px] bg-[#f5c14e] inline-block"></i>Claude AI · write tool execution</span>
-                <span class="flex items-center gap-2"><i class="w-3 h-[2px] bg-[#22d3ee] inline-block"></i>ChatGPT · fuzzy context recall</span>
-                <span class="flex items-center gap-2"><i class="w-3 h-[2px] bg-[#a78bfa] inline-block"></i>Cursor · IDE workspace integration</span>
+                <span class="flex items-center gap-2"><i class="w-3 h-[2px] bg-[#00e599] inline-block"></i>1. Android notes sync directly to Neon DB</span>
+                <span class="flex items-center gap-2"><i class="w-3 h-[2px] bg-white inline-block"></i>2. FastMCP acts as broker with direct DB access</span>
+                <span class="flex items-center gap-2"><i class="w-3 h-[2px] bg-[#f5c14e] inline-block"></i>3. AI apps request tools via FastMCP</span>
+                <span class="flex items-center gap-2"><i class="w-3 h-[2px] bg-[#22d3ee] inline-block"></i>4. FastMCP extracts DB context & streams to AI</span>
             </div>
 
         </div>
