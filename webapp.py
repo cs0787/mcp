@@ -2,7 +2,8 @@
 Memory Notes for AI - Web Application
 Integrated with the custom Monochromatic Tailwind CSS Frontend design,
 interactive spotlight grid background, quick-start terminal, developer deep dives,
-and the Neon-style 2-phase synchronized architecture animation.
+and the Neon-style 2-phase synchronized architecture animation:
+Left-to-Right -> Rest -> Right-to-Left -> Rest -> Loop.
 """
 
 import asyncpg
@@ -136,19 +137,23 @@ def _page(title: str, body: str) -> HTMLResponse:
             opacity: 1;
         }}
 
-        /* Neon Pipeline Transitions */
+        /* Smooth Path Stroke Travel & Resting Transitions */
         .anim-path {{
-            transition: stroke-dashoffset 1.8s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease, opacity 0.4s ease;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease, opacity 0.4s ease;
         }}
         .node-check {{
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
             transform-origin: center;
         }}
         .node-check.hidden-node {{
             transform: scale(0);
             opacity: 0;
         }}
-        .pill-active {{
+        .pill-badge {{
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }}
+        .pill-badge.pill-active {{
+            transform: scale(1.05);
             box-shadow: 0 0 25px rgba(0, 229, 153, 0.4);
             border-color: #00e599 !important;
         }}
@@ -211,7 +216,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
 
     // =========================================================================
-    // 2-PHASE SYNCHRONIZED ARCHITECTURE ANIMATION
+    // 2-PHASE ARCHITECTURE ANIMATION: Left-to-Right -> Rest -> Right-to-Left -> Rest
     // =========================================================================
     let currentAnimPhase = 1;
     let animTimer = null;
@@ -220,6 +225,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     function runPhase(phase, manual = false) {{
         if (manual) {{
             autoPlay = false;
+            clearTimeout(animTimer);
             document.getElementById('playPauseBtn').innerText = '▶ Play';
         }}
         currentAnimPhase = phase;
@@ -228,15 +234,15 @@ def _page(title: str, body: str) -> HTMLResponse:
         const btn2 = document.getElementById('phase-btn-2');
         const statusText = document.getElementById('anim-status-indicator');
 
-        // SVG Path references
-        const mainBeamLeft = document.getElementById('beam-main-left');
-        const mainBeamRight = document.getElementById('beam-main-right');
+        // Path references
+        const beamLeft = document.getElementById('beam-main-left');
+        const beamRight = document.getElementById('beam-main-right');
         const branchTopLeft = document.getElementById('branch-top-left');
         const branchTopRight = document.getElementById('branch-top-right');
         const branchBottomWrite = document.getElementById('branch-bottom-write');
-        const returnSyncLine = document.getElementById('branch-bottom-return');
+        const branchBottomReturn = document.getElementById('branch-bottom-return');
 
-        // Checkpoint Nodes
+        // Checkpoints
         const chkNegStart = document.getElementById('chk-neg-start');
         const chkNegComplete = document.getElementById('chk-neg-complete');
         const chkAccessGranted = document.getElementById('chk-access-granted');
@@ -255,73 +261,114 @@ def _page(title: str, body: str) -> HTMLResponse:
             btn1.className = 'px-3.5 py-1.5 rounded-lg border border-[#00e599] bg-[#00e599]/10 text-[#00e599] mono text-xs font-semibold shadow-[0_0_10px_rgba(0,229,153,0.2)]';
             btn2.className = 'px-3.5 py-1.5 rounded-lg border border-white/10 bg-white/5 text-white/50 hover:text-white mono text-xs font-medium';
 
-            statusText.innerHTML = '<span class="text-[#00e599] font-bold">Phase 1:</span> Main signal moves from Memory Notes &rarr; Neon DB &rarr; MCP Server while negotiation protocols execute.';
+            statusText.innerHTML = '<span class="text-[#00e599] font-bold">1. Left to Right:</span> Memory Notes &rarr; neon db &rarr; mcp-server. Negotiation protocols execute along the branch.';
 
-            // Reset Phase 2 elements
-            mainBeamRight.style.strokeDashoffset = '500';
+            // Reset Right-Side (Phase 2) paths and nodes
+            beamRight.style.strokeDashoffset = '400';
             branchTopRight.style.strokeDashoffset = '600';
             branchBottomWrite.style.strokeDashoffset = '300';
-            returnSyncLine.style.strokeDashoffset = '900';
+            branchBottomReturn.style.strokeDashoffset = '700';
+
             chkAccessGranted.classList.add('hidden-node');
             chkNoteProcessed.classList.add('hidden-node');
             chkNoteSaved.classList.add('hidden-node');
             chkSyncFinal.classList.add('hidden-node');
             pillAi.classList.remove('pill-active');
 
-            // Animate Phase 1
-            pillMemNotes.classList.add('pill-active');
-            pillNeon.classList.add('pill-active');
-            pillMcp.classList.add('pill-active');
+            // Reset Left-Side paths before firing
+            beamLeft.style.strokeDashoffset = '400';
+            branchTopLeft.style.strokeDashoffset = '600';
+            chkNegStart.classList.add('hidden-node');
+            chkNegComplete.classList.add('hidden-node');
 
-            // 1. Straight green beam along scale
-            mainBeamLeft.style.strokeDashoffset = '0';
-            // 2. Simultaneously draw top left curved branch
-            branchTopLeft.style.strokeDashoffset = '0';
+            // Trigger Left to Right animation
+            setTimeout(() => {{
+                beamLeft.style.strokeDashoffset = '0';
+                branchTopLeft.style.strokeDashoffset = '0';
+                pillMemNotes.classList.add('pill-active');
+                pillNeon.classList.add('pill-active');
+            }}, 50);
 
-            // Timed checkpoint pop-ins during travel
-            setTimeout(() => chkNegStart.classList.remove('hidden-node'), 700);
-            setTimeout(() => chkNegComplete.classList.remove('hidden-node'), 1400);
+            // Pop in nodes as the signal travels
+            setTimeout(() => chkNegStart.classList.remove('hidden-node'), 650);
+            setTimeout(() => {{
+                chkNegComplete.classList.remove('hidden-node');
+                pillMcp.classList.add('pill-active');
+            }}, 1300);
+
+            // After animation finishes (~1.5s), it RESTS until 3.8s, then triggers Phase 2
+            if (autoPlay) {{
+                clearTimeout(animTimer);
+                animTimer = setTimeout(() => runPhase(2, false), 3800);
+            }}
         }} 
         else if (phase === 2) {{
             // Button styles
             btn2.className = 'px-3.5 py-1.5 rounded-lg border border-[#00e599] bg-[#00e599]/10 text-[#00e599] mono text-xs font-semibold shadow-[0_0_10px_rgba(0,229,153,0.2)]';
             btn1.className = 'px-3.5 py-1.5 rounded-lg border border-white/10 bg-white/5 text-white/50 hover:text-white mono text-xs font-medium';
 
-            statusText.innerHTML = '<span class="text-[#fde047] font-bold">Phase 2:</span> Main signal advances from AI Apps &rarr; MCP Server while tool calls execute and write back to Neon & Mobile.';
+            statusText.innerHTML = '<span class="text-[#fde047] font-bold">2. Right to Left:</span> AI Apps request tools &rarr; Context granted &rarr; Notes written back to neon db & Memory Notes.';
 
-            pillAi.classList.add('pill-active');
-            pillMcp.classList.add('pill-active');
+            // Reset Left-Side (Phase 1) paths and nodes
+            beamLeft.style.strokeDashoffset = '400';
+            branchTopLeft.style.strokeDashoffset = '600';
+            chkNegStart.classList.add('hidden-node');
+            chkNegComplete.classList.add('hidden-node');
+            pillMemNotes.classList.remove('pill-active');
+            pillNeon.classList.remove('pill-active');
 
-            // 1. Straight green beam along scale from AI apps to MCP server
-            mainBeamRight.style.strokeDashoffset = '0';
+            // Reset Right-Side paths before firing
+            beamRight.style.strokeDashoffset = '400';
+            branchTopRight.style.strokeDashoffset = '600';
+            branchBottomWrite.style.strokeDashoffset = '300';
+            branchBottomReturn.style.strokeDashoffset = '700';
 
-            // 2. Simultaneously draw request tools branch & bottom write branch
-            branchTopRight.style.strokeDashoffset = '0';
-            branchBottomWrite.style.strokeDashoffset = '0';
-            returnSyncLine.style.strokeDashoffset = '0';
+            chkAccessGranted.classList.add('hidden-node');
+            chkNoteProcessed.classList.add('hidden-node');
+            chkNoteSaved.classList.add('hidden-node');
+            chkSyncFinal.classList.add('hidden-node');
 
-            setTimeout(() => chkAccessGranted.classList.remove('hidden-node'), 800);
-            setTimeout(() => chkNoteProcessed.classList.remove('hidden-node'), 1000);
-            setTimeout(() => chkNoteSaved.classList.remove('hidden-node'), 1400);
-            setTimeout(() => chkSyncFinal.classList.remove('hidden-node'), 1800);
+            // Trigger Right to Left animation
+            setTimeout(() => {{
+                beamRight.style.strokeDashoffset = '0';
+                branchTopRight.style.strokeDashoffset = '0';
+                branchBottomWrite.style.strokeDashoffset = '0';
+                branchBottomReturn.style.strokeDashoffset = '0';
+                pillAi.classList.add('pill-active');
+                pillMcp.classList.add('pill-active');
+            }}, 50);
+
+            // Pop in nodes sequentially
+            setTimeout(() => chkAccessGranted.classList.remove('hidden-node'), 750);
+            setTimeout(() => chkNoteProcessed.classList.remove('hidden-node'), 950);
+            setTimeout(() => chkNoteSaved.classList.remove('hidden-node'), 1350);
+            setTimeout(() => {{
+                chkSyncFinal.classList.remove('hidden-node');
+                pillMemNotes.classList.add('pill-active');
+            }}, 1650);
+
+            // After animation finishes (~1.7s), it RESTS until 4.2s, then loops back to Phase 1
+            if (autoPlay) {{
+                clearTimeout(animTimer);
+                animTimer = setTimeout(() => runPhase(1, false), 4200);
+            }}
         }}
     }}
 
     function toggleAutoPlay() {{
         autoPlay = !autoPlay;
-        document.getElementById('playPauseBtn').innerText = autoPlay ? '⏸ Pause' : '▶ Play';
-    }}
-
-    function loopTimeline() {{
+        const btn = document.getElementById('playPauseBtn');
         if (autoPlay) {{
-            currentAnimPhase = (currentAnimPhase === 1) ? 2 : 1;
-            runPhase(currentAnimPhase, false);
+            btn.innerText = '⏸ Pause';
+            runPhase(currentAnimPhase === 1 ? 2 : 1, false);
+        }} else {{
+            btn.innerText = '▶ Play';
+            clearTimeout(animTimer);
         }}
     }}
 
     document.addEventListener('DOMContentLoaded', () => {{
         runPhase(1, false);
-        animTimer = setInterval(loopTimeline, 3800);
     }});
 </script>
 </body>
@@ -497,7 +544,7 @@ async def landing_page(request: Request):
     </section>
 
     <!-- ========================================================================= -->
-    <!-- 2. EXACT NEON ARCHITECTURE & DATAFLOW BRANCHING CANVAS (SYNCHRONIZED ANIMATION) -->
+    <!-- 2. EXACT NEON ARCHITECTURE & DATAFLOW BRANCHING CANVAS -->
     <!-- ========================================================================= -->
     <section class="py-20 bg-[#000000] text-white border-b border-neutral-800 overflow-hidden select-none">
         <div class="max-w-6xl mx-auto px-6 lg:px-12">
@@ -574,7 +621,7 @@ async def landing_page(request: Request):
                             <line x1="856" y1="256" x2="856" y2="264"/>
                         </g>
 
-                        <!-- Base Background Line (Unactive Gray) -->
+                        <!-- Base Background Inactive Line -->
                         <line x1="130" y1="260" x2="980" y2="260" stroke="#1f1f23" stroke-width="2"/>
 
                         <!-- ================= 1. MAIN GREEN SCALE BEAMS ================= -->
@@ -679,7 +726,7 @@ async def landing_page(request: Request):
                     <!-- ================= HTML CAPSULE PILLS OVERLAY ================= -->
 
                     <!-- 1. Memory Notes (Origin Left) -->
-                    <div id="pill-memory-notes" class="absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent transition-all select-none"
+                    <div id="pill-memory-notes" class="pill-badge absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent select-none"
                          style="left:1.5%; top:50%;">
                         <svg class="w-3.5 h-3.5 text-[#0a0a0a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                         Memory Notes
@@ -692,7 +739,7 @@ async def landing_page(request: Request):
                     </div>
 
                     <!-- 2. Neon DB (Middle Left) -->
-                    <div id="pill-neon-db" class="absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent transition-all select-none"
+                    <div id="pill-neon-db" class="pill-badge absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent select-none"
                          style="left:18.5%; top:50%;">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 3.79 2 6v12c0 2.21 4.48 4 10 4s10-1.79 10-4V6c0-2.21-4.48-4-10-4zm0 2c4.97 0 8 1.46 8 2s-3.03 2-8 2-8-1.46-8-2 3.03-2 8-2zm0 16c-4.97 0-8-1.46-8-2v-2.23c2.08 1.34 5.09 2.23 8 2.23s5.92-.89 8-2.23V18c0 .54-3.03 2-8 2z"/></svg>
                         neon db
@@ -709,7 +756,7 @@ async def landing_page(request: Request):
                     </div>
 
                     <!-- 4. MCP Server (Center Yellow Hub) -->
-                    <div id="pill-mcp-server" class="absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-[#fde047] text-[#0a0a0a] mono text-xs font-extrabold shadow-[0_0_25px_rgba(253,224,71,0.4)] select-none border-2 border-white/40 transition-all"
+                    <div id="pill-mcp-server" class="pill-badge absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-[#fde047] text-[#0a0a0a] mono text-xs font-extrabold shadow-[0_0_25px_rgba(253,224,71,0.4)] select-none border-2 border-white/40"
                          style="left:51%; top:32.7%;">
                         <svg class="w-4 h-4 text-[#0a0a0a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
                         mcp-server
@@ -723,7 +770,7 @@ async def landing_page(request: Request):
                     </div>
 
                     <!-- 6. AI Apps (Right Endpoint) -->
-                    <div id="pill-ai-apps" class="absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent transition-all select-none"
+                    <div id="pill-ai-apps" class="pill-badge absolute -translate-y-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent select-none"
                          style="left:86.5%; top:50%;">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
                         ai apps
@@ -749,7 +796,7 @@ async def landing_page(request: Request):
                 <!-- Animated Status Ribbon -->
                 <div class="px-6 py-3 bg-[#09090b] border-t border-white/5 flex items-center justify-between mono text-xs">
                     <div id="anim-status-indicator" class="text-white/80">
-                        <span class="text-[#00e599] font-bold">Phase 1:</span> Main signal moves from Memory Notes &rarr; Neon DB &rarr; MCP Server while negotiation protocols execute.
+                        <span class="text-[#00e599] font-bold">1. Left to Right:</span> Memory Notes &rarr; neon db &rarr; mcp-server. Negotiation protocols execute along the branch.
                     </div>
                     <span class="text-white/30 hidden sm:inline">Model Context Protocol 2.0</span>
                 </div>
