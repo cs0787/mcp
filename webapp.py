@@ -2,14 +2,12 @@
 Memory Notes for AI - Web Application
 Integrated with the custom Monochromatic Tailwind CSS Frontend design,
 interactive spotlight grid background, quick-start terminal, developer deep dives,
-and the Neon-style synchronized architecture animation:
+and the exact Neon-style 2-phase synchronized architecture animation:
 - Initial state: Only 'Memory Notes' is present.
-- Phase 1 (Left to Right): Green pulse travels on the central scale from Memory Notes -> neon db -> mcp-server
-  while the top-left branch (request data, negotiation checkpoints, protocol gear) draws and pops in.
-- Rests.
-- Phase 2 (Right to Left): 'ai apps' activates, green pulse travels right-to-left along the scale into mcp-server
-  while request tools, access granted, and the bottom return pipeline (write note -> neon db -> sync) execute.
-- Rests in its final completed visual state (repeats only upon page reload).
+- Phase 1 (Left to Right): 'Memory Notes' sparkles with a burst effect and shoots a green beam along the central scale line toward 'mcp-server'. As it travels, neon db, request data, negotiation checkpoints, and protocol gear appear.
+- Rest period.
+- Phase 2 (Right to Left): 'ai apps' activates on the right, sparkles, and shoots a beam leftwards along the central scale toward 'mcp-server' while request tools, access granted, and the bottom return loop (write note -> neon db -> sync) execute.
+- Rests permanently in its completed visual state (repeats only upon page reload or replay button).
 """
 
 import asyncpg
@@ -143,7 +141,7 @@ def _page(title: str, body: str) -> HTMLResponse:
             opacity: 1;
         }}
 
-        /* Neon Timeline Element Transitions */
+        /* Neon Timeline Transitions */
         .anim-path {{
             transition: stroke-dashoffset 1.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
         }}
@@ -163,6 +161,24 @@ def _page(title: str, body: str) -> HTMLResponse:
             opacity: 1 !important;
             transform: scale(1) !important;
             pointer-events: auto !important;
+        }}
+
+        /* Sparkle Pulse Animations */
+        @keyframes sparkleBurstGreen {{
+            0% {{ transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 229, 153, 0.9); }}
+            40% {{ transform: scale(1.18); box-shadow: 0 0 35px 12px rgba(0, 229, 153, 1); filter: brightness(1.6); }}
+            100% {{ transform: scale(1); box-shadow: 0 0 20px 2px rgba(0, 229, 153, 0.4); }}
+        }}
+        @keyframes sparkleBurstAi {{
+            0% {{ transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 229, 153, 0.9); }}
+            40% {{ transform: scale(1.18); box-shadow: 0 0 35px 12px rgba(0, 229, 153, 1); filter: brightness(1.6); }}
+            100% {{ transform: scale(1); box-shadow: 0 0 20px 2px rgba(0, 229, 153, 0.4); }}
+        }}
+        .sparkle-active-green {{
+            animation: sparkleBurstGreen 0.7s ease-out forwards;
+        }}
+        .sparkle-active-ai {{
+            animation: sparkleBurstAi 0.7s ease-out forwards;
         }}
 
         .feature-card {{
@@ -225,9 +241,8 @@ def _page(title: str, body: str) -> HTMLResponse:
     // =========================================================================
     // EXACT NEON-STYLE ONCE-ON-LOAD ANIMATION
     // Initial state: Only Memory Notes is visible.
-    // 1. Left-to-right pulse travels on central scale -> branch draws -> checkpoints pop -> rests.
-    // 2. Right-to-left pulse travels from AI apps -> request tools & bottom write return loop -> rests.
-    // Rests in final state. Repeats only on page reload.
+    // Phase 1: Memory Notes sparkles -> shoots beam on scale to mcp-server -> top branch draws & pops in -> rests.
+    // Phase 2: AI apps activates on right, sparkles -> shoots beam on scale to mcp-server -> request tools & bottom return loop draw -> rests permanently.
     // =========================================================================
     function resetTimelineToStart() {{
         document.getElementById('beam-main-left').style.strokeDashoffset = '400';
@@ -237,6 +252,11 @@ def _page(title: str, body: str) -> HTMLResponse:
         document.getElementById('branch-bottom-write').style.strokeDashoffset = '300';
         document.getElementById('branch-bottom-return').style.strokeDashoffset = '700';
 
+        const pillMem = document.getElementById('pill-memory-notes');
+        const pillAi = document.getElementById('elem-ai-apps');
+        pillMem.classList.remove('sparkle-active-green');
+        pillAi.classList.remove('sparkle-active-ai');
+
         document.querySelectorAll('.timeline-elem:not(.pill-memory-start)').forEach(el => {{
             el.classList.remove('visible');
         }});
@@ -245,73 +265,86 @@ def _page(title: str, body: str) -> HTMLResponse:
     function runFullSequence() {{
         resetTimelineToStart();
         const statusText = document.getElementById('anim-status-indicator');
+        const pillMem = document.getElementById('pill-memory-notes');
+        const pillAi = document.getElementById('elem-ai-apps');
 
-        // --- PHASE 1 (Left to Right) ---
-        statusText.innerHTML = '<span class="text-[#00e599] font-bold">1. Ingestion:</span> Pulse moves from Memory Notes &rarr; neon db &rarr; mcp-server. Branch protocol negotiation executes.';
+        // --- 1. PHASE 1: Left-to-Right Execution ---
+        statusText.innerHTML = '<span class="text-[#00e599] font-bold">1. Ingestion:</span> Memory Notes sparkles &amp; shoots beam along scale to mcp-server.';
 
-        // Pulse rides along central scale from Memory Notes to MCP Server
+        // Step 1A: Memory Notes Sparkle Burst at start
+        setTimeout(() => {{
+            pillMem.classList.add('sparkle-active-green');
+        }}, 150);
+
+        // Step 1B: Shoot beam along central scale from Memory Notes to MCP Server
         setTimeout(() => {{
             document.getElementById('beam-main-left').style.strokeDashoffset = '0';
-        }}, 200);
+        }}, 450);
 
-        // When pulse crosses neon db (~450ms): pop neon db & trigger top-left branch
+        // Step 1C: Beam crosses neon db on scale -> pop neon db & launch top-left branch
         setTimeout(() => {{
             document.getElementById('elem-neon-db').classList.add('visible');
             document.getElementById('elem-db-icon').classList.add('visible');
             document.getElementById('branch-top-left').style.strokeDashoffset = '0';
-        }}, 450);
+        }}, 700);
 
-        // As branch progresses: pop request data, checkpoints, mcp-server hub
+        // Step 1D: Top branch draws -> pop request data & negotiation checkpoint
         setTimeout(() => {{
             document.getElementById('elem-request-data').classList.add('visible');
             document.getElementById('chk-neg-start').classList.add('visible');
-        }}, 800);
+        }}, 1050);
 
+        // Step 1E: Beam reaches mcp-server hub on central scale -> pop mcp-server, gear & complete checkpoint
         setTimeout(() => {{
             document.getElementById('elem-mcp-server').classList.add('visible');
             document.getElementById('elem-gear').classList.add('visible');
             document.getElementById('chk-neg-complete').classList.add('visible');
-        }}, 1200);
+        }}, 1400);
 
-        // --- PHASE 1 REST (from ~1.5s to 2.4s) ---
+        // --- PHASE 1 REST (from ~1.7s to 2.8s) ---
 
-        // --- PHASE 2 (Right to Left) ---
+        // --- 2. PHASE 2: Right-to-Left Execution ---
         setTimeout(() => {{
-            statusText.innerHTML = '<span class="text-[#fde047] font-bold">2. Tool Execution &amp; Sync:</span> AI Apps activate &rarr; Pulse enters mcp-server while tools are granted and note is written back.';
+            statusText.innerHTML = '<span class="text-[#fde047] font-bold">2. Tool Request &amp; Sync:</span> AI Apps sparkles &amp; shoots beam along scale to mcp-server while tools are granted and note writes back.';
             
-            // Pop AI Apps pill on the right
-            document.getElementById('elem-ai-apps').classList.add('visible');
+            // Step 2A: AI Apps appears and sparkles on the right
+            pillAi.classList.add('visible');
+            pillAi.classList.add('sparkle-active-ai');
 
-            // Pulse rides right-to-left along scale
+            // Step 2B: Shoot beam right-to-left along scale toward MCP server
             setTimeout(() => {{
                 document.getElementById('beam-main-right').style.strokeDashoffset = '0';
                 document.getElementById('elem-robot-icon').classList.add('visible');
                 document.getElementById('branch-top-right').style.strokeDashoffset = '0';
                 document.getElementById('branch-bottom-write').style.strokeDashoffset = '0';
-            }}, 150);
+            }}, 400);
 
+            // Step 2C: Draw request tools & bottom write branch
             setTimeout(() => {{
                 document.getElementById('elem-request-tools').classList.add('visible');
                 document.getElementById('elem-write-note').classList.add('visible');
                 document.getElementById('branch-bottom-return').style.strokeDashoffset = '0';
-            }}, 550);
+            }}, 800);
 
+            // Step 2D: Pop access granted & note processed
             setTimeout(() => {{
                 document.getElementById('chk-access-granted').classList.add('visible');
                 document.getElementById('chk-note-processed').classList.add('visible');
-            }}, 900);
+            }}, 1150);
 
+            // Step 2E: Pop note saved in neon db
             setTimeout(() => {{
                 document.getElementById('chk-note-saved').classList.add('visible');
-            }}, 1250);
+            }}, 1500);
 
+            // Step 2F: Pop final sync to Memory Notes
             setTimeout(() => {{
                 document.getElementById('chk-sync-final').classList.add('visible');
-                statusText.innerHTML = '<span class="text-[#00e599] font-bold">✓ Complete:</span> Real-time bidirectional memory pipeline active across Android, Neon, and AI models.';
-            }}, 1550);
+                statusText.innerHTML = '<span class="text-[#00e599] font-bold">✓ Complete:</span> Memory pipeline active. Notes seamlessly synchronized between Android, Neon DB, and AI Agents.';
+            }}, 1800);
 
-        }}, 2400);
-        // Sequence ends and rests permanently in final state
+        }}, 2800);
+        // Completed sequence rests permanently
     }}
 
     document.addEventListener('DOMContentLoaded', () => {{
@@ -542,7 +575,7 @@ async def landing_page(request: Request):
                         <!-- Background Grid -->
                         <rect x="0" y="0" width="1020" height="540" fill="url(#neonGridPattern)"/>
 
-                        <!-- Center Baseline Ruler Ticks (Spanning the scale) -->
+                        <!-- Center Baseline Ruler Ticks (Spanning across scale) -->
                         <g stroke="#ffffff" stroke-opacity="0.16">
                             <line x1="280" y1="256" x2="280" y2="264"/>
                             <line x1="316" y1="256" x2="316" y2="264"/>
@@ -713,7 +746,7 @@ async def landing_page(request: Request):
                         request tools
                     </div>
 
-                    <!-- 6. AI Apps (Right Endpoint) -->
+                    <!-- 6. AI Apps (Right Endpoint - Activated in Phase 2) -->
                     <div id="elem-ai-apps" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent select-none z-10"
                          style="left:85.5%; top:48.1%;">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
@@ -740,7 +773,7 @@ async def landing_page(request: Request):
                 <!-- Status Ribbon -->
                 <div class="px-6 py-3 bg-[#09090b] border-t border-white/5 flex items-center justify-between mono text-xs">
                     <div id="anim-status-indicator" class="text-white/80">
-                        <span class="text-[#00e599] font-bold">1. Ingestion:</span> Pulse moves from Memory Notes &rarr; neon db &rarr; mcp-server. Branch protocol negotiation executes.
+                        <span class="text-[#00e599] font-bold">1. Ingestion:</span> Memory Notes sparkles &amp; shoots beam along scale to mcp-server.
                     </div>
                     <span class="text-white/30 hidden sm:inline">Model Context Protocol 2.0</span>
                 </div>
