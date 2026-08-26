@@ -1,7 +1,7 @@
 """
 Memory Notes for AI - Web Application
 Integrated with the custom Monochromatic Tailwind CSS Frontend design,
-interactive spotlight grid background, clean standardized hero action buttons,
+interactive spotlight grid background, custom Liquid Carve "Get Started" button,
 quick-start terminal, developer deep dives, and progressive emerging architecture animation.
 """
 
@@ -361,8 +361,53 @@ def _page(title: str, body: str) -> HTMLResponse:
         }}, 6500);
     }}
 
+    // =========================================================================
+    // LIQUID CARVE BUTTON SPRING / GOO LOGIC
+    // =========================================================================
     document.addEventListener('DOMContentLoaded', () => {{
         runFullSequence();
+
+        const btn = document.getElementById('liquidGetStartedBtn');
+        const circle = document.getElementById('liquidBiteCircle');
+        const follower = document.getElementById('liquidBiteFollower');
+
+        if (btn && circle && follower) {{
+            let chase = {{ x: 0, y: 0, tx: 0, ty: 0 }};
+            let isHovered = false;
+            let currentRadius = 0;
+            let targetRadius = 0;
+
+            btn.addEventListener('pointerenter', (e) => {{
+                isHovered = true;
+                const rect = btn.getBoundingClientRect();
+                chase.x = chase.tx = e.clientX - rect.left;
+                chase.y = chase.ty = e.clientY - rect.top;
+                targetRadius = 45;
+            }});
+
+            btn.addEventListener('pointermove', (e) => {{
+                const rect = btn.getBoundingClientRect();
+                chase.tx = e.clientX - rect.left;
+                chase.ty = e.clientY - rect.top;
+            }});
+
+            btn.addEventListener('pointerleave', () => {{
+                isHovered = false;
+                targetRadius = 0;
+            }});
+
+            function animateLiquid() {{
+                chase.x += (chase.tx - chase.x) * 0.16;
+                chase.y += (chase.ty - chase.y) * 0.16;
+                currentRadius += (targetRadius - currentRadius) * 0.2;
+
+                follower.setAttribute('transform', `translate(${{chase.x}}, ${{chase.y}})`);
+                circle.setAttribute('r', Math.max(0, currentRadius));
+
+                requestAnimationFrame(animateLiquid);
+            }}
+            animateLiquid();
+        }}
     }});
 </script>
 </body>
@@ -481,8 +526,35 @@ async def landing_page(request: Request):
                     A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents. Read and write thoughts dynamically.
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-3">
-                    <!-- Clean Hero Action Buttons with matching previous proportions -->
-                    <a href="{' /dashboard' if user_id else '/signup'}" class="bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Get Started</a>
+                    
+                    <!-- 1. Liquid Carve "Get Started" Button (Original Size: px-6 py-3) -->
+                    <a id="liquidGetStartedBtn" href="{' /dashboard' if user_id else '/signup'}" class="relative inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded text-[#080808] border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] overflow-hidden no-underline select-none shadow-sm transition-transform cursor-pointer">
+                        <svg class="absolute inset-0 w-full h-full pointer-events-none" style="overflow: visible; z-index: 1;">
+                            <defs>
+                                <filter id="goo-liquid-carve">
+                                    <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+                                    <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"/>
+                                </filter>
+                                <mask id="mask-liquid-carve">
+                                    <rect width="100%" height="100%" fill="#fff"/>
+                                    <g id="liquidBiteFollower" style="transform: translate(-999px, -999px);">
+                                        <circle id="liquidBiteCircle" cx="0" cy="0" r="0" fill="#000"/>
+                                    </g>
+                                </mask>
+                            </defs>
+                            <!-- Reveal Blob Layer (#F2F3F8) -->
+                            <g filter="url(#goo-liquid-carve)">
+                                <rect width="100%" height="100%" fill="#F2F3F8"/>
+                            </g>
+                            <!-- Fill Layer (#F5C906) carved by bite mask -->
+                            <g filter="url(#goo-liquid-carve)">
+                                <rect width="100%" height="100%" fill="#F5C906" mask="url(#mask-liquid-carve)"/>
+                            </g>
+                        </svg>
+                        <span class="relative z-10 pointer-events-none font-bold text-on-surface">Get Started</span>
+                    </a>
+                    
+                    <!-- 2. "See more" Button (Matching Previous Size: px-6 py-3) -->
                     <a href="#quickstart" class="bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline shadow-sm">See more</a>
                 </div>
             </div>
@@ -818,7 +890,7 @@ async def landing_page(request: Request):
                     <!-- 5. Request Tools (Top Right Pill) -->
                     <div id="elem-request-tools" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md z-10"
                          style="left:64%; top:22%;">
-                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                         request tools
                     </div>
 
