@@ -17,7 +17,7 @@ from tenant_context import current_user_id, current_pool
 
 # Paths that do not require Bearer token auth
 WEBAPP_EXACT_PATHS = {"/", ""}
-WEBAPP_PATH_PREFIXES = ("/signup", "/login", "/logout", "/dashboard", "/static")
+WEBAPP_PATH_PREFIXES = ("/signup", "/login", "/logout", "/dashboard", "/static" , "/console")
 
 
 def hash_token(raw_key: str) -> str:
