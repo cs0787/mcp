@@ -32,6 +32,7 @@ def _page(title: str, body: str) -> HTMLResponse:
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -145,15 +146,6 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
     .hero-interactive-grid:hover::after {{
         opacity: 1;
-    }}
-
-    .feature-card {{
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }}
-    .feature-card:hover {{
-        transform: translateY(-4px);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-        border-color: #050505;
     }}
 
     .settings-dropdown {{
@@ -737,171 +729,264 @@ async def landing_page(request: Request):
     </div>
 </section>
 
-    <!-- 3. Developer Feature Deep Dives -->
-    <section id="features" class="py-16 bg-surface-white border-b border-border-muted">
-        <div class="max-w-6xl mx-auto px-6 lg:px-12 space-y-16">
+    <!-- Core Capabilities & Footer Showcase (Sticky Scroll Sections) -->
+    <div class="showcase-container" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+      
+      <div class="sticky-nav-wrapper">
+        <nav class="sticky-sidebar" id="sidebar">
+          <button class="menu-badge-btn" aria-hidden="true" tabindex="-1" style="background:#facc15; border:0; border-radius:12px; color:#000; padding:10px 18px; font-weight:800; font-size:13.5px; text-transform:uppercase; margin-bottom:20px;">CORE CAPABILITIES</button>
+          <ul class="nav-list" style="list-style:none; display:flex; flex-direction:column; gap:12px; padding:0; margin:0;">
+            <li>
+              <a class="nav-btn active" data-target="trigram-search" style="display:flex; align-items:center; gap:10px; font-size:14.5px; font-weight:500; color:#71717a; text-decoration:none; cursor:pointer;">
+                <span class="nav-dot"></span>Zero-Latency Trigram Search
+              </a>
+            </li>
+            <li>
+              <a class="nav-btn" data-target="ai-memory-sync" style="display:flex; align-items:center; gap:10px; font-size:14.5px; font-weight:500; color:#71717a; text-decoration:none; cursor:pointer;">
+                <span class="nav-dot"></span>Autonomous AI Memory Sync
+              </a>
+            </li>
+            <li>
+              <a class="nav-btn" data-target="zen-canvas" style="display:flex; align-items:center; gap:10px; font-size:14.5px; font-weight:500; color:#71717a; text-decoration:none; cursor:pointer;">
+                <span class="nav-dot"></span>Zen Canvas
+              </a>
+            </li>
+            <li>
+              <a class="nav-btn" data-target="non-linear" style="display:flex; align-items:center; gap:10px; font-size:14.5px; font-weight:500; color:#71717a; text-decoration:none; cursor:pointer;">
+                <span class="nav-dot"></span>Non-Linear Connectivity
+              </a>
+            </li>
+            <li>
+              <a class="nav-btn" data-target="open-protocol" style="display:flex; align-items:center; gap:10px; font-size:14.5px; font-weight:500; color:#71717a; text-decoration:none; cursor:pointer;">
+                <span class="nav-dot"></span>Open Protocol Standards
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <section id="trigram-search" class="feature-section section-dark" data-theme="dark" style="width:100%; min-height:85vh; padding:90px 0; display:flex; align-items:center; background-color:#000000; color:#e2e8f0;">
+        <div class="section-inner" style="max-width:1200px; margin:0 auto; padding:0 24px; width:100%; display:grid; grid-template-columns:260px 1fr; column-gap:56px;">
+          <div class="section-content" style="grid-column:2; max-width:820px;">
+            <h2 class="hero-heading" style="font-size:clamp(30px, 4vw, 48px); font-weight:800; letter-spacing:-0.035em; line-height:1.15; margin-bottom:20px; color:#ffffff;">Zero-Latency Trigram Search. Never miss a fragmented thought.</h2>
+            <p class="lead-text" style="font-size:17px; line-height:1.6; margin-bottom:28px; color:#a1a1aa;">Memory Notes harnesses PostgreSQL trigram matching (<code>pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds.</p>
             
-            <!-- Spotlight 1: Zero-Latency Trigram Search -->
-            <div class="flex flex-col lg:flex-row items-center gap-10">
-                <div class="flex-1 space-y-3">
-                    <div class="inline-block px-2 py-1 bg-surface-container rounded text-xs font-mono font-semibold text-primary">FULL-TEXT RECALL</div>
-                    <h3 class="text-2xl font-bold text-on-surface">Zero-Latency Trigram Search</h3>
-                    <p class="text-sm text-on-surface-variant leading-relaxed">
-                        Traditional LLM retrieval fails when queries have typos or fragmented terms. Memory Notes harnesses PostgreSQL trigram matching (<code class="font-mono text-xs text-on-surface bg-surface-container-low px-1 py-0.5 rounded">pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds.
-                    </p>
-                    <ul class="text-xs font-mono text-text-secondary space-y-1 pt-2">
-                        <li>✓ Typo-tolerant substring & fuzzy similarity score</li>
-                        <li>✓ Automatic fallback to ILIKE if extensions are missing</li>
-                    </ul>
-                </div>
-                <div class="flex-1 w-full">
-                    <div class="bg-[#0f0f11] text-neutral-200 p-5 rounded-xl border border-neutral-800 font-mono text-xs shadow-md">
-                        <div class="text-neutral-500 mb-2">// SQL Query Execution</div>
-                        <div class="text-yellow-400">SELECT <span class="text-neutral-200">id, title, similarity(title, $1) AS score</span></div>
-                        <div class="text-yellow-400">FROM <span class="text-neutral-200">notes</span></div>
-                        <div class="text-yellow-400">WHERE <span class="text-neutral-200">title % $1 OR content ILIKE '%'||$1||'%'</span></div>
-                        <div class="text-yellow-400">ORDER BY <span class="text-neutral-200">score DESC LIMIT 10;</span></div>
-                        <div class="mt-3 pt-3 border-t border-neutral-800 text-green-400 text-[11px]">
-                            ⚡ Query Execution: 3.4ms | 10 rows retrieved
-                        </div>
-                    </div>
-                </div>
+            <ul class="checklist" style="list-style:none; display:flex; flex-direction:column; gap:12px; margin-bottom:32px; padding:0;">
+              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Typo-tolerant substring & fuzzy similarity scoring</li>
+              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Automatic fallback to ILIKE if extensions are missing</li>
+              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Indexed lookups executing in under 4ms</li>
+            </ul>
+
+            <div class="terminal-box" style="background:#09090b; border:1px solid #27272a; border-radius:12px; overflow:hidden; font-family:'JetBrains Mono', monospace; max-width:740px; box-shadow:0 16px 36px -10px rgba(0, 0, 0, 0.7);">
+              <div class="terminal-topbar" style="background:#18181b; padding:10px 16px; display:flex; align-items:center; gap:8px;">
+                <div class="terminal-dots" style="display:flex; gap:6px;"><span class="dot-red" style="width:10px; height:10px; border-radius:50%; background:#ef4444;"></span><span class="dot-yellow" style="width:10px; height:10px; border-radius:50%; background:#eab308;"></span><span class="dot-green" style="width:10px; height:10px; border-radius:50%; background:#22c55e;"></span></div>
+                <span class="terminal-title" style="font-size:12px; color:#a1a1aa; font-weight:500; margin-left:6px;">SQL Query Execution</span>
+              </div>
+              <div class="terminal-code" style="padding:20px; font-size:13.5px; color:#e4e4e7; overflow-x:auto; line-height:1.65;">
+                <span style="color:#38bdf8;">SELECT</span> id, title, similarity(title, $1) <span style="color:#38bdf8;">AS</span> score <br>
+                <span style="color:#38bdf8;">FROM</span> notes <br>
+                <span style="color:#38bdf8;">WHERE</span> title % $1 <span style="color:#38bdf8;">OR</span> content <span style="color:#38bdf8;">ILIKE</span> <span style="color:#fbbf24;">'%'</span>||$1||<span style="color:#fbbf24;">'%'</span> <br>
+                <span style="color:#38bdf8;">ORDER BY</span> score <span style="color:#38bdf8;">DESC LIMIT</span> 10;<br><br>
+                <span style="color:#4ade80;">⚡ Query Execution: 3.4ms | 10 rows retrieved</span>
+              </div>
             </div>
-
-            <hr class="border-border-muted">
-
-            <!-- Spotlight 2: Autonomous AI Memory Sync -->
-            <div class="flex flex-col lg:flex-row-reverse items-center gap-10">
-                <div class="flex-1 space-y-3">
-                    <div class="inline-block px-2 py-1 bg-secondary-container rounded text-xs font-mono font-semibold text-on-surface">BI-DIRECTIONAL WRITES</div>
-                    <h3 class="text-2xl font-bold text-on-surface">Autonomous AI Memory Sync</h3>
-                    <p class="text-sm text-on-surface-variant leading-relaxed">
-                        Claude and Cursor can not only inspect your past notes—they can create new workspace folders, append structured summaries, or update existing documents directly from conversation prompts.
-                    </p>
-                    <ul class="text-xs font-mono text-text-secondary space-y-1 pt-2">
-                        <li>✓ Explicit bigint epoch timestamping for Last-Write-Wins</li>
-                        <li>✓ Reactive Jetpack Compose Room sync down to Android</li>
-                    </ul>
-                </div>
-                <div class="flex-1 w-full">
-                    <div class="bg-[#0f0f11] text-neutral-200 p-5 rounded-xl border border-neutral-800 font-mono text-xs shadow-md">
-                        <div class="text-neutral-500 mb-2">// MCP Tool Invocation Output</div>
-                        <div class="text-blue-400">&gt; create_note(<span class="text-neutral-300">title="Sprint Specs", workspace="Dev"</span>)</div>
-                        <div class="text-neutral-400 mt-2">
-                            {{<br>
-                            &nbsp;&nbsp;"id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",<br>
-                            &nbsp;&nbsp;"title": "Sprint Specs",<br>
-                            &nbsp;&nbsp;"updated_at": 1786675973594<br>
-                            }}
-                        </div>
-                        <div class="mt-3 pt-3 border-t border-neutral-800 text-green-400 text-[11px]">
-                            ✓ Database record created • Dispatched to mobile sync engine
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+          </div>
         </div>
-    </section>
+      </section>
 
-    <!-- Core Bento Capabilities -->
-    <section class="py-16 bg-surface-white border-b border-border-muted">
-        <div class="max-w-6xl mx-auto px-6 lg:px-12">
-            <div class="mb-12">
-                <h2 class="text-2xl lg:text-3xl font-bold text-on-surface mb-2">Core Capabilities</h2>
-                <p class="text-sm text-on-surface-variant max-w-2xl">Tools designed for deep intellectual focus, stripping away the superfluous to leave only what matters.</p>
+      <section id="ai-memory-sync" class="feature-section section-light" data-theme="light" style="width:100%; min-height:85vh; padding:90px 0; display:flex; align-items:center; background-color:#ffffff; color:#000000;">
+        <div class="section-inner" style="max-width:1200px; margin:0 auto; padding:0 24px; width:100%; display:grid; grid-template-columns:260px 1fr; column-gap:56px;">
+          <div class="section-content" style="grid-column:2; max-width:820px;">
+            <h2 class="hero-heading" style="font-size:clamp(30px, 4vw, 48px); font-weight:800; letter-spacing:-0.035em; line-height:1.15; margin-bottom:20px; color:#000000;">Autonomous AI Memory Sync. Bi-directional writes from your agent.</h2>
+            <p class="lead-text" style="font-size:17px; line-height:1.6; margin-bottom:28px; color:#52525b;">Claude and Cursor don't just inspect your past notes—they can create new workspace folders, append structured summaries, or update documents directly from prompt context.</p>
+            
+            <ul class="checklist" style="list-style:none; display:flex; flex-direction:column; gap:12px; margin-bottom:32px; padding:0;">
+              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#27272a;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Explicit bigint epoch timestamping for Last-Write-Wins (LWW)</li>
+              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#27272a;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Reactive Jetpack Compose Room sync down to Android</li>
+              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#27272a;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Automated schema compaction for continuous agent memory</li>
+            </ul>
+
+            <div class="terminal-box" style="background:#09090b; border:1px solid #27272a; border-radius:12px; overflow:hidden; font-family:'JetBrains Mono', monospace; max-width:740px; box-shadow:0 16px 36px -10px rgba(0, 0, 0, 0.7);">
+              <div class="terminal-topbar" style="background:#18181b; padding:10px 16px; display:flex; align-items:center; gap:8px;">
+                <div class="terminal-dots" style="display:flex; gap:6px;"><span class="dot-red" style="width:10px; height:10px; border-radius:50%; background:#ef4444;"></span><span class="dot-yellow" style="width:10px; height:10px; border-radius:50%; background:#eab308;"></span><span class="dot-green" style="width:10px; height:10px; border-radius:50%; background:#22c55e;"></span></div>
+                <span class="terminal-title" style="font-size:12px; color:#a1a1aa; font-weight:500; margin-left:6px;">MCP Tool Invocation Output</span>
+              </div>
+              <div class="terminal-code" style="padding:20px; font-size:13.5px; color:#e4e4e7; overflow-x:auto; line-height:1.65;">
+                <span style="color:#71717a;">> create_note( title="Sprint Specs", workspace="Dev" )</span><br>
+                {<br>
+                &nbsp;&nbsp;<span style="color:#38bdf8;">"id"</span>: <span style="color:#fbbf24;">"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"</span>,<br>
+                &nbsp;&nbsp;<span style="color:#38bdf8;">"title"</span>: <span style="color:#fbbf24;">"Sprint Specs"</span>,<br>
+                &nbsp;&nbsp;<span style="color:#38bdf8;">"updated_at"</span>: 1786675973594<br>
+                }<br><br>
+                <span style="color:#4ade80;">✓ Database record created • Dispatched to mobile sync engine</span>
+              </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-6 flex flex-col justify-between group rounded">
-                    <div class="mb-6">
-                        <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors">
-                            <span class="material-symbols-outlined text-primary" data-icon="account_tree">account_tree</span>
-                        </span>
-                        <h3 class="text-xl font-semibold text-on-surface mb-1">Non-Linear Connectivity</h3>
-                        <p class="text-sm text-on-surface-variant">Build an intricate web of knowledge. Link notes effortlessly to visualize relationships and emergent ideas.</p>
-                    </div>
-                    <div class="h-36 bg-surface-container-low border border-border-muted rounded flex items-center justify-center relative overflow-hidden p-4">
-                        <svg class="w-full h-full text-border-muted" viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <line x1="50" y1="60" x2="160" y2="30" stroke="#737783" stroke-width="1.5" stroke-dasharray="3 3"/>
-                            <line x1="160" y1="30" x2="280" y2="80" stroke="#1c1b1b" stroke-width="1.5"/>
-                            <line x1="160" y1="30" x2="350" y2="40" stroke="#1c1b1b" stroke-width="1.5"/>
-                            <line x1="50" y1="60" x2="200" y2="90" stroke="#737783" stroke-width="1.5"/>
-                            <circle cx="50" cy="60" r="14" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
-                            <circle cx="160" cy="30" r="18" fill="#fdd400" stroke="#1c1b1b" stroke-width="2"/>
-                            <circle cx="280" cy="80" r="14" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
-                            <circle cx="350" cy="40" r="12" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
-                            <circle cx="200" cy="90" r="10" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
-                        </svg>
-                    </div>
-                </div>
-                
-                <div class="feature-card bg-surface-white border border-border-muted p-6 flex flex-col group rounded">
-                    <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
-                        <span class="material-symbols-outlined text-primary" data-icon="format_ink_highlighter">format_ink_highlighter</span>
-                    </span>
-                    <h3 class="text-xl font-semibold text-on-surface mb-1">Zen Canvas</h3>
-                    <p class="text-sm text-on-surface-variant mb-6">A distraction-free writing environment that centers your thoughts and fades UI elements away.</p>
-                    <div class="mt-auto h-36 bg-surface-container-low border border-border-muted rounded flex items-center justify-center p-4">
-                        <svg class="w-full h-24" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="10" y="10" width="180" height="60" rx="4" fill="#ffffff" stroke="#E2E2E7" stroke-width="1"/>
-                            <rect x="25" y="24" width="90" height="6" rx="2" fill="#1c1b1b"/>
-                            <rect x="25" y="38" width="150" height="4" rx="2" fill="#71717A"/>
-                            <rect x="25" y="48" width="120" height="4" rx="2" fill="#E2E2E7"/>
-                            <line x1="120" y1="23" x2="120" y2="31" stroke="#003178" stroke-width="2"/>
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="feature-card bg-surface-white border border-border-muted p-6 flex flex-col group rounded">
-                    <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
-                        <span class="material-symbols-outlined text-primary" data-icon="search">search</span>
-                    </span>
-                    <h3 class="text-xl font-semibold text-on-surface mb-1">Lightning Search</h3>
-                    <p class="text-sm text-on-surface-variant mb-6">Instantly retrieve any thought with our fast, full-text fuzzy search engine.</p>
-                    <div class="mt-auto h-36 bg-surface-container-low border border-border-muted rounded flex flex-col justify-center p-3">
-                        <div class="flex items-center gap-2 px-3 py-2 border border-border-muted rounded bg-surface-white text-xs text-on-surface shadow-xs">
-                            <span class="material-symbols-outlined text-sm text-primary" data-icon="search">search</span>
-                            <span class="font-mono text-xs font-semibold">trgm.match("query")</span>
-                        </div>
-                        <div class="mt-2 text-[10px] font-mono text-text-secondary px-1">
-                            &gt; 3 matches indexed in 4ms
-                        </div>
-                    </div>
-                </div>
-
-                <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-6 flex flex-col md:flex-row gap-6 items-center group rounded">
-                    <div class="flex-1">
-                        <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors">
-                            <span class="material-symbols-outlined text-primary" data-icon="code">code</span>
-                        </span>
-                        <h3 class="text-xl font-semibold text-on-surface mb-1">Open Protocol Standards</h3>
-                        <p class="text-sm text-on-surface-variant">Built directly on top of Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer extensibility.</p>
-                    </div>
-                    <div class="flex-1 w-full h-36 bg-surface-container-low border border-border-muted rounded flex flex-col justify-center p-4 font-mono text-xs text-text-secondary leading-relaxed">
-                        <div>Server: FastMCP / Python 3.12</div>
-                        <div>Protocol: Streamable HTTP (SSE)</div>
-                        <div class="text-primary font-semibold mt-1">Multi-Tenant Isolation</div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-    </section>
-</main>
+      </section>
 
-<!-- Footer -->
-<footer class="w-full py-8 px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center max-w-6xl mx-auto bg-surface-white border-t border-border-muted">
-    <div class="flex flex-col items-center md:items-start gap-1 mb-4 md:mb-0">
-        <span class="text-sm font-bold text-on-surface">Memory Notes</span>
-        <span class="text-xs text-text-secondary">© 2026 Memory Notes. Structured Freedom.</span>
+      <section id="zen-canvas" class="feature-section section-dark" data-theme="dark" style="width:100%; min-height:85vh; padding:90px 0; display:flex; align-items:center; background-color:#000000; color:#e2e8f0;">
+        <div class="section-inner" style="max-width:1200px; margin:0 auto; padding:0 24px; width:100%; display:grid; grid-template-columns:260px 1fr; column-gap:56px;">
+          <div class="section-content" style="grid-column:2; max-width:820px;">
+            <h2 class="hero-heading" style="font-size:clamp(30px, 4vw, 48px); font-weight:800; letter-spacing:-0.035em; line-height:1.15; margin-bottom:20px; color:#ffffff;">Zen Canvas. Distraction-free writing surface.</h2>
+            <p class="lead-text" style="font-size:17px; line-height:1.6; margin-bottom:28px; color:#a1a1aa;">A writing environment that strips away the superfluous, centering your thoughts and fading interface clutter away during deep focus.</p>
+            
+            <ul class="checklist" style="list-style:none; display:flex; flex-direction:column; gap:12px; margin-bottom:32px; padding:0;">
+              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Clean Markdown canvas with zero UI distraction</li>
+              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Full keyboard-first command palette navigation</li>
+              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Instant local-first caching for zero-latency typing</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="non-linear" class="feature-section section-light" data-theme="light" style="width:100%; min-height:85vh; padding:90px 0; display:flex; align-items:center; background-color:#ffffff; color:#000000;">
+        <div class="section-inner" style="max-width:1200px; margin:0 auto; padding:0 24px; width:100%; display:grid; grid-template-columns:260px 1fr; column-gap:56px;">
+          <div class="section-content" style="grid-column:2; max-width:820px;">
+            <h2 class="hero-heading" style="font-size:clamp(30px, 4vw, 48px); font-weight:800; letter-spacing:-0.035em; line-height:1.15; margin-bottom:20px; color:#000000;">Non-Linear Connectivity. An interconnected web of knowledge.</h2>
+            <p class="lead-text" style="font-size:17px; line-height:1.6; margin-bottom:28px; color:#52525b;">Link thoughts effortlessly with bi-directional wikilinks to visualize complex patterns, relationships, and emergent ideas.</p>
+            
+            <ul class="checklist" style="list-style:none; display:flex; flex-direction:column; gap:12px; margin-bottom:32px; padding:0;">
+              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#27272a;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Bi-directional backlinks and automatic connection mapping</li>
+              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#27272a;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Interactive visual node graph for complex mental models</li>
+              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#27272a;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Dynamic workspace clustering by topic and reference</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="open-protocol" class="feature-section section-dark" data-theme="dark" style="width:100%; min-height:85vh; padding:90px 0; display:flex; align-items:center; background-color:#000000; color:#e2e8f0;">
+        <div class="section-inner" style="max-width:1200px; margin:0 auto; padding:0 24px; width:100%; display:grid; grid-template-columns:260px 1fr; column-gap:56px;">
+          <div class="section-content" style="grid-column:2; max-width:820px;">
+            <h2 class="hero-heading" style="font-size:clamp(30px, 4vw, 48px); font-weight:800; letter-spacing:-0.035em; line-height:1.15; margin-bottom:20px; color:#ffffff;">Open Protocol Standards. Zero lock-in, complete control.</h2>
+            <p class="lead-text" style="font-size:17px; line-height:1.6; margin-bottom:28px; color:#a1a1aa;">Built directly on Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer independence and easy tooling integrations.</p>
+            
+            <ul class="checklist" style="list-style:none; display:flex; flex-direction:column; gap:12px; margin-bottom:32px; padding:0;">
+              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Server runtime powered by FastMCP and Python 3.12</li>
+              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Streamable HTTP with Server-Sent Events (SSE)</li>
+              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Multi-tenant isolation with portable data export</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
     </div>
-    <nav class="flex gap-4 text-xs text-text-secondary">
-        <a class="hover:text-primary transition-colors no-underline" href="#">Privacy Policy</a>
-        <a class="hover:text-primary transition-colors no-underline" href="#">Terms of Service</a>
-        <a class="hover:text-primary transition-colors no-underline" href="#">Changelog</a>
-    </nav>
-</footer>
-"""
+
+    <!-- Footer -->
+    <footer class="neon-footer" style="background-color:#F5F5F5; border-top:1px solid #e5e5e5; color:#52525b; padding:80px 24px 48px; position:relative; z-index:30;">
+      <div class="footer-container" style="max-width:1200px; margin:0 auto;">
+        <div class="footer-top" style="display:grid; grid-template-columns:2fr repeat(4, 1fr); gap:48px; margin-bottom:64px;">
+          
+          <div class="footer-brand" style="display:flex; flex-direction:column; gap:16px;">
+            <a href="/" class="footer-logo" style="display:inline-flex; align-items:center; gap:10px; text-decoration:none; color:#18181b; font-weight:800; font-size:20px;">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:24px; height:24px;">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 17L12 22L22 17" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>Memory Notes</span>
+            </a>
+            <p class="footer-tagline" style="font-size:14px; color:#71717a; max-width:270px; line-height:1.5;">Structured freedom for your thoughts. A private notes application and long-term memory bridge for Claude, Cursor, and custom AI agents.</p>
+            <a href="#" class="status-badge" style="display:inline-flex; align-items:center; gap:8px; width:fit-content; margin-top:8px; padding:6px 12px; border-radius:9999px; background:#ffffff; border:1px solid #e4e4e7; color:#3f3f46; font-size:12px; font-weight:600; text-decoration:none;">
+              <span class="status-dot" style="width:6px; height:6px; border-radius:50%; background-color:#16a34a; box-shadow:0 0 8px #16a34a;"></span>
+              MCP Gateway Connected
+            </a>
+          </div>
+
+          <div class="footer-col">
+            <h4 style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#18181b; margin-bottom:20px;">Product</h4>
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:12px; padding:0; margin:0;">
+              <li><a href="#trigram-search" style="color:#71717a; text-decoration:none; font-size:14px;">Trigram Fuzzy Search</a></li>
+              <li><a href="#ai-memory-sync" style="color:#71717a; text-decoration:none; font-size:14px;">Autonomous AI Sync</a></li>
+              <li><a href="#zen-canvas" style="color:#71717a; text-decoration:none; font-size:14px;">Zen Canvas</a></li>
+              <li><a href="#non-linear" style="color:#71717a; text-decoration:none; font-size:14px;">Graph Connectivity</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4 style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#18181b; margin-bottom:20px;">Resources</h4>
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:12px; padding:0; margin:0;">
+              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">MCP Protocol Guide</a></li>
+              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">Cursor Setup</a></li>
+              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">Claude Desktop Integration</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4 style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#18181b; margin-bottom:20px;">Developers</h4>
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:12px; padding:0; margin:0;">
+              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">FastMCP Starlette ASGI</a></li>
+              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">SSE Stream Handshakes</a></li>
+              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">Android Room Schema</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4 style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#18181b; margin-bottom:20px;">Platform</h4>
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:12px; padding:0; margin:0;">
+              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">About</a></li>
+              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">Changelog</a></li>
+              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">Privacy Policy</a></li>
+            </ul>
+          </div>
+
+        </div>
+
+        <div class="footer-bottom" style="border-top:1px solid #e5e5e5; padding-top:32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px; font-size:13px; color:#71717a;">
+          <div>&copy; 2026 Memory Notes. Structured Freedom.</div>
+
+          <div class="footer-bottom-links" style="display:flex; align-items:center; gap:24px;">
+            <a href="#" style="color:#71717a; text-decoration:none;">Privacy Policy</a>
+            <a href="#" style="color:#71717a; text-decoration:none;">Terms of Service</a>
+            <a href="#" style="color:#71717a; text-decoration:none;">Security</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const navButtons = document.querySelectorAll('.nav-btn');
+      const sections = document.querySelectorAll('.feature-section');
+      const sidebar = document.getElementById('sidebar');
+
+      function syncActiveNav() {{
+        const focalLine = window.innerHeight * 0.4;
+        let currentSection = sections[0];
+
+        sections.forEach((section) => {{
+          const rect = section.getBoundingClientRect();
+          if (rect.top <= focalLine && rect.bottom >= focalLine) {{
+            currentSection = section;
+          }}
+        }});
+
+        navButtons.forEach((btn) => {{
+          btn.classList.toggle('active', btn.dataset.target === currentSection.id);
+        }});
+
+        const theme = currentSection.getAttribute('data-theme');
+        if (theme === 'light') {{
+          sidebar.classList.add('theme-light');
+        }} else {{
+          sidebar.classList.remove('theme-light');
+        }}
+      }}
+
+      window.addEventListener('scroll', syncActiveNav, {{ passive: true }});
+      window.addEventListener('resize', syncActiveNav);
+      syncActiveNav();
+
+      navButtons.forEach((btn) => {{
+        btn.addEventListener('click', (e) => {{
+          e.preventDefault();
+          const target = document.getElementById(btn.dataset.target);
+          if (target) {{
+            target.scrollIntoView({{ behavior: 'smooth' }});
+          }}
+        }});
+      }});
+    </script>
+""")
     return _page("Home", body)
 
 
@@ -1667,7 +1752,7 @@ async def create_api_key(request: Request):
 async def revoke_api_key(request: Request):
     user_id = _require_login(request)
     if not user_id:
-        return RedirectResponse("/login", status_code=302)
+        return RedirectResponse(("/login"), status_code=302)
 
     form = await request.form()
     key_id = str(form.get("key_id", ""))
