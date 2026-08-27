@@ -1,11 +1,11 @@
 """
 Memory Notes for AI - Web Application
-Full Python Starlette ASGI Application with:
+Complete Starlette ASGI Application with:
 - Monochromatic Tailwind CSS Design System
-- Interactive Spotlight Grid Hero with Clean Standard Action Buttons ("Get Started" & "See more")
-- Live Emerging Architecture Pipeline Canvas (Neon DB -> FastMCP Broker -> AI Apps)
-- Multi-Tab Quick-Start Terminal Snippets (Claude Desktop / Cursor / cURL)
-- Developer Feature Deep Dives & Full-Stack Auth / Multi-Tenant Dashboard
+- Collapsible Left Sidebar (Claude-style sidebar toggle button at top-left)
+- Interactive Codebase Management Workspace with 2D Infinite Node Graph Canvas
+- Node Modal View: Details what file changed, what changed, and the downstream effect
+- Gateway Settings & Multi-Tenant Support
 """
 
 import asyncpg
@@ -214,9 +214,11 @@ def _page(title: str, body: str) -> HTMLResponse:
     function copyToClipboard(text, btnId) {{
         navigator.clipboard.writeText(text).then(() => {{
             const btn = document.getElementById(btnId);
-            const orig = btn.innerText;
-            btn.innerText = 'Copied!';
-            setTimeout(() => btn.innerText = orig, 2000);
+            if (btn) {{
+                const orig = btn.innerText;
+                btn.innerText = 'Copied!';
+                setTimeout(() => btn.innerText = orig, 2000);
+            }}
         }});
     }}
     function setTerminalTab(tab) {{
@@ -224,12 +226,14 @@ def _page(title: str, body: str) -> HTMLResponse:
         tabs.forEach(t => {{
             const btn = document.getElementById('tab-' + t);
             const block = document.getElementById('snippet-' + t);
-            if (t === tab) {{
-                btn.className = 'px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors';
-                block.classList.remove('hidden');
-            }} else {{
-                btn.className = 'px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors';
-                block.classList.add('hidden');
+            if (btn && block) {{
+                if (t === tab) {{
+                    btn.className = 'px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors';
+                    block.classList.remove('hidden');
+                }} else {{
+                    btn.className = 'px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors';
+                    block.classList.add('hidden');
+                }}
             }}
         }});
     }}
@@ -265,26 +269,30 @@ def _page(title: str, body: str) -> HTMLResponse:
         const pillMem = document.getElementById('pill-memory-notes');
         const pillAi = document.getElementById('elem-ai-apps');
 
-        // PHASE 1: Left to Right
         if (statusText) statusText.innerHTML = '<span class="text-[#00e599] font-bold">1. Ingestion:</span> Memory Notes sparkles &amp; shoots beam along scale to neon db &amp; mcp-server.';
 
         setTimeout(() => {{ if (pillMem) pillMem.classList.add('sparkle-burst'); }}, 200);
         setTimeout(() => {{ drawSeg('seg-scale-p1-a'); }}, 700);
         setTimeout(() => {{
-            document.getElementById('elem-neon-db').classList.add('visible');
-            document.getElementById('elem-junc-neon').classList.add('visible');
+            const db = document.getElementById('elem-neon-db');
+            const junc = document.getElementById('elem-junc-neon');
+            if (db) db.classList.add('visible');
+            if (junc) junc.classList.add('visible');
             drawSeg('seg-branch-p1-up');
         }}, 1400);
         setTimeout(() => {{
-            document.getElementById('elem-db-icon').classList.add('visible');
+            const icon = document.getElementById('elem-db-icon');
+            if (icon) icon.classList.add('visible');
             drawSeg('seg-branch-p1-curve');
         }}, 2000);
         setTimeout(() => {{
-            document.getElementById('elem-request-data').classList.add('visible');
+            const req = document.getElementById('elem-request-data');
+            if (req) req.classList.add('visible');
         }}, 2500);
         setTimeout(() => {{ drawSeg('seg-scale-p1-b'); }}, 2800);
         setTimeout(() => {{
-            document.getElementById('elem-mcp-server').classList.add('visible');
+            const srv = document.getElementById('elem-mcp-server');
+            if (srv) srv.classList.add('visible');
         }}, 3400);
         setTimeout(() => {{
             drawSeg('seg-branch-p1-chk1');
@@ -292,12 +300,14 @@ def _page(title: str, body: str) -> HTMLResponse:
             drawSeg('seg-branch-p1-gear');
         }}, 3800);
         setTimeout(() => {{
-            document.getElementById('chk-neg-start').classList.add('visible');
-            document.getElementById('chk-neg-complete').classList.add('visible');
-            document.getElementById('elem-gear').classList.add('visible');
+            const c1 = document.getElementById('chk-neg-start');
+            const c2 = document.getElementById('chk-neg-complete');
+            const gear = document.getElementById('elem-gear');
+            if (c1) c1.classList.add('visible');
+            if (c2) c2.classList.add('visible');
+            if (gear) gear.classList.add('visible');
         }}, 4400);
 
-        // PHASE 2: Right to Left
         setTimeout(() => {{
             if (statusText) statusText.innerHTML = '<span class="text-[#fde047] font-bold">2. Tool Request &amp; Sync:</span> AI Apps sparkles, beam enters mcp-server while tools are granted &amp; notes write back.';
             if (pillAi) {{
@@ -306,17 +316,21 @@ def _page(title: str, body: str) -> HTMLResponse:
             }}
             setTimeout(() => {{ drawSeg('seg-scale-p2'); }}, 600);
             setTimeout(() => {{
-                document.getElementById('elem-junc-ai').classList.add('visible');
+                const junc = document.getElementById('elem-junc-ai');
+                if (junc) junc.classList.add('visible');
                 drawSeg('seg-branch-p2-up');
                 drawSeg('seg-branch-p2-down');
             }}, 1100);
             setTimeout(() => {{
-                document.getElementById('elem-robot-icon').classList.add('visible');
+                const robot = document.getElementById('elem-robot-icon');
+                const write = document.getElementById('elem-write-note');
+                if (robot) robot.classList.add('visible');
+                if (write) write.classList.add('visible');
                 drawSeg('seg-branch-p2-curve');
-                document.getElementById('elem-write-note').classList.add('visible');
             }}, 1600);
             setTimeout(() => {{
-                document.getElementById('elem-request-tools').classList.add('visible');
+                const tools = document.getElementById('elem-request-tools');
+                if (tools) tools.classList.add('visible');
                 drawSeg('seg-branch-p2-write-curve');
             }}, 2100);
             setTimeout(() => {{
@@ -324,15 +338,19 @@ def _page(title: str, body: str) -> HTMLResponse:
                 drawSeg('seg-branch-p2-return');
             }}, 2600);
             setTimeout(() => {{
-                document.getElementById('chk-access-granted').classList.add('visible');
-                document.getElementById('chk-note-processed').classList.add('visible');
+                const acc = document.getElementById('chk-access-granted');
+                const proc = document.getElementById('chk-note-processed');
+                if (acc) acc.classList.add('visible');
+                if (proc) proc.classList.add('visible');
             }}, 3100);
             setTimeout(() => {{
-                document.getElementById('chk-note-saved').classList.add('visible');
+                const saved = document.getElementById('chk-note-saved');
+                if (saved) saved.classList.add('visible');
                 drawSeg('seg-branch-p2-arrow-neon');
             }}, 3700);
             setTimeout(() => {{
-                document.getElementById('chk-sync-final').classList.add('visible');
+                const sync = document.getElementById('chk-sync-final');
+                if (sync) sync.classList.add('visible');
                 drawSeg('seg-branch-p2-arrow-mem');
                 if (statusText) statusText.innerHTML = '<span class="text-[#00e599] font-bold">✓ Complete:</span> Real-time bidirectional memory pipeline active across Android, Neon, and AI models.';
             }}, 4300);
@@ -340,8 +358,10 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
 
     document.addEventListener('DOMContentLoaded', () => {{
-        runFullSequence();
-    }});
+        if (document.getElementById('seg-scale-p1-a')) {{
+            runFullSequence();
+        }}
+    }));
 </script>
 </body>
 </html>
@@ -686,7 +706,7 @@ async def landing_page(request: Request):
                     </div>
 
                     <div id="elem-request-tools" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md z-10" style="left:64%; top:22%;">
-                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0-.33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                         request tools
                     </div>
 
@@ -711,7 +731,7 @@ async def landing_page(request: Request):
 
                 <div class="px-6 py-3 bg-[#09090b] border-t border-white/5 flex items-center justify-between mono text-xs">
                     <div id="anim-status-indicator" class="text-white/80">
-                        <span class="text-[#00e599] font-bold">1. Ingestion:</span> Memory Notes sparkles &amp; shoots beam along scale to mcp-server.
+                        <span class="text-[#00e599] font-bold">1. Ingestion:</span> Memory Notes sparkles &amp; shoots beam along scale to neon db &amp; mcp-server.
                     </div>
                     <span class="text-white/30 hidden sm:inline">Model Context Protocol 2.1</span>
                 </div>
@@ -888,7 +908,7 @@ async def landing_page(request: Request):
                         <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors">
                             <span class="material-symbols-outlined text-primary" data-icon="code">code</span>
                         </span>
-                        <h3 class="text-xl font-semibold text-on-surface mb-1">Open Protocol Standards</h3>
+                        <h3 class="xl font-semibold text-on-surface mb-1">Open Protocol Standards</h3>
                         <p class="text-sm text-on-surface-variant">Built directly on top of Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer extensibility.</p>
                     </div>
                     <div class="flex-1 w-full h-36 bg-surface-container-low border border-border-muted rounded flex flex-col justify-center p-4 font-mono text-xs text-text-secondary leading-relaxed">
@@ -919,7 +939,7 @@ async def landing_page(request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Signup
+# Signup & Login Handlers
 # ---------------------------------------------------------------------------
 async def signup_get(request: Request):
     next_ = _safe_next(request.query_params.get("next"))
@@ -1007,9 +1027,6 @@ async def signup_post(request: Request):
     return RedirectResponse(next_, status_code=302)
 
 
-# ---------------------------------------------------------------------------
-# Login
-# ---------------------------------------------------------------------------
 async def login_get(request: Request):
     next_ = _safe_next(request.query_params.get("next"))
     if _require_login(request):
