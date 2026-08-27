@@ -5,12 +5,10 @@ Full Python Starlette ASGI Application with:
 - Interactive Spotlight Grid Hero with Clean Standard Action Buttons ("Get Started" & "See more")
 - Live Emerging Architecture Pipeline Canvas (Neon DB -> FastMCP Broker -> AI Apps)
 - Multi-Tab Quick-Start Terminal Snippets (Claude Desktop / Cursor / cURL)
-- Dedicated Codebase Console Workspace with Claude-style Sidebar and 2D Infinite Node Canvas
+- Developer Feature Deep Dives & Full-Stack Auth / Multi-Tenant Dashboard
 """
 
 import asyncpg
-import json
-import time
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, RedirectResponse
 from starlette.routing import Route
@@ -216,11 +214,9 @@ def _page(title: str, body: str) -> HTMLResponse:
     function copyToClipboard(text, btnId) {{
         navigator.clipboard.writeText(text).then(() => {{
             const btn = document.getElementById(btnId);
-            if (btn) {{
-                const orig = btn.innerText;
-                btn.innerText = 'Copied!';
-                setTimeout(() => btn.innerText = orig, 2000);
-            }}
+            const orig = btn.innerText;
+            btn.innerText = 'Copied!';
+            setTimeout(() => btn.innerText = orig, 2000);
         }});
     }}
     function setTerminalTab(tab) {{
@@ -228,14 +224,12 @@ def _page(title: str, body: str) -> HTMLResponse:
         tabs.forEach(t => {{
             const btn = document.getElementById('tab-' + t);
             const block = document.getElementById('snippet-' + t);
-            if (btn && block) {{
-                if (t === tab) {{
-                    btn.className = 'px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors';
-                    block.classList.remove('hidden');
-                }} else {{
-                    btn.className = 'px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors';
-                    block.classList.add('hidden');
-                }}
+            if (t === tab) {{
+                btn.className = 'px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors';
+                block.classList.remove('hidden');
+            }} else {{
+                btn.className = 'px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors';
+                block.classList.add('hidden');
             }}
         }});
     }}
@@ -271,6 +265,7 @@ def _page(title: str, body: str) -> HTMLResponse:
         const pillMem = document.getElementById('pill-memory-notes');
         const pillAi = document.getElementById('elem-ai-apps');
 
+        // PHASE 1: Left to Right
         if (statusText) statusText.innerHTML = '<span class="text-[#00e599] font-bold">1. Ingestion:</span> Memory Notes sparkles &amp; shoots beam along scale to neon db &amp; mcp-server.';
 
         setTimeout(() => {{ if (pillMem) pillMem.classList.add('sparkle-burst'); }}, 200);
@@ -302,6 +297,7 @@ def _page(title: str, body: str) -> HTMLResponse:
             document.getElementById('elem-gear').classList.add('visible');
         }}, 4400);
 
+        // PHASE 2: Right to Left
         setTimeout(() => {{
             if (statusText) statusText.innerHTML = '<span class="text-[#fde047] font-bold">2. Tool Request &amp; Sync:</span> AI Apps sparkles, beam enters mcp-server while tools are granted &amp; notes write back.';
             if (pillAi) {{
@@ -344,9 +340,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
 
     document.addEventListener('DOMContentLoaded', () => {{
-        if (document.getElementById('seg-scale-p1-a')) {{
-            runFullSequence();
-        }}
+        runFullSequence();
     }});
 </script>
 </body>
@@ -924,10 +918,13 @@ async def landing_page(request: Request):
     return _page("Home", body)
 
 
+# ---------------------------------------------------------------------------
+# Signup
+# ---------------------------------------------------------------------------
 async def signup_get(request: Request):
     next_ = _safe_next(request.query_params.get("next"))
     if _require_login(request):
-        return RedirectResponse("/dashboard", status_code=302)
+        return RedirectResponse(next_, status_code=302)
     
     body = f"""
 {_navbar(request)}
@@ -958,6 +955,7 @@ async def signup_post(request: Request):
     form = await request.form()
     email = str(form.get("email", "")).strip()
     password = str(form.get("password", ""))
+    next_ = _safe_next(str(form.get("next", "")))
 
     error = None
     if "@" not in email:
@@ -973,6 +971,7 @@ async def signup_post(request: Request):
         <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
         <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">{error}</div>
         <form method="POST" action="/signup">
+            <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
                 <label class="block text-xs font-semibold text-on-surface mb-1">Email Address</label>
                 <input type="email" name="email" value="{email}" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm">
@@ -998,19 +997,23 @@ async def signup_post(request: Request):
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
         <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
         <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">An account with that email already exists.</div>
-        <p class="text-xs"><a href="/login" class="text-primary font-semibold underline">Log in instead</a></p>
+        <p class="text-xs"><a href="/login?next={next_}" class="text-primary font-semibold underline">Log in instead</a></p>
     </div>
 </main>
 """
         return _page("Sign up", body)
 
     request.session["user_id"] = user_id
-    return RedirectResponse("/dashboard", status_code=302)
+    return RedirectResponse(next_, status_code=302)
 
 
+# ---------------------------------------------------------------------------
+# Login
+# ---------------------------------------------------------------------------
 async def login_get(request: Request):
+    next_ = _safe_next(request.query_params.get("next"))
     if _require_login(request):
-        return RedirectResponse("/dashboard", status_code=302)
+        return RedirectResponse(next_, status_code=302)
     
     body = f"""
 {_navbar(request)}
@@ -1019,6 +1022,7 @@ async def login_get(request: Request):
         <h2 class="text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
         <p class="text-xs text-text-secondary mb-6">Log in to your account.</p>
         <form method="POST" action="/login">
+            <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
                 <label class="block text-xs font-semibold text-on-surface mb-1">Email Address</label>
                 <input type="email" name="email" placeholder="name@example.com" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm focus:outline-none focus:border-primary">
@@ -1029,7 +1033,7 @@ async def login_get(request: Request):
             </div>
             <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all">Log In</button>
         </form>
-        <p class="text-xs text-text-secondary text-center mt-6">No account yet? <a href="/signup" class="text-primary font-semibold hover:underline">Sign up</a></p>
+        <p class="text-xs text-text-secondary text-center mt-6">No account yet? <a href="/signup?next={next_}" class="text-primary font-semibold hover:underline">Sign up</a></p>
     </div>
 </main>
 """
@@ -1040,6 +1044,7 @@ async def login_post(request: Request):
     form = await request.form()
     email = str(form.get("email", "")).strip()
     password = str(form.get("password", ""))
+    next_ = _safe_next(str(form.get("next", "")))
 
     pool = db_control.get_control_pool()
     user = await db_control.get_user_by_email(pool, email)
@@ -1052,6 +1057,7 @@ async def login_post(request: Request):
         <h2 class="text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
         <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">Incorrect email or password.</div>
         <form method="POST" action="/login">
+            <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
                 <label class="block text-xs font-semibold text-on-surface mb-1">Email Address</label>
                 <input type="email" name="email" value="{email}" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm">
@@ -1068,17 +1074,188 @@ async def login_post(request: Request):
         return _page("Log in", body)
 
     request.session["user_id"] = str(user["id"])
-    return RedirectResponse("/dashboard", status_code=302)
+    return RedirectResponse(next_, status_code=302)
 
 
 async def logout(request: Request):
+    form = await request.form()
+    next_ = str(form.get("next", "")) if form.get("next") else None
     request.session.clear()
+    if next_ and next_.startswith("/") and not next_.startswith("//"):
+        return RedirectResponse(f"/login?next={next_}", status_code=302)
     return RedirectResponse("/login", status_code=302)
 
 
 # ---------------------------------------------------------------------------
-# Route Registry
+# Dashboard & Settings
 # ---------------------------------------------------------------------------
+async def dashboard_get(request: Request):
+    user_id = _require_login(request)
+    if not user_id:
+        return RedirectResponse("/login", status_code=302)
+
+    pool = db_control.get_control_pool()
+    user = await db_control.get_user_by_id(pool, user_id)
+    if user is None:
+        request.session.clear()
+        return RedirectResponse("/login", status_code=302)
+
+    flash_key = request.session.pop("flash_api_key", None)
+    flash_html = ""
+    if flash_key:
+        flash_html = f"""
+<div class="mb-6 p-4 bg-surface-container-low border border-primary rounded-lg">
+    <strong class="text-xs uppercase font-mono text-primary block mb-1">New API Key (Shown Once — Copy Now):</strong>
+    <div class="flex items-center gap-2 mt-2">
+        <input type="text" readonly value="{flash_key}" id="newApiKeyField" class="w-full font-mono text-xs bg-surface-white border border-border-muted p-2 rounded">
+        <button id="btnCopyKey" onclick="copyToClipboard('{flash_key}', 'btnCopyKey')" class="bg-secondary-container text-on-surface px-4 py-2 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy</button>
+    </div>
+    <p class="text-xs text-text-secondary mt-2">Use this as your Bearer Token for Claude or direct API configurations.</p>
+</div>
+"""
+
+    if user["connection_string_encrypted"]:
+        masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
+        conn_status = f'<p class="text-xs text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
+    else:
+        conn_status = '<div class="p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">No Neon connection string set yet. Claude connector will fail until configured.</div>'
+
+    keys = await db_control.list_api_keys(pool, user_id)
+    active_keys = [k for k in keys if k["revoked_at"] is None]
+    if active_keys:
+        rows = "".join(f"""
+<div class="flex items-center justify-between py-3 border-b border-border-muted last:border-0">
+    <div>
+        <div class="text-sm font-semibold text-on-surface">{k['label']}</div>
+        <div class="text-xs text-text-secondary">Created {k['created_at'].strftime('%b %d, %Y')}{f" • Last used {k['last_used_at'].strftime('%b %d, %Y')}" if k['last_used_at'] else ""}</div>
+    </div>
+    <form method="POST" action="/dashboard/api-key/revoke" class="m-0">
+        <input type="hidden" name="key_id" value="{k['id']}">
+        <button type="submit" class="text-error text-xs font-semibold hover:underline" onclick="return confirm('Revoke this key? Apps using it will disconnect immediately.');">Revoke</button>
+    </form>
+</div>
+""" for k in active_keys)
+    else:
+        rows = '<p class="text-xs text-text-secondary">No active API keys found.</p>'
+
+    base_url = str(request.base_url).rstrip("/")
+    mcp_endpoint = f"{base_url}/mcp"
+    nav_html = _navbar(request, user["email"])
+
+    body = f"""
+{nav_html}
+<main class="flex-grow py-10 px-6">
+    <div class="max-w-3xl mx-auto">
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-on-surface mb-1">Dashboard & Settings</h1>
+            <p class="text-xs text-text-secondary">Manage your database connection string, API keys, and connector endpoint.</p>
+        </div>
+
+        {flash_html}
+
+        <!-- 1. Endpoint & Connection URL -->
+        <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
+            <h2 class="text-base font-semibold text-on-surface mb-1">1. MCP Server Endpoint</h2>
+            <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector.</p>
+            <div class="flex items-center gap-2">
+                <input type="text" readonly value="{mcp_endpoint}" id="mcpEndpointField" class="w-full font-mono text-xs bg-surface-container-low border border-border-muted p-2.5 rounded">
+                <button id="btnCopyEndpoint" onclick="copyToClipboard('{mcp_endpoint}', 'btnCopyEndpoint')" class="bg-surface-white text-on-surface px-4 py-2.5 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy URL</button>
+            </div>
+        </div>
+
+        <!-- 2. Neon Database Connection String Settings -->
+        <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
+            <h2 class="text-base font-semibold text-on-surface mb-1">2. Neon Database Connection String</h2>
+            <p class="text-xs text-text-secondary mb-3">Paste the same PostgreSQL connection string your mobile notes app uses to sync.</p>
+            {conn_status}
+            <form method="POST" action="/dashboard/connection-string" class="mt-4">
+                <div class="mb-3">
+                    <input type="text" name="connection_string" placeholder="postgresql://user:password@ep-xxx.neon.tech/dbname" required class="w-full px-4 py-2.5 border border-border-muted rounded text-xs font-mono focus:outline-none focus:border-primary">
+                </div>
+                <button type="submit" class="bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505]">Save Connection String</button>
+            </form>
+        </div>
+
+        <!-- 3. API Keys Management -->
+        <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
+            <h2 class="text-base font-semibold text-on-surface mb-1">3. MCP API Keys</h2>
+            <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps.</p>
+            <div class="divide-y border-border-muted mb-4">
+                {rows}
+            </div>
+            <form method="POST" action="/dashboard/api-key/create">
+                <button type="submit" class="bg-surface-white text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors">Generate New Manual API Key</button>
+            </form>
+        </div>
+    </div>
+</main>
+"""
+    return _page("Dashboard", body)
+
+
+async def update_connection_string(request: Request):
+    user_id = _require_login(request)
+    if not user_id:
+        return RedirectResponse("/login", status_code=302)
+
+    form = await request.form()
+    connection_string = str(form.get("connection_string", "")).strip()
+
+    if not (connection_string.startswith("postgresql://") or connection_string.startswith("postgres://")):
+        return _dashboard_error("Invalid format: Must start with postgresql://")
+
+    ok, err = await tenant_pools.test_connection_string(connection_string)
+    if not ok:
+        return _dashboard_error(f"Connection test failed: {err}")
+
+    pool = db_control.get_control_pool()
+    await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))
+    await tenant_pools.get_manager().invalidate(user_id)
+
+    return RedirectResponse("/dashboard", status_code=302)
+
+
+async def create_api_key(request: Request):
+    user_id = _require_login(request)
+    if not user_id:
+        return RedirectResponse("/login", status_code=302)
+
+    pool = db_control.get_control_pool()
+    raw_key = security.generate_api_key()
+    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")
+    request.session["flash_api_key"] = raw_key
+
+    return RedirectResponse("/dashboard", status_code=302)
+
+
+async def revoke_api_key(request: Request):
+    user_id = _require_login(request)
+    if not user_id:
+        return RedirectResponse("/login", status_code=302)
+
+    form = await request.form()
+    key_id = str(form.get("key_id", ""))
+
+    pool = db_control.get_control_pool()
+    await db_control.revoke_api_key(pool, user_id, key_id)
+
+    return RedirectResponse("/dashboard", status_code=302)
+
+
+def _dashboard_error(message: str) -> HTMLResponse:
+    body = f"""
+<main class="flex-grow flex items-center justify-center py-16 px-6">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm text-center">
+        <h2 class="text-lg font-bold text-error mb-2">Error</h2>
+        <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-6 border border-red-200">{message}</div>
+        <a href="/dashboard" class="inline-block bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] no-underline">Back to Dashboard</a>
+    </div>
+</main>
+"""
+    return _page("Error", body)
+
+
+# Route registry
 routes = [
     Route("/", landing_page, methods=["GET"]),
     Route("/signup", signup_get, methods=["GET"]),
@@ -1086,7 +1263,7 @@ routes = [
     Route("/login", login_get, methods=["GET"]),
     Route("/login", login_post, methods=["POST"]),
     Route("/logout", logout, methods=["POST"]),
-    Route("/dashboard", console_get, methods=["GET"]),
+    Route("/dashboard", dashboard_get, methods=["GET"]),
     Route("/dashboard/connection-string", update_connection_string, methods=["POST"]),
     Route("/dashboard/api-key/create", create_api_key, methods=["POST"]),
     Route("/dashboard/api-key/revoke", revoke_api_key, methods=["POST"]),
