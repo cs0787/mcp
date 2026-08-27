@@ -147,37 +147,6 @@ def _page(title: str, body: str) -> HTMLResponse:
         opacity: 1;
     }}
 
-    /* Progressive Emerging Architecture Animation */
-    .seg-path {{
-        transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
-    }}
-    
-    .timeline-elem {{
-        transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-        opacity: 0;
-        transform: scale(0.4);
-        pointer-events: none;
-    }}
-    .timeline-elem.visible {{
-        opacity: 1;
-        transform: scale(1);
-        pointer-events: auto;
-    }}
-    .pill-memory-start {{
-        opacity: 1 !important;
-        transform: scale(1) !important;
-        pointer-events: auto !important;
-    }}
-
-    @keyframes sparkleBurstSlow {{
-        0% {{ transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 229, 153, 0.9); }}
-        40% {{ transform: scale(1.15); box-shadow: 0 0 35px 12px rgba(0, 229, 153, 1); filter: brightness(1.5); }}
-        100% {{ transform: scale(1); box-shadow: 0 0 18px 2px rgba(0, 229, 153, 0.4); }}
-    }}
-    .sparkle-burst {{
-        animation: sparkleBurstSlow 0.9s ease-out forwards;
-    }}
-
     .feature-card {{
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }}
@@ -234,115 +203,6 @@ def _page(title: str, body: str) -> HTMLResponse:
             }}
         }});
     }}
-
-    // =========================================================================
-    // PROGRESSIVE EMERGING ARCHITECTURE ANIMATION
-    // =========================================================================
-    function resetTimelineToStart() {{
-        document.querySelectorAll('.seg-path').forEach(p => {{
-            const len = p.getAttribute('data-len') || '300';
-            p.style.strokeDasharray = len;
-            p.style.strokeDashoffset = len;
-        }});
-
-        const pillMem = document.getElementById('pill-memory-notes');
-        const pillAi = document.getElementById('elem-ai-apps');
-        if (pillMem) pillMem.classList.remove('sparkle-burst');
-        if (pillAi) pillAi.classList.remove('sparkle-burst');
-
-        document.querySelectorAll('.timeline-elem:not(.pill-memory-start)').forEach(el => {{
-            el.classList.remove('visible');
-        }});
-    }}
-
-    function drawSeg(id) {{
-        const el = document.getElementById(id);
-        if (el) el.style.strokeDashoffset = '0';
-    }}
-
-    function runFullSequence() {{
-        resetTimelineToStart();
-        const statusText = document.getElementById('anim-status-indicator');
-        const pillMem = document.getElementById('pill-memory-notes');
-        const pillAi = document.getElementById('elem-ai-apps');
-
-        // PHASE 1: Left to Right
-        if (statusText) statusText.innerHTML = '<span class="text-[#00e599] font-bold">1. Ingestion:</span> Memory Notes sparkles &amp; shoots beam along scale to neon db &amp; mcp-server.';
-
-        setTimeout(() => {{ if (pillMem) pillMem.classList.add('sparkle-burst'); }}, 200);
-        setTimeout(() => {{ drawSeg('seg-scale-p1-a'); }}, 700);
-        setTimeout(() => {{
-            document.getElementById('elem-neon-db').classList.add('visible');
-            document.getElementById('elem-junc-neon').classList.add('visible');
-            drawSeg('seg-branch-p1-up');
-        }}, 1400);
-        setTimeout(() => {{
-            document.getElementById('elem-db-icon').classList.add('visible');
-            drawSeg('seg-branch-p1-curve');
-        }}, 2000);
-        setTimeout(() => {{
-            document.getElementById('elem-request-data').classList.add('visible');
-        }}, 2500);
-        setTimeout(() => {{ drawSeg('seg-scale-p1-b'); }}, 2800);
-        setTimeout(() => {{
-            document.getElementById('elem-mcp-server').classList.add('visible');
-        }}, 3400);
-        setTimeout(() => {{
-            drawSeg('seg-branch-p1-chk1');
-            drawSeg('seg-branch-p1-chk2');
-            drawSeg('seg-branch-p1-gear');
-        }}, 3800);
-        setTimeout(() => {{
-            document.getElementById('chk-neg-start').classList.add('visible');
-            document.getElementById('chk-neg-complete').classList.add('visible');
-            document.getElementById('elem-gear').classList.add('visible');
-        }}, 4400);
-
-        // PHASE 2: Right to Left
-        setTimeout(() => {{
-            if (statusText) statusText.innerHTML = '<span class="text-[#fde047] font-bold">2. Tool Request &amp; Sync:</span> AI Apps sparkles, beam enters mcp-server while tools are granted &amp; notes write back.';
-            if (pillAi) {{
-                pillAi.classList.add('visible');
-                pillAi.classList.add('sparkle-burst');
-            }}
-            setTimeout(() => {{ drawSeg('seg-scale-p2'); }}, 600);
-            setTimeout(() => {{
-                document.getElementById('elem-junc-ai').classList.add('visible');
-                drawSeg('seg-branch-p2-up');
-                drawSeg('seg-branch-p2-down');
-            }}, 1100);
-            setTimeout(() => {{
-                document.getElementById('elem-robot-icon').classList.add('visible');
-                drawSeg('seg-branch-p2-curve');
-                document.getElementById('elem-write-note').classList.add('visible');
-            }}, 1600);
-            setTimeout(() => {{
-                document.getElementById('elem-request-tools').classList.add('visible');
-                drawSeg('seg-branch-p2-write-curve');
-            }}, 2100);
-            setTimeout(() => {{
-                drawSeg('seg-branch-p2-access');
-                drawSeg('seg-branch-p2-return');
-            }}, 2600);
-            setTimeout(() => {{
-                document.getElementById('chk-access-granted').classList.add('visible');
-                document.getElementById('chk-note-processed').classList.add('visible');
-            }}, 3100);
-            setTimeout(() => {{
-                document.getElementById('chk-note-saved').classList.add('visible');
-                drawSeg('seg-branch-p2-arrow-neon');
-            }}, 3700);
-            setTimeout(() => {{
-                document.getElementById('chk-sync-final').classList.add('visible');
-                drawSeg('seg-branch-p2-arrow-mem');
-                if (statusText) statusText.innerHTML = '<span class="text-[#00e599] font-bold">✓ Complete:</span> Real-time bidirectional memory pipeline active across Android, Neon, and AI models.';
-            }}, 4300);
-        }}, 6500);
-    }}
-
-    document.addEventListener('DOMContentLoaded', () => {{
-        runFullSequence();
-    }});
 </script>
 </body>
 </html>
@@ -502,7 +362,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. EXACT NEON-STYLE ARCHITECTURE CANVAS -->
+    <!-- 2. EXACT NEON-STYLE ARCHITECTURE CANVAS WITH EMBEDDED EXACT ANIMATION -->
     <section id="pipeline" class="py-20 bg-[#000000] text-white border-b border-neutral-800 overflow-hidden select-none">
         <div class="max-w-7xl mx-auto px-6 lg:px-12">
             
@@ -516,391 +376,366 @@ async def landing_page(request: Request):
                         Instant Context Pipeline
                     </h2>
                 </div>
-
-                <div class="flex items-center gap-3">
-                    <button onclick="runFullSequence()" class="px-4 py-2 rounded-xl bg-[#121214] hover:bg-[#1c1c20] border border-white/10 text-white/80 hover:text-white mono text-xs font-semibold flex items-center gap-2 transition-all">
-                        <span class="material-symbols-outlined text-sm" data-icon="replay">replay</span>
-                        Replay Animation
-                    </button>
-                </div>
             </div>
 
-            <!-- Neon Wrapper Frame -->
-            <div class="transition-opacity opacity-100 relative w-full rounded-2xl border border-white/[0.08] bg-[#000000] shadow-2xl p-2 overflow-x-auto">
-                <div class="size-full aspect-[1184/500] min-w-[1050px] relative w-full">
-
-                    <svg viewBox="0 0 1184 500" preserveAspectRatio="xMidYMid meet" class="absolute inset-0 w-full h-full">
-                        <defs>
-                            <pattern id="neonGridPattern" width="36" height="500" patternUnits="userSpaceOnUse">
-                                <line x1="0" y1="0" x2="0" y2="500" stroke="#ffffff" stroke-opacity="0.035" stroke-width="1" stroke-dasharray="2 5"/>
-                            </pattern>
-                            <filter id="neonGreenGlow" x="-20%" y="-400%" width="140%" height="900%">
-                                <feGaussianBlur in="SourceGraphic" stdDeviation="3.8" result="blur"/>
-                                <feMerge>
-                                    <feMergeNode in="blur"/>
-                                    <feMergeNode in="SourceGraphic"/>
-                                </feMerge>
-                            </filter>
-                            <marker id="greenArrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                                <path d="M 0 1 L 8 5 L 0 9 z" fill="#00e599"/>
-                            </marker>
-                        </defs>
-
-                        <rect x="0" y="0" width="1184" height="500" fill="url(#neonGridPattern)"/>
-
-                        <g stroke="#ffffff" stroke-opacity="0.16">
-                            <line x1="320" y1="246" x2="320" y2="254"/>
-                            <line x1="356" y1="246" x2="356" y2="254"/>
-                            <line x1="392" y1="246" x2="392" y2="254"/>
-                            <line x1="428" y1="246" x2="428" y2="254"/>
-                            <line x1="464" y1="246" x2="464" y2="254"/>
-                            <line x1="500" y1="246" x2="500" y2="254"/>
-                            <line x1="536" y1="246" x2="536" y2="254"/>
-                            <line x1="572" y1="246" x2="572" y2="254"/>
-                            <line x1="608" y1="246" x2="608" y2="254"/>
-                            <line x1="644" y1="246" x2="644" y2="254"/>
-                            <line x1="680" y1="246" x2="680" y2="254"/>
-                            <line x1="716" y1="246" x2="716" y2="254"/>
-                            <line x1="752" y1="246" x2="752" y2="254"/>
-                            <line x1="788" y1="246" x2="788" y2="254"/>
-                            <line x1="824" y1="246" x2="824" y2="254"/>
-                            <line x1="860" y1="246" x2="860" y2="254"/>
-                            <line x1="896" y1="246" x2="896" y2="254"/>
-                            <line x1="932" y1="246" x2="932" y2="254"/>
-                            <line x1="968" y1="246" x2="968" y2="254"/>
-                        </g>
-
-                        <line x1="140" y1="250" x2="1080" y2="250" stroke="#1f1f23" stroke-width="2"/>
-                        <path d="M 145 250 H 195" stroke="#00e599" stroke-width="2" marker-end="url(#greenArrow)"/>
-
-                        <path id="seg-scale-p1-a" class="seg-path" data-len="130" d="M 140 250 H 268" stroke="#00e599" stroke-width="2.8" stroke-dasharray="130" stroke-dashoffset="130" filter="url(#neonGreenGlow)" fill="none"/>
-                        <path id="seg-scale-p1-b" class="seg-path" data-len="330" d="M 268 250 H 592" stroke="#00e599" stroke-width="2.8" stroke-dasharray="330" stroke-dashoffset="330" filter="url(#neonGreenGlow)" fill="none"/>
-                        <path id="seg-branch-p1-up" class="seg-path" data-len="80" d="M 268 250 V 175" stroke="#00e599" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="80" fill="none"/>
-                        <path id="seg-branch-p1-curve" class="seg-path" data-len="400" d="M 268 148 C 268 110 295 110 320 110 H 460 C 495 110 505 160 520 160 H 570" stroke="#52525b" stroke-width="1.6" stroke-dasharray="400" stroke-dashoffset="400" fill="none"/>
-                        <path id="seg-branch-p1-chk1" class="seg-path" data-len="60" d="M 520 160 V 105" stroke="#00e599" stroke-width="1.2" stroke-dasharray="3 3" stroke-dashoffset="60" fill="none"/>
-                        <path id="seg-branch-p1-chk2" class="seg-path" data-len="60" d="M 664 160 V 105" stroke="#00e599" stroke-width="1.2" stroke-dasharray="3 3" stroke-dashoffset="60" fill="none"/>
-                        <path id="seg-branch-p1-gear" class="seg-path" data-len="120" d="M 592 180 V 295" stroke="#ffffff" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="120" fill="none"/>
-
-                        <path id="seg-scale-p2" class="seg-path" data-len="430" d="M 1020 250 H 592" stroke="#00e599" stroke-width="2.8" stroke-dasharray="430" stroke-dashoffset="430" filter="url(#neonGreenGlow)" fill="none"/>
-                        <path id="seg-branch-p2-up" class="seg-path" data-len="80" d="M 940 250 V 175" stroke="#00e599" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="80" fill="none"/>
-                        <path id="seg-branch-p2-curve" class="seg-path" data-len="400" d="M 940 148 C 940 110 915 110 885 110 H 740 C 700 110 690 160 670 160 H 614" stroke="#52525b" stroke-width="1.6" stroke-dasharray="400" stroke-dashoffset="400" fill="none"/>
-                        <path id="seg-branch-p2-access" class="seg-path" data-len="140" d="M 645 160 C 705 160 705 235 705 275" stroke="#71717a" stroke-width="1.5" stroke-dasharray="140" stroke-dashoffset="140" fill="none"/>
-                        <path id="seg-branch-p2-down" class="seg-path" data-len="150" d="M 1035 265 V 360 H 980" stroke="#00e599" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="150" fill="none"/>
-                        <path id="seg-branch-p2-write-curve" class="seg-path" data-len="120" d="M 870 360 C 830 360 830 420 790 420" stroke="#52525b" stroke-width="1.6" stroke-dasharray="120" stroke-dashoffset="120" fill="none"/>
-                        <path id="seg-branch-p2-return" class="seg-path" data-len="710" d="M 790 420 H 85" stroke="#00e599" stroke-width="1.8" stroke-dasharray="710" stroke-dashoffset="710" fill="none"/>
-                        <path id="seg-branch-p2-arrow-neon" class="seg-path" data-len="150" d="M 300 420 V 270" stroke="#00e599" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="150" marker-end="url(#greenArrow)" fill="none"/>
-                        <path id="seg-branch-p2-arrow-mem" class="seg-path" data-len="150" d="M 85 420 V 270" stroke="#00e599" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="150" marker-end="url(#greenArrow)" fill="none"/>
-
-                        <g id="elem-junc-neon" class="timeline-elem">
-                            <circle cx="268" cy="250" r="3.5" fill="#000000" stroke="#00e599" stroke-width="2"/>
-                        </g>
-                        <g id="elem-db-icon" class="timeline-elem">
-                            <circle cx="268" cy="162" r="14" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
-                            <path d="M263 157 C263 155 265 154 268 154 C271 154 273 155 273 157 C273 159 271 160 268 160 C265 160 263 159 263 157 Z M263 162 C263 164 265 165 268 165 C271 165 273 164 273 162 M263 167 C263 169 265 170 268 170 C271 170 273 169 273 167" stroke="#ffffff" stroke-width="1.2" fill="none"/>
-                        </g>
-                        <g id="chk-neg-start" class="timeline-elem">
-                            <circle cx="520" cy="105" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
-                            <path d="M517 105 L519 107 L523 103" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                            <text x="520" y="55" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">negotiation<tspan x="520" dy="14">started</tspan></text>
-                        </g>
-                        <g id="chk-neg-complete" class="timeline-elem">
-                            <circle cx="664" cy="105" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
-                            <path d="M661 105 L663 107 L667 103" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                            <text x="664" y="55" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">negotiation<tspan x="664" dy="14">complete</tspan></text>
-                        </g>
-                        <g id="elem-gear" class="timeline-elem">
-                            <circle cx="592" cy="310" r="14" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
-                            <path d="M592 305 A5 5 0 1 0 592 315 A5 5 0 1 0 592 305 M592 302 V304 M592 316 V318 M584 310 H586 M598 310 H600" stroke="#ffffff" stroke-width="1.4" fill="none"/>
-                            <text x="592" y="342" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">protocol<tspan x="592" dy="14">negotiation</tspan></text>
-                        </g>
-                        <g id="elem-junc-ai" class="timeline-elem">
-                            <circle cx="940" cy="250" r="3.5" fill="#000000" stroke="#00e599" stroke-width="2"/>
-                        </g>
-                        <g id="elem-robot-icon" class="timeline-elem">
-                            <circle cx="940" cy="162" r="14" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
-                            <path d="M936 159 H944 V167 H936 Z M940 155 V159 M933 163 H936 M944 163 H947 M938 162 H939 M941 162 H942" stroke="#ffffff" stroke-width="1.2" fill="none"/>
-                        </g>
-                        <g id="chk-access-granted" class="timeline-elem">
-                            <circle cx="705" cy="275" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
-                            <path d="M702 275 L704 277 L708 273" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                            <text x="705" y="306" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">tools &amp; data<tspan x="705" dy="14">access granted</tspan></text>
-                        </g>
-                        <g id="chk-note-processed" class="timeline-elem">
-                            <circle cx="705" cy="420" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
-                            <path d="M702 420 L704 422 L708 418" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                            <text x="705" y="452" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">note processed<tspan x="705" dy="14">by mcp-server</tspan></text>
-                        </g>
-                        <g id="chk-note-saved" class="timeline-elem">
-                            <circle cx="300" cy="420" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
-                            <path d="M297 420 L299 422 L303 418" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                            <text x="300" y="452" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">note saved<tspan x="300" dy="14">in neon db</tspan></text>
-                        </g>
-                        <g id="chk-sync-final" class="timeline-elem">
-                            <circle cx="85" cy="420" r="7" fill="#092f1f" stroke="#00e599" stroke-width="2"/>
-                            <path d="M82 420 L84 422 L88 418" stroke="#00e599" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                            <text x="85" y="452" fill="#a1a1aa" font-size="11" font-family="'JetBrains Mono', monospace" text-anchor="middle">sync<tspan x="85" dy="14">(auto / manual)</tspan></text>
-                        </g>
-                    </svg>
-
-                    <!-- HTML CAPSULE PILLS OVERLAY -->
-                    <div id="pill-memory-notes" class="timeline-elem pill-memory-start absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent select-none z-10" style="left:1.5%; top:48%;">
-                        <svg class="w-3.5 h-3.5 text-[#0a0a0a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                        Memory Notes
-                    </div>
-                    <div class="absolute mono text-[11px] text-white/50 text-center" style="left:2.2%; top:53%;">
-                        Notes added<br>by you
-                    </div>
-                    <div class="absolute mono text-[10px] text-[#00e599] font-semibold" style="left:14%; top:49.8%;">
-                        sync
-                    </div>
-
-                    <div id="elem-neon-db" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent select-none z-10" style="left:18.5%; top:48%;">
-                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 3.79 2 6v12c0 2.21 4.48 4 10 4s10-1.79 10-4V6c0-2.21-4.48-4-10-4zm0 2c4.97 0 8 1.46 8 2s-3.03 2-8 2-8-1.46-8-2 3.03-2 8-2zm0 16c-4.97 0-8-1.46-8-2v-2.23c2.08 1.34 5.09 2.23 8 2.23s5.92-.89 8-2.23V18c0 .54-3.03 2-8 2z"/></svg>
-                        neon db
-                    </div>
-                    <div class="absolute mono text-[11px] text-white/50 text-center" style="left:19.5%; top:53%;">
-                        Stores all notes
-                    </div>
-
-                    <div id="elem-request-data" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md z-10" style="left:27%; top:22%;">
-                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 3.79 2 6v12c0 2.21 4.48 4 10 4s10-1.79 10-4V6c0-2.21-4.48-4-10-4zm0 2c4.97 0 8 1.46 8 2s-3.03 2-8 2-8-1.46-8-2 3.03-2 8-2zm0 16c-4.97 0-8-1.46-8-2v-2.23c2.08 1.34 5.09 2.23 8 2.23s5.92-.89 8-2.23V18c0 .54-3.03 2-8 2z"/></svg>
-                        request data
-                    </div>
-
-                    <div id="elem-mcp-server" class="timeline-elem absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 px-4 py-2 rounded-full bg-[#fde047] text-[#0a0a0a] mono text-xs font-extrabold shadow-[0_0_25px_rgba(253,224,71,0.4)] select-none border-2 border-white/40 z-20" style="left:50%; top:31%;">
-                        <svg class="w-4 h-4 text-[#0a0a0a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                        mcp-server
-                    </div>
-
-                    <div id="elem-request-tools" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md z-10" style="left:64%; top:22%;">
-                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0-.33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                        request tools
-                    </div>
-
-                    <div id="elem-ai-apps" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white text-[#0a0a0a] mono text-xs font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] border-2 border-transparent select-none z-10" style="left:86%; top:48%;">
-                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
-                        ai apps
-                    </div>
-                    <div class="absolute mono text-[11px] text-white/50 text-center" style="left:86%; top:53%;">
-                        AI Agents / Apps
-                    </div>
-
-                    <div id="elem-write-note" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md z-10" style="left:76%; top:69%;">
-                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-                        write note
-                    </div>
-
-                    <div class="absolute -translate-x-1/2 mono text-[10px] text-white/35" style="left:22.5%; top:59%;">18:24:00</div>
-                    <div class="absolute -translate-x-1/2 mono text-[10px] text-white/35" style="left:41%; top:41%;">19:08:12</div>
-                    <div class="absolute -translate-x-1/2 mono text-[10px] text-white/35" style="left:73.5%; top:53.5%;">20:32:04</div>
-
+            <!-- Embedded Exact Animation Diagram Container -->
+            <div class="w-full flex justify-center bg-[#000000] rounded-2xl border border-white/[0.08] p-4 overflow-x-auto shadow-2xl">
+              <div class="diagram-container" style="transform: scale(0.95); transform-origin: center;">
+                <!-- Grid Columns -->
+                <div class="vertical-grid">
+                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
+                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
+                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
+                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
+                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
+                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
+                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
                 </div>
 
-                <div class="px-6 py-3 bg-[#09090b] border-t border-white/5 flex items-center justify-between mono text-xs">
-                    <div id="anim-status-indicator" class="text-white/80">
-                        <span class="text-[#00e599] font-bold">1. Ingestion:</span> Memory Notes sparkles &amp; shoots beam along scale to mcp-server.
-                    </div>
-                    <span class="text-white/30 hidden sm:inline">Model Context Protocol 2.1</span>
+                <!-- Vector Canvas -->
+                <svg class="canvas" viewBox="0 0 1000 524">
+                  <defs>
+                    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                      <path d="M 1 2 L 7 5 L 1 8" fill="none" stroke="#00e599" stroke-width="1.5" stroke-linecap="round"/>
+                    </marker>
+                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur stdDeviation="3.5" result="blur" />
+                      <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+                  </defs>
+
+                  <!-- Main Central Timeline Track -->
+                  <path id="path-main" d="M 74 262 L 950 262" class="line-green" />
+                  <path id="path-sync-arrow" d="M 132 262 L 188 262" class="line-green" marker-end="url(#arrow-green)" />
+
+                  <!-- Ruler Ticks -->
+                  <g id="ticks">
+                    <line x1="292" y1="256" x2="292" y2="268" class="ruler-tick" />
+                    <line x1="316" y1="258" x2="316" y2="266" class="ruler-tick" />
+                    <line x1="340" y1="256" x2="340" y2="268" class="ruler-tick" />
+                    <line x1="364" y1="258" x2="364" y2="266" class="ruler-tick" />
+                    <line x1="388" y1="256" x2="388" y2="268" class="ruler-tick" />
+                    
+                    <!-- 19:08:12 Tick -->
+                    <line id="tick-19" x1="410" y1="244" x2="410" y2="268" class="ruler-tick tick-active" style="opacity: 0;" />
+
+                    <line x1="434" y1="258" x2="434" y2="266" class="ruler-tick" />
+                    <line x1="458" y1="256" x2="458" y2="268" class="ruler-tick" />
+                    <line x1="482" y1="258" x2="482" y2="266" class="ruler-tick" />
+                    <line x1="506" y1="256" x2="506" y2="268" class="ruler-tick" />
+                    <line x1="530" y1="258" x2="530" y2="266" class="ruler-tick" />
+                    <line x1="554" y1="256" x2="554" y2="268" class="ruler-tick" />
+                    <line x1="578" y1="258" x2="578" y2="266" class="ruler-tick" />
+                    <line x1="602" y1="256" x2="602" y2="268" class="ruler-tick" />
+                    <line x1="626" y1="258" x2="626" y2="266" class="ruler-tick" />
+                    <line x1="650" y1="256" x2="650" y2="268" class="ruler-tick" />
+                    <line x1="674" y1="258" x2="674" y2="266" class="ruler-tick" />
+                    <line x1="698" y1="256" x2="698" y2="268" class="ruler-tick" />
+                    <line x1="722" y1="258" x2="722" y2="266" class="ruler-tick" />
+
+                    <!-- 20:32:04 Tick -->
+                    <line id="tick-20" x1="743" y1="248" x2="743" y2="276" class="ruler-tick tick-active" style="opacity: 0;" />
+
+                    <line x1="766" y1="258" x2="766" y2="266" class="ruler-tick" />
+                    <line x1="790" y1="256" x2="790" y2="268" class="ruler-tick" />
+                    <line x1="814" y1="258" x2="814" y2="266" class="ruler-tick" />
+                    <line x1="838" y1="256" x2="838" y2="268" class="ruler-tick" />
+                    <line x1="862" y1="258" x2="862" y2="266" class="ruler-tick" />
+                  </g>
+
+                  <!-- Upper Left Branch Flow -->
+                  <path id="path-db-up" d="M 226 262 V 182" class="line-green-dash" />
+                  <path id="path-req-data" d="M 226 162 V 138 Q 226 118 248 118 H 268" class="line-white-dash" />
+                  <path id="path-data-to-mcp" d="M 390 118 H 410 Q 426 118 426 140 V 158 Q 426 172 444 172 H 455" class="line-white-dash" />
+
+                  <!-- Negotiation Status Lines -->
+                  <path id="path-neg-1" d="M 450 85 V 157" class="line-green-dash" />
+                  <path id="path-neg-2" d="M 591 85 V 157" class="line-green-dash" />
+
+                  <!-- Upper Right Branch Flow -->
+                  <path id="path-mcp-to-tools" d="M 584 172 H 598 Q 614 172 614 150 V 138 Q 614 118 632 118 H 648" class="line-white-dash" />
+                  <path id="path-tools-to-apps" d="M 776 118 H 806 Q 828 118 828 138 V 162" class="line-white-dash" />
+                  <path id="path-apps-down" d="M 828 182 V 262" class="line-green-dash" />
+
+                  <!-- Center Protocol Negotiation Line -->
+                  <path id="path-protocol" d="M 520 188 V 328" class="line-white-dash" />
+
+                  <!-- Access Granted Line -->
+                  <path id="path-granted" d="M 572 188 V 276 Q 572 298 598 298 H 618" class="line-white-solid" />
+
+                  <!-- Lower Return Flow -->
+                  <path id="path-ai-to-note" d="M 918 278 V 356 Q 918 380 892 380 H 885" class="line-green-dash" />
+                  <path id="path-note-to-proc" d="M 775 380 H 760 Q 747 380 747 408 V 418 Q 747 440 726 440 H 635" class="line-white-solid" />
+                  <path id="path-lower-flow" d="M 615 440 L 280 440" class="line-green-dash" marker-end="url(#arrow-green)" />
+                  <path id="path-ret-db" d="M 248 440 H 236 Q 236 400 236 360" class="line-green-dash" marker-end="url(#arrow-green)" />
+                  <path id="path-ret-sync" d="M 248 440 H 76 V 340" class="line-green-dash" marker-end="url(#arrow-green)" />
+
+                  <!-- Leading Glow Head -->
+                  <circle id="head-dot" class="glow-dot" r="3.5" cx="0" cy="0" />
+                </svg>
+
+                <!-- Top Negotiation Status Badges -->
+                <div id="el-neg1-txt" class="meta-text" style="top: 54px; left: 450px;">negotiation<br>started</div>
+                <div id="el-neg1-ico" class="circle-icon check-node" style="top: 111px; left: 450px;">✓</div>
+
+                <div id="el-neg2-txt" class="meta-text" style="top: 54px; left: 591px;">negotiation<br>complete</div>
+                <div id="el-neg2-ico" class="circle-icon check-node" style="top: 111px; left: 591px;">✓</div>
+
+                <!-- Upper Badges -->
+                <div id="el-db-ico" class="circle-icon outline-node" style="top: 172px; left: 226px;">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
                 </div>
+
+                <div id="el-req-data" class="badge badge-dark" style="top: 118px; left: 327px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+                  request data
+                </div>
+
+                <!-- MCP SERVER -->
+                <div id="el-mcp" class="badge badge-yellow" style="top: 172px; left: 520px;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                  mcp-server
+                </div>
+
+                <div id="el-req-tools" class="badge badge-dark" style="top: 118px; left: 713px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg>
+                  request tools
+                </div>
+
+                <div id="el-bot-ico" class="circle-icon outline-node" style="top: 172px; left: 828px;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+                </div>
+
+                <div id="el-hollow-top" class="circle-icon hollow-node" style="top: 228px; left: 828px;"></div>
+
+                <!-- Main Central Timeline Badges -->
+                <div id="el-notes" class="badge badge-white" style="top: 262px; left: 74px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                  Memory Notes
+                </div>
+                <div id="el-notes-sub" class="meta-text" style="top: 288px; left: 74px;">Notes added<br>by you</div>
+
+                <div id="el-sync-txt" class="meta-text" style="top: 272px; left: 156px; font-size: 10px;">sync</div>
+
+                <div id="el-neondb" class="badge badge-white" style="top: 262px; left: 240px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                  neon db
+                </div>
+                <div id="el-neondb-sub" class="meta-text" style="top: 288px; left: 240px;">Stores all notes</div>
+                <div id="el-neondb-time" class="meta-text timestamp" style="top: 318px; left: 240px;">18:24:00</div>
+
+                <div id="el-time-mid" class="meta-text timestamp" style="top: 224px; left: 410px;">19:08:12</div>
+
+                <div id="el-grant-ico" class="circle-icon check-node" style="top: 298px; left: 625px;">✓</div>
+                <div id="el-grant-txt" class="meta-text" style="top: 320px; left: 625px;">tools & data<br>access granted</div>
+
+                <div id="el-time-right" class="meta-text timestamp" style="top: 298px; left: 743px;">20:32:04</div>
+
+                <div id="el-ai-apps" class="badge badge-white" style="top: 262px; left: 918px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg>
+                  ai apps
+                </div>
+                <div id="el-ai-apps-sub" class="meta-text" style="top: 288px; left: 918px;">AI Agents / Apps</div>
+
+                <!-- Center Bottom Protocol Negotiation Node -->
+                <div id="el-proto-ico" class="circle-icon outline-node" style="top: 338px; left: 520px; width: 26px; height: 26px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </div>
+                <div id="el-proto-txt" class="meta-text" style="top: 365px; left: 520px;">protocol<br>negotiation</div>
+
+                <!-- Lower Flow Elements -->
+                <div id="el-hollow-bot" class="circle-icon hollow-node" style="top: 334px; left: 918px;"></div>
+
+                <div id="el-write" class="badge badge-dark" style="top: 380px; left: 830px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  write note
+                </div>
+
+                <div id="el-proc-ico" class="circle-icon check-node" style="top: 440px; left: 625px;">✓</div>
+                <div id="el-proc-txt" class="meta-text" style="top: 462px; left: 625px;">note processed<br>by mcp-server</div>
+
+                <div id="el-saved-ico" class="circle-icon check-node" style="top: 440px; left: 265px;">✓</div>
+                <div id="el-saved-txt" class="meta-text" style="top: 462px; left: 265px;">note saved<br>in neon db</div>
+
+                <div id="el-sync-ico" class="circle-icon check-node" style="top: 440px; left: 76px;">✓</div>
+                <div id="el-sync-bot-txt" class="meta-text" style="top: 462px; left: 76px;">sync<br>(auto / manual)</div>
+              </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 pt-8 border-t border-white/[0.08]">
-                <div>
-                    <div class="flex items-center gap-2 text-white font-semibold text-sm mb-2">
-                        <span class="material-symbols-outlined text-base text-[#00e599]" data-icon="sync">sync</span>
-                        Local-first Sync
-                    </div>
-                    <p class="text-xs text-neutral-400 leading-relaxed">
-                        Capture notes distraction-free on Android. Records persist instantly to SQLite Room DB and stream upstream to Neon Postgres.
-                    </p>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2 text-white font-semibold text-sm mb-2">
-                        <span class="material-symbols-outlined text-base text-[#fde047]" data-icon="hub">hub</span>
-                        FastMCP Protocol Broker
-                    </div>
-                    <p class="text-xs text-neutral-400 leading-relaxed">
-                        Stateless FastMCP protocol server intercepts LLM tool requests, manages authenticated access, and queries Neon DB.
-                    </p>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2 text-white font-semibold text-sm mb-2">
-                        <span class="material-symbols-outlined text-base text-[#22d3ee]" data-icon="bolt">bolt</span>
-                        Instant Context
-                    </div>
-                    <p class="text-xs text-neutral-400 leading-relaxed">
-                        Sub-10ms trigram similarity queries inject personal notes and project history directly into Claude, Cursor, and ChatGPT.
-                    </p>
-                </div>
-            </div>
+            <!-- Embedding Exact Diagram Styles & Animation Controller -->
+            <style>
+              .diagram-container {{
+                position: relative;
+                width: 1000px;
+                height: 524px;
+                background-color: #000000;
+                overflow: hidden;
+              }}
+              .vertical-grid {{
+                position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 35px; pointer-events: none; opacity: 0.12;
+              }}
+              .grid-line {{ width: 1px; height: 100%; background-color: #ffffff; }}
+              svg.canvas {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }}
+              .line-green {{ stroke: #00e599; stroke-width: 1.5; fill: none; }}
+              .line-green-dash {{ stroke: #00e599; stroke-width: 1.5; stroke-dasharray: 4 4; fill: none; }}
+              .line-white-dash {{ stroke: #71767c; stroke-width: 1.5; stroke-dasharray: 4 4; fill: none; }}
+              .line-white-solid {{ stroke: #71767c; stroke-width: 1.5; fill: none; }}
+              .ruler-tick {{ stroke: #25282c; stroke-width: 1.5; transition: stroke 0.25s ease; }}
+              .ruler-tick.lit {{ stroke: #00e599; }}
+              .tick-active {{ stroke: #00e599; stroke-width: 1.5; }}
+              .badge {{
+                position: absolute; transform: translate(-50%, -50%) scale(0.65); display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
+                transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
+              }}
+              .badge.visible {{ opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }}
+              .badge-white {{ background: #ffffff; color: #000000; padding: 6px 14px; font-weight: 600; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1); }}
+              .badge-yellow {{ background: #fcee0a; color: #000000; padding: 7px 18px; font-weight: 700; font-size: 13px; box-shadow: 0 0 28px rgba(252, 238, 10, 0.45); }}
+              .badge-dark {{ background: #25282e; color: #b1b8c0; border: 1px solid #383c44; padding: 5px 14px; font-size: 11.5px; }}
+              .circle-icon {{
+                position: absolute; transform: translate(-50%, -50%) scale(0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; opacity: 0;
+                transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+              }}
+              .circle-icon.visible {{ opacity: 1; transform: translate(-50%, -50%) scale(1); }}
+              .check-node {{ width: 15px; height: 15px; background: #00e599; color: #000000; font-size: 9px; font-weight: 900; box-shadow: 0 0 10px rgba(0, 229, 153, 0.7); }}
+              .outline-node {{ width: 20px; height: 20px; border-radius: 50%; background: #0b0d10; border: 1px solid #30353c; color: #8b949e; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }}
+              .hollow-node {{ width: 7px; height: 7px; background: #000000; border: 1.5px solid #00e599; border-radius: 50%; }}
+              .meta-text {{
+                position: absolute; transform: translateX(-50%); font-size: 9.5px; color: #7d8590; text-align: center; line-height: 1.35; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.4s ease;
+              }}
+              .meta-text.visible {{ opacity: 1; }}
+              .timestamp {{ font-size: 9.5px; color: #555d68; letter-spacing: 0.3px; }}
+              .glow-dot {{ fill: #00e599; filter: url(#glow); opacity: 0; transition: opacity 0.2s ease; }}
+              .glow-dot.active {{ opacity: 1; }}
+            </style>
+            <script>
+              document.addEventListener('DOMContentLoaded', () => {{
+                const allPaths = document.querySelectorAll('.diagram-container svg.canvas path:not(defs path)');
+                const dot = document.getElementById('head-dot');
+                if (!allPaths.length || !dot) return;
 
+                function animateDraw(id, duration, delay = 0, ease = 'cubic-bezier(0.25, 1, 0.5, 1)', trackDot = false) {{
+                  const p = document.getElementById(id);
+                  if (!p) return;
+                  const len = p.getTotalLength();
+                  setTimeout(() => {{
+                    p.style.transition = `stroke-dashoffset ${{duration}}s ${{ease}}`;
+                    p.style.strokeDashoffset = '0';
+                    if (trackDot) {{
+                      dot.classList.add('active');
+                      const start = performance.now();
+                      function updateDot(time) {{
+                        const progress = Math.min(1, (time - start) / (duration * 1000));
+                        const point = p.getPointAtLength(progress * len);
+                        dot.setAttribute('cx', point.x);
+                        dot.setAttribute('cy', point.y);
+                        if (progress < 1) requestAnimationFrame(updateDot);
+                        else dot.classList.remove('active');
+                      }}
+                      requestAnimationFrame(updateDot);
+                    }}
+                  }}, delay * 1000);
+                }}
+
+                function reveal(id, delay) {{
+                  setTimeout(() => {{
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('visible');
+                  }}, delay * 1000);
+                }}
+
+                allPaths.forEach(path => {{
+                  const len = path.getTotalLength();
+                  path.style.strokeDasharray = `${{len}} ${{len}}`;
+                  path.style.strokeDashoffset = len;
+                }});
+
+                reveal('el-notes', 0.1);
+                reveal('el-notes-sub', 0.2);
+                animateDraw('path-sync-arrow', 0.35, 0.3);
+                reveal('el-sync-txt', 0.45);
+
+                animateDraw('path-main', 2.0, 0.4, 'linear', true);
+
+                document.querySelectorAll('.diagram-container #ticks line').forEach((tick, i) => {{
+                  setTimeout(() => tick.classList.add('lit'), 400 + i * 75);
+                }});
+
+                reveal('el-neondb', 0.7);
+                reveal('el-neondb-sub', 0.8);
+                reveal('el-neondb-time', 0.9);
+
+                animateDraw('path-db-up', 0.35, 0.95);
+                reveal('el-db-ico', 1.15);
+                animateDraw('path-req-data', 0.4, 1.25);
+                reveal('el-req-data', 1.45);
+
+                animateDraw('path-data-to-mcp', 0.5, 1.65);
+                setTimeout(() => {{ const t19 = document.getElementById('tick-19'); if(t19) t19.style.opacity = '1'; }}, 1800);
+                reveal('el-time-mid', 1.85);
+                reveal('el-mcp', 2.05);
+
+                animateDraw('path-neg-1', 0.35, 2.15);
+                reveal('el-neg1-ico', 2.3);
+                reveal('el-neg1-txt', 2.3);
+
+                animateDraw('path-protocol', 0.4, 2.3);
+                reveal('el-proto-ico', 2.55);
+                reveal('el-proto-txt', 2.65);
+
+                animateDraw('path-neg-2', 0.35, 2.75);
+                reveal('el-neg2-ico', 2.9);
+                reveal('el-neg2-txt', 2.9);
+
+                animateDraw('path-granted', 0.4, 2.95);
+                reveal('el-grant-ico', 3.25);
+                reveal('el-grant-txt', 3.25);
+
+                animateDraw('path-mcp-to-tools', 0.4, 2.95);
+                reveal('el-req-tools', 3.25);
+                animateDraw('path-tools-to-apps', 0.4, 3.45);
+                reveal('el-bot-ico', 3.65);
+
+                animateDraw('path-apps-down', 0.3, 3.75);
+                reveal('el-hollow-top', 3.85);
+                setTimeout(() => {{ const t20 = document.getElementById('tick-20'); if(t20) t20.style.opacity = '1'; }}, 3900);
+                reveal('el-time-right', 3.95);
+                reveal('el-ai-apps', 4.05);
+                reveal('el-ai-apps-sub', 4.15);
+
+                animateDraw('path-ai-to-note', 0.4, 4.25);
+                reveal('el-hollow-bot', 4.45);
+                reveal('el-write', 4.65);
+
+                animateDraw('path-note-to-proc', 0.4, 4.85);
+                reveal('el-proc-ico', 5.15);
+                reveal('el-proc-txt', 5.25);
+
+                animateDraw('path-lower-flow', 0.8, 5.35, 'linear');
+
+                animateDraw('path-ret-db', 0.35, 6.05);
+                reveal('el-saved-ico', 6.25);
+                reveal('el-saved-txt', 6.25);
+
+                animateDraw('path-ret-sync', 0.5, 6.45);
+                reveal('el-sync-ico', 6.85);
+                reveal('el-sync-bot-txt', 6.95);
+
+                setTimeout(() => {{
+                  document.querySelectorAll('.diagram-container .line-green-dash, .diagram-container .line-white-dash').forEach(p => {{
+                    p.style.transition = 'none';
+                    p.style.strokeDasharray = '4 4';
+                    p.style.strokeDashoffset = '0';
+                  }});
+                }}, 7300);
+              }});
+            </script>
         </div>
-    </section>
 
-    <!-- 3. Developer Feature Deep Dives -->
-    <section id="features" class="py-16 bg-surface-white border-b border-border-muted">
-        <div class="max-w-6xl mx-auto px-6 lg:px-12 space-y-16">
-            
-            <!-- Spotlight 1: Zero-Latency Trigram Search -->
-            <div class="flex flex-col lg:flex-row items-center gap-10">
-                <div class="flex-1 space-y-3">
-                    <div class="inline-block px-2 py-1 bg-surface-container rounded text-xs font-mono font-semibold text-primary">FULL-TEXT RECALL</div>
-                    <h3 class="text-2xl font-bold text-on-surface">Zero-Latency Trigram Search</h3>
-                    <p class="text-sm text-on-surface-variant leading-relaxed">
-                        Traditional LLM retrieval fails when queries have typos or fragmented terms. Memory Notes harnesses PostgreSQL trigram matching (<code class="font-mono text-xs text-on-surface bg-surface-container-low px-1 py-0.5 rounded">pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds.
-                    </p>
-                    <ul class="text-xs font-mono text-text-secondary space-y-1 pt-2">
-                        <li>✓ Typo-tolerant substring & fuzzy similarity score</li>
-                        <li>✓ Automatic fallback to ILIKE if extensions are missing</li>
-                    </ul>
-                </div>
-                <div class="flex-1 w-full">
-                    <div class="bg-[#0f0f11] text-neutral-200 p-5 rounded-xl border border-neutral-800 font-mono text-xs shadow-md">
-                        <div class="text-neutral-500 mb-2">// SQL Query Execution</div>
-                        <div class="text-yellow-400">SELECT <span class="text-neutral-200">id, title, similarity(title, $1) AS score</span></div>
-                        <div class="text-yellow-400">FROM <span class="text-neutral-200">notes</span></div>
-                        <div class="text-yellow-400">WHERE <span class="text-neutral-200">title % $1 OR content ILIKE '%'||$1||'%'</span></div>
-                        <div class="text-yellow-400">ORDER BY <span class="text-neutral-200">score DESC LIMIT 10;</span></div>
-                        <div class="mt-3 pt-3 border-t border-neutral-800 text-green-400 text-[11px]">
-                            ⚡ Query Execution: 3.4ms | 10 rows retrieved
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <hr class="border-border-muted">
-
-            <!-- Spotlight 2: Autonomous AI Memory Sync -->
-            <div class="flex flex-col lg:flex-row-reverse items-center gap-10">
-                <div class="flex-1 space-y-3">
-                    <div class="inline-block px-2 py-1 bg-secondary-container rounded text-xs font-mono font-semibold text-on-surface">BI-DIRECTIONAL WRITES</div>
-                    <h3 class="text-2xl font-bold text-on-surface">Autonomous AI Memory Sync</h3>
-                    <p class="text-sm text-on-surface-variant leading-relaxed">
-                        Claude and Cursor can not only inspect your past notes—they can create new workspace folders, append structured summaries, or update existing documents directly from conversation prompts.
-                    </p>
-                    <ul class="text-xs font-mono text-text-secondary space-y-1 pt-2">
-                        <li>✓ Explicit bigint epoch timestamping for Last-Write-Wins</li>
-                        <li>✓ Reactive Jetpack Compose Room sync down to Android</li>
-                    </ul>
-                </div>
-                <div class="flex-1 w-full">
-                    <div class="bg-[#0f0f11] text-neutral-200 p-5 rounded-xl border border-neutral-800 font-mono text-xs shadow-md">
-                        <div class="text-neutral-500 mb-2">// MCP Tool Invocation Output</div>
-                        <div class="text-blue-400">&gt; create_note(<span class="text-neutral-300">title="Sprint Specs", workspace="Dev"</span>)</div>
-                        <div class="text-neutral-400 mt-2">
-                            {{<br>
-                            &nbsp;&nbsp;"id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",<br>
-                            &nbsp;&nbsp;"title": "Sprint Specs",<br>
-                            &nbsp;&nbsp;"updated_at": 1786675973594<br>
-                            }}
-                        </div>
-                        <div class="mt-3 pt-3 border-t border-neutral-800 text-green-400 text-[11px]">
-                            ✓ Database record created • Dispatched to mobile sync engine
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- Core Bento Capabilities -->
-    <section class="py-16 bg-surface-white border-b border-border-muted">
-        <div class="max-w-6xl mx-auto px-6 lg:px-12">
-            <div class="mb-12">
-                <h2 class="text-2xl lg:text-3xl font-bold text-on-surface mb-2">Core Capabilities</h2>
-                <p class="text-sm text-on-surface-variant max-w-2xl">Tools designed for deep intellectual focus, stripping away the superfluous to leave only what matters.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-6 flex flex-col justify-between group rounded">
-                    <div class="mb-6">
-                        <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors">
-                            <span class="material-symbols-outlined text-primary" data-icon="account_tree">account_tree</span>
-                        </span>
-                        <h3 class="text-xl font-semibold text-on-surface mb-1">Non-Linear Connectivity</h3>
-                        <p class="text-sm text-on-surface-variant">Build an intricate web of knowledge. Link notes effortlessly to visualize relationships and emergent ideas.</p>
-                    </div>
-                    <div class="h-36 bg-surface-container-low border border-border-muted rounded flex items-center justify-center relative overflow-hidden p-4">
-                        <svg class="w-full h-full text-border-muted" viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <line x1="50" y1="60" x2="160" y2="30" stroke="#737783" stroke-width="1.5" stroke-dasharray="3 3"/>
-                            <line x1="160" y1="30" x2="280" y2="80" stroke="#1c1b1b" stroke-width="1.5"/>
-                            <line x1="160" y1="30" x2="350" y2="40" stroke="#1c1b1b" stroke-width="1.5"/>
-                            <line x1="50" y1="60" x2="200" y2="90" stroke="#737783" stroke-width="1.5"/>
-                            <circle cx="50" cy="60" r="14" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
-                            <circle cx="160" cy="30" r="18" fill="#fdd400" stroke="#1c1b1b" stroke-width="2"/>
-                            <circle cx="280" cy="80" r="14" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
-                            <circle cx="350" cy="40" r="12" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
-                            <circle cx="200" cy="90" r="10" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
-                        </svg>
-                    </div>
-                </div>
-                
-                <div class="feature-card bg-surface-white border border-border-muted p-6 flex flex-col group rounded">
-                    <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
-                        <span class="material-symbols-outlined text-primary" data-icon="format_ink_highlighter">format_ink_highlighter</span>
-                    </span>
-                    <h3 class="text-xl font-semibold text-on-surface mb-1">Zen Canvas</h3>
-                    <p class="text-sm text-on-surface-variant mb-6">A distraction-free writing environment that centers your thoughts and fades UI elements away.</p>
-                    <div class="mt-auto h-36 bg-surface-container-low border border-border-muted rounded flex items-center justify-center p-4">
-                        <svg class="w-full h-24" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="10" y="10" width="180" height="60" rx="4" fill="#ffffff" stroke="#E2E2E7" stroke-width="1"/>
-                            <rect x="25" y="24" width="90" height="6" rx="2" fill="#1c1b1b"/>
-                            <rect x="25" y="38" width="150" height="4" rx="2" fill="#71717A"/>
-                            <rect x="25" y="48" width="120" height="4" rx="2" fill="#E2E2E7"/>
-                            <line x1="120" y1="23" x2="120" y2="31" stroke="#003178" stroke-width="2"/>
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="feature-card bg-surface-white border border-border-muted p-6 flex flex-col group rounded">
-                    <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
-                        <span class="material-symbols-outlined text-primary" data-icon="search">search</span>
-                    </span>
-                    <h3 class="text-xl font-semibold text-on-surface mb-1">Lightning Search</h3>
-                    <p class="text-sm text-on-surface-variant mb-6">Instantly retrieve any thought with our fast, full-text fuzzy search engine.</p>
-                    <div class="mt-auto h-36 bg-surface-container-low border border-border-muted rounded flex flex-col justify-center p-3">
-                        <div class="flex items-center gap-2 px-3 py-2 border border-border-muted rounded bg-surface-white text-xs text-on-surface shadow-xs">
-                            <span class="material-symbols-outlined text-sm text-primary" data-icon="search">search</span>
-                            <span class="font-mono text-xs font-semibold">trgm.match("query")</span>
-                        </div>
-                        <div class="mt-2 text-[10px] font-mono text-text-secondary px-1">
-                            &gt; 3 matches indexed in 4ms
-                        </div>
-                    </div>
-                </div>
-
-                <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-6 flex flex-col md:flex-row gap-6 items-center group rounded">
-                    <div class="flex-1">
-                        <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors">
-                            <span class="material-symbols-outlined text-primary" data-icon="code">code</span>
-                        </span>
-                        <h3 class="text-xl font-semibold text-on-surface mb-1">Open Protocol Standards</h3>
-                        <p class="text-sm text-on-surface-variant">Built directly on top of Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer extensibility.</p>
-                    </div>
-                    <div class="flex-1 w-full h-36 bg-surface-container-low border border-border-muted rounded flex flex-col justify-center p-4 font-mono text-xs text-text-secondary leading-relaxed">
-                        <div>Server: FastMCP / Python 3.12</div>
-                        <div>Protocol: Streamable HTTP (SSE)</div>
-                        <div class="text-primary font-semibold mt-1">Multi-Tenant Isolation</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-</main>
-
-<!-- Footer -->
-<footer class="w-full py-8 px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center max-w-6xl mx-auto bg-surface-white border-t border-border-muted">
-    <div class="flex flex-col items-center md:items-start gap-1 mb-4 md:mb-0">
-        <span class="text-sm font-bold text-on-surface">Memory Notes</span>
-        <span class="text-xs text-text-secondary">© 2026 Memory Notes. Structured Freedom.</span>
     </div>
-    <nav class="flex gap-4 text-xs text-text-secondary">
-        <a class="hover:text-primary transition-colors no-underline" href="#">Privacy Policy</a>
-        <a class="hover:text-primary transition-colors no-underline" href="#">Terms of Service</a>
-        <a class="hover:text-primary transition-colors no-underline" href="#">Changelog</a>
-    </nav>
-</footer>
+</section>
 """
     return _page("Home", body)
 
@@ -1100,7 +935,6 @@ async def console_page(request: Request):
             conn_str = security.decrypt_text(user["connection_string_encrypted"])
             user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
             
-            # Fetch distinct repositories/workspaces from project nodes
             ws_rows = await user_pool.fetch("SELECT DISTINCT workspace FROM project_nodes ORDER BY workspace ASC")
             workspaces = [r["workspace"] for r in ws_rows]
             
@@ -1109,7 +943,6 @@ async def console_page(request: Request):
             elif not selected_workspace:
                 selected_workspace = "Default Project"
 
-            # Fetch linear timeline nodes for the selected repository
             node_rows = await user_pool.fetch(
                 """
                 SELECT id, sequence_index, title, summary, rationale, impact_analysis, affected_components, status, created_at
@@ -1123,7 +956,6 @@ async def console_page(request: Request):
         except Exception:
             pass
 
-    # Build Sidebar Repository list
     if workspaces:
         repo_list_html = "".join(f"""
             <li class="chat-item {'active' if ws == selected_workspace else ''}" onclick="window.location='/console?ws={ws}'">
@@ -1133,7 +965,6 @@ async def console_page(request: Request):
     else:
         repo_list_html = '<div class="p-3 text-xs text-[#8e8e8e]">No repositories found. Connect MCP to Claude/Cursor to log changes.</div>'
 
-    # Build 2D Canvas Nodes & SVG Connectors
     if nodes:
         nodes_html = ""
         svg_lines_html = ""
