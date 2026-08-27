@@ -1103,21 +1103,17 @@ async def console_page(request: Request):
             ws_rows = await user_pool.fetch("SELECT DISTINCT workspace FROM project_nodes ORDER BY workspace ASC")
             workspaces = [r["workspace"] for r in ws_rows]
             
-            if not selected_workspace and workspaces:
-                selected_workspace = workspaces[0]
-            elif not selected_workspace:
-                selected_workspace = "Default Project"
-
-            node_rows = await user_pool.fetch(
-                """
-                SELECT id, sequence_index, title, summary, rationale, impact_analysis, affected_components, status, created_at
-                FROM project_nodes
-                WHERE workspace = $1 AND node_type = 'codebase_change'
-                ORDER BY sequence_index ASC
-                """,
-                selected_workspace
-            )
-            nodes = [dict(r) for r in node_rows]
+            if selected_workspace:
+                node_rows = await user_pool.fetch(
+                    """
+                    SELECT id, sequence_index, title, summary, rationale, impact_analysis, affected_components, status, created_at
+                    FROM project_nodes
+                    WHERE workspace = $1 AND node_type = 'codebase_change'
+                    ORDER BY sequence_index ASC
+                    """,
+                    selected_workspace
+                )
+                nodes = [dict(r) for r in node_rows]
         except Exception:
             pass
 
@@ -1130,56 +1126,65 @@ async def console_page(request: Request):
     else:
         repo_list_html = '<div class="p-3 text-xs text-[#8e8e8e]">No repositories found. Connect MCP to Claude/Cursor to log changes.</div>'
 
-    if nodes:
-        nodes_html = ""
-        svg_lines_html = ""
-        card_width = 240
-        card_height = 140
-        spacing_x = 320
-        start_x = 80
-        start_y = 180
+    if selected_workspace:
+        if nodes:
+            nodes_html = ""
+            svg_lines_html = ""
+            card_width = 240
+            card_height = 140
+            spacing_x = 320
+            start_x = 80
+            start_y = 180
 
-        for i, node in enumerate(nodes):
-            x = start_x + (i * spacing_x)
-            y = start_y + (60 if i % 2 == 1 else -40)
-            
-            if i > 0:
-                prev_x = start_x + ((i - 1) * spacing_x) + (card_width / 2)
-                prev_y = start_y + (60 if (i - 1) % 2 == 1 else -40) + (card_height / 2)
-                curr_cx = x + (card_width / 2)
-                curr_cy = y + (card_height / 2)
-                svg_lines_html += f'<line x1="{prev_x}" y1="{prev_y}" x2="{curr_cx}" y2="{curr_cy}" stroke="#52525b" stroke-width="2" stroke-dasharray="4 4" />'
+            for i, node in enumerate(nodes):
+                x = start_x + (i * spacing_x)
+                y = start_y + (60 if i % 2 == 1 else -40)
+                
+                if i > 0:
+                    prev_x = start_x + ((i - 1) * spacing_x) + (card_width / 2)
+                    prev_y = start_y + (60 if (i - 1) % 2 == 1 else -40) + (card_height / 2)
+                    curr_cx = x + (card_width / 2)
+                    curr_cy = y + (card_height / 2)
+                    svg_lines_html += f'<line x1="{prev_x}" y1="{prev_y}" x2="{curr_cx}" y2="{curr_cy}" stroke="#52525b" stroke-width="2" stroke-dasharray="4 4" />'
 
-            title_esc = node['title'].replace('"', '&quot;')
-            summary_esc = node['summary'].replace('"', '&quot;')
-            why_esc = (node['rationale'] or 'No rationale provided').replace('"', '&quot;')
-            impact_esc = (node['impact_analysis'] or 'None').replace('"', '&quot;')
-            step_idx = node['sequence_index'] or (i + 1)
+                title_esc = node['title'].replace('"', '&quot;')
+                summary_esc = node['summary'].replace('"', '&quot;')
+                why_esc = (node['rationale'] or 'No rationale provided').replace('"', '&quot;')
+                impact_esc = (node['impact_analysis'] or 'None').replace('"', '&quot;')
+                step_idx = node['sequence_index'] or (i + 1)
 
-            nodes_html += f"""
-            <div class="canvas-node" style="left: {x}px; top: {y}px; width: {card_width}px;" 
-                 ondblclick="openNodeModal('Step {step_idx}: {title_esc}', '{summary_esc}', '{why_esc}', '{impact_esc}')">
-                <div class="node-header">
-                    <span class="node-step">Step {step_idx}</span>
-                    <span class="node-status">✓</span>
+                nodes_html += f"""
+                <div class="canvas-node" style="left: {x}px; top: {y}px; width: {card_width}px;" 
+                     ondblclick="openNodeModal('Step {step_idx}: {title_esc}', '{summary_esc}', '{why_esc}', '{impact_esc}')">
+                    <div class="node-header">
+                        <span class="node-step">Step {step_idx}</span>
+                        <span class="node-status">✓</span>
+                    </div>
+                    <div class="node-title">{node['title']}</div>
+                    <div class="node-snippet">{node['summary'][:90]}...</div>
+                    <div class="node-footer">Double-click to expand note</div>
                 </div>
-                <div class="node-title">{node['title']}</div>
-                <div class="node-snippet">{node['summary'][:90]}...</div>
-                <div class="node-footer">Double-click to expand note</div>
+                """
+            
+            canvas_content = f"""
+            <svg class="canvas-svg">{svg_lines_html}</svg>
+            {nodes_html}
+            """
+        else:
+            canvas_content = f"""
+            <div class="empty-canvas-state">
+                <div class="empty-icon">⚡</div>
+                <h3>No CodeBase Data</h3>
+                <p>No CodeBase Data Connect mcp to AI models and store CodeBase Logs</p>
+                <code>mcpServers -&gt; memory-notes</code>
             </div>
             """
-        
-        canvas_content = f"""
-        <svg class="canvas-svg">{svg_lines_html}</svg>
-        {nodes_html}
-        """
     else:
         canvas_content = f"""
         <div class="empty-canvas-state">
-            <div class="empty-icon">⚡</div>
-            <h3>No CodeBase Data</h3>
-            <p>No CodeBase Data Connect mcp to AI models and store CodeBase Logs</p>
-            <code>mcpServers -&gt; memory-notes</code>
+            <div class="empty-icon">📁</div>
+            <h3>Manage Code Base</h3>
+            <p>Select a codebase from the sidebar to view its architecture nodes and logs.</p>
         </div>
         """
 
