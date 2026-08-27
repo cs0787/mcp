@@ -32,6 +32,7 @@ mcp = FastMCP(
         "Tools for personal notes sync and structured codebase architectural management. "
         "Use log_sequential_codebase_change to record plain-English summaries, rationale, and "
         "impact analysis of codebase changes in a linear timeline without passing raw code. "
+        "Use get_codebase_context to inspect what has already been done in a project repository. "
         "Use create_or_connect_hub_concept to form conceptual topic graphs, and search_notes or "
         "get_codebase_context to inspect past architecture decisions."
     ),
@@ -418,6 +419,46 @@ async def log_sequential_codebase_change(
         "logged_at": new_node["created_at"].isoformat()
     }
     return json.dumps(result, ensure_ascii=False, indent=2)
+
+
+@mcp.tool()
+async def get_codebase_context(workspace: str, limit: int = 15) -> str:
+    """
+    Retrieves complete codebase history and recent architectural logs for a project workspace.
+    Use this tool whenever you start working on a project to understand what files were changed, 
+    why they were altered, and what downstream modules are affected.
+    """
+    pool = _get_pool()
+    await _ensure_codebase_tables(pool)
+
+    query = """
+        SELECT sequence_index, title, summary, rationale, impact_analysis, affected_components, status, created_at
+        FROM project_nodes
+        WHERE workspace = $1 AND node_type = 'codebase_change'
+        ORDER BY sequence_index DESC
+        LIMIT $2;
+    """
+
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(query, workspace, limit)
+
+    if not rows:
+        return json.dumps({"workspace": workspace, "message": "No previous codebase logs found for this project."})
+
+    history = [
+        {
+            "step": r["sequence_index"],
+            "title": r["title"],
+            "what_changed": r["summary"],
+            "why": r["rationale"],
+            "impact_on_project": r["impact_analysis"],
+            "affected_modules": r["affected_components"],
+            "status": r["status"],
+            "logged_at": r["created_at"].strftime("%Y-%m-%d %H:%M:%S")
+        }
+        for r in rows
+    ]
+    return json.dumps({"workspace": workspace, "codebase_logs": history}, ensure_ascii=False, indent=2)
 
 
 @mcp.tool()
