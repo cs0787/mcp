@@ -30,9 +30,8 @@ def _page(title: str, body: str) -> HTMLResponse:
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -163,6 +162,448 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
     .settings-dropdown.active {{
         display: block;
+    }}
+
+    /* Core Capabilities Showcase Scaffolding */
+    :root {{
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --neon-green: #00e599;
+      --dark-bg: #000000;
+      --light-bg: #ffffff;
+      --footer-bg: #F5F5F5;
+    }}
+
+    .showcase-container {{
+      position: relative;
+      width: 100%;
+      padding-bottom: 80px;
+      font-family: var(--font-main);
+    }}
+
+    .sticky-nav-wrapper {{
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 80px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      pointer-events: none;
+      z-index: 20;
+    }}
+
+    .sticky-sidebar {{
+      position: sticky;
+      top: 90px;
+      width: 260px;
+      pointer-events: auto;
+      padding-top: 8px;
+    }}
+
+    .menu-badge-btn {{
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 18px;
+      border: unset;
+      border-radius: 12px;
+      color: #000000;
+      background: #facc15;
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 13.5px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 14px -2px rgba(250, 204, 21, 0.45);
+      cursor: default;
+      pointer-events: none;
+      user-select: none;
+      margin-bottom: 20px;
+      margin-left: 0;
+      text-align: left;
+    }}
+
+    .nav-list {{
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }}
+
+    .nav-btn {{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14.5px;
+      font-weight: 500;
+      color: #71717a;
+      text-decoration: none;
+      transition: color 0.2s ease;
+      cursor: pointer;
+    }}
+
+    .nav-btn:hover {{
+      color: #ffffff;
+    }}
+
+    .nav-btn.active {{
+      color: #ffffff;
+      font-weight: 700;
+    }}
+
+    .sticky-sidebar.theme-light .nav-btn {{
+      color: #71717a;
+    }}
+    .sticky-sidebar.theme-light .nav-btn:hover {{
+      color: #000000;
+    }}
+    .sticky-sidebar.theme-light .nav-btn.active {{
+      color: #000000;
+    }}
+
+    .nav-dot {{
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: transparent;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }}
+
+    .nav-btn.active .nav-dot {{
+      background-color: var(--neon-green);
+      box-shadow: 0 0 10px rgba(0, 229, 153, 0.9);
+      transform: scale(1.3);
+    }}
+
+    .feature-section {{
+      width: 100%;
+      min-height: 85vh;
+      padding: 90px 0;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      scroll-margin-top: 0;
+    }}
+
+    .section-inner {{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      column-gap: 56px;
+    }}
+
+    .section-content {{
+      grid-column: 2;
+      max-width: 820px;
+    }}
+
+    .section-dark {{
+      background-color: #000000;
+      color: #e2e8f0;
+    }}
+    .section-dark .hero-heading {{ color: #ffffff; }}
+    .section-dark .lead-text {{ color: #a1a1aa; }}
+    .section-dark .checklist li {{ color: #d4d4d8; }}
+
+    .section-light {{
+      background-color: #ffffff;
+      color: #000000;
+    }}
+    .section-light .hero-heading {{ color: #000000; }}
+    .section-light .lead-text {{ color: #52525b; }}
+    .section-light .checklist li {{ color: #27272a; }}
+
+    .hero-heading {{
+      font-size: clamp(30px, 4vw, 48px);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }}
+
+    .lead-text {{
+      font-size: 17px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }}
+
+    .checklist {{
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }}
+
+    .checklist li {{
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 600;
+    }}
+
+    .checklist li .check-icon {{
+      color: var(--neon-green);
+      font-weight: 800;
+      font-size: 15px;
+    }}
+
+    .terminal-box {{
+      background: #09090b;
+      border: 1px solid #27272a;
+      border-radius: 12px;
+      overflow: hidden;
+      font-family: var(--font-mono);
+      max-width: 740px;
+      box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.7);
+    }}
+
+    .terminal-topbar {{
+      background: #18181b;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }}
+
+    .terminal-dots {{
+      display: flex;
+      gap: 6px;
+    }}
+
+    .terminal-dots span {{
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }}
+
+    .dot-red {{ background: #ef4444; }}
+    .dot-yellow {{ background: #eab308; }}
+    .dot-green {{ background: #22c55e; }}
+
+    .terminal-title {{
+      font-size: 12px;
+      color: #a1a1aa;
+      font-weight: 500;
+      margin-left: 6px;
+    }}
+
+    .terminal-code {{
+      padding: 20px;
+      font-size: 13.5px;
+      color: #e4e4e7;
+      overflow-x: auto;
+      line-height: 1.65;
+    }}
+
+    .hl-key {{ color: #38bdf8; }}
+    .hl-str {{ color: #fbbf24; }}
+    .hl-green {{ color: #4ade80; }}
+    .hl-dim {{ color: #71717a; }}
+
+    .neon-footer {{
+      background-color: var(--footer-bg);
+      border-top: 1px solid #e5e5e5;
+      color: #52525b;
+      padding: 80px 24px 48px;
+      font-family: var(--font-main);
+      position: relative;
+      z-index: 30;
+      clear: both;
+    }}
+
+    .footer-container {{
+      max-width: 1200px;
+      margin: 0 auto;
+    }}
+
+    .footer-top {{
+      display: grid;
+      grid-template-columns: 2fr repeat(4, 1fr);
+      gap: 48px;
+      margin-bottom: 64px;
+    }}
+
+    .footer-brand {{
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }}
+
+    .footer-logo {{
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #18181b;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.03em;
+    }}
+
+    .footer-logo svg {{
+      width: 24px;
+      height: 24px;
+    }}
+
+    .footer-tagline {{
+      font-size: 14px;
+      color: #71717a;
+      max-width: 270px;
+      line-height: 1.5;
+    }}
+
+    .status-badge {{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      margin-top: 8px;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      background: #ffffff;
+      border: 1px solid #e4e4e7;
+      color: #3f3f46;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }}
+
+    .status-badge:hover {{
+      background: #f4f4f5;
+      border-color: #d4d4d8;
+      color: #18181b;
+    }}
+
+    .status-dot {{
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #16a34a;
+      box-shadow: 0 0 8px #16a34a;
+    }}
+
+    .footer-col h4 {{
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #18181b;
+      margin-bottom: 20px;
+    }}
+
+    .footer-col ul {{
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }}
+
+    .footer-col ul li a {{
+      color: #71717a;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.15s ease;
+      display: inline-block;
+    }}
+
+    .footer-col ul li a:hover {{
+      color: #18181b;
+      font-weight: 600;
+    }}
+
+    .footer-bottom {{
+      border-top: 1px solid #e5e5e5;
+      padding-top: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-size: 13px;
+      color: #71717a;
+    }}
+
+    .footer-bottom-links {{
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }}
+
+    .footer-bottom-links a {{
+      color: #71717a;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }}
+
+    .footer-bottom-links a:hover {{
+      color: #18181b;
+    }}
+
+    .social-links {{
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }}
+
+    .social-links a {{
+      color: #71717a;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s ease;
+      text-decoration: none;
+    }}
+
+    .social-links a:hover {{
+      color: #18181b;
+    }}
+
+    .social-links svg {{
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }}
+
+    @media (max-width: 900px) {{
+      .sticky-nav-wrapper {{
+        position: static;
+        padding: 40px 24px 0;
+      }}
+      .sticky-sidebar {{
+        position: static;
+        width: 100%;
+      }}
+      .section-inner {{
+        display: block;
+        padding: 0 24px;
+      }}
+      .section-content {{
+        width: 100%;
+      }}
+      .feature-section {{
+        padding: 60px 0;
+        min-height: auto;
+      }}
+      .footer-top {{
+        grid-template-columns: 1fr 1fr;
+        gap: 36px;
+      }}
+      .footer-brand {{
+        grid-column: 1 / -1;
+      }}
+      .footer-bottom {{
+        flex-direction: column;
+        align-items: flex-start;
+      }}
     }}
 </style>
 </head>
@@ -729,35 +1170,35 @@ async def landing_page(request: Request):
     </div>
 </section>
 
-    <!-- Core Capabilities & Footer Showcase (Sticky Scroll Sections) -->
-    <div class="showcase-container" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+    <!-- Core Capabilities Showcase Container -->
+    <div class="showcase-container">
       
       <div class="sticky-nav-wrapper">
         <nav class="sticky-sidebar" id="sidebar">
-          <button class="menu-badge-btn" aria-hidden="true" tabindex="-1" style="background:#facc15; border:0; border-radius:12px; color:#000; padding:10px 18px; font-weight:800; font-size:13.5px; text-transform:uppercase; margin-bottom:20px;">CORE CAPABILITIES</button>
-          <ul class="nav-list" style="list-style:none; display:flex; flex-direction:column; gap:12px; padding:0; margin:0;">
+          <button class="menu-badge-btn" aria-hidden="true" tabindex="-1">CORE CAPABILITIES</button>
+          <ul class="nav-list">
             <li>
-              <a class="nav-btn active" data-target="trigram-search" style="display:flex; align-items:center; gap:10px; font-size:14.5px; font-weight:500; color:#71717a; text-decoration:none; cursor:pointer;">
+              <a class="nav-btn active" data-target="trigram-search">
                 <span class="nav-dot"></span>Zero-Latency Trigram Search
               </a>
             </li>
             <li>
-              <a class="nav-btn" data-target="ai-memory-sync" style="display:flex; align-items:center; gap:10px; font-size:14.5px; font-weight:500; color:#71717a; text-decoration:none; cursor:pointer;">
+              <a class="nav-btn" data-target="ai-memory-sync">
                 <span class="nav-dot"></span>Autonomous AI Memory Sync
               </a>
             </li>
             <li>
-              <a class="nav-btn" data-target="zen-canvas" style="display:flex; align-items:center; gap:10px; font-size:14.5px; font-weight:500; color:#71717a; text-decoration:none; cursor:pointer;">
+              <a class="nav-btn" data-target="zen-canvas">
                 <span class="nav-dot"></span>Zen Canvas
               </a>
             </li>
             <li>
-              <a class="nav-btn" data-target="non-linear" style="display:flex; align-items:center; gap:10px; font-size:14.5px; font-weight:500; color:#71717a; text-decoration:none; cursor:pointer;">
+              <a class="nav-btn" data-target="non-linear">
                 <span class="nav-dot"></span>Non-Linear Connectivity
               </a>
             </li>
             <li>
-              <a class="nav-btn" data-target="open-protocol" style="display:flex; align-items:center; gap:10px; font-size:14.5px; font-weight:500; color:#71717a; text-decoration:none; cursor:pointer;">
+              <a class="nav-btn" data-target="open-protocol">
                 <span class="nav-dot"></span>Open Protocol Standards
               </a>
             </li>
@@ -765,106 +1206,106 @@ async def landing_page(request: Request):
         </nav>
       </div>
 
-      <section id="trigram-search" class="feature-section section-dark" data-theme="dark" style="width:100%; min-height:85vh; padding:90px 0; display:flex; align-items:center; background-color:#000000; color:#e2e8f0;">
-        <div class="section-inner" style="max-width:1200px; margin:0 auto; padding:0 24px; width:100%; display:grid; grid-template-columns:260px 1fr; column-gap:56px;">
-          <div class="section-content" style="grid-column:2; max-width:820px;">
-            <h2 class="hero-heading" style="font-size:clamp(30px, 4vw, 48px); font-weight:800; letter-spacing:-0.035em; line-height:1.15; margin-bottom:20px; color:#ffffff;">Zero-Latency Trigram Search. Never miss a fragmented thought.</h2>
-            <p class="lead-text" style="font-size:17px; line-height:1.6; margin-bottom:28px; color:#a1a1aa;">Memory Notes harnesses PostgreSQL trigram matching (<code>pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds.</p>
+      <section id="trigram-search" class="feature-section section-dark" data-theme="dark">
+        <div class="section-inner">
+          <div class="section-content">
+            <h2 class="hero-heading">Zero-Latency Trigram Search. Never miss a fragmented thought.</h2>
+            <p class="lead-text">Memory Notes harnesses PostgreSQL trigram matching (<code>pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds.</p>
             
-            <ul class="checklist" style="list-style:none; display:flex; flex-direction:column; gap:12px; margin-bottom:32px; padding:0;">
-              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Typo-tolerant substring & fuzzy similarity scoring</li>
-              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Automatic fallback to ILIKE if extensions are missing</li>
-              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Indexed lookups executing in under 4ms</li>
+            <ul class="checklist">
+              <li><span class="check-icon">✓</span> Typo-tolerant substring & fuzzy similarity scoring</li>
+              <li><span class="check-icon">✓</span> Automatic fallback to ILIKE if extensions are missing</li>
+              <li><span class="check-icon">✓</span> Indexed lookups executing in under 4ms</li>
             </ul>
 
-            <div class="terminal-box" style="background:#09090b; border:1px solid #27272a; border-radius:12px; overflow:hidden; font-family:'JetBrains Mono', monospace; max-width:740px; box-shadow:0 16px 36px -10px rgba(0, 0, 0, 0.7);">
-              <div class="terminal-topbar" style="background:#18181b; padding:10px 16px; display:flex; align-items:center; gap:8px;">
-                <div class="terminal-dots" style="display:flex; gap:6px;"><span class="dot-red" style="width:10px; height:10px; border-radius:50%; background:#ef4444;"></span><span class="dot-yellow" style="width:10px; height:10px; border-radius:50%; background:#eab308;"></span><span class="dot-green" style="width:10px; height:10px; border-radius:50%; background:#22c55e;"></span></div>
-                <span class="terminal-title" style="font-size:12px; color:#a1a1aa; font-weight:500; margin-left:6px;">SQL Query Execution</span>
+            <div class="terminal-box">
+              <div class="terminal-topbar">
+                <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+                <span class="terminal-title">SQL Query Execution</span>
               </div>
-              <div class="terminal-code" style="padding:20px; font-size:13.5px; color:#e4e4e7; overflow-x:auto; line-height:1.65;">
-                <span style="color:#38bdf8;">SELECT</span> id, title, similarity(title, $1) <span style="color:#38bdf8;">AS</span> score <br>
-                <span style="color:#38bdf8;">FROM</span> notes <br>
-                <span style="color:#38bdf8;">WHERE</span> title % $1 <span style="color:#38bdf8;">OR</span> content <span style="color:#38bdf8;">ILIKE</span> <span style="color:#fbbf24;">'%'</span>||$1||<span style="color:#fbbf24;">'%'</span> <br>
-                <span style="color:#38bdf8;">ORDER BY</span> score <span style="color:#38bdf8;">DESC LIMIT</span> 10;<br><br>
-                <span style="color:#4ade80;">⚡ Query Execution: 3.4ms | 10 rows retrieved</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="ai-memory-sync" class="feature-section section-light" data-theme="light" style="width:100%; min-height:85vh; padding:90px 0; display:flex; align-items:center; background-color:#ffffff; color:#000000;">
-        <div class="section-inner" style="max-width:1200px; margin:0 auto; padding:0 24px; width:100%; display:grid; grid-template-columns:260px 1fr; column-gap:56px;">
-          <div class="section-content" style="grid-column:2; max-width:820px;">
-            <h2 class="hero-heading" style="font-size:clamp(30px, 4vw, 48px); font-weight:800; letter-spacing:-0.035em; line-height:1.15; margin-bottom:20px; color:#000000;">Autonomous AI Memory Sync. Bi-directional writes from your agent.</h2>
-            <p class="lead-text" style="font-size:17px; line-height:1.6; margin-bottom:28px; color:#52525b;">Claude and Cursor don't just inspect your past notes—they can create new workspace folders, append structured summaries, or update documents directly from prompt context.</p>
-            
-            <ul class="checklist" style="list-style:none; display:flex; flex-direction:column; gap:12px; margin-bottom:32px; padding:0;">
-              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#27272a;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Explicit bigint epoch timestamping for Last-Write-Wins (LWW)</li>
-              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#27272a;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Reactive Jetpack Compose Room sync down to Android</li>
-              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#27272a;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Automated schema compaction for continuous agent memory</li>
-            </ul>
-
-            <div class="terminal-box" style="background:#09090b; border:1px solid #27272a; border-radius:12px; overflow:hidden; font-family:'JetBrains Mono', monospace; max-width:740px; box-shadow:0 16px 36px -10px rgba(0, 0, 0, 0.7);">
-              <div class="terminal-topbar" style="background:#18181b; padding:10px 16px; display:flex; align-items:center; gap:8px;">
-                <div class="terminal-dots" style="display:flex; gap:6px;"><span class="dot-red" style="width:10px; height:10px; border-radius:50%; background:#ef4444;"></span><span class="dot-yellow" style="width:10px; height:10px; border-radius:50%; background:#eab308;"></span><span class="dot-green" style="width:10px; height:10px; border-radius:50%; background:#22c55e;"></span></div>
-                <span class="terminal-title" style="font-size:12px; color:#a1a1aa; font-weight:500; margin-left:6px;">MCP Tool Invocation Output</span>
-              </div>
-              <div class="terminal-code" style="padding:20px; font-size:13.5px; color:#e4e4e7; overflow-x:auto; line-height:1.65;">
-                <span style="color:#71717a;">&gt; create_note( title="Sprint Specs", workspace="Dev" )</span><br>
-                {{<br>
-                &nbsp;&nbsp;<span style="color:#38bdf8;">"id"</span>: <span style="color:#fbbf24;">"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"</span>,<br>
-                &nbsp;&nbsp;<span style="color:#38bdf8;">"title"</span>: <span style="color:#fbbf24;">"Sprint Specs"</span>,<br>
-                &nbsp;&nbsp;<span style="color:#38bdf8;">"updated_at"</span>: 1786675973594<br>
-                }}<br><br>
-                <span style="color:#4ade80;">✓ Database record created • Dispatched to mobile sync engine</span>
+              <div class="terminal-code">
+<span class="hl-key">SELECT</span> id, title, similarity(title, $1) <span class="hl-key">AS</span> score <br>
+<span class="hl-key">FROM</span> notes <br>
+<span class="hl-key">WHERE</span> title % $1 <span class="hl-key">OR</span> content <span class="hl-key">ILIKE</span> <span class="hl-str">'%'</span>||$1||<span class="hl-str">'%'</span> <br>
+<span class="hl-key">ORDER BY</span> score <span class="hl-key">DESC LIMIT</span> 10;<br><br>
+<span class="hl-green">⚡ Query Execution: 3.4ms | 10 rows retrieved</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="zen-canvas" class="feature-section section-dark" data-theme="dark" style="width:100%; min-height:85vh; padding:90px 0; display:flex; align-items:center; background-color:#000000; color:#e2e8f0;">
-        <div class="section-inner" style="max-width:1200px; margin:0 auto; padding:0 24px; width:100%; display:grid; grid-template-columns:260px 1fr; column-gap:56px;">
-          <div class="section-content" style="grid-column:2; max-width:820px;">
-            <h2 class="hero-heading" style="font-size:clamp(30px, 4vw, 48px); font-weight:800; letter-spacing:-0.035em; line-height:1.15; margin-bottom:20px; color:#ffffff;">Zen Canvas. Distraction-free writing surface.</h2>
-            <p class="lead-text" style="font-size:17px; line-height:1.6; margin-bottom:28px; color:#a1a1aa;">A writing environment that strips away the superfluous, centering your thoughts and fading interface clutter away during deep focus.</p>
+      <section id="ai-memory-sync" class="feature-section section-light" data-theme="light">
+        <div class="section-inner">
+          <div class="section-content">
+            <h2 class="hero-heading">Autonomous AI Memory Sync. Bi-directional writes from your agent.</h2>
+            <p class="lead-text">Claude and Cursor don't just inspect your past notes—they can create new workspace folders, append structured summaries, or update documents directly from prompt context.</p>
             
-            <ul class="checklist" style="list-style:none; display:flex; flex-direction:column; gap:12px; margin-bottom:32px; padding:0;">
-              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Clean Markdown canvas with zero UI distraction</li>
-              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Full keyboard-first command palette navigation</li>
-              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Instant local-first caching for zero-latency typing</li>
+            <ul class="checklist">
+              <li><span class="check-icon">✓</span> Explicit bigint epoch timestamping for Last-Write-Wins (LWW)</li>
+              <li><span class="check-icon">✓</span> Reactive Jetpack Compose Room sync down to Android</li>
+              <li><span class="check-icon">✓</span> Automated schema compaction for continuous agent memory</li>
+            </ul>
+
+            <div class="terminal-box">
+              <div class="terminal-topbar">
+                <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+                <span class="terminal-title">MCP Tool Invocation Output</span>
+              </div>
+              <div class="terminal-code">
+<span class="hl-dim">&gt; create_note( title="Sprint Specs", workspace="Dev" )</span><br>
+{{<br>
+&nbsp;&nbsp;<span class="hl-key">"id"</span>: <span class="hl-str">"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"</span>,<br>
+&nbsp;&nbsp;<span class="hl-key">"title"</span>: <span class="hl-str">"Sprint Specs"</span>,<br>
+&nbsp;&nbsp;<span class="hl-key">"updated_at"</span>: 1786675973594<br>
+}}<br><br>
+<span class="hl-green">✓ Database record created • Dispatched to mobile sync engine</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="zen-canvas" class="feature-section section-dark" data-theme="dark">
+        <div class="section-inner">
+          <div class="section-content">
+            <h2 class="hero-heading">Zen Canvas. Distraction-free writing surface.</h2>
+            <p class="lead-text">A writing environment that strips away the superfluous, centering your thoughts and fading interface clutter away during deep focus.</p>
+            
+            <ul class="checklist">
+              <li><span class="check-icon">✓</span> Clean Markdown canvas with zero UI distraction</li>
+              <li><span class="check-icon">✓</span> Full keyboard-first command palette navigation</li>
+              <li><span class="check-icon">✓</span> Instant local-first caching for zero-latency typing</li>
             </ul>
           </div>
         </div>
       </section>
 
-      <section id="non-linear" class="feature-section section-light" data-theme="light" style="width:100%; min-height:85vh; padding:90px 0; display:flex; align-items:center; background-color:#ffffff; color:#000000;">
-        <div class="section-inner" style="max-width:1200px; margin:0 auto; padding:0 24px; width:100%; display:grid; grid-template-columns:260px 1fr; column-gap:56px;">
-          <div class="section-content" style="grid-column:2; max-width:820px;">
-            <h2 class="hero-heading" style="font-size:clamp(30px, 4vw, 48px); font-weight:800; letter-spacing:-0.035em; line-height:1.15; margin-bottom:20px; color:#000000;">Non-Linear Connectivity. An interconnected web of knowledge.</h2>
-            <p class="lead-text" style="font-size:17px; line-height:1.6; margin-bottom:28px; color:#52525b;">Link thoughts effortlessly with bi-directional wikilinks to visualize complex patterns, relationships, and emergent ideas.</p>
+      <section id="non-linear" class="feature-section section-light" data-theme="light">
+        <div class="section-inner">
+          <div class="section-content">
+            <h2 class="hero-heading">Non-Linear Connectivity. An interconnected web of knowledge.</h2>
+            <p class="lead-text">Link thoughts effortlessly with bi-directional wikilinks to visualize complex patterns, relationships, and emergent ideas.</p>
             
-            <ul class="checklist" style="list-style:none; display:flex; flex-direction:column; gap:12px; margin-bottom:32px; padding:0;">
-              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#27272a;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Bi-directional backlinks and automatic connection mapping</li>
-              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#27272a;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Interactive visual node graph for complex mental models</li>
-              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#27272a;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Dynamic workspace clustering by topic and reference</li>
+            <ul class="checklist">
+              <li><span class="check-icon">✓</span> Bi-directional backlinks and automatic connection mapping</li>
+              <li><span class="check-icon">✓</span> Interactive visual node graph for complex mental models</li>
+              <li><span class="check-icon">✓</span> Dynamic workspace clustering by topic and reference</li>
             </ul>
           </div>
         </div>
       </section>
 
-      <section id="open-protocol" class="feature-section section-dark" data-theme="dark" style="width:100%; min-height:85vh; padding:90px 0; display:flex; align-items:center; background-color:#000000; color:#e2e8f0;">
-        <div class="section-inner" style="max-width:1200px; margin:0 auto; padding:0 24px; width:100%; display:grid; grid-template-columns:260px 1fr; column-gap:56px;">
-          <div class="section-content" style="grid-column:2; max-width:820px;">
-            <h2 class="hero-heading" style="font-size:clamp(30px, 4vw, 48px); font-weight:800; letter-spacing:-0.035em; line-height:1.15; margin-bottom:20px; color:#ffffff;">Open Protocol Standards. Zero lock-in, complete control.</h2>
-            <p class="lead-text" style="font-size:17px; line-height:1.6; margin-bottom:28px; color:#a1a1aa;">Built directly on Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer independence and easy tooling integrations.</p>
+      <section id="open-protocol" class="feature-section section-dark" data-theme="dark">
+        <div class="section-inner">
+          <div class="section-content">
+            <h2 class="hero-heading">Open Protocol Standards. Zero lock-in, complete control.</h2>
+            <p class="lead-text">Built directly on Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer independence and easy tooling integrations.</p>
             
-            <ul class="checklist" style="list-style:none; display:flex; flex-direction:column; gap:12px; margin-bottom:32px; padding:0;">
-              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Server runtime powered by FastMCP and Python 3.12</li>
-              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Streamable HTTP with Server-Sent Events (SSE)</li>
-              <li style="display:flex; align-items:flex-start; gap:10px; font-size:15px; font-weight:600; color:#d4d4d8;"><span class="check-icon" style="color:#00e599; font-weight:800;">✓</span> Multi-tenant isolation with portable data export</li>
+            <ul class="checklist">
+              <li><span class="check-icon">✓</span> Server runtime powered by FastMCP and Python 3.12</li>
+              <li><span class="check-icon">✓</span> Streamable HTTP with Server-Sent Events (SSE)</li>
+              <li><span class="check-icon">✓</span> Multi-tenant isolation with portable data export</li>
             </ul>
           </div>
         </div>
@@ -872,73 +1313,93 @@ async def landing_page(request: Request):
 
     </div>
 
-    <!-- Footer -->
-    <footer class="neon-footer" style="background-color:#F5F5F5; border-top:1px solid #e5e5e5; color:#52525b; padding:80px 24px 48px; position:relative; z-index:30;">
-      <div class="footer-container" style="max-width:1200px; margin:0 auto;">
-        <div class="footer-top" style="display:grid; grid-template-columns:2fr repeat(4, 1fr); gap:48px; margin-bottom:64px;">
+    <!-- Neon-Style Modern Footer -->
+    <footer class="neon-footer">
+      <div class="footer-container">
+        <div class="footer-top">
           
-          <div class="footer-brand" style="display:flex; flex-direction:column; gap:16px;">
-            <a href="/" class="footer-logo" style="display:inline-flex; align-items:center; gap:10px; text-decoration:none; color:#18181b; font-weight:800; font-size:20px;">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:24px; height:24px;">
+          <div class="footer-brand">
+            <a href="/" class="footer-logo">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M2 17L12 22L22 17" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M2 12L12 17L22 12" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
               <span>Memory Notes</span>
             </a>
-            <p class="footer-tagline" style="font-size:14px; color:#71717a; max-width:270px; line-height:1.5;">Structured freedom for your thoughts. A private notes application and long-term memory bridge for Claude, Cursor, and custom AI agents.</p>
-            <a href="#" class="status-badge" style="display:inline-flex; align-items:center; gap:8px; width:fit-content; margin-top:8px; padding:6px 12px; border-radius:9999px; background:#ffffff; border:1px solid #e4e4e7; color:#3f3f46; font-size:12px; font-weight:600; text-decoration:none;">
-              <span class="status-dot" style="width:6px; height:6px; border-radius:50%; background-color:#16a34a; box-shadow:0 0 8px #16a34a;"></span>
+            <p class="footer-tagline">Structured freedom for your thoughts. A private notes application and long-term memory bridge for Claude, Cursor, and custom AI agents.</p>
+            <a href="#" class="status-badge">
+              <span class="status-dot"></span>
               MCP Gateway Connected
             </a>
           </div>
 
           <div class="footer-col">
-            <h4 style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#18181b; margin-bottom:20px;">Product</h4>
-            <ul style="list-style:none; display:flex; flex-direction:column; gap:12px; padding:0; margin:0;">
-              <li><a href="#trigram-search" style="color:#71717a; text-decoration:none; font-size:14px;">Trigram Fuzzy Search</a></li>
-              <li><a href="#ai-memory-sync" style="color:#71717a; text-decoration:none; font-size:14px;">Autonomous AI Sync</a></li>
-              <li><a href="#zen-canvas" style="color:#71717a; text-decoration:none; font-size:14px;">Zen Canvas</a></li>
-              <li><a href="#non-linear" style="color:#71717a; text-decoration:none; font-size:14px;">Graph Connectivity</a></li>
+            <h4>Product</h4>
+            <ul>
+              <li><a href="#trigram-search">Trigram Fuzzy Search</a></li>
+              <li><a href="#ai-memory-sync">Autonomous AI Sync</a></li>
+              <li><a href="#zen-canvas">Zen Canvas</a></li>
+              <li><a href="#non-linear">Graph Connectivity</a></li>
+              <li><a href="/console">Developer Console</a></li>
             </ul>
           </div>
 
           <div class="footer-col">
-            <h4 style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#18181b; margin-bottom:20px;">Resources</h4>
-            <ul style="list-style:none; display:flex; flex-direction:column; gap:12px; padding:0; margin:0;">
-              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">MCP Protocol Guide</a></li>
-              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">Cursor Setup</a></li>
-              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">Claude Desktop Integration</a></li>
+            <h4>Resources</h4>
+            <ul>
+              <li><a href="#">MCP Protocol Guide</a></li>
+              <li><a href="#">Cursor Setup</a></li>
+              <li><a href="#">Claude Desktop Integration</a></li>
+              <li><a href="#">pg_trgm Search Docs</a></li>
+              <li><a href="#">API Specification</a></li>
             </ul>
           </div>
 
           <div class="footer-col">
-            <h4 style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#18181b; margin-bottom:20px;">Developers</h4>
-            <ul style="list-style:none; display:flex; flex-direction:column; gap:12px; padding:0; margin:0;">
-              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">FastMCP Starlette ASGI</a></li>
-              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">SSE Stream Handshakes</a></li>
-              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">Android Room Schema</a></li>
+            <h4>Developers</h4>
+            <ul>
+              <li><a href="#">FastMCP Starlette ASGI</a></li>
+              <li><a href="#">SSE Stream Handshakes</a></li>
+              <li><a href="#">Android Room Schema</a></li>
+              <li><a href="#">CLI Quickstart</a></li>
+              <li><a href="#">GitHub Repository</a></li>
             </ul>
           </div>
 
           <div class="footer-col">
-            <h4 style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#18181b; margin-bottom:20px;">Platform</h4>
-            <ul style="list-style:none; display:flex; flex-direction:column; gap:12px; padding:0; margin:0;">
-              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">About</a></li>
-              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">Changelog</a></li>
-              <li><a href="#" style="color:#71717a; text-decoration:none; font-size:14px;">Privacy Policy</a></li>
+            <h4>Platform</h4>
+            <ul>
+              <li><a href="#">About</a></li>
+              <li><a href="#">Changelog</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms of Service</a></li>
+              <li><a href="#">Security &amp; Multi-Tenancy</a></li>
             </ul>
           </div>
 
         </div>
 
-        <div class="footer-bottom" style="border-top:1px solid #e5e5e5; padding-top:32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px; font-size:13px; color:#71717a;">
+        <div class="footer-bottom">
           <div>&copy; 2026 Memory Notes. Structured Freedom.</div>
 
-          <div class="footer-bottom-links" style="display:flex; align-items:center; gap:24px;">
-            <a href="#" style="color:#71717a; text-decoration:none;">Privacy Policy</a>
-            <a href="#" style="color:#71717a; text-decoration:none;">Terms of Service</a>
-            <a href="#" style="color:#71717a; text-decoration:none;">Security</a>
+          <div class="footer-bottom-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Security</a>
+            <a href="#">Cookie Settings</a>
+          </div>
+
+          <div class="social-links">
+            <a href="#" aria-label="Twitter">
+              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="#" aria-label="GitHub">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            </a>
+            <a href="#" aria-label="Discord">
+              <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.893.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+            </a>
           </div>
         </div>
       </div>
