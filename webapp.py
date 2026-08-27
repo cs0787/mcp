@@ -2,7 +2,8 @@
 Memory Notes for AI - Web Application
 Integrated with the custom Monochromatic Tailwind CSS Frontend design,
 interactive spotlight grid background, custom Liquid Carve "Get Started" button,
-quick-start terminal, developer deep dives, and progressive emerging architecture animation.
+emerald animated "See more" button, quick-start terminal, developer deep dives,
+and progressive emerging architecture animation.
 """
 
 import asyncpg
@@ -362,51 +363,70 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
 
     // =========================================================================
-    // LIQUID CARVE BUTTON SPRING / GOO LOGIC
+    // LIQUID CARVE BUTTON (ORIGINKIT PRESET CONVERTED TO JS RUNTIME)
     // =========================================================================
     document.addEventListener('DOMContentLoaded', () => {{
         runFullSequence();
 
-        const btn = document.getElementById('liquidGetStartedBtn');
-        const circle = document.getElementById('liquidBiteCircle');
-        const follower = document.getElementById('liquidBiteFollower');
+        const btn = document.getElementById('liquidCarveBtn');
+        const followEl = document.getElementById('liquidFollowGroup');
+        const squashEl = document.getElementById('liquidSquashGroup');
+        const biteEl = document.getElementById('liquidBiteGroup');
 
-        if (btn && circle && follower) {{
-            let chase = {{ x: 0, y: 0, tx: 0, ty: 0 }};
+        if (btn && followEl && squashEl && biteEl) {{
+            let st = {{ x: 0, y: 0, tx: 0, ty: 0, squash: 1, angle: 0, scale: 0, targetScale: 0 }};
+            let last = 0;
             let isHovered = false;
-            let currentRadius = 0;
-            let targetRadius = 0;
 
             btn.addEventListener('pointerenter', (e) => {{
                 isHovered = true;
-                const rect = btn.getBoundingClientRect();
-                chase.x = chase.tx = e.clientX - rect.left;
-                chase.y = chase.ty = e.clientY - rect.top;
-                targetRadius = 45;
+                const r = btn.getBoundingClientRect();
+                const dx = e.clientX - (r.left + r.width / 2);
+                const dy = e.clientY - (r.top + r.height / 2);
+                st.x = st.tx = dx;
+                st.y = st.ty = dy;
+                st.targetScale = 1;
             }});
 
             btn.addEventListener('pointermove', (e) => {{
-                const rect = btn.getBoundingClientRect();
-                chase.tx = e.clientX - rect.left;
-                chase.ty = e.clientY - rect.top;
+                if (!isHovered) return;
+                const r = btn.getBoundingClientRect();
+                st.tx = e.clientX - (r.left + r.width / 2);
+                st.ty = e.clientY - (r.top + r.height / 2);
             }});
 
             btn.addEventListener('pointerleave', () => {{
                 isHovered = false;
-                targetRadius = 0;
+                st.targetScale = 0;
             }});
 
-            function animateLiquid() {{
-                chase.x += (chase.tx - chase.x) * 0.16;
-                chase.y += (chase.ty - chase.y) * 0.16;
-                currentRadius += (targetRadius - currentRadius) * 0.2;
+            function animateLiquid(now) {{
+                const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
+                last = now;
 
-                follower.setAttribute('transform', `translate(${{chase.x}}, ${{chase.y}})`);
-                circle.setAttribute('r', Math.max(0, currentRadius));
+                const tau = 0.08;
+                const k = 1 - Math.exp(-dt / tau);
+                const dx = (st.tx - st.x) * k;
+                const dy = (st.ty - st.y) * k;
+                st.x += dx;
+                st.y += dy;
+
+                st.scale += (st.targetScale - st.scale) * (1 - Math.exp(-dt / 0.1));
+
+                const speed = Math.hypot(dx, dy) / dt;
+                const wantSquash = Math.min(1.5, 1 + speed * 0.0011);
+                st.squash += (wantSquash - st.squash) * (1 - Math.exp(-dt / 0.09));
+                if (speed > 8) st.angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+
+                const cx = btn.offsetWidth / 2;
+                const cy = btn.offsetHeight / 2;
+                followEl.style.transform = `translate(${{cx + st.x}}px, ${{cy + st.y}}px)`;
+                squashEl.style.transform = `rotate(${{st.angle}}deg) scale(${{st.squash}}, ${{1 / st.squash}})`;
+                biteEl.style.transform = `scale(${{Math.max(0, st.scale)}})`;
 
                 requestAnimationFrame(animateLiquid);
             }}
-            animateLiquid();
+            requestAnimationFrame(animateLiquid);
         }}
     }});
 </script>
@@ -525,37 +545,47 @@ async def landing_page(request: Request):
                 <p class="text-base lg:text-lg text-on-surface-variant max-w-xl mx-auto lg:mx-0 leading-relaxed">
                     A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents. Read and write thoughts dynamically.
                 </p>
-                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-3">
+                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-3">
                     
-                    <!-- 1. Liquid Carve "Get Started" Button (Original Size: px-6 py-3) -->
-                    <a id="liquidGetStartedBtn" href="{' /dashboard' if user_id else '/signup'}" class="relative inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded text-[#080808] border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] overflow-hidden no-underline select-none shadow-sm transition-transform cursor-pointer">
+                    <!-- 1. Liquid Carve "Get Started" Button -->
+                    <a id="liquidCarveBtn" href="{' /dashboard' if user_id else '/signup'}" class="relative inline-flex items-center justify-center h-14 w-56 rounded-md overflow-hidden no-underline cursor-pointer border border-[#050505] shadow-sm select-none">
                         <svg class="absolute inset-0 w-full h-full pointer-events-none" style="overflow: visible; z-index: 1;">
                             <defs>
-                                <filter id="goo-liquid-carve">
-                                    <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+                                <filter id="goo-filter-liquid">
+                                    <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
                                     <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"/>
                                 </filter>
-                                <mask id="mask-liquid-carve">
+                                <mask id="bite-mask-liquid">
                                     <rect width="100%" height="100%" fill="#fff"/>
-                                    <g id="liquidBiteFollower" style="transform: translate(-999px, -999px);">
-                                        <circle id="liquidBiteCircle" cx="0" cy="0" r="0" fill="#000"/>
+                                    <g id="liquidFollowGroup" style="transform: translate(-999px, -999px);">
+                                        <g id="liquidSquashGroup" style="transform-origin: center;">
+                                            <g id="liquidBiteGroup" style="transform: scale(0); transform-origin: center;">
+                                                <circle cx="0" cy="0" r="42.5" fill="#000"/>
+                                            </g>
+                                        </g>
                                     </g>
                                 </mask>
                             </defs>
-                            <!-- Reveal Blob Layer (#F2F3F8) -->
-                            <g filter="url(#goo-liquid-carve)">
+                            <!-- Reveal Background Layer (#F2F3F8) -->
+                            <g filter="url(#goo-filter-liquid)">
                                 <rect width="100%" height="100%" fill="#F2F3F8"/>
                             </g>
-                            <!-- Fill Layer (#F5C906) carved by bite mask -->
-                            <g filter="url(#goo-liquid-carve)">
-                                <rect width="100%" height="100%" fill="#F5C906" mask="url(#mask-liquid-carve)"/>
+                            <!-- Masked Yellow Surface Layer (#F5C906) -->
+                            <g filter="url(#goo-filter-liquid)">
+                                <rect width="100%" height="100%" fill="#F5C906" mask="url(#bite-mask-liquid)"/>
                             </g>
                         </svg>
-                        <span class="relative z-10 pointer-events-none font-bold text-on-surface">Get Started</span>
+                        <span class="relative z-10 pointer-events-none font-bold text-sm text-[#080808] tracking-tight">Get Started</span>
                     </a>
                     
-                    <!-- 2. "See more" Button (Matching Previous Size: px-6 py-3) -->
-                    <a href="#quickstart" class="bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline shadow-sm">See more</a>
+                    <!-- 2. Emerald Multi-Layer Bubble Animated "See more" Button (Matching h-14 w-56 size) -->
+                    <a href="#quickstart" class="border hover:scale-95 duration-300 relative group cursor-pointer text-emerald-50 overflow-hidden h-14 w-56 rounded-md bg-emerald-200 p-2 flex justify-center items-center font-extrabold no-underline shadow-sm">
+                        <div class="absolute right-32 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-40 h-40 rounded-full group-hover:scale-150 duration-500 bg-emerald-900"></div>
+                        <div class="absolute right-2 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-32 h-32 rounded-full group-hover:scale-150 duration-500 bg-emerald-800"></div>
+                        <div class="absolute -right-12 top-4 group-hover:top-1 group-hover:right-2 z-10 w-24 h-24 rounded-full group-hover:scale-150 duration-500 bg-emerald-700"></div>
+                        <div class="absolute right-20 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-16 h-16 rounded-full group-hover:scale-150 duration-500 bg-emerald-600"></div>
+                        <p class="z-10 text-sm font-bold text-white">See more</p>
+                    </a>
                 </div>
             </div>
             
