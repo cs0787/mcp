@@ -6,7 +6,7 @@ Full Python Starlette ASGI Application with:
 - Live Emerging Architecture Pipeline Canvas (Neon DB -> FastMCP Broker -> AI Apps)
 - Multi-Tab Quick-Start Terminal Snippets (Claude Desktop / Cursor / cURL)
 - Developer Feature Deep Dives & Full-Stack Auth / Multi-Tenant Dashboard
-- Console Workspace Interface for Logged-In Users
+- Console Workspace 2D Infinite Canvas Node Interface for Logged-In Users
 """
 
 import asyncpg
@@ -1074,7 +1074,7 @@ async def logout(request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Console Page (Custom Codebase Manager UI)
+# Console Page (Custom Codebase Manager 2D Node Canvas UI)
 # ---------------------------------------------------------------------------
 async def console_page(request: Request):
     user_id = _require_login(request)
@@ -1090,6 +1090,102 @@ async def console_page(request: Request):
     user_email = user["email"]
     display_name = user_email.split("@")[0].capitalize()
     initial = display_name[0].upper()
+
+    workspaces = []
+    nodes = []
+    selected_workspace = request.query_params.get("ws", "")
+
+    if user["connection_string_encrypted"]:
+        try:
+            conn_str = security.decrypt_text(user["connection_string_encrypted"])
+            user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
+            
+            # Fetch distinct repositories/workspaces from project nodes
+            ws_rows = await user_pool.fetch("SELECT DISTINCT workspace FROM project_nodes ORDER BY workspace ASC")
+            workspaces = [r["workspace"] for r in ws_rows]
+            
+            if not selected_workspace and workspaces:
+                selected_workspace = workspaces[0]
+            elif not selected_workspace:
+                selected_workspace = "Default Project"
+
+            # Fetch linear timeline nodes for the selected repository
+            node_rows = await user_pool.fetch(
+                """
+                SELECT id, sequence_index, title, summary, rationale, impact_analysis, affected_components, status, created_at
+                FROM project_nodes
+                WHERE workspace = $1 AND node_type = 'codebase_change'
+                ORDER BY sequence_index ASC
+                """,
+                selected_workspace
+            )
+            nodes = [dict(r) for r in node_rows]
+        except Exception:
+            pass
+
+    # Build Sidebar Repository list
+    if workspaces:
+        repo_list_html = "".join(f"""
+            <li class="chat-item {'active' if ws == selected_workspace else ''}" onclick="window.location='/console?ws={ws}'">
+                📁 {ws}
+            </li>
+        """ for ws in workspaces)
+    else:
+        repo_list_html = '<div class="p-3 text-xs text-[#8e8e8e]">No repositories found. Connect MCP to Claude/Cursor to log changes.</div>'
+
+    # Build 2D Canvas Nodes & SVG Connectors
+    if nodes:
+        nodes_html = ""
+        svg_lines_html = ""
+        card_width = 240
+        card_height = 140
+        spacing_x = 320
+        start_x = 80
+        start_y = 180
+
+        for i, node in enumerate(nodes):
+            x = start_x + (i * spacing_x)
+            y = start_y + (60 if i % 2 == 1 else -40)
+            
+            if i > 0:
+                prev_x = start_x + ((i - 1) * spacing_x) + (card_width / 2)
+                prev_y = start_y + (60 if (i - 1) % 2 == 1 else -40) + (card_height / 2)
+                curr_cx = x + (card_width / 2)
+                curr_cy = y + (card_height / 2)
+                svg_lines_html += f'<line x1="{prev_x}" y1="{prev_y}" x2="{curr_cx}" y2="{curr_cy}" stroke="#52525b" stroke-width="2" stroke-dasharray="4 4" />'
+
+            title_esc = node['title'].replace('"', '&quot;')
+            summary_esc = node['summary'].replace('"', '&quot;')
+            why_esc = (node['rationale'] or 'No rationale provided').replace('"', '&quot;')
+            impact_esc = (node['impact_analysis'] or 'None').replace('"', '&quot;')
+            step_idx = node['sequence_index'] or (i + 1)
+
+            nodes_html += f"""
+            <div class="canvas-node" style="left: {x}px; top: {y}px; width: {card_width}px;" 
+                 ondblclick="openNodeModal('Step {step_idx}: {title_esc}', '{summary_esc}', '{why_esc}', '{impact_esc}')">
+                <div class="node-header">
+                    <span class="node-step">Step {step_idx}</span>
+                    <span class="node-status">✓</span>
+                </div>
+                <div class="node-title">{node['title']}</div>
+                <div class="node-snippet">{node['summary'][:90]}...</div>
+                <div class="node-footer">Double-click to expand note</div>
+            </div>
+            """
+        
+        canvas_content = f"""
+        <svg class="canvas-svg">{svg_lines_html}</svg>
+        {nodes_html}
+        """
+    else:
+        canvas_content = f"""
+        <div class="empty-canvas-state">
+            <div class="empty-icon">⚡</div>
+            <h3>No CodeBase Data</h3>
+            <p>No CodeBase Data Connect mcp to AI models and store CodeBase Logs</p>
+            <code>mcpServers -&gt; memory-notes</code>
+        </div>
+        """
 
     return HTMLResponse(f"""<!DOCTYPE html>
 <html lang="en">
@@ -1122,17 +1218,9 @@ body {{
       linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%, transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%, transparent);
   background-size: 55px 55px;
   display: flex;
-  transition: background-color 0.3s ease;
 }}
 
-.container:hover {{
-  --color: #D0D0D0;
-  background-color: #EAEAEA;
-}}
-
-#sidebar-toggle {{
-  display: none;
-}}
+#sidebar-toggle {{ display: none; }}
 
 .toggle-btn {{
   background: black;
@@ -1144,12 +1232,6 @@ body {{
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s ease, color 0.2s ease;
-}}
-
-.toggle-btn:hover {{
-  background-color: black;
-  color: var(--text-main);
 }}
 
 .floating-toggle {{
@@ -1160,9 +1242,7 @@ body {{
   display: none;
 }}
 
-#sidebar-toggle:checked ~ .floating-toggle {{
-  display: flex;
-}}
+#sidebar-toggle:checked ~ .floating-toggle {{ display: flex; }}
 
 .sidebar {{
   width: 260px;
@@ -1173,16 +1253,14 @@ body {{
   height: 100%;
   box-sizing: border-box;
   padding: 12px;
-  position: relative;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s ease, padding 0.3s ease;
   z-index: 5;
+  transition: transform 0.3s ease, width 0.3s ease;
 }}
 
 #sidebar-toggle:checked ~ .sidebar {{
   transform: translateX(-100%);
   width: 0;
   padding: 0;
-  border-right-color: transparent;
   overflow: hidden;
 }}
 
@@ -1190,23 +1268,12 @@ body {{
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 4px;
   margin-bottom: 16px;
   padding: 4px;
 }}
 
-.sidebar-brand {{
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-main);
-}}
-
-.sidebar-section-title {{
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-muted);
-  padding: 8px 12px;
-}}
+.sidebar-brand {{ font-size: 14px; font-weight: 600; color: var(--text-main); }}
+.sidebar-section-title {{ font-size: 12px; font-weight: 500; color: var(--text-muted); padding: 8px 12px; }}
 
 .chat-list {{
   flex: 1;
@@ -1216,35 +1283,25 @@ body {{
   margin: 0;
 }}
 
-.chat-list::-webkit-scrollbar {{
-  width: 4px;
-}}
-
-.chat-list::-webkit-scrollbar-thumb {{
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
-}}
-
 .chat-item {{
   padding: 10px 12px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
-  color: var(--text-main);
+  font-size: 13px;
+  color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, color 0.2s;
 }}
-
-.chat-item:hover {{
+.chat-item:hover, .chat-item.active {{
   background-color: var(--hover-bg);
+  color: var(--text-main);
 }}
 
 .sidebar-footer {{
   border-top: 1px solid var(--border-color);
   padding-top: 12px;
-  margin-top: auto;
 }}
 
 .user-profile {{
@@ -1252,70 +1309,93 @@ body {{
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s ease;
 }}
 
-.user-profile:hover {{
-  background-color: var(--hover-bg);
-}}
-
-.user-info {{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  font-weight: 500;
-}}
-
-.user-name {{
-  color: white;
-}}
-
+.user-info {{ display: flex; align-items: center; gap: 10px; font-size: 14px; }}
+.user-name {{ color: white; }}
 .avatar {{
-  width: 24px;
-  height: 24px;
-  background-color: #3b82f6;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: bold;
+  width: 24px; height: 24px; background-color: #3b82f6; color: white;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;
 }}
-
-.plan-badge {{
-  font-size: 12px;
-  color: var(--text-muted);
-}}
-
-.main-content {{
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #1e1e1e;
-  font-size: 1.5rem;
-  font-weight: 600;
-}}
-
-.logout-form {{
-  margin-top: 8px;
-}}
+.plan-badge {{ font-size: 11px; color: var(--text-muted); }}
 
 .logout-btn {{
-  all: unset;
-  color: #f87171;
-  font-size: 12px;
+  all: unset; color: #f87171; font-size: 12px; cursor: pointer; padding: 4px 12px; display: block;
+}}
+.logout-btn:hover {{ text-decoration: underline; }}
+
+/* 2D Interactive Canvas Area */
+.main-canvas {{
+  flex: 1;
+  position: relative;
+  overflow: auto;
+  cursor: grab;
+  background: transparent;
+}}
+.main-canvas:active {{ cursor: grabbing; }}
+
+.canvas-svg {{
+  position: absolute;
+  top: 0; left: 0;
+  width: 5000px; height: 5000px;
+  pointer-events: none;
+}}
+
+.canvas-node {{
+  position: absolute;
+  background: #ffffff;
+  border: 1px solid #d4d4d8;
+  border-radius: 8px;
+  padding: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   cursor: pointer;
-  padding: 4px 12px;
-  display: block;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  user-select: none;
 }}
-.logout-btn:hover {{
-  text-decoration: underline;
+.canvas-node:hover {{
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  border-color: #000000;
 }}
+.node-header {{
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+}}
+.node-step {{
+  font-size: 10px; font-family: monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: #475569; font-weight: 600;
+}}
+.node-status {{ color: #16a34a; font-size: 12px; }}
+.node-title {{ font-size: 13px; font-weight: 700; color: #09090b; margin-bottom: 4px; }}
+.node-snippet {{ font-size: 11px; color: #71717a; line-height: 1.4; }}
+.node-footer {{
+  margin-top: 10px; padding-top: 6px; border-top: 1px solid #f1f5f9; font-size: 10px; color: #0284c7; text-align: right;
+}}
+
+/* Empty State */
+.empty-canvas-state {{
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  text-align: center; max-width: 380px; background: white; border: 1px solid #e2e2e7; padding: 32px; border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+}}
+.empty-icon {{ font-size: 32px; margin-bottom: 12px; }}
+.empty-canvas-state h3 {{ font-size: 16px; font-weight: bold; margin: 0 0 8px 0; color: #111; }}
+.empty-canvas-state p {{ font-size: 12px; color: #666; line-height: 1.5; margin: 0 0 16px 0; }}
+.empty-canvas-state code {{ display: block; background: #f4f4f5; padding: 8px; border-radius: 6px; font-family: monospace; font-size: 11px; color: #333; }}
+
+/* Modal Popup for Node Details */
+.modal-overlay {{
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center;
+}}
+.modal-overlay.active {{ display: flex; }}
+.modal-card {{
+  background: white; width: 500px; max-width: 90%; border-radius: 12px; border: 1px solid #e4e4e7; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); padding: 24px; position: relative;
+}}
+.modal-close {{
+  position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 18px; cursor: pointer; color: #71717a;
+}}
+.modal-title {{ font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #18181b; }}
+.modal-section {{ margin-bottom: 12px; }}
+.modal-label {{ font-size: 11px; font-weight: bold; text-transform: uppercase; color: #71717a; margin-bottom: 4px; }}
+.modal-body {{ font-size: 13px; color: #3f3f46; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; line-height: 1.5; }}
 </style>
 </head>
 <body>
@@ -1330,23 +1410,15 @@ body {{
           <line x1="9" y1="3" x2="9" y2="21"></line>
         </svg>
       </label>
-      <span class="sidebar-brand">Codebase</span>
+      <span class="sidebar-brand">Codebase Vault</span>
     </div>
 
     <div class="sidebar-section-title">Repositories &amp; Codebases</div>
     <ul class="chat-list">
-      <li class="chat-item"><a href="/dashboard" style="color:inherit; text-decoration:none;">⚙️ Settings & Database</a></li>
-      <li class="chat-item">auth-service-microservice v2.4</li>
-      <li class="chat-item">react-timeline-component-lib</li>
-      <li class="chat-item">scrape-verse-core-engine</li>
-      <li class="chat-item">anthropic-notes-app-styling</li>
-      <li class="chat-item">renewable-chem-seeds-api</li>
-      <li class="chat-item">mcp-second-brain-connector</li>
-      <li class="chat-item">neo-brutalism-portfolio-ui</li>
-      <li class="chat-item">database-migration-scripts-pg</li>
-      <li class="chat-item">ui-component-library-v1</li>
-      <li class="chat-item">graphql-gateway-service</li>
-      <li class="chat-item">payment-processing-worker</li>
+      <li class="chat-item" style="border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:6px; padding-bottom:6px;">
+        <a href="/dashboard" style="color:inherit; text-decoration:none;">⚙️ Database & Settings</a>
+      </li>
+      {repo_list_html}
     </ul>
 
     <div class="sidebar-footer">
@@ -1355,9 +1427,9 @@ body {{
           <div class="avatar">{initial}</div>
           <span class="user-name">{display_name}</span>
         </div>
-        <span class="plan-badge">Pro Dev</span>
+        <span class="plan-badge">MCP Active</span>
       </div>
-      <form method="POST" action="/logout" class="logout-form">
+      <form method="POST" action="/logout" style="margin-top:8px;">
         <button type="submit" class="logout-btn">Log Out</button>
       </form>
     </div>
@@ -1370,17 +1442,84 @@ body {{
     </svg>
   </label>
 
-  <main class="main-content">
-    <h1>Manage your repositories, {display_name}</h1>
+  <main class="main-canvas" id="canvasArea">
+    {canvas_content}
   </main>
 </div>
+
+<!-- Node Details Modal -->
+<div id="nodeModal" class="modal-overlay" onclick="closeNodeModal(event)">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeNodeModalDirect()">×</button>
+    <div id="modalTitle" class="modal-title">Node Details</div>
+    
+    <div class="modal-section">
+      <div class="modal-label">What Changed (Summary)</div>
+      <div id="modalSummary" class="modal-body"></div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-label">Why (Rationale)</div>
+      <div id="modalRationale" class="modal-body"></div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-label">Project Impact Analysis</div>
+      <div id="modalImpact" class="modal-body"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const canvas = document.getElementById('canvasArea');
+  let isDragging = false;
+  let startX, startY, scrollLeft, scrollTop;
+
+  canvas.addEventListener('mousedown', (e) => {{
+    if(e.target.closest('.canvas-node')) return;
+    isDragging = true;
+    startX = e.pageX - canvas.offsetLeft;
+    startY = e.pageY - canvas.offsetTop;
+    scrollLeft = canvas.scrollLeft;
+    scrollTop = canvas.scrollTop;
+  }});
+
+  canvas.addEventListener('mouseleave', () => {{ isDragging = false; }});
+  canvas.addEventListener('mouseup', () => {{ isDragging = false; }});
+  canvas.addEventListener('mousemove', (e) => {{
+    if(!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - canvas.offsetLeft;
+    const y = e.pageY - canvas.offsetTop;
+    canvas.scrollLeft = scrollLeft - (x - startX);
+    canvas.scrollTop = scrollTop - (y - startY);
+  }});
+
+  function openNodeModal(title, summary, rationale, impact) {{
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalSummary').innerText = summary;
+    document.getElementById('modalRationale').innerText = rationale;
+    document.getElementById('modalImpact').innerText = impact;
+    document.getElementById('nodeModal').classList.add('active');
+  }}
+
+  function closeNodeModalDirect() {{
+    document.getElementById('nodeModal').classList.remove('active');
+  }}
+
+  function closeNodeModal(e) {{
+    if(e.target.id === 'nodeModal') {{
+      document.getElementById('nodeModal').classList.remove('active');
+    }}
+  }}
+</script>
 </body>
 </html>
 """)
 
 
 # ---------------------------------------------------------------------------
-# Dashboard & Settings (Retained for Neon DB Configuration & API Keys)
+# Dashboard & Settings
 # ---------------------------------------------------------------------------
 async def dashboard_get(request: Request):
     user_id = _require_login(request)
