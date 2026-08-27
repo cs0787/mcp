@@ -1,8 +1,8 @@
 """
 Memory Notes for AI - Web Application
 Integrated with the custom Monochromatic Tailwind CSS Frontend design,
-interactive spotlight grid background, custom Liquid Carve "Get Started" button,
-emerald animated "See more" button, quick-start terminal, developer deep dives,
+interactive spotlight grid background, custom Originkit Liquid Carve "Get Started" button,
+clean classic "See more" button, quick-start terminal, developer deep dives,
 and progressive emerging architecture animation.
 """
 
@@ -363,7 +363,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
 
     // =========================================================================
-    // LIQUID CARVE BUTTON (ORIGINKIT PRESET CONVERTED TO JS RUNTIME)
+    // ORIGINKIT LIQUID CARVE BUTTON (EXACT PRESET PHYSICS SIMULATION)
     // =========================================================================
     document.addEventListener('DOMContentLoaded', () => {{
         runFullSequence();
@@ -374,6 +374,16 @@ def _page(title: str, body: str) -> HTMLResponse:
         const biteEl = document.getElementById('liquidBiteGroup');
 
         if (btn && followEl && squashEl && biteEl) {{
+            const FOLLOW_TAU_MIN = 0.02;
+            const FOLLOW_TAU_MAX = 0.4;
+            const SQUASH_TAU = 0.09;
+            const SQUASH_PER_PX_PER_SEC = 0.0011;
+            const SQUASH_MAX = 1.6;
+            const smoothness = 100; // Preset value: 100%
+
+            const t = smoothness / 100;
+            const tau = FOLLOW_TAU_MIN + t * (FOLLOW_TAU_MAX - FOLLOW_TAU_MIN);
+
             let st = {{ x: 0, y: 0, tx: 0, ty: 0, squash: 1, angle: 0, scale: 0, targetScale: 0 }};
             let last = 0;
             let isHovered = false;
@@ -404,7 +414,6 @@ def _page(title: str, body: str) -> HTMLResponse:
                 const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
                 last = now;
 
-                const tau = 0.08;
                 const k = 1 - Math.exp(-dt / tau);
                 const dx = (st.tx - st.x) * k;
                 const dy = (st.ty - st.y) * k;
@@ -414,8 +423,8 @@ def _page(title: str, body: str) -> HTMLResponse:
                 st.scale += (st.targetScale - st.scale) * (1 - Math.exp(-dt / 0.1));
 
                 const speed = Math.hypot(dx, dy) / dt;
-                const wantSquash = Math.min(1.5, 1 + speed * 0.0011);
-                st.squash += (wantSquash - st.squash) * (1 - Math.exp(-dt / 0.09));
+                const wantSquash = Math.min(SQUASH_MAX, 1 + speed * SQUASH_PER_PX_PER_SEC);
+                st.squash += (wantSquash - st.squash) * (1 - Math.exp(-dt / SQUASH_TAU));
                 if (speed > 8) st.angle = (Math.atan2(dy, dx) * 180) / Math.PI;
 
                 const cx = btn.offsetWidth / 2;
@@ -547,8 +556,8 @@ async def landing_page(request: Request):
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-3">
                     
-                    <!-- 1. Liquid Carve "Get Started" Button -->
-                    <a id="liquidCarveBtn" href="{' /dashboard' if user_id else '/signup'}" class="relative inline-flex items-center justify-center h-14 w-56 rounded-md overflow-hidden no-underline cursor-pointer border border-[#050505] shadow-sm select-none">
+                    <!-- 1. Originkit Liquid Carve "Get Started" Button -->
+                    <a id="liquidCarveBtn" href="{' /dashboard' if user_id else '/signup'}" class="relative inline-flex items-center justify-center px-6 py-3 rounded text-sm font-semibold overflow-hidden no-underline cursor-pointer border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] shadow-sm select-none">
                         <svg class="absolute inset-0 w-full h-full pointer-events-none" style="overflow: visible; z-index: 1;">
                             <defs>
                                 <filter id="goo-filter-liquid">
@@ -578,14 +587,8 @@ async def landing_page(request: Request):
                         <span class="relative z-10 pointer-events-none font-bold text-sm text-[#080808] tracking-tight">Get Started</span>
                     </a>
                     
-                    <!-- 2. Emerald Multi-Layer Bubble Animated "See more" Button (Matching h-14 w-56 size) -->
-                    <a href="#quickstart" class="border hover:scale-95 duration-300 relative group cursor-pointer text-emerald-50 overflow-hidden h-14 w-56 rounded-md bg-emerald-200 p-2 flex justify-center items-center font-extrabold no-underline shadow-sm">
-                        <div class="absolute right-32 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-40 h-40 rounded-full group-hover:scale-150 duration-500 bg-emerald-900"></div>
-                        <div class="absolute right-2 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-32 h-32 rounded-full group-hover:scale-150 duration-500 bg-emerald-800"></div>
-                        <div class="absolute -right-12 top-4 group-hover:top-1 group-hover:right-2 z-10 w-24 h-24 rounded-full group-hover:scale-150 duration-500 bg-emerald-700"></div>
-                        <div class="absolute right-20 -top-4 group-hover:top-1 group-hover:right-2 z-10 w-16 h-16 rounded-full group-hover:scale-150 duration-500 bg-emerald-600"></div>
-                        <p class="z-10 text-sm font-bold text-white">See more</p>
-                    </a>
+                    <!-- 2. Clean Classic "See more" Button -->
+                    <a href="#quickstart" class="bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline shadow-sm">See more</a>
                 </div>
             </div>
             
