@@ -1,5 +1,6 @@
 """
 The control-plane database pool manager for Vercel Serverless.
+Manages user authentication, encrypted Neon connection strings, and API keys.
 """
 
 import os
