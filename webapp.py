@@ -736,6 +736,171 @@ async def landing_page(request: Request):
 
     </div>
 </section>
+
+    <!-- 3. Developer Feature Deep Dives -->
+    <section id="features" class="py-16 bg-surface-white border-b border-border-muted">
+        <div class="max-w-6xl mx-auto px-6 lg:px-12 space-y-16">
+            
+            <!-- Spotlight 1: Zero-Latency Trigram Search -->
+            <div class="flex flex-col lg:flex-row items-center gap-10">
+                <div class="flex-1 space-y-3">
+                    <div class="inline-block px-2 py-1 bg-surface-container rounded text-xs font-mono font-semibold text-primary">FULL-TEXT RECALL</div>
+                    <h3 class="text-2xl font-bold text-on-surface">Zero-Latency Trigram Search</h3>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">
+                        Traditional LLM retrieval fails when queries have typos or fragmented terms. Memory Notes harnesses PostgreSQL trigram matching (<code class="font-mono text-xs text-on-surface bg-surface-container-low px-1 py-0.5 rounded">pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds.
+                    </p>
+                    <ul class="text-xs font-mono text-text-secondary space-y-1 pt-2">
+                        <li>✓ Typo-tolerant substring & fuzzy similarity score</li>
+                        <li>✓ Automatic fallback to ILIKE if extensions are missing</li>
+                    </ul>
+                </div>
+                <div class="flex-1 w-full">
+                    <div class="bg-[#0f0f11] text-neutral-200 p-5 rounded-xl border border-neutral-800 font-mono text-xs shadow-md">
+                        <div class="text-neutral-500 mb-2">// SQL Query Execution</div>
+                        <div class="text-yellow-400">SELECT <span class="text-neutral-200">id, title, similarity(title, $1) AS score</span></div>
+                        <div class="text-yellow-400">FROM <span class="text-neutral-200">notes</span></div>
+                        <div class="text-yellow-400">WHERE <span class="text-neutral-200">title % $1 OR content ILIKE '%'||$1||'%'</span></div>
+                        <div class="text-yellow-400">ORDER BY <span class="text-neutral-200">score DESC LIMIT 10;</span></div>
+                        <div class="mt-3 pt-3 border-t border-neutral-800 text-green-400 text-[11px]">
+                            ⚡ Query Execution: 3.4ms | 10 rows retrieved
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-border-muted">
+
+            <!-- Spotlight 2: Autonomous AI Memory Sync -->
+            <div class="flex flex-col lg:flex-row-reverse items-center gap-10">
+                <div class="flex-1 space-y-3">
+                    <div class="inline-block px-2 py-1 bg-secondary-container rounded text-xs font-mono font-semibold text-on-surface">BI-DIRECTIONAL WRITES</div>
+                    <h3 class="text-2xl font-bold text-on-surface">Autonomous AI Memory Sync</h3>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">
+                        Claude and Cursor can not only inspect your past notes—they can create new workspace folders, append structured summaries, or update existing documents directly from conversation prompts.
+                    </p>
+                    <ul class="text-xs font-mono text-text-secondary space-y-1 pt-2">
+                        <li>✓ Explicit bigint epoch timestamping for Last-Write-Wins</li>
+                        <li>✓ Reactive Jetpack Compose Room sync down to Android</li>
+                    </ul>
+                </div>
+                <div class="flex-1 w-full">
+                    <div class="bg-[#0f0f11] text-neutral-200 p-5 rounded-xl border border-neutral-800 font-mono text-xs shadow-md">
+                        <div class="text-neutral-500 mb-2">// MCP Tool Invocation Output</div>
+                        <div class="text-blue-400">&gt; create_note(<span class="text-neutral-300">title="Sprint Specs", workspace="Dev"</span>)</div>
+                        <div class="text-neutral-400 mt-2">
+                            {{<br>
+                            &nbsp;&nbsp;"id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",<br>
+                            &nbsp;&nbsp;"title": "Sprint Specs",<br>
+                            &nbsp;&nbsp;"updated_at": 1786675973594<br>
+                            }}
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-neutral-800 text-green-400 text-[11px]">
+                            ✓ Database record created • Dispatched to mobile sync engine
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Core Bento Capabilities -->
+    <section class="py-16 bg-surface-white border-b border-border-muted">
+        <div class="max-w-6xl mx-auto px-6 lg:px-12">
+            <div class="mb-12">
+                <h2 class="text-2xl lg:text-3xl font-bold text-on-surface mb-2">Core Capabilities</h2>
+                <p class="text-sm text-on-surface-variant max-w-2xl">Tools designed for deep intellectual focus, stripping away the superfluous to leave only what matters.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-6 flex flex-col justify-between group rounded">
+                    <div class="mb-6">
+                        <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors">
+                            <span class="material-symbols-outlined text-primary" data-icon="account_tree">account_tree</span>
+                        </span>
+                        <h3 class="text-xl font-semibold text-on-surface mb-1">Non-Linear Connectivity</h3>
+                        <p class="text-sm text-on-surface-variant">Build an intricate web of knowledge. Link notes effortlessly to visualize relationships and emergent ideas.</p>
+                    </div>
+                    <div class="h-36 bg-surface-container-low border border-border-muted rounded flex items-center justify-center relative overflow-hidden p-4">
+                        <svg class="w-full h-full text-border-muted" viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <line x1="50" y1="60" x2="160" y2="30" stroke="#737783" stroke-width="1.5" stroke-dasharray="3 3"/>
+                            <line x1="160" y1="30" x2="280" y2="80" stroke="#1c1b1b" stroke-width="1.5"/>
+                            <line x1="160" y1="30" x2="350" y2="40" stroke="#1c1b1b" stroke-width="1.5"/>
+                            <line x1="50" y1="60" x2="200" y2="90" stroke="#737783" stroke-width="1.5"/>
+                            <circle cx="50" cy="60" r="14" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
+                            <circle cx="160" cy="30" r="18" fill="#fdd400" stroke="#1c1b1b" stroke-width="2"/>
+                            <circle cx="280" cy="80" r="14" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
+                            <circle cx="350" cy="40" r="12" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
+                            <circle cx="200" cy="90" r="10" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="feature-card bg-surface-white border border-border-muted p-6 flex flex-col group rounded">
+                    <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
+                        <span class="material-symbols-outlined text-primary" data-icon="format_ink_highlighter">format_ink_highlighter</span>
+                    </span>
+                    <h3 class="text-xl font-semibold text-on-surface mb-1">Zen Canvas</h3>
+                    <p class="text-sm text-on-surface-variant mb-6">A distraction-free writing environment that centers your thoughts and fades UI elements away.</p>
+                    <div class="mt-auto h-36 bg-surface-container-low border border-border-muted rounded flex items-center justify-center p-4">
+                        <svg class="w-full h-24" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="10" y="10" width="180" height="60" rx="4" fill="#ffffff" stroke="#E2E2E7" stroke-width="1"/>
+                            <rect x="25" y="24" width="90" height="6" rx="2" fill="#1c1b1b"/>
+                            <rect x="25" y="38" width="150" height="4" rx="2" fill="#71717A"/>
+                            <rect x="25" y="48" width="120" height="4" rx="2" fill="#E2E2E7"/>
+                            <line x1="120" y1="23" x2="120" y2="31" stroke="#003178" stroke-width="2"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="feature-card bg-surface-white border border-border-muted p-6 flex flex-col group rounded">
+                    <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors self-start">
+                        <span class="material-symbols-outlined text-primary" data-icon="search">search</span>
+                    </span>
+                    <h3 class="text-xl font-semibold text-on-surface mb-1">Lightning Search</h3>
+                    <p class="text-sm text-on-surface-variant mb-6">Instantly retrieve any thought with our fast, full-text fuzzy search engine.</p>
+                    <div class="mt-auto h-36 bg-surface-container-low border border-border-muted rounded flex flex-col justify-center p-3">
+                        <div class="flex items-center gap-2 px-3 py-2 border border-border-muted rounded bg-surface-white text-xs text-on-surface shadow-xs">
+                            <span class="material-symbols-outlined text-sm text-primary" data-icon="search">search</span>
+                            <span class="font-mono text-xs font-semibold">trgm.match("query")</span>
+                        </div>
+                        <div class="mt-2 text-[10px] font-mono text-text-secondary px-1">
+                            &gt; 3 matches indexed in 4ms
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 feature-card bg-surface-white border border-border-muted p-6 flex flex-col md:flex-row gap-6 items-center group rounded">
+                    <div class="flex-1">
+                        <span class="inline-block p-2.5 bg-surface-container rounded mb-4 border border-border-muted group-hover:border-[#050505] transition-colors">
+                            <span class="material-symbols-outlined text-primary" data-icon="code">code</span>
+                        </span>
+                        <h3 class="text-xl font-semibold text-on-surface mb-1">Open Protocol Standards</h3>
+                        <p class="text-sm text-on-surface-variant">Built directly on top of Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer extensibility.</p>
+                    </div>
+                    <div class="flex-1 w-full h-36 bg-surface-container-low border border-border-muted rounded flex flex-col justify-center p-4 font-mono text-xs text-text-secondary leading-relaxed">
+                        <div>Server: FastMCP / Python 3.12</div>
+                        <div>Protocol: Streamable HTTP (SSE)</div>
+                        <div class="text-primary font-semibold mt-1">Multi-Tenant Isolation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="w-full py-8 px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center max-w-6xl mx-auto bg-surface-white border-t border-border-muted">
+    <div class="flex flex-col items-center md:items-start gap-1 mb-4 md:mb-0">
+        <span class="text-sm font-bold text-on-surface">Memory Notes</span>
+        <span class="text-xs text-text-secondary">© 2026 Memory Notes. Structured Freedom.</span>
+    </div>
+    <nav class="flex gap-4 text-xs text-text-secondary">
+        <a class="hover:text-primary transition-colors no-underline" href="#">Privacy Policy</a>
+        <a class="hover:text-primary transition-colors no-underline" href="#">Terms of Service</a>
+        <a class="hover:text-primary transition-colors no-underline" href="#">Changelog</a>
+    </nav>
+</footer>
 """
     return _page("Home", body)
 
