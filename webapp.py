@@ -986,7 +986,7 @@ async def landing_page(request: Request):
         }});
       }});
     </script>
-""")
+"""
     return _page("Home", body)
 
 
