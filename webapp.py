@@ -5,7 +5,7 @@ Full Python Starlette ASGI Application with:
 - Interactive Spotlight Grid Hero with Clean Standard Action Buttons ("Get Started" & "See more")
 - Live Emerging Architecture Pipeline Canvas (Neon DB -> FastMCP Broker -> AI Apps)
 - Multi-Tab Quick-Start Terminal Snippets (Claude Desktop / Cursor / cURL)
-- Developer Feature Deep Dives & Full-Stack Auth / Multi-Tenant Dashboard
+- Dedicated Codebase Console Workspace with Claude-style Sidebar and 2D Infinite Node Canvas
 """
 
 import asyncpg
@@ -216,9 +216,11 @@ def _page(title: str, body: str) -> HTMLResponse:
     function copyToClipboard(text, btnId) {{
         navigator.clipboard.writeText(text).then(() => {{
             const btn = document.getElementById(btnId);
-            const orig = btn.innerText;
-            btn.innerText = 'Copied!';
-            setTimeout(() => btn.innerText = orig, 2000);
+            if (btn) {{
+                const orig = btn.innerText;
+                btn.innerText = 'Copied!';
+                setTimeout(() => btn.innerText = orig, 2000);
+            }}
         }});
     }}
     function setTerminalTab(tab) {{
@@ -226,12 +228,14 @@ def _page(title: str, body: str) -> HTMLResponse:
         tabs.forEach(t => {{
             const btn = document.getElementById('tab-' + t);
             const block = document.getElementById('snippet-' + t);
-            if (t === tab) {{
-                btn.className = 'px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors';
-                block.classList.remove('hidden');
-            }} else {{
-                btn.className = 'px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors';
-                block.classList.add('hidden');
+            if (btn && block) {{
+                if (t === tab) {{
+                    btn.className = 'px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors';
+                    block.classList.remove('hidden');
+                }} else {{
+                    btn.className = 'px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors';
+                    block.classList.add('hidden');
+                }}
             }}
         }});
     }}
@@ -267,7 +271,6 @@ def _page(title: str, body: str) -> HTMLResponse:
         const pillMem = document.getElementById('pill-memory-notes');
         const pillAi = document.getElementById('elem-ai-apps');
 
-        // PHASE 1: Left to Right
         if (statusText) statusText.innerHTML = '<span class="text-[#00e599] font-bold">1. Ingestion:</span> Memory Notes sparkles &amp; shoots beam along scale to neon db &amp; mcp-server.';
 
         setTimeout(() => {{ if (pillMem) pillMem.classList.add('sparkle-burst'); }}, 200);
@@ -299,7 +302,6 @@ def _page(title: str, body: str) -> HTMLResponse:
             document.getElementById('elem-gear').classList.add('visible');
         }}, 4400);
 
-        // PHASE 2: Right to Left
         setTimeout(() => {{
             if (statusText) statusText.innerHTML = '<span class="text-[#fde047] font-bold">2. Tool Request &amp; Sync:</span> AI Apps sparkles, beam enters mcp-server while tools are granted &amp; notes write back.';
             if (pillAi) {{
@@ -342,7 +344,9 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
 
     document.addEventListener('DOMContentLoaded', () => {{
-        runFullSequence();
+        if (document.getElementById('seg-scale-p1-a')) {{
+            runFullSequence();
+        }}
     }});
 </script>
 </body>
@@ -713,7 +717,7 @@ async def landing_page(request: Request):
 
                 <div class="px-6 py-3 bg-[#09090b] border-t border-white/5 flex items-center justify-between mono text-xs">
                     <div id="anim-status-indicator" class="text-white/80">
-                        <span class="text-[#00e599] font-bold">1. Ingestion:</span> Memory Notes sparkles &amp; shoots beam along scale to neon db &amp; mcp-server.
+                        <span class="text-[#00e599] font-bold">1. Ingestion:</span> Memory Notes sparkles &amp; shoots beam along scale to mcp-server.
                     </div>
                     <span class="text-white/30 hidden sm:inline">Model Context Protocol 2.1</span>
                 </div>
@@ -920,13 +924,10 @@ async def landing_page(request: Request):
     return _page("Home", body)
 
 
-# ---------------------------------------------------------------------------
-# Signup & Login Handlers
-# ---------------------------------------------------------------------------
 async def signup_get(request: Request):
     next_ = _safe_next(request.query_params.get("next"))
     if _require_login(request):
-        return RedirectResponse(next_, status_code=302)
+        return RedirectResponse("/dashboard", status_code=302)
     
     body = f"""
 {_navbar(request)}
@@ -957,7 +958,6 @@ async def signup_post(request: Request):
     form = await request.form()
     email = str(form.get("email", "")).strip()
     password = str(form.get("password", ""))
-    next_ = _safe_next(str(form.get("next", "")))
 
     error = None
     if "@" not in email:
@@ -973,7 +973,6 @@ async def signup_post(request: Request):
         <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
         <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">{error}</div>
         <form method="POST" action="/signup">
-            <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
                 <label class="block text-xs font-semibold text-on-surface mb-1">Email Address</label>
                 <input type="email" name="email" value="{email}" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm">
@@ -999,20 +998,19 @@ async def signup_post(request: Request):
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
         <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
         <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">An account with that email already exists.</div>
-        <p class="text-xs"><a href="/login?next={next_}" class="text-primary font-semibold underline">Log in instead</a></p>
+        <p class="text-xs"><a href="/login" class="text-primary font-semibold underline">Log in instead</a></p>
     </div>
 </main>
 """
         return _page("Sign up", body)
 
     request.session["user_id"] = user_id
-    return RedirectResponse(next_, status_code=302)
+    return RedirectResponse("/dashboard", status_code=302)
 
 
 async def login_get(request: Request):
-    next_ = _safe_next(request.query_params.get("next"))
     if _require_login(request):
-        return RedirectResponse(next_, status_code=302)
+        return RedirectResponse("/dashboard", status_code=302)
     
     body = f"""
 {_navbar(request)}
@@ -1021,7 +1019,6 @@ async def login_get(request: Request):
         <h2 class="text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
         <p class="text-xs text-text-secondary mb-6">Log in to your account.</p>
         <form method="POST" action="/login">
-            <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
                 <label class="block text-xs font-semibold text-on-surface mb-1">Email Address</label>
                 <input type="email" name="email" placeholder="name@example.com" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm focus:outline-none focus:border-primary">
@@ -1032,7 +1029,7 @@ async def login_get(request: Request):
             </div>
             <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all">Log In</button>
         </form>
-        <p class="text-xs text-text-secondary text-center mt-6">No account yet? <a href="/signup?next={next_}" class="text-primary font-semibold hover:underline">Sign up</a></p>
+        <p class="text-xs text-text-secondary text-center mt-6">No account yet? <a href="/signup" class="text-primary font-semibold hover:underline">Sign up</a></p>
     </div>
 </main>
 """
@@ -1043,7 +1040,6 @@ async def login_post(request: Request):
     form = await request.form()
     email = str(form.get("email", "")).strip()
     password = str(form.get("password", ""))
-    next_ = _safe_next(str(form.get("next", "")))
 
     pool = db_control.get_control_pool()
     user = await db_control.get_user_by_email(pool, email)
@@ -1056,7 +1052,6 @@ async def login_post(request: Request):
         <h2 class="text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
         <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">Incorrect email or password.</div>
         <form method="POST" action="/login">
-            <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
                 <label class="block text-xs font-semibold text-on-surface mb-1">Email Address</label>
                 <input type="email" name="email" value="{email}" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm">
@@ -1073,532 +1068,12 @@ async def login_post(request: Request):
         return _page("Log in", body)
 
     request.session["user_id"] = str(user["id"])
-    return RedirectResponse(next_, status_code=302)
+    return RedirectResponse("/dashboard", status_code=302)
 
 
 async def logout(request: Request):
-    form = await request.form()
-    next_ = str(form.get("next", "")) if form.get("next") else None
     request.session.clear()
-    if next_ and next_.startswith("/") and not next_.startswith("//"):
-        return RedirectResponse(f"/login?next={next_}", status_code=302)
     return RedirectResponse("/login", status_code=302)
-
-
-# ---------------------------------------------------------------------------
-# Authenticated Codebase Console (Separate App Experience like console.neon.tech)
-# ---------------------------------------------------------------------------
-async def console_get(request: Request):
-    user_id = _require_login(request)
-    if not user_id:
-        return RedirectResponse("/login", status_code=302)
-
-    pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
-    if user is None:
-        request.session.clear()
-        return RedirectResponse("/login", status_code=302)
-
-    selected_ws = request.query_params.get("workspace", "")
-    workspaces = []
-    nodes_json = "[]"
-
-    if user["connection_string_encrypted"]:
-        tenant_pool = await tenant_pools.get_manager().get_pool(user_id)
-        if tenant_pool:
-            async with tenant_pool.acquire() as conn:
-                try:
-                    await conn.execute("CREATE EXTENSION IF NOT EXISTS pgcrypto")
-                    await conn.execute("""
-                        CREATE TABLE IF NOT EXISTS project_nodes (
-                            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                            workspace VARCHAR(255) NOT NULL,
-                            node_type VARCHAR(50) NOT NULL,
-                            title VARCHAR(255) NOT NULL,
-                            summary TEXT NOT NULL,
-                            rationale TEXT,
-                            impact_analysis TEXT,
-                            sequence_index INT,
-                            previous_node_id UUID,
-                            central_hub_id UUID,
-                            affected_components TEXT[] DEFAULT '{{}}',
-                            status VARCHAR(50) DEFAULT 'completed',
-                            created_at TIMESTAMPTZ DEFAULT now(),
-                            updated_at BIGINT NOT NULL
-                        );
-                    """)
-                    ws_rows = await conn.fetch("SELECT DISTINCT workspace FROM project_nodes ORDER BY workspace ASC;")
-                    workspaces = [r["workspace"] for r in ws_rows]
-                except Exception:
-                    workspaces = []
-
-                current_ws = selected_ws if selected_ws in workspaces else (workspaces[0] if workspaces else "main-core")
-
-                try:
-                    timeline_rows = await conn.fetch(
-                        """
-                        SELECT id, sequence_index, previous_node_id, title, summary, rationale,
-                               impact_analysis, affected_components, status, created_at
-                        FROM project_nodes
-                        WHERE workspace = $1 AND node_type = 'codebase_change'
-                        ORDER BY sequence_index ASC, created_at ASC;
-                        """,
-                        current_ws
-                    )
-                    
-                    nodes_data = []
-                    for idx, r in enumerate(timeline_rows):
-                        nodes_data.append({
-                            "id": str(r["id"]),
-                            "step": r["sequence_index"] or (idx + 1),
-                            "title": r["title"],
-                            "summary": r["summary"],
-                            "rationale": r["rationale"] or "No rationale recorded.",
-                            "impact": r["impact_analysis"] or "No downstream effect recorded.",
-                            "components": r["affected_components"] or []
-                        })
-                    nodes_json = json.dumps(nodes_data)
-                except Exception:
-                    nodes_json = "[]"
-                    current_ws = selected_ws or "main-core"
-
-    chat_list_html = ""
-    if workspaces:
-        for w in workspaces:
-            active_cls = "active" if w == current_ws else ""
-            chat_list_html += f'<li><a href="/dashboard?workspace={w}" class="chat-item {active_cls}"><span class="material-symbols-outlined text-[16px] opacity-70">folder_open</span>{w}</a></li>'
-    else:
-        chat_list_html = '<li class="text-xs text-text-muted px-3 py-2">No repositories tracked yet.</li>'
-
-    username = user['email'].split('@')[0]
-    initial = username[0].upper()
-
-    html_content = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Codebase Console - Memory Notes</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<style>
-    :root {{
-        --sidebar-bg: #171717;
-        --text-main: #ececec;
-        --text-muted: #8e8e8e;
-        --hover-bg: rgba(255, 255, 255, 0.05);
-        --border-color: rgba(255, 255, 255, 0.08);
-    }}
-    body {{
-        margin: 0;
-        font-family: 'Inter', sans-serif;
-        height: 100vh;
-        overflow: hidden;
-        background: #fafafa;
-    }}
-    .container {{
-        width: 100%;
-        height: 100%;
-        display: flex;
-        position: relative;
-    }}
-    #sidebar-toggle {{
-        display: none;
-    }}
-    .toggle-btn {{
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-muted);
-        padding: 8px;
-        border-radius: 8px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s ease, color 0.2s ease;
-    }}
-    .toggle-btn:hover {{
-        background-color: var(--hover-bg);
-        color: var(--text-main);
-    }}
-    .floating-toggle {{
-        position: fixed;
-        top: 12px;
-        left: 12px;
-        z-index: 50;
-        display: none;
-        background: #171717;
-    }}
-    #sidebar-toggle:checked ~ .floating-toggle {{
-        display: flex;
-    }}
-    .sidebar {{
-        width: 260px;
-        background-color: var(--sidebar-bg);
-        border-right: 1px solid var(--border-color);
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        box-sizing: border-box;
-        padding: 12px;
-        position: relative;
-        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s ease, padding 0.3s ease, border-color 0.3s ease;
-        z-index: 40;
-    }}
-    #sidebar-toggle:checked ~ .sidebar {{
-        transform: translateX(-100%);
-        width: 0;
-        padding: 0;
-        border-right-color: transparent;
-        overflow: hidden;
-    }}
-    .sidebar-header {{
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-top: 4px;
-        margin-bottom: 16px;
-        padding: 4px;
-    }}
-    .sidebar-brand {{
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text-main);
-    }}
-    .sidebar-section-title {{
-        font-size: 11px;
-        font-weight: 500;
-        color: var(--text-muted);
-        padding: 8px 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }}
-    .chat-list {{
-        flex: 1;
-        overflow-y: auto;
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }}
-    .chat-list::-webkit-scrollbar {{
-        width: 4px;
-    }}
-    .chat-list::-webkit-scrollbar-thumb {{
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 4px;
-    }}
-    .chat-item {{
-        padding: 10px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 13px;
-        color: var(--text-main);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        transition: background 0.2s ease;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-    }}
-    .chat-item:hover, .chat-item.active {{
-        background-color: var(--hover-bg);
-    }}
-    .sidebar-footer {{
-        border-top: 1px solid var(--border-color);
-        padding-top: 12px;
-        margin-top: auto;
-    }}
-    .user-profile {{
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 8px 12px;
-        border-radius: 8px;
-    }}
-    .user-info {{
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 13px;
-        font-weight: 500;
-        color: white;
-    }}
-    .avatar {{
-        width: 24px;
-        height: 24px;
-        background-color: #3b82f6;
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: bold;
-    }}
-    .main-content {{
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        overflow: hidden;
-        background-color: #fafafa;
-        background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
-        background-size: 20px 20px;
-    }}
-    .canvas-plane {{
-        position: absolute;
-        top: 0;
-        left: 0;
-        transform-origin: 0 0;
-        width: 10000px;
-        height: 10000px;
-        cursor: grab;
-    }}
-    .canvas-plane:active {{
-        cursor: grabbing;
-    }}
-    .node-card {{
-        position: absolute;
-        width: 300px;
-        background: #ffffff;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        padding: 16px;
-        cursor: pointer;
-        user-select: none;
-        transition: box-shadow 0.2s, border-color 0.2s;
-    }}
-    .node-card:hover {{
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        border-color: #d4d4d8;
-    }}
-    #nodeModal {{
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 100;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(2px);
-    }}
-    #nodeModal.active {{
-        display: flex;
-    }}
-</style>
-</head>
-<body>
-
-<div class="container">
-    <input type="checkbox" id="sidebar-toggle" />
-
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <label for="sidebar-toggle" class="toggle-btn" title="Toggle Sidebar">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="9" y1="3" x2="9" y2="21"></line>
-                </svg>
-            </label>
-            <span class="sidebar-brand">Codebase Console</span>
-        </div>
-
-        <div class="sidebar-section-title">Repositories & Tracks</div>
-        <ul class="chat-list">
-            {chat_list_html}
-        </ul>
-
-        <div class="mt-2 pt-2 border-t border-white/10">
-            <a href="/" class="chat-item text-neutral-400 hover:text-white">
-                <span class="material-symbols-outlined text-[16px]">public</span>
-                Home / Landing Page
-            </a>
-        </div>
-
-        <div class="sidebar-footer">
-            <div class="user-profile">
-                <div class="user-info">
-                    <div class="avatar">{initial}</div>
-                    <span class="user-name truncate w-28">{username}</span>
-                </div>
-                <form method="POST" action="/logout" class="m-0">
-                    <button type="submit" class="bg-transparent border-0 text-neutral-400 hover:text-white cursor-pointer p-0" title="Log Out">
-                        <span class="material-symbols-outlined text-sm">logout</span>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </aside>
-
-    <label for="sidebar-toggle" class="toggle-btn floating-toggle" title="Toggle Sidebar">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-            <line x1="9" y1="3" x2="9" y2="21"></line>
-        </svg>
-    </label>
-
-    <main class="main-content" id="canvasContainer">
-        <div class="absolute top-4 left-4 z-20 bg-white/80 backdrop-blur border border-border-muted px-4 py-2 rounded-lg shadow-xs pointer-events-none">
-            <h1 class="text-xs font-bold text-neutral-900 font-mono">Workspace: {current_ws}</h1>
-            <p class="text-[11px] text-neutral-500">Double-click any node to open the change impact modal.</p>
-        </div>
-
-        <div class="canvas-plane" id="canvasPlane">
-            <svg id="svgLines" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></svg>
-        </div>
-    </main>
-
-    <!-- Detail Modal -->
-    <div id="nodeModal" onclick="closeModal()">
-        <div class="bg-white w-[520px] rounded-xl shadow-2xl border border-border-muted flex flex-col max-h-[85vh] overflow-hidden" onclick="event.stopPropagation()">
-            <div class="p-4 border-b border-border-muted flex justify-between items-center bg-neutral-50">
-                <div class="flex items-center gap-2.5">
-                    <div id="modalStep" class="w-6 h-6 rounded-full bg-neutral-900 text-white flex items-center justify-center text-xs font-mono font-bold"></div>
-                    <h3 id="modalTitle" class="text-sm font-bold text-neutral-900"></h3>
-                </div>
-                <button onclick="closeModal()" class="text-neutral-400 hover:text-neutral-900">
-                    <span class="material-symbols-outlined text-sm">close</span>
-                </button>
-            </div>
-            <div class="p-6 overflow-y-auto space-y-5 text-sm">
-                <div>
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5 mb-1.5"><span class="material-symbols-outlined text-[15px]">description</span> What file changed?</span>
-                    <div id="modalFiles" class="flex flex-wrap gap-1.5"></div>
-                </div>
-                <div>
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5 mb-1.5"><span class="material-symbols-outlined text-[15px]">edit_note</span> What changed?</span>
-                    <p id="modalSummary" class="text-neutral-700 text-xs leading-relaxed bg-neutral-50 p-3 rounded-lg border border-neutral-100"></p>
-                </div>
-                <div>
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5 mb-1.5"><span class="material-symbols-outlined text-[15px]">hub</span> Downstream Effect (Impact & Why)</span>
-                    <p id="modalImpact" class="text-neutral-700 text-xs leading-relaxed bg-neutral-50 p-3 rounded-lg border border-neutral-100"></p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    const nodesData = {nodes_json};
-    const container = document.getElementById('canvasContainer');
-    const plane = document.getElementById('canvasPlane');
-    const svgLines = document.getElementById('svgLines');
-    const modal = document.getElementById('nodeModal');
-
-    let isDragging = false;
-    let startX, startY;
-    let planeX = -4500;
-    let planeY = -4500;
-
-    plane.style.transform = `translate(${{planeX}}px, ${{planeY}}px)`;
-
-    container.addEventListener('mousedown', (e) => {{
-        if (e.target.closest('.node-card')) return;
-        isDragging = true;
-        startX = e.clientX - planeX;
-        startY = e.clientY - planeY;
-    }});
-
-    window.addEventListener('mousemove', (e) => {{
-        if (!isDragging) return;
-        planeX = e.clientX - startX;
-        planeY = e.clientY - startY;
-        plane.style.transform = `translate(${{planeX}}px, ${{planeY}}px)`;
-    }});
-
-    window.addEventListener('mouseup', () => {{ isDragging = false; }});
-
-    const startNodeX = 5000;
-    const startNodeY = 5000;
-    const gapX = 380;
-
-    let prevX = null;
-    let prevY = null;
-
-    nodesData.forEach((node, index) => {{
-        const nx = startNodeX + (index * gapX);
-        const ny = startNodeY;
-
-        if (prevX !== null) {{
-            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            line.setAttribute("x1", prevX + 300);
-            line.setAttribute("y1", prevY + 65);
-            line.setAttribute("x2", nx);
-            line.setAttribute("y2", ny + 65);
-            line.setAttribute("stroke", "#cbd5e1");
-            line.setAttribute("stroke-width", "2");
-            svgLines.appendChild(line);
-        }}
-
-        const card = document.createElement('div');
-        card.className = 'node-card';
-        card.style.left = nx + 'px';
-        card.style.top = ny + 'px';
-        
-        let badgeHtml = '';
-        if (node.components && node.components.length > 0) {{
-            badgeHtml = `<div class="mt-3 flex flex-wrap gap-1">${{node.components.map(c => '<span class="px-1.5 py-0.5 bg-neutral-100 text-neutral-600 rounded text-[10px] font-mono">' + c + '</span>').join('')}}</div>`;
-        }}
-
-        card.innerHTML = `
-            <div class="flex items-center gap-2 mb-2">
-                <div class="w-5 h-5 rounded-full bg-neutral-900 text-white flex items-center justify-center text-[10px] font-mono font-bold">${{node.step}}</div>
-                <div class="font-bold text-xs truncate flex-1 text-neutral-900">${{node.title}}</div>
-            </div>
-            <div class="text-[11px] text-neutral-500 line-clamp-2 leading-relaxed">${{node.summary}}</div>
-            ${{badgeHtml}}
-        `;
-
-        card.addEventListener('dblclick', (e) => {{
-            e.stopPropagation();
-            openModal(node);
-        }});
-
-        plane.appendChild(card);
-        prevX = nx;
-        prevY = ny;
-    }});
-
-    if (nodesData.length === 0) {{
-        const emptyCard = document.createElement('div');
-        emptyCard.className = 'node-card text-center p-6';
-        emptyCard.style.left = startNodeX + 'px';
-        emptyCard.style.top = startNodeY + 'px';
-        emptyCard.innerHTML = `
-            <div class="text-xs font-bold text-neutral-800 mb-1">No Codebase Changes Logged</div>
-            <p class="text-[11px] text-neutral-500">Instruct Claude or Cursor to log changes to populate this canvas.</p>
-        `;
-        plane.appendChild(emptyCard);
-    }}
-
-    function openModal(node) {{
-        document.getElementById('modalStep').innerText = node.step;
-        document.getElementById('modalTitle').innerText = node.title;
-        document.getElementById('modalSummary').innerText = node.summary;
-        document.getElementById('modalImpact').innerText = node.impact + "\\n\\nRationale: " + node.rationale;
-        
-        const filesDiv = document.getElementById('modalFiles');
-        if (node.components && node.components.length > 0) {{
-            filesDiv.innerHTML = node.components.map(c => '<span class="px-2 py-1 bg-neutral-100 border border-neutral-200 text-neutral-800 rounded text-xs font-mono">' + c + '</span>').join('');
-        }} else {{
-            filesDiv.innerHTML = '<span class="text-xs text-neutral-400 italic">No specific files targeted</span>';
-        }}
-        
-        modal.classList.add('active');
-    }}
-
-    function closeModal() {{
-        modal.classList.remove('active');
-    }}
-</script>
-</body>
-</html>
-"""
-    return HTMLResponse(html_content)
 
 
 # ---------------------------------------------------------------------------
