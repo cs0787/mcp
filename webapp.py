@@ -2,12 +2,10 @@
 Memory Notes for AI - Web Application
 Full Python Starlette ASGI Application with:
 - Monochromatic Tailwind CSS Design System
-- Landing Page: Interactive Spotlight Grid, Live Emerging Neon Architecture Timeline (1184/500 Canvas), Terminal Snippets, Deep Dives & Bento Grid
-- Avatar Dropdown Navigation Menu
-- Authenticated Dashboard with Left Side Panel:
-    1. 🌳 Codebase Nodes: Per-project linear evolution changelog (1 -> 2 -> 3), summaries, rationale, impact, and concept hubs
-    2. ⚙️ Gateway & Settings: MCP Server URL, Neon Database Connection String, and API Keys Management
-- Multi-Tenant Isolation with Tenant Pool Manager
+- Interactive Spotlight Grid Hero with Clean Standard Action Buttons ("Get Started" & "See more")
+- Live Emerging Architecture Pipeline Canvas (Neon DB -> FastMCP Broker -> AI Apps)
+- Multi-Tab Quick-Start Terminal Snippets (Claude Desktop / Cursor / cURL)
+- Developer Feature Deep Dives & Full-Stack Auth / Multi-Tenant Dashboard
 """
 
 import asyncpg
@@ -216,11 +214,9 @@ def _page(title: str, body: str) -> HTMLResponse:
     function copyToClipboard(text, btnId) {{
         navigator.clipboard.writeText(text).then(() => {{
             const btn = document.getElementById(btnId);
-            if (btn) {{
-                const orig = btn.innerText;
-                btn.innerText = 'Copied!';
-                setTimeout(() => btn.innerText = orig, 2000);
-            }}
+            const orig = btn.innerText;
+            btn.innerText = 'Copied!';
+            setTimeout(() => btn.innerText = orig, 2000);
         }});
     }}
     function setTerminalTab(tab) {{
@@ -228,14 +224,12 @@ def _page(title: str, body: str) -> HTMLResponse:
         tabs.forEach(t => {{
             const btn = document.getElementById('tab-' + t);
             const block = document.getElementById('snippet-' + t);
-            if (btn && block) {{
-                if (t === tab) {{
-                    btn.className = 'px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors';
-                    block.classList.remove('hidden');
-                }} else {{
-                    btn.className = 'px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors';
-                    block.classList.add('hidden');
-                }}
+            if (t === tab) {{
+                btn.className = 'px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors';
+                block.classList.remove('hidden');
+            }} else {{
+                btn.className = 'px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors';
+                block.classList.add('hidden');
             }}
         }});
     }}
@@ -277,25 +271,20 @@ def _page(title: str, body: str) -> HTMLResponse:
         setTimeout(() => {{ if (pillMem) pillMem.classList.add('sparkle-burst'); }}, 200);
         setTimeout(() => {{ drawSeg('seg-scale-p1-a'); }}, 700);
         setTimeout(() => {{
-            const db = document.getElementById('elem-neon-db');
-            const junc = document.getElementById('elem-junc-neon');
-            if (db) db.classList.add('visible');
-            if (junc) junc.classList.add('visible');
+            document.getElementById('elem-neon-db').classList.add('visible');
+            document.getElementById('elem-junc-neon').classList.add('visible');
             drawSeg('seg-branch-p1-up');
         }}, 1400);
         setTimeout(() => {{
-            const icon = document.getElementById('elem-db-icon');
-            if (icon) icon.classList.add('visible');
+            document.getElementById('elem-db-icon').classList.add('visible');
             drawSeg('seg-branch-p1-curve');
         }}, 2000);
         setTimeout(() => {{
-            const req = document.getElementById('elem-request-data');
-            if (req) req.classList.add('visible');
+            document.getElementById('elem-request-data').classList.add('visible');
         }}, 2500);
         setTimeout(() => {{ drawSeg('seg-scale-p1-b'); }}, 2800);
         setTimeout(() => {{
-            const srv = document.getElementById('elem-mcp-server');
-            if (srv) srv.classList.add('visible');
+            document.getElementById('elem-mcp-server').classList.add('visible');
         }}, 3400);
         setTimeout(() => {{
             drawSeg('seg-branch-p1-chk1');
@@ -303,12 +292,9 @@ def _page(title: str, body: str) -> HTMLResponse:
             drawSeg('seg-branch-p1-gear');
         }}, 3800);
         setTimeout(() => {{
-            const c1 = document.getElementById('chk-neg-start');
-            const c2 = document.getElementById('chk-neg-complete');
-            const gear = document.getElementById('elem-gear');
-            if (c1) c1.classList.add('visible');
-            if (c2) c2.classList.add('visible');
-            if (gear) gear.classList.add('visible');
+            document.getElementById('chk-neg-start').classList.add('visible');
+            document.getElementById('chk-neg-complete').classList.add('visible');
+            document.getElementById('elem-gear').classList.add('visible');
         }}, 4400);
 
         // PHASE 2: Right to Left
@@ -320,21 +306,17 @@ def _page(title: str, body: str) -> HTMLResponse:
             }}
             setTimeout(() => {{ drawSeg('seg-scale-p2'); }}, 600);
             setTimeout(() => {{
-                const junc = document.getElementById('elem-junc-ai');
-                if (junc) junc.classList.add('visible');
+                document.getElementById('elem-junc-ai').classList.add('visible');
                 drawSeg('seg-branch-p2-up');
                 drawSeg('seg-branch-p2-down');
             }}, 1100);
             setTimeout(() => {{
-                const robot = document.getElementById('elem-robot-icon');
-                const write = document.getElementById('elem-write-note');
-                if (robot) robot.classList.add('visible');
-                if (write) write.classList.add('visible');
+                document.getElementById('elem-robot-icon').classList.add('visible');
                 drawSeg('seg-branch-p2-curve');
+                document.getElementById('elem-write-note').classList.add('visible');
             }}, 1600);
             setTimeout(() => {{
-                const tools = document.getElementById('elem-request-tools');
-                if (tools) tools.classList.add('visible');
+                document.getElementById('elem-request-tools').classList.add('visible');
                 drawSeg('seg-branch-p2-write-curve');
             }}, 2100);
             setTimeout(() => {{
@@ -342,19 +324,15 @@ def _page(title: str, body: str) -> HTMLResponse:
                 drawSeg('seg-branch-p2-return');
             }}, 2600);
             setTimeout(() => {{
-                const acc = document.getElementById('chk-access-granted');
-                const proc = document.getElementById('chk-note-processed');
-                if (acc) acc.classList.add('visible');
-                if (proc) proc.classList.add('visible');
+                document.getElementById('chk-access-granted').classList.add('visible');
+                document.getElementById('chk-note-processed').classList.add('visible');
             }}, 3100);
             setTimeout(() => {{
-                const saved = document.getElementById('chk-note-saved');
-                if (saved) saved.classList.add('visible');
+                document.getElementById('chk-note-saved').classList.add('visible');
                 drawSeg('seg-branch-p2-arrow-neon');
             }}, 3700);
             setTimeout(() => {{
-                const sync = document.getElementById('chk-sync-final');
-                if (sync) sync.classList.add('visible');
+                document.getElementById('chk-sync-final').classList.add('visible');
                 drawSeg('seg-branch-p2-arrow-mem');
                 if (statusText) statusText.innerHTML = '<span class="text-[#00e599] font-bold">✓ Complete:</span> Real-time bidirectional memory pipeline active across Android, Neon, and AI models.';
             }}, 4300);
@@ -362,9 +340,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
 
     document.addEventListener('DOMContentLoaded', () => {{
-        if (document.getElementById('seg-scale-p1-a')) {{
-            runFullSequence();
-        }}
+        runFullSequence();
     }});
 </script>
 </body>
@@ -462,7 +438,7 @@ async def landing_page(request: Request):
     curl_config_snippet = f"""curl -X POST "{base_url}/mcp" \\
   -H "Authorization: Bearer sbmcp_your_api_key_here" \\
   -H "Content-Type: application/json" \\
-  -d '{{"jsonrpc": "2.0", "method": "tools/call", "params": {{"name": "get_linear_codebase_timeline", "arguments": {{"workspace": "main-core"}}}}, "id": 1}}'"""
+  -d '{{"jsonrpc": "2.0", "method": "tools/call", "params": {{"name": "search_notes", "arguments": {{"query": "architecture"}}}}, "id": 1}}'"""
 
     body = f"""
 {nav_html}
@@ -474,13 +450,13 @@ async def landing_page(request: Request):
             <div class="flex-1 space-y-4 text-center lg:text-left">
                 <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-surface-white border border-border-muted text-xs font-mono text-on-surface-variant mb-2 shadow-xs">
                     <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    Autonomous Codebase & Memory Protocol Active
+                    Model Context Protocol Active
                 </div>
                 <h1 class="text-4xl lg:text-[54px] lg:leading-[60px] font-bold text-on-surface tracking-tight max-w-2xl">
-                    Structured Freedom for Your Thoughts & Codebase.
+                    Structured Freedom for Your Thoughts.
                 </h1>
                 <p class="text-base lg:text-lg text-on-surface-variant max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                    A long-term memory bridge and architectural tracking server for Claude, Cursor, and custom AI agents. Read and write thoughts dynamically while logging linear decision chains without storing raw code.
+                    A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents. Read and write thoughts dynamically.
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-3">
                     <a href="{' /dashboard' if user_id else '/signup'}" class="bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Get Started</a>
@@ -491,12 +467,12 @@ async def landing_page(request: Request):
             <div class="flex-1 w-full max-w-md lg:max-w-none flex items-center justify-center">
                 <div class="p-6 bg-surface-white border border-border-muted rounded-xl shadow-md text-left w-full max-w-md font-mono text-xs">
                     <div class="flex items-center justify-between pb-3 mb-3 border-b border-border-muted">
-                        <span class="font-bold text-primary">● MCP ARCHITECTURE GATEWAY</span>
+                        <span class="font-bold text-primary">● MCP MEMORY GATEWAY</span>
                         <span class="text-text-secondary">Connected</span>
                     </div>
-                    <p class="text-text-secondary mb-1">&gt; AI Autonomous logging:</p>
-                    <p class="text-on-surface font-semibold">&gt; log_sequential_codebase_change(step=4)</p>
-                    <p class="text-green-600 mt-2 font-semibold">✓ Linear chain linked: Step 3 &rarr; Step 4</p>
+                    <p class="text-text-secondary mb-1">&gt; AI Model query sync:</p>
+                    <p class="text-on-surface font-semibold">&gt; search_notes(query="architecture design")</p>
+                    <p class="text-primary mt-2">✓ Synced instantly to local client.</p>
                 </div>
             </div>
         </div>
@@ -710,7 +686,7 @@ async def landing_page(request: Request):
                     </div>
 
                     <div id="elem-request-tools" class="timeline-elem absolute -translate-y-1/2 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#383a42] text-white mono text-xs font-medium select-none border border-white/10 shadow-md z-10" style="left:64%; top:22%;">
-                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        <svg class="w-3.5 h-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0-.33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                         request tools
                     </div>
 
@@ -943,7 +919,7 @@ async def landing_page(request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Signup & Login Handlers
+# Signup
 # ---------------------------------------------------------------------------
 async def signup_get(request: Request):
     next_ = _safe_next(request.query_params.get("next"))
@@ -1031,6 +1007,9 @@ async def signup_post(request: Request):
     return RedirectResponse(next_, status_code=302)
 
 
+# ---------------------------------------------------------------------------
+# Login
+# ---------------------------------------------------------------------------
 async def login_get(request: Request):
     next_ = _safe_next(request.query_params.get("next"))
     if _require_login(request):
@@ -1108,7 +1087,7 @@ async def logout(request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Dashboard (With Left Side Navigation Panel & Avatar Dropdown)
+# Dashboard & Settings
 # ---------------------------------------------------------------------------
 async def dashboard_get(request: Request):
     user_id = _require_login(request)
@@ -1121,277 +1100,54 @@ async def dashboard_get(request: Request):
         request.session.clear()
         return RedirectResponse("/login", status_code=302)
 
-    tab = request.query_params.get("tab", "codebase" if user["connection_string_encrypted"] else "settings")
-    selected_ws = request.query_params.get("workspace", "")
-
     flash_key = request.session.pop("flash_api_key", None)
     flash_html = ""
     if flash_key:
         flash_html = f"""
-        <div class="mb-6 p-4 bg-yellow-50 border border-yellow-400 rounded-lg">
-            <strong class="text-xs uppercase font-mono text-yellow-900 block mb-1">New API Key (Shown Once — Copy Now):</strong>
-            <div class="flex items-center gap-2 mt-2">
-                <input type="text" readonly value="{flash_key}" id="newApiKeyField" class="w-full font-mono text-xs bg-surface-white border border-border-muted p-2 rounded">
-                <button id="btnCopyKey" onclick="copyToClipboard('{flash_key}', 'btnCopyKey')" class="bg-secondary-container text-on-surface px-4 py-2 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy</button>
-            </div>
-            <p class="text-xs text-text-secondary mt-2">Use this as your Bearer Token for Claude Desktop or Cursor configurations.</p>
-        </div>
-        """
+<div class="mb-6 p-4 bg-surface-container-low border border-primary rounded-lg">
+    <strong class="text-xs uppercase font-mono text-primary block mb-1">New API Key (Shown Once — Copy Now):</strong>
+    <div class="flex items-center gap-2 mt-2">
+        <input type="text" readonly value="{flash_key}" id="newApiKeyField" class="w-full font-mono text-xs bg-surface-white border border-border-muted p-2 rounded">
+        <button id="btnCopyKey" onclick="copyToClipboard('{flash_key}', 'btnCopyKey')" class="bg-secondary-container text-on-surface px-4 py-2 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy</button>
+    </div>
+    <p class="text-xs text-text-secondary mt-2">Use this as your Bearer Token for Claude or direct API configurations.</p>
+</div>
+"""
+
+    if user["connection_string_encrypted"]:
+        masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
+        conn_status = f'<p class="text-xs text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
+    else:
+        conn_status = '<div class="p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">No Neon connection string set yet. Claude connector will fail until configured.</div>'
+
+    keys = await db_control.list_api_keys(pool, user_id)
+    active_keys = [k for k in keys if k["revoked_at"] is None]
+    if active_keys:
+        rows = "".join(f"""
+<div class="flex items-center justify-between py-3 border-b border-border-muted last:border-0">
+    <div>
+        <div class="text-sm font-semibold text-on-surface">{k['label']}</div>
+        <div class="text-xs text-text-secondary">Created {k['created_at'].strftime('%b %d, %Y')}{f" • Last used {k['last_used_at'].strftime('%b %d, %Y')}" if k['last_used_at'] else ""}</div>
+    </div>
+    <form method="POST" action="/dashboard/api-key/revoke" class="m-0">
+        <input type="hidden" name="key_id" value="{k['id']}">
+        <button type="submit" class="text-error text-xs font-semibold hover:underline" onclick="return confirm('Revoke this key? Apps using it will disconnect immediately.');">Revoke</button>
+    </form>
+</div>
+""" for k in active_keys)
+    else:
+        rows = '<p class="text-xs text-text-secondary">No active API keys found.</p>'
 
     base_url = str(request.base_url).rstrip("/")
     mcp_endpoint = f"{base_url}/mcp"
     nav_html = _navbar(request, user["email"])
 
-    # -----------------------------------------------------------------------
-    # TAB 1: CODEBASE ARCHITECTURE & NODES VIEW
-    # -----------------------------------------------------------------------
-    if tab == "codebase":
-        codebase_content = ""
-        if not user["connection_string_encrypted"]:
-            codebase_content = """
-            <div class="p-8 text-center bg-surface-white border border-border-muted rounded-xl shadow-sm">
-                <span class="material-symbols-outlined text-4xl text-neutral-400 mb-2">database</span>
-                <h3 class="text-lg font-bold text-on-surface mb-2">Database Connection Required</h3>
-                <p class="text-xs text-text-secondary max-w-md mx-auto mb-6">
-                    Connect your personal Neon PostgreSQL database in Gateway & Settings so the MCP server can store and retrieve linear codebase chains and architectural decisions.
-                </p>
-                <a href="/dashboard?tab=settings" class="bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] no-underline inline-block">
-                    Configure Neon Database
-                </a>
-            </div>
-            """
-        else:
-            tenant_pool = await tenant_pools.get_manager().get_pool(user_id)
-            if not tenant_pool:
-                codebase_content = """
-                <div class="p-6 bg-red-50 text-red-700 text-xs rounded border border-red-200">
-                    Failed to connect to your personal database. Please verify your connection string in Settings.
-                </div>
-                """
-            else:
-                async with tenant_pool.acquire() as conn:
-                    # Auto-initialize project nodes tables if not yet created
-                    await conn.execute("CREATE EXTENSION IF NOT EXISTS pgcrypto")
-                    await conn.execute(
-                        """
-                        CREATE TABLE IF NOT EXISTS project_nodes (
-                            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                            workspace VARCHAR(255) NOT NULL,
-                            node_type VARCHAR(50) NOT NULL,
-                            title VARCHAR(255) NOT NULL,
-                            summary TEXT NOT NULL,
-                            rationale TEXT,
-                            impact_analysis TEXT,
-                            sequence_index INT,
-                            previous_node_id UUID,
-                            central_hub_id UUID,
-                            affected_components TEXT[] DEFAULT '{}',
-                            status VARCHAR(50) DEFAULT 'completed',
-                            created_at TIMESTAMPTZ DEFAULT now(),
-                            updated_at BIGINT NOT NULL
-                        );
-                        """
-                    )
-
-                    try:
-                        ws_rows = await conn.fetch("SELECT DISTINCT workspace FROM project_nodes ORDER BY workspace ASC;")
-                        workspaces = [r["workspace"] for r in ws_rows]
-                    except Exception:
-                        workspaces = []
-
-                    current_ws = selected_ws if selected_ws in workspaces else (workspaces[0] if workspaces else "main-core")
-
-                    try:
-                        timeline_rows = await conn.fetch(
-                            """
-                            SELECT id, sequence_index, previous_node_id, title, summary, rationale,
-                                   impact_analysis, affected_components, status, created_at
-                            FROM project_nodes
-                            WHERE workspace = $1 AND node_type = 'codebase_change'
-                            ORDER BY sequence_index ASC, created_at ASC;
-                            """,
-                            current_ws
-                        )
-                    except Exception:
-                        timeline_rows = []
-
-                    try:
-                        concept_rows = await conn.fetch(
-                            """
-                            SELECT id, node_type, title, summary, central_hub_id, created_at
-                            FROM project_nodes
-                            WHERE workspace = $1 AND node_type IN ('hub', 'concept')
-                            ORDER BY created_at DESC;
-                            """,
-                            current_ws
-                        )
-                    except Exception:
-                        concept_rows = []
-
-                # Build Workspace Tabs
-                ws_pills = ""
-                if workspaces:
-                    for w in workspaces:
-                        active = "bg-on-surface text-surface-white font-bold" if w == current_ws else "bg-surface-container-low text-text-secondary hover:text-on-surface"
-                        ws_pills += f'<a href="/dashboard?tab=codebase&workspace={w}" class="px-3.5 py-1.5 rounded-lg text-xs font-mono transition-colors no-underline {active}">{w}</a>'
-                else:
-                    ws_pills = f'<span class="px-3 py-1 rounded bg-surface-container-low text-text-secondary text-xs font-mono">No active projects logged yet</span>'
-
-                # Build Linear Step Timeline Cards
-                if timeline_rows:
-                    timeline_cards = ""
-                    for r in timeline_rows:
-                        step_num = r["sequence_index"] or 1
-                        components_badges = "".join([f'<span class="px-2 py-0.5 bg-neutral-100 border border-neutral-200 text-neutral-800 rounded text-[10px] font-mono">{c}</span>' for c in (r["affected_components"] or [])])
-                        prev_badge = f'<span class="text-[10px] font-mono text-neutral-400">Linked from Step {step_num - 1}</span>' if step_num > 1 else '<span class="text-[10px] font-mono text-green-600 font-semibold">● Chain Root</span>'
-
-                        timeline_cards += f"""
-                        <div class="relative pl-8 pb-8 last:pb-2 group">
-                            <!-- Connecting Chain Line -->
-                            <div class="absolute left-3 top-4 bottom-0 w-0.5 bg-neutral-200 group-last:hidden"></div>
-                            
-                            <!-- Step Number Badge -->
-                            <div class="absolute left-0 top-0.5 w-6 h-6 rounded-full bg-on-surface text-surface-white flex items-center justify-center text-xs font-mono font-bold shadow-xs">
-                                {step_num}
-                            </div>
-
-                            <div class="bg-surface-white border border-border-muted p-5 rounded-xl shadow-sm hover:border-black transition-colors">
-                                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                                    <h4 class="text-sm font-bold text-on-surface">{r['title']}</h4>
-                                    <div class="flex items-center gap-2">
-                                        {prev_badge}
-                                        <span class="text-[10px] text-text-secondary mono">{r['created_at'].strftime('%b %d, %H:%M')}</span>
-                                    </div>
-                                </div>
-
-                                <div class="space-y-2 text-xs">
-                                    <div>
-                                        <span class="font-semibold text-neutral-700">What changed:</span>
-                                        <p class="text-neutral-600 mt-0.5 leading-relaxed">{r['summary']}</p>
-                                    </div>
-                                    {f'''<div>
-                                        <span class="font-semibold text-neutral-700">Why (Rationale):</span>
-                                        <p class="text-neutral-600 mt-0.5 leading-relaxed">{r['rationale']}</p>
-                                    </div>''' if r['rationale'] else ''}
-                                    {f'''<div>
-                                        <span class="font-semibold text-neutral-700">Project Impact:</span>
-                                        <p class="text-neutral-600 mt-0.5 leading-relaxed">{r['impact_analysis']}</p>
-                                    </div>''' if r['impact_analysis'] else ''}
-                                </div>
-
-                                {f'<div class="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-border-muted">{components_badges}</div>' if components_badges else ''}
-                            </div>
-                        </div>
-                        """
-                else:
-                    timeline_cards = """
-                    <div class="p-8 text-center bg-surface-white border border-border-muted rounded-xl">
-                        <span class="material-symbols-outlined text-3xl text-neutral-400 mb-2">timeline</span>
-                        <h4 class="text-sm font-bold text-on-surface mb-1">No Linear Codebase Logs Yet</h4>
-                        <p class="text-xs text-text-secondary max-w-sm mx-auto">
-                            When AI agents write or refactor code, tell Claude or Cursor: <br><code class="font-mono bg-neutral-100 p-1 rounded mt-1 inline-block">"Log this codebase change to Memory Notes"</code>
-                        </p>
-                    </div>
-                    """
-
-                # Build Concept Hub Cards
-                concept_cards = ""
-                if concept_rows:
-                    for c in concept_rows:
-                        is_hub = c["node_type"] == "hub"
-                        border_color = "border-yellow-400 bg-yellow-50/20" if is_hub else "border-border-muted bg-surface-white"
-                        badge = '<span class="px-2 py-0.5 rounded bg-yellow-400 text-black font-mono text-[10px] font-bold">Central Hub</span>' if is_hub else '<span class="px-2 py-0.5 rounded bg-neutral-100 text-neutral-700 font-mono text-[10px]">Spoke Concept</span>'
-                        concept_cards += f"""
-                        <div class="p-4 border {border_color} rounded-xl shadow-xs">
-                            <div class="flex items-center justify-between mb-2">
-                                <h5 class="text-xs font-bold text-on-surface">{c['title']}</h5>
-                                {badge}
-                            </div>
-                            <p class="text-xs text-neutral-600 leading-relaxed">{c['summary']}</p>
-                        </div>
-                        """
-
-                codebase_content = f"""
-                <div class="space-y-6">
-                    <!-- Project Selector -->
-                    <div class="flex items-center justify-between flex-wrap gap-3 bg-surface-white border border-border-muted p-4 rounded-xl shadow-xs">
-                        <div>
-                            <span class="text-xs font-semibold text-text-secondary block">ACTIVE REPOSITORY / WORKSPACE</span>
-                            <span class="text-base font-bold text-on-surface font-mono">{current_ws}</span>
-                        </div>
-                        <div class="flex items-center gap-2 flex-wrap">
-                            {ws_pills}
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                        <!-- Left 2 Cols: Linear Change Chain (1 -> 2 -> 3) -->
-                        <div class="lg:col-span-2 space-y-4">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-sm font-bold text-on-surface flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-primary text-base">alt_route</span>
-                                    Linear Change Evolution Chain
-                                </h3>
-                                <span class="text-xs text-text-secondary mono">{len(timeline_rows)} connected changes</span>
-                            </div>
-                            <div class="pt-2">
-                                {timeline_cards}
-                            </div>
-                        </div>
-
-                        <!-- Right Col: Conceptual Hubs & Module Architecture -->
-                        <div class="space-y-4">
-                            <h3 class="text-sm font-bold text-on-surface flex items-center gap-2">
-                                <span class="material-symbols-outlined text-yellow-600 text-base">hub</span>
-                                Architecture Hubs & Concepts
-                            </h3>
-                            <div class="space-y-3">
-                                {concept_cards if concept_cards else '<p class="text-xs text-text-secondary p-4 bg-surface-white border border-border-muted rounded-xl text-center">No concept hubs configured yet.</p>'}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                """
-
-        main_view = f"""
+    body = f"""
+{nav_html}
+<main class="flex-grow py-10 px-6">
+    <div class="max-w-3xl mx-auto">
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-on-surface mb-1">Codebase Architecture & Linear Changes</h1>
-            <p class="text-xs text-text-secondary">Chronological decision chains and structural impact logged by AI models across your repositories.</p>
-        </div>
-        {codebase_content}
-        """
-
-    # -----------------------------------------------------------------------
-    # TAB 2: SETTINGS & MCP GATEWAY
-    # -----------------------------------------------------------------------
-    else:
-        if user["connection_string_encrypted"]:
-            masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
-            conn_status = f'<p class="text-xs text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
-        else:
-            conn_status = '<div class="p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">No Neon connection string set yet. Claude / Cursor MCP connector will fail until configured.</div>'
-
-        keys = await db_control.list_api_keys(pool, user_id)
-        active_keys = [k for k in keys if k["revoked_at"] is None]
-        if active_keys:
-            key_rows = "".join(f"""
-            <div class="flex items-center justify-between py-3 border-b border-border-muted last:border-0">
-                <div>
-                    <div class="text-sm font-semibold text-on-surface">{k['label']}</div>
-                    <div class="text-xs text-text-secondary">Created {k['created_at'].strftime('%b %d, %Y')}{f" • Last used {k['last_used_at'].strftime('%b %d, %Y')}" if k['last_used_at'] else ""}</div>
-                </div>
-                <form method="POST" action="/dashboard/api-key/revoke" class="m-0">
-                    <input type="hidden" name="key_id" value="{k['id']}">
-                    <button type="submit" class="text-error text-xs font-semibold hover:underline" onclick="return confirm('Revoke this key? Apps using it will disconnect immediately.');">Revoke</button>
-                </form>
-            </div>
-            """ for k in active_keys)
-        else:
-            key_rows = '<p class="text-xs text-text-secondary">No active API keys found.</p>'
-
-        main_view = f"""
-        <div class="mb-6">
-            <h1 class="text-2xl font-bold text-on-surface mb-1">MCP Gateway & Database Settings</h1>
+            <h1 class="text-2xl font-bold text-on-surface mb-1">Dashboard & Settings</h1>
             <p class="text-xs text-text-secondary">Manage your database connection string, API keys, and connector endpoint.</p>
         </div>
 
@@ -1399,8 +1155,8 @@ async def dashboard_get(request: Request):
 
         <!-- 1. Endpoint & Connection URL -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
-            <h2 class="text-base font-semibold text-on-surface mb-1">1. Model Context Protocol Endpoint</h2>
-            <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring your Claude Desktop, Cursor, or HTTP MCP client connector.</p>
+            <h2 class="text-base font-semibold text-on-surface mb-1">1. MCP Server Endpoint</h2>
+            <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector.</p>
             <div class="flex items-center gap-2">
                 <input type="text" readonly value="{mcp_endpoint}" id="mcpEndpointField" class="w-full font-mono text-xs bg-surface-container-low border border-border-muted p-2.5 rounded">
                 <button id="btnCopyEndpoint" onclick="copyToClipboard('{mcp_endpoint}', 'btnCopyEndpoint')" class="bg-surface-white text-on-surface px-4 py-2.5 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy URL</button>
@@ -1410,7 +1166,7 @@ async def dashboard_get(request: Request):
         <!-- 2. Neon Database Connection String Settings -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">2. Neon Database Connection String</h2>
-            <p class="text-xs text-text-secondary mb-3">Paste the same PostgreSQL connection string your mobile notes app and MCP server use to sync.</p>
+            <p class="text-xs text-text-secondary mb-3">Paste the same PostgreSQL connection string your mobile notes app uses to sync.</p>
             {conn_status}
             <form method="POST" action="/dashboard/connection-string" class="mt-4">
                 <div class="mb-3">
@@ -1422,59 +1178,21 @@ async def dashboard_get(request: Request):
 
         <!-- 3. API Keys Management -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
-            <h2 class="text-base font-semibold text-on-surface mb-1">3. MCP Authentication API Keys</h2>
+            <h2 class="text-base font-semibold text-on-surface mb-1">3. MCP API Keys</h2>
             <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps.</p>
             <div class="divide-y border-border-muted mb-4">
-                {key_rows}
+                {rows}
             </div>
             <form method="POST" action="/dashboard/api-key/create">
                 <button type="submit" class="bg-surface-white text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors">Generate New Manual API Key</button>
             </form>
         </div>
-        """
-
-    active_codebase_nav = "bg-on-surface text-surface-white font-bold" if tab == "codebase" else "text-on-surface-variant hover:bg-surface-container-low"
-    active_settings_nav = "bg-on-surface text-surface-white font-bold" if tab == "settings" else "text-on-surface-variant hover:bg-surface-container-low"
-
-    body = f"""
-    {nav_html}
-    <div class="min-h-[calc(100vh-61px)] flex flex-col md:flex-row bg-surface-bright">
-        
-        <!-- LEFT SIDE PANEL -->
-        <aside class="w-full md:w-64 bg-surface-white border-r border-border-muted flex flex-col justify-between p-5 select-none shrink-0">
-            <div>
-                <div class="text-[11px] font-mono tracking-wider text-text-secondary uppercase mb-3 px-2">Navigation</div>
-                <nav class="space-y-1.5">
-                    <a href="/dashboard?tab=codebase" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium no-underline transition-colors {active_codebase_nav}">
-                        <span class="material-symbols-outlined text-base">alt_route</span>
-                        Codebase Nodes
-                    </a>
-                    <a href="/dashboard?tab=settings" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium no-underline transition-colors {active_settings_nav}">
-                        <span class="material-symbols-outlined text-base">settings</span>
-                        Gateway & Settings
-                    </a>
-                </nav>
-            </div>
-
-            <!-- Sidebar Footer -->
-            <div class="pt-5 border-t border-border-muted">
-                <div class="text-[11px] text-text-secondary truncate mb-1">Logged in account:</div>
-                <div class="text-xs font-semibold text-on-surface truncate">{user['email']}</div>
-            </div>
-        </aside>
-
-        <!-- MAIN CONTENT AREA -->
-        <main class="flex-grow p-6 lg:p-10 max-w-6xl overflow-y-auto">
-            {main_view}
-        </main>
     </div>
-    """
+</main>
+"""
     return _page("Dashboard", body)
 
 
-# ---------------------------------------------------------------------------
-# API Key & Connection String Actions
-# ---------------------------------------------------------------------------
 async def update_connection_string(request: Request):
     user_id = _require_login(request)
     if not user_id:
@@ -1494,7 +1212,7 @@ async def update_connection_string(request: Request):
     await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))
     await tenant_pools.get_manager().invalidate(user_id)
 
-    return RedirectResponse("/dashboard?tab=settings", status_code=302)
+    return RedirectResponse("/dashboard", status_code=302)
 
 
 async def create_api_key(request: Request):
@@ -1507,7 +1225,7 @@ async def create_api_key(request: Request):
     await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")
     request.session["flash_api_key"] = raw_key
 
-    return RedirectResponse("/dashboard?tab=settings", status_code=302)
+    return RedirectResponse("/dashboard", status_code=302)
 
 
 async def revoke_api_key(request: Request):
@@ -1521,25 +1239,23 @@ async def revoke_api_key(request: Request):
     pool = db_control.get_control_pool()
     await db_control.revoke_api_key(pool, user_id, key_id)
 
-    return RedirectResponse("/dashboard?tab=settings", status_code=302)
+    return RedirectResponse("/dashboard", status_code=302)
 
 
 def _dashboard_error(message: str) -> HTMLResponse:
     body = f"""
-    <main class="flex-grow flex items-center justify-center py-16 px-6">
-        <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm text-center">
-            <h2 class="text-lg font-bold text-error mb-2">Configuration Error</h2>
-            <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-6 border border-red-200">{message}</div>
-            <a href="/dashboard?tab=settings" class="inline-block bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] no-underline">Back to Dashboard</a>
-        </div>
-    </main>
-    """
+<main class="flex-grow flex items-center justify-center py-16 px-6">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm text-center">
+        <h2 class="text-lg font-bold text-error mb-2">Error</h2>
+        <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-6 border border-red-200">{message}</div>
+        <a href="/dashboard" class="inline-block bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] no-underline">Back to Dashboard</a>
+    </div>
+</main>
+"""
     return _page("Error", body)
 
 
-# ---------------------------------------------------------------------------
-# Route Registry
-# ---------------------------------------------------------------------------
+# Route registry
 routes = [
     Route("/", landing_page, methods=["GET"]),
     Route("/signup", signup_get, methods=["GET"]),
