@@ -812,12 +812,12 @@ async def landing_page(request: Request):
                 <span class="terminal-title" style="font-size:12px; color:#a1a1aa; font-weight:500; margin-left:6px;">MCP Tool Invocation Output</span>
               </div>
               <div class="terminal-code" style="padding:20px; font-size:13.5px; color:#e4e4e7; overflow-x:auto; line-height:1.65;">
-                <span style="color:#71717a;">> create_note( title="Sprint Specs", workspace="Dev" )</span><br>
-                {<br>
+                <span style="color:#71717a;">&gt; create_note( title="Sprint Specs", workspace="Dev" )</span><br>
+                {{<br>
                 &nbsp;&nbsp;<span style="color:#38bdf8;">"id"</span>: <span style="color:#fbbf24;">"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"</span>,<br>
                 &nbsp;&nbsp;<span style="color:#38bdf8;">"title"</span>: <span style="color:#fbbf24;">"Sprint Specs"</span>,<br>
                 &nbsp;&nbsp;<span style="color:#38bdf8;">"updated_at"</span>: 1786675973594<br>
-                }<br><br>
+                }}<br><br>
                 <span style="color:#4ade80;">✓ Database record created • Dispatched to mobile sync engine</span>
               </div>
             </div>
@@ -986,6 +986,7 @@ async def landing_page(request: Request):
         }});
       }});
     </script>
+</main>
 """
     return _page("Home", body)
 
