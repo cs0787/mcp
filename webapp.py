@@ -1,11 +1,12 @@
 """
-Memory Notes for AI - Web Application
+Memory Notes - Web Application
 Full Python Starlette ASGI Application with:
 - Monochromatic Tailwind CSS Design System
 - Interactive Spotlight Grid Hero with Clean Standard Action Buttons ("Get Started" & "See more")
 - Live Emerging Architecture Pipeline Canvas (Neon DB -> FastMCP Broker -> AI Apps)
 - Multi-Tab Quick-Start Terminal Snippets (Claude Desktop / Cursor / cURL)
 - Developer Feature Deep Dives & Full-Stack Auth / Multi-Tenant Dashboard
+- Console Workspace Interface for Logged-In Users
 """
 
 import asyncpg
@@ -355,27 +356,13 @@ def _require_login(request: Request) -> str | None:
 def _safe_next(raw: str | None) -> str:
     if raw and raw.startswith("/") and not raw.startswith("//"):
         return raw
-    return "/dashboard"
+    return "/console"
 
 
 def _navbar(request: Request, user_email: str | None = None) -> str:
     if user_email:
-        initial = user_email[0].upper()
-        right_actions = f"""
-        <div class="relative">
-            <div onclick="toggleSettings()" class="w-8 h-8 rounded-full bg-surface-dim overflow-hidden border border-border-muted cursor-pointer flex items-center justify-center font-bold text-xs select-none hover:border-black transition-colors">
-                {initial}
-            </div>
-            <div id="settingsDropdown" class="settings-dropdown">
-                <div class="font-bold text-sm text-on-surface mb-1">Signed in as</div>
-                <div class="text-xs text-text-secondary truncate mb-3">{user_email}</div>
-                <hr class="border-border-muted mb-3">
-                <a href="/dashboard" class="block text-sm text-on-surface py-1.5 hover:text-primary font-semibold transition-colors">⚙️ Dashboard & Settings</a>
-                <form method="POST" action="/logout" class="mt-2">
-                    <button type="submit" class="w-full text-left text-sm text-error py-1.5 hover:opacity-80 transition-opacity">Log Out</button>
-                </form>
-            </div>
-        </div>
+        right_actions = """
+        <a href="/console" class="bg-secondary-container text-on-surface px-4 py-2 rounded text-sm font-semibold hover:bg-secondary-fixed transition-colors no-underline">Console</a>
         """
     else:
         right_actions = """
@@ -459,7 +446,7 @@ async def landing_page(request: Request):
                     A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents. Read and write thoughts dynamically.
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-3">
-                    <a href="{' /dashboard' if user_id else '/signup'}" class="bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Get Started</a>
+                    <a href="{' /console' if user_id else '/signup'}" class="bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Get Started</a>
                     <a href="#quickstart" class="bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline shadow-sm">See more</a>
                 </div>
             </div>
@@ -1004,7 +991,7 @@ async def signup_post(request: Request):
         return _page("Sign up", body)
 
     request.session["user_id"] = user_id
-    return RedirectResponse(next_, status_code=302)
+    return RedirectResponse("/console", status_code=302)
 
 
 # ---------------------------------------------------------------------------
@@ -1074,7 +1061,7 @@ async def login_post(request: Request):
         return _page("Log in", body)
 
     request.session["user_id"] = str(user["id"])
-    return RedirectResponse(next_, status_code=302)
+    return RedirectResponse("/console", status_code=302)
 
 
 async def logout(request: Request):
@@ -1087,7 +1074,313 @@ async def logout(request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Dashboard & Settings
+# Console Page (Custom Codebase Manager UI)
+# ---------------------------------------------------------------------------
+async def console_page(request: Request):
+    user_id = _require_login(request)
+    if not user_id:
+        return RedirectResponse("/login", status_code=302)
+
+    pool = db_control.get_control_pool()
+    user = await db_control.get_user_by_id(pool, user_id)
+    if user is None:
+        request.session.clear()
+        return RedirectResponse("/login", status_code=302)
+
+    user_email = user["email"]
+    display_name = user_email.split("@")[0].capitalize()
+    initial = display_name[0].upper()
+
+    return HTMLResponse(f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Console - Codebase Manager</title>
+<style>
+:root {{
+  --sidebar-bg: #171717;
+  --text-main: #ececec;
+  --text-muted: #8e8e8e;
+  --hover-bg: rgba(255, 255, 255, 0.05);
+  --border-color: rgba(255, 255, 255, 0.08);
+}}
+
+body {{
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}}
+
+.container {{
+  width: 100%;
+  height: 100%;
+  --color: #E1E1E1;
+  background-color: #F3F3F3;
+  background-image: linear-gradient(0deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%, transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%, transparent),
+      linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%, transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%, transparent);
+  background-size: 55px 55px;
+  display: flex;
+  transition: background-color 0.3s ease;
+}}
+
+.container:hover {{
+  --color: #D0D0D0;
+  background-color: #EAEAEA;
+}}
+
+#sidebar-toggle {{
+  display: none;
+}}
+
+.toggle-btn {{
+  background: black;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, color 0.2s ease;
+}}
+
+.toggle-btn:hover {{
+  background-color: black;
+  color: var(--text-main);
+}}
+
+.floating-toggle {{
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  display: none;
+}}
+
+#sidebar-toggle:checked ~ .floating-toggle {{
+  display: flex;
+}}
+
+.sidebar {{
+  width: 260px;
+  background-color: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s ease, padding 0.3s ease;
+  z-index: 5;
+}}
+
+#sidebar-toggle:checked ~ .sidebar {{
+  transform: translateX(-100%);
+  width: 0;
+  padding: 0;
+  border-right-color: transparent;
+  overflow: hidden;
+}}
+
+.sidebar-header {{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+  margin-bottom: 16px;
+  padding: 4px;
+}}
+
+.sidebar-brand {{
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+}}
+
+.sidebar-section-title {{
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 8px 12px;
+}}
+
+.chat-list {{
+  flex: 1;
+  overflow-y: auto;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}}
+
+.chat-list::-webkit-scrollbar {{
+  width: 4px;
+}}
+
+.chat-list::-webkit-scrollbar-thumb {{
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}}
+
+.chat-item {{
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background 0.2s ease;
+}}
+
+.chat-item:hover {{
+  background-color: var(--hover-bg);
+}}
+
+.sidebar-footer {{
+  border-top: 1px solid var(--border-color);
+  padding-top: 12px;
+  margin-top: auto;
+}}
+
+.user-profile {{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}}
+
+.user-profile:hover {{
+  background-color: var(--hover-bg);
+}}
+
+.user-info {{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}}
+
+.user-name {{
+  color: white;
+}}
+
+.avatar {{
+  width: 24px;
+  height: 24px;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}}
+
+.plan-badge {{
+  font-size: 12px;
+  color: var(--text-muted);
+}}
+
+.main-content {{
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1e1e1e;
+  font-size: 1.5rem;
+  font-weight: 600;
+}}
+
+.logout-form {{
+  margin-top: 8px;
+}}
+
+.logout-btn {{
+  all: unset;
+  color: #f87171;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 12px;
+  display: block;
+}}
+.logout-btn:hover {{
+  text-decoration: underline;
+}}
+</style>
+</head>
+<body>
+<div class="container">
+  <input type="checkbox" id="sidebar-toggle" />
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <label for="sidebar-toggle" class="toggle-btn" title="Toggle Sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="9" y1="3" x2="9" y2="21"></line>
+        </svg>
+      </label>
+      <span class="sidebar-brand">Codebase</span>
+    </div>
+
+    <div class="sidebar-section-title">Repositories &amp; Codebases</div>
+    <ul class="chat-list">
+      <li class="chat-item"><a href="/dashboard" style="color:inherit; text-decoration:none;">⚙️ Settings & Database</a></li>
+      <li class="chat-item">auth-service-microservice v2.4</li>
+      <li class="chat-item">react-timeline-component-lib</li>
+      <li class="chat-item">scrape-verse-core-engine</li>
+      <li class="chat-item">anthropic-notes-app-styling</li>
+      <li class="chat-item">renewable-chem-seeds-api</li>
+      <li class="chat-item">mcp-second-brain-connector</li>
+      <li class="chat-item">neo-brutalism-portfolio-ui</li>
+      <li class="chat-item">database-migration-scripts-pg</li>
+      <li class="chat-item">ui-component-library-v1</li>
+      <li class="chat-item">graphql-gateway-service</li>
+      <li class="chat-item">payment-processing-worker</li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-info">
+          <div class="avatar">{initial}</div>
+          <span class="user-name">{display_name}</span>
+        </div>
+        <span class="plan-badge">Pro Dev</span>
+      </div>
+      <form method="POST" action="/logout" class="logout-form">
+        <button type="submit" class="logout-btn">Log Out</button>
+      </form>
+    </div>
+  </aside>
+
+  <label for="sidebar-toggle" class="toggle-btn floating-toggle" title="Toggle Sidebar">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+      <line x1="9" y1="3" x2="9" y2="21"></line>
+    </svg>
+  </label>
+
+  <main class="main-content">
+    <h1>Manage your repositories, {display_name}</h1>
+  </main>
+</div>
+</body>
+</html>
+""")
+
+
+# ---------------------------------------------------------------------------
+# Dashboard & Settings (Retained for Neon DB Configuration & API Keys)
 # ---------------------------------------------------------------------------
 async def dashboard_get(request: Request):
     user_id = _require_login(request)
@@ -1144,11 +1437,14 @@ async def dashboard_get(request: Request):
 
     body = f"""
 {nav_html}
-<main class="flex-grow py-10 px-6">
+<main class="flex-grow py-10 px-6 bg-surface-white">
     <div class="max-w-3xl mx-auto">
-        <div class="mb-6">
-            <h1 class="text-2xl font-bold text-on-surface mb-1">Dashboard & Settings</h1>
-            <p class="text-xs text-text-secondary">Manage your database connection string, API keys, and connector endpoint.</p>
+        <div class="mb-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-on-surface mb-1">Database & API Settings</h1>
+                <p class="text-xs text-text-secondary">Manage your Neon database connection string and MCP API keys.</p>
+            </div>
+            <a href="/console" class="text-xs font-semibold text-primary underline">← Back to Console</a>
         </div>
 
         {flash_html}
@@ -1190,7 +1486,7 @@ async def dashboard_get(request: Request):
     </div>
 </main>
 """
-    return _page("Dashboard", body)
+    return _page("Settings", body)
 
 
 async def update_connection_string(request: Request):
@@ -1244,11 +1540,11 @@ async def revoke_api_key(request: Request):
 
 def _dashboard_error(message: str) -> HTMLResponse:
     body = f"""
-<main class="flex-grow flex items-center justify-center py-16 px-6">
+<main class="flex-grow flex items-center justify-center py-16 px-6 bg-surface-white">
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm text-center">
         <h2 class="text-lg font-bold text-error mb-2">Error</h2>
         <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-6 border border-red-200">{message}</div>
-        <a href="/dashboard" class="inline-block bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] no-underline">Back to Dashboard</a>
+        <a href="/dashboard" class="inline-block bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] no-underline">Back to Settings</a>
     </div>
 </main>
 """
@@ -1263,6 +1559,7 @@ routes = [
     Route("/login", login_get, methods=["GET"]),
     Route("/login", login_post, methods=["POST"]),
     Route("/logout", logout, methods=["POST"]),
+    Route("/console", console_page, methods=["GET"]),
     Route("/dashboard", dashboard_get, methods=["GET"]),
     Route("/dashboard/connection-string", update_connection_string, methods=["POST"]),
     Route("/dashboard/api-key/create", create_api_key, methods=["POST"]),
