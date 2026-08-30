@@ -1,12 +1,12 @@
 """
-Memory Notes - Web Application (Full Responsive, Scroll-Driven Architecture & Active Nav Sync)
+Memory Notes - Web Application (Fixed Pipeline Framing & Seamless Section Flow)
 Full Python Starlette ASGI Application with:
 - Darkroom Engineering Lenis Smooth Scrolling (@studio-freight/lenis)
-- Scroll-pinned animation sequence starting seamlessly from the "Connect in 30 Seconds" terminal block down through the Instant Context Pipeline
-- 100% Proportional Aspect-Ratio Vector Engine locked inside browser viewports (impervious to browser tab zoom)
+- Fixed sticky positioning accounting for the navbar offset (no top-half clipping)
+- Seamless dark-to-dark background transition (no white gap before Core Capabilities)
+- Proportional Aspect-Ratio Vector Engine (Zoom-proof)
 - Accurate bi-directional scroll-spy synchronization for Core Capabilities navigation
 - 2D Codebase Console Graph Interface with Module Clustering & Touch/Pan Support
-- Multi-Tenant Isolated PostgreSQL (Neon DB) FastMCP Architecture
 """
 
 import asyncpg
@@ -166,10 +166,12 @@ def _page(title: str, body: str) -> HTMLResponse:
         opacity: 1;
     }}
 
-    /* Neon-Style Zoom Lock Proportional Canvas */
+    /* Diagram Scaler Wrapper */
     .diagram-scaler-wrapper {{
         width: 100%;
-        max-width: 1000px;
+        max-width: min(980px, 92vw);
+        max-height: min(520px, 62vh);
+        aspect-ratio: 1000 / 524;
         margin: 0 auto;
         position: relative;
         container-type: inline-size;
@@ -178,9 +180,10 @@ def _page(title: str, body: str) -> HTMLResponse:
     .diagram-container {{
         position: relative;
         width: 100%;
+        height: 100%;
         aspect-ratio: 1000 / 524;
         background-color: #000000;
-        overflow: hidden;
+        overflow: visible;
     }}
 
     .vertical-grid {{
@@ -189,7 +192,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     .grid-line {{ width: 1px; height: 100%; background-color: #ffffff; }}
     
     svg.canvas {{
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;
     }}
 
     .line-green {{ stroke: #00e599; stroke-width: 1.5; fill: none; }}
@@ -200,7 +203,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     .ruler-tick.lit {{ stroke: #00e599; }}
     .tick-active {{ stroke: #00e599; stroke-width: 1.5; }}
 
-    /* Proportional Badges Scaled to Container Query Width (cqw) */
+    /* Proportional Badges */
     .badge {{
         position: absolute; transform: translate(-50%, -50%) scale(0.7); display: flex; align-items: center; gap: 0.6cqw; font-size: clamp(8px, 1.2cqw, 12px); font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
         transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
@@ -227,7 +230,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     .glow-dot {{ fill: #00e599; filter: url(#glow); opacity: 0; transition: opacity 0.2s ease; }}
     .glow-dot.active {{ opacity: 1; }}
 
-    /* Core Capabilities Showcase Scaffolding */
+    /* Core Capabilities Showcase */
     :root {{
       --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -238,14 +241,13 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
 
     .showcase-container {{
-  position: relative;
-  width: 100%;
-  margin-top: 180px; /* Pushes the entire section down */
-  padding-top: 40px;  /* Additional internal buffer */
-  padding-bottom: 80px;
-  font-family: var(--font-main);
-  clear: both;
-}}
+      position: relative;
+      width: 100%;
+      background-color: #000000;
+      padding-bottom: 80px;
+      font-family: var(--font-main);
+      z-index: 20;
+    }}
 
     .sticky-nav-wrapper {{
       position: absolute;
@@ -262,10 +264,10 @@ def _page(title: str, body: str) -> HTMLResponse:
 
     .sticky-sidebar {{
       position: sticky;
-      top: 110px;
+      top: 80px;
       width: 260px;
       pointer-events: auto;
-      padding-top: 12px;
+      padding-top: 8px;
     }}
 
     .menu-badge-btn {{
@@ -754,25 +756,25 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. STICKY SCROLL-PINNED CONTINUOUS PIPELINE SECTION (Continuous Scroll Scrubbing) -->
-    <div id="pipelineTrack" class="relative bg-[#000000]" style="height: 250vh;">
-      <section id="pipeline" class="sticky top-0 h-screen flex flex-col justify-center py-6 bg-[#000000] text-white border-b border-neutral-800 select-none overflow-hidden">
-        <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center h-full">
+    <!-- 2. STICKY SCROLL-PINNED PIPELINE SECTION (Offset properly to prevent top cutoff) -->
+    <div id="pipelineTrack" class="relative bg-[#000000]" style="height: 240vh;">
+      <section id="pipeline" class="sticky top-[58px] h-[calc(100vh-58px)] flex flex-col justify-center py-4 bg-[#000000] text-white border-b border-neutral-800 select-none overflow-hidden">
+        <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center my-auto">
             
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2 mb-3">
                 <div>
                     <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-1 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
                         Scroll to Flow
                     </p>
-                    <h2 class="text-white text-2xl sm:text-3xl font-bold tracking-tight">
+                    <h2 class="text-white text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">
                         Instant Context Pipeline
                     </h2>
                 </div>
             </div>
 
-            <!-- Proportional Diagram Scaler Wrapper (Locks Vector & Badges from Browser Tab Zoom Distortions) -->
-            <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] overflow-hidden relative">
+            <!-- Proportional Diagram Scaler Wrapper -->
+            <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] relative">
               <div id="pipelineViewport" class="diagram-container">
                 <!-- Grid Columns -->
                 <div class="vertical-grid">
@@ -993,12 +995,10 @@ async def landing_page(request: Request):
                 }}
 
                 function updateScrollPipeline() {{
-                  // Animation sequence anchors from top of "Connect in 30 Seconds" through the pipeline track
                   const qRect = quickstartSection ? quickstartSection.getBoundingClientRect() : null;
                   const tRect = pipelineTrack.getBoundingClientRect();
                   const winH = window.innerHeight;
 
-                  // Trigger point begins when Quickstart section scrolls into view
                   const startY = qRect ? qRect.top : tRect.top;
                   const totalDistance = (tRect.bottom - startY) - winH;
                   if (totalDistance <= 0) return;
