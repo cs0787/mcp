@@ -1,12 +1,10 @@
 """
-Memory Notes - Web Application (Mobile, Tablet & Desktop Fully Optimized)
+Memory Notes - Web Application
 Full Python Starlette ASGI Application with:
-- Responsive Monochromatic Tailwind CSS Design System
-- Interactive Spotlight Grid Hero with Clean Standard Action Buttons
-- Live Emerging Architecture Pipeline Canvas with smooth touch scrolling & no node distortion
-- Sticky scroll-spying Core Capabilities navigation across Desktop and Mobile
-- Multi-Tab Quick-Start Terminal Snippets
-- 2D Infinite Canvas Node Console with Touch & Mouse Pan/Zoom
+- Desktop: Exact original pinned sticky sidebar with live scroll tracking and desktop canvas[cite: 1].
+- Mobile & Tablet: Standard stacked sections without sticky nav overhead, styled after Neon's mobile layout.
+- Horizontal friction-free scroll for the architecture pipeline diagram on mobile devices[cite: 1].
+- Complete multi-user OAuth 2.1, FastMCP, and 2D Interactive Console Canvas support[cite: 1, 5, 8].
 """
 
 import asyncpg
@@ -24,7 +22,7 @@ def _page(title: str, body: str) -> HTMLResponse:
 <html class="scroll-smooth" lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>{title} - Memory Notes</title>
 
 <!-- Fonts -->
@@ -164,7 +162,6 @@ def _page(title: str, body: str) -> HTMLResponse:
       font-family: var(--font-main);
     }}
 
-    /* Desktop Sticky Sidebar Wrapper */
     .sticky-nav-wrapper {{
       position: absolute;
       top: 0;
@@ -189,20 +186,48 @@ def _page(title: str, body: str) -> HTMLResponse:
     .menu-badge-btn {{
       display: inline-flex;
       align-items: center;
-      padding: 8px 14px;
-      border-radius: 8px;
+      padding: 10px 18px;
+      border: unset;
+      border-radius: 12px;
       color: #000000;
       background: #facc15;
       font-family: var(--font-main);
       font-weight: 800;
-      font-size: 11.5px;
+      font-size: 13.5px;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       box-shadow: 0 4px 14px -2px rgba(250, 204, 21, 0.45);
       cursor: default;
       pointer-events: none;
       user-select: none;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
+      margin-left: 0;
+      text-align: left;
+    }}
+
+    .mobile-feature-badge {{
+      display: none;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      width: fit-content;
+    }}
+
+    .section-dark .mobile-feature-badge {{
+      background: rgba(255, 255, 255, 0.1);
+      color: #00e599;
+      border: 1px solid rgba(0, 229, 153, 0.3);
+    }}
+
+    .section-light .mobile-feature-badge {{
+      background: #f4f4f5;
+      color: #18181b;
+      border: 1px solid #e4e4e7;
     }}
 
     .nav-list {{
@@ -222,9 +247,8 @@ def _page(title: str, body: str) -> HTMLResponse:
       font-weight: 500;
       color: #71717a;
       text-decoration: none;
-      transition: all 0.2s ease;
+      transition: color 0.2s ease;
       cursor: pointer;
-      white-space: nowrap;
     }}
 
     .nav-btn:hover {{
@@ -268,7 +292,7 @@ def _page(title: str, body: str) -> HTMLResponse:
       margin: 0;
       display: flex;
       align-items: center;
-      scroll-margin-top: 50px;
+      scroll-margin-top: 0;
     }}
 
     .section-inner {{
@@ -311,9 +335,9 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
 
     .lead-text {{
-      font-size: 16px;
+      font-size: 17px;
       line-height: 1.6;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }}
 
     .checklist {{
@@ -329,7 +353,7 @@ def _page(title: str, body: str) -> HTMLResponse:
       display: flex;
       align-items: flex-start;
       gap: 10px;
-      font-size: 14.5px;
+      font-size: 15px;
       font-weight: 600;
     }}
 
@@ -380,8 +404,8 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
 
     .terminal-code {{
-      padding: 16px 20px;
-      font-size: 12.5px;
+      padding: 20px;
+      font-size: 13.5px;
       color: #e4e4e7;
       overflow-x: auto;
       line-height: 1.65;
@@ -392,79 +416,11 @@ def _page(title: str, body: str) -> HTMLResponse:
     .hl-green {{ color: #4ade80; }}
     .hl-dim {{ color: #71717a; }}
 
-    /* Mobile Responsive Overrides for Core Capabilities */
-    @media (max-width: 900px) {{
-      .sticky-nav-wrapper {{
-        position: sticky;
-        top: 56px;
-        bottom: auto;
-        padding: 8px 12px;
-        background: rgba(10, 10, 10, 0.85);
-        backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        pointer-events: auto;
-        z-index: 40;
-      }}
-      .sticky-sidebar {{
-        position: static;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding-top: 0;
-      }}
-      .menu-badge-btn {{
-        display: none;
-      }}
-      .nav-list {{
-        flex-direction: row;
-        gap: 8px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        width: 100%;
-        padding-bottom: 2px;
-      }}
-      .nav-list::-webkit-scrollbar {{
-        display: none;
-      }}
-      .nav-btn {{
-        font-size: 12px;
-        padding: 6px 12px;
-        border-radius: 9999px;
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        color: #a1a1aa;
-      }}
-      .nav-btn.active {{
-        background: #ffffff;
-        color: #000000;
-        font-weight: 700;
-        border-color: #ffffff;
-      }}
-      .nav-btn.active .nav-dot {{
-        background-color: #000000;
-        box-shadow: none;
-        transform: scale(1);
-      }}
-      .section-inner {{
-        display: block;
-        padding: 0 16px;
-      }}
-      .section-content {{
-        width: 100%;
-      }}
-      .feature-section {{
-        padding: 60px 0;
-        min-height: auto;
-      }}
-    }}
-
     .neon-footer {{
       background-color: var(--footer-bg);
       border-top: 1px solid #e5e5e5;
       color: #52525b;
-      padding: 60px 20px 40px;
+      padding: 80px 24px 48px;
       font-family: var(--font-main);
       position: relative;
       z-index: 30;
@@ -479,14 +435,14 @@ def _page(title: str, body: str) -> HTMLResponse:
     .footer-top {{
       display: grid;
       grid-template-columns: 2fr repeat(4, 1fr);
-      gap: 40px;
-      margin-bottom: 48px;
+      gap: 48px;
+      margin-bottom: 64px;
     }}
 
     .footer-brand {{
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 16px;
     }}
 
     .footer-logo {{
@@ -496,12 +452,17 @@ def _page(title: str, body: str) -> HTMLResponse:
       text-decoration: none;
       color: #18181b;
       font-weight: 800;
-      font-size: 18px;
+      font-size: 20px;
       letter-spacing: -0.03em;
     }}
 
+    .footer-logo svg {{
+      width: 24px;
+      height: 24px;
+    }}
+
     .footer-tagline {{
-      font-size: 13.5px;
+      font-size: 14px;
       color: #71717a;
       max-width: 270px;
       line-height: 1.5;
@@ -521,6 +482,13 @@ def _page(title: str, body: str) -> HTMLResponse:
       font-size: 12px;
       font-weight: 600;
       text-decoration: none;
+      transition: all 0.2s ease;
+    }}
+
+    .status-badge:hover {{
+      background: #f4f4f5;
+      border-color: #d4d4d8;
+      color: #18181b;
     }}
 
     .status-dot {{
@@ -532,49 +500,118 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
 
     .footer-col h4 {{
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: #18181b;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }}
 
     .footer-col ul {{
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       padding: 0;
     }}
 
     .footer-col ul li a {{
       color: #71717a;
       text-decoration: none;
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 500;
       transition: color 0.15s ease;
+      display: inline-block;
+    }}
+
+    .footer-col ul li a:hover {{
+      color: #18181b;
+      font-weight: 600;
     }}
 
     .footer-bottom {{
       border-top: 1px solid #e5e5e5;
-      padding-top: 28px;
+      padding-top: 32px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 20px;
       font-size: 13px;
       color: #71717a;
     }}
 
+    .footer-bottom-links {{
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }}
+
+    .footer-bottom-links a {{
+      color: #71717a;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }}
+
+    .footer-bottom-links a:hover {{
+      color: #18181b;
+    }}
+
+    .social-links {{
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }}
+
+    .social-links a {{
+      color: #71717a;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s ease;
+      text-decoration: none;
+    }}
+
+    .social-links a:hover {{
+      color: #18181b;
+    }}
+
+    .social-links svg {{
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }}
+
+    /* Mobile Only Adjustments: Exactly like Neon mobile view */
     @media (max-width: 900px) {{
+      .sticky-nav-wrapper {{
+        display: none !important;
+      }}
+      .mobile-feature-badge {{
+        display: inline-flex;
+      }}
+      .section-inner {{
+        display: block;
+        padding: 0 20px;
+      }}
+      .section-content {{
+        width: 100%;
+      }}
+      .feature-section {{
+        padding: 60px 0;
+        min-height: auto;
+      }}
       .footer-top {{
         grid-template-columns: 1fr 1fr;
-        gap: 32px;
+        gap: 36px;
       }}
       .footer-brand {{
         grid-column: 1 / -1;
+      }}
+      .footer-bottom {{
+        flex-direction: column;
+        align-items: flex-start;
       }}
     }}
 </style>
@@ -763,7 +800,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. ARCHITECTURE CANVAS WITH CRISP HORIZONTAL SWIPE SUPPORT -->
+    <!-- 2. EXACT ARCHITECTURE CANVAS -->
     <section id="pipeline" class="py-16 sm:py-20 bg-[#000000] text-white border-b border-neutral-800 overflow-hidden select-none">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
             
@@ -778,11 +815,11 @@ async def landing_page(request: Request):
                     </h2>
                 </div>
                 <div class="text-[11px] mono text-neutral-400 flex items-center gap-1.5 lg:hidden">
-                    <span>⇄ Swipe horizontally to explore pipeline</span>
+                    <span>⇄ Swipe horizontally to inspect</span>
                 </div>
             </div>
 
-            <!-- Architecture Diagram Scroll Container -->
+            <!-- Architecture Diagram Container -->
             <div class="w-full bg-[#000000] rounded-2xl border border-white/[0.08] overflow-x-auto shadow-2xl p-2 sm:p-4" style="-webkit-overflow-scrolling: touch;">
               <div class="diagram-container">
                 <!-- Grid Columns -->
@@ -939,7 +976,7 @@ async def landing_page(request: Request):
                 <div id="el-time-right" class="meta-text timestamp" style="top: 298px; left: 743px;">20:32:04</div>
 
                 <div id="el-ai-apps" class="badge badge-white" style="top: 262px; left: 918px;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg>
                   ai apps
                 </div>
                 <div id="el-ai-apps-sub" class="meta-text" style="top: 288px; left: 918px;">AI Agents / Apps</div>
@@ -969,7 +1006,7 @@ async def landing_page(request: Request):
               </div>
             </div>
 
-            <!-- Embedded Exact Diagram Styles & Animation Controller -->
+            <!-- Embedding Exact Diagram Styles & Animation Controller -->
             <style>
               .diagram-container {{
                 position: relative;
@@ -1143,13 +1180,13 @@ async def landing_page(request: Request):
     </div>
 </section>
 
-    <!-- Core Capabilities Showcase Container with Unified Desktop/Mobile Sticky Navigation -->
+    <!-- Core Capabilities Showcase: Sticky on PC/Desktop, Sequentially Stacked on Mobile -->
     <div class="showcase-container">
       
       <div class="sticky-nav-wrapper">
         <nav class="sticky-sidebar" id="sidebar">
           <button class="menu-badge-btn" aria-hidden="true" tabindex="-1">CORE CAPABILITIES</button>
-          <ul class="nav-list" id="navList">
+          <ul class="nav-list">
             <li>
               <a class="nav-btn active" data-target="trigram-search">
                 <span class="nav-dot"></span>Zero-Latency Trigram Search
@@ -1182,13 +1219,14 @@ async def landing_page(request: Request):
       <section id="trigram-search" class="feature-section section-dark" data-theme="dark">
         <div class="section-inner">
           <div class="section-content">
+            <span class="mobile-feature-badge">01 • Trigram Search</span>
             <h2 class="hero-heading">Zero-Latency Trigram Search. Never miss a fragmented thought.</h2>
-            <p class="lead-text">Memory Notes harnesses PostgreSQL trigram matching (<code>pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds.</p>
+            <p class="lead-text">Memory Notes harnesses PostgreSQL trigram matching (<code>pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds[cite: 1].</p>
             
             <ul class="checklist">
-              <li><span class="check-icon">✓</span> Typo-tolerant substring & fuzzy similarity scoring</li>
-              <li><span class="check-icon">✓</span> Automatic fallback to ILIKE if extensions are missing</li>
-              <li><span class="check-icon">✓</span> Indexed lookups executing in under 4ms</li>
+              <li><span class="check-icon">✓</span> Typo-tolerant substring & fuzzy similarity scoring[cite: 1]</li>
+              <li><span class="check-icon">✓</span> Automatic fallback to ILIKE if extensions are missing[cite: 1]</li>
+              <li><span class="check-icon">✓</span> Indexed lookups executing in under 4ms[cite: 1]</li>
             </ul>
 
             <div class="terminal-box">
@@ -1211,13 +1249,14 @@ async def landing_page(request: Request):
       <section id="ai-memory-sync" class="feature-section section-light" data-theme="light">
         <div class="section-inner">
           <div class="section-content">
+            <span class="mobile-feature-badge">02 • Autonomous Sync</span>
             <h2 class="hero-heading">Autonomous AI Memory Sync. Bi-directional writes from your agent.</h2>
-            <p class="lead-text">Claude and Cursor don't just inspect your past notes—they can create new workspace folders, append structured summaries, or update documents directly from prompt context.</p>
+            <p class="lead-text">Claude and Cursor don't just inspect your past notes—they can create new workspace folders, append structured summaries, or update documents directly from prompt context[cite: 1].</p>
             
             <ul class="checklist">
-              <li><span class="check-icon">✓</span> Explicit bigint epoch timestamping for Last-Write-Wins (LWW)</li>
-              <li><span class="check-icon">✓</span> Reactive Jetpack Compose Room sync down to Android</li>
-              <li><span class="check-icon">✓</span> Automated schema compaction for continuous agent memory</li>
+              <li><span class="check-icon">✓</span> Explicit bigint epoch timestamping for Last-Write-Wins (LWW)[cite: 1]</li>
+              <li><span class="check-icon">✓</span> Reactive Jetpack Compose Room sync down to Android[cite: 1]</li>
+              <li><span class="check-icon">✓</span> Automated schema compaction for continuous agent memory[cite: 1]</li>
             </ul>
 
             <div class="terminal-box">
@@ -1242,13 +1281,14 @@ async def landing_page(request: Request):
       <section id="zen-canvas" class="feature-section section-dark" data-theme="dark">
         <div class="section-inner">
           <div class="section-content">
+            <span class="mobile-feature-badge">03 • Zen Canvas</span>
             <h2 class="hero-heading">Zen Canvas. Distraction-free writing surface.</h2>
-            <p class="lead-text">A writing environment that strips away the superfluous, centering your thoughts and fading interface clutter away during deep focus.</p>
+            <p class="lead-text">A writing environment that strips away the superfluous, centering your thoughts and fading interface clutter away during deep focus[cite: 1].</p>
             
             <ul class="checklist">
-              <li><span class="check-icon">✓</span> Clean Markdown canvas with zero UI distraction</li>
-              <li><span class="check-icon">✓</span> Full keyboard-first command palette navigation</li>
-              <li><span class="check-icon">✓</span> Instant local-first caching for zero-latency typing</li>
+              <li><span class="check-icon">✓</span> Clean Markdown canvas with zero UI distraction[cite: 1]</li>
+              <li><span class="check-icon">✓</span> Full keyboard-first command palette navigation[cite: 1]</li>
+              <li><span class="check-icon">✓</span> Instant local-first caching for zero-latency typing[cite: 1]</li>
             </ul>
           </div>
         </div>
@@ -1257,13 +1297,14 @@ async def landing_page(request: Request):
       <section id="non-linear" class="feature-section section-light" data-theme="light">
         <div class="section-inner">
           <div class="section-content">
+            <span class="mobile-feature-badge">04 • Connectivity</span>
             <h2 class="hero-heading">Non-Linear Connectivity. An interconnected web of knowledge.</h2>
-            <p class="lead-text">Link thoughts effortlessly with bi-directional wikilinks to visualize complex patterns, relationships, and emergent ideas.</p>
+            <p class="lead-text">Link thoughts effortlessly with bi-directional wikilinks to visualize complex patterns, relationships, and emergent ideas[cite: 1].</p>
             
             <ul class="checklist">
-              <li><span class="check-icon">✓</span> Bi-directional backlinks and automatic connection mapping</li>
-              <li><span class="check-icon">✓</span> Interactive visual node graph for complex mental models</li>
-              <li><span class="check-icon">✓</span> Dynamic workspace clustering by topic and reference</li>
+              <li><span class="check-icon">✓</span> Bi-directional backlinks and automatic connection mapping[cite: 1]</li>
+              <li><span class="check-icon">✓</span> Interactive visual node graph for complex mental models[cite: 1]</li>
+              <li><span class="check-icon">✓</span> Dynamic workspace clustering by topic and reference[cite: 1]</li>
             </ul>
           </div>
         </div>
@@ -1272,13 +1313,14 @@ async def landing_page(request: Request):
       <section id="open-protocol" class="feature-section section-dark" data-theme="dark">
         <div class="section-inner">
           <div class="section-content">
+            <span class="mobile-feature-badge">05 • Open Standards</span>
             <h2 class="hero-heading">Open Protocol Standards. Zero lock-in, complete control.</h2>
-            <p class="lead-text">Built directly on Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer independence and easy tooling integrations.</p>
+            <p class="lead-text">Built directly on Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer independence and easy tooling integrations[cite: 1].</p>
             
             <ul class="checklist">
-              <li><span class="check-icon">✓</span> Server runtime powered by FastMCP and Python 3.12</li>
-              <li><span class="check-icon">✓</span> Streamable HTTP with Server-Sent Events (SSE)</li>
-              <li><span class="check-icon">✓</span> Multi-tenant isolation with portable data export</li>
+              <li><span class="check-icon">✓</span> Server runtime powered by FastMCP and Python 3.12[cite: 1]</li>
+              <li><span class="check-icon">✓</span> Streamable HTTP with Server-Sent Events (SSE)[cite: 1]</li>
+              <li><span class="check-icon">✓</span> Multi-tenant isolation with portable data export[cite: 1]</li>
             </ul>
           </div>
         </div>
@@ -1293,14 +1335,14 @@ async def landing_page(request: Request):
           
           <div class="footer-brand">
             <a href="/" class="footer-logo">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M2 17L12 22L22 17" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M2 12L12 17L22 12" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
               <span>Memory Notes</span>
             </a>
-            <p class="footer-tagline">Structured freedom for your thoughts. A private notes application and long-term memory bridge for Claude, Cursor, and custom AI agents.</p>
+            <p class="footer-tagline">Structured freedom for your thoughts. A private notes application and long-term memory bridge for Claude, Cursor, and custom AI agents[cite: 1].</p>
             <a href="#" class="status-badge">
               <span class="status-dot"></span>
               MCP Gateway Connected
@@ -1356,10 +1398,23 @@ async def landing_page(request: Request):
         <div class="footer-bottom">
           <div>&copy; 2026 Memory Notes. Structured Freedom.</div>
 
-          <div class="flex items-center gap-6">
-            <a href="#" class="hover:text-black transition-colors">Privacy Policy</a>
-            <a href="#" class="hover:text-black transition-colors">Terms of Service</a>
-            <a href="#" class="hover:text-black transition-colors">Security</a>
+          <div class="footer-bottom-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Security</a>
+            <a href="#">Cookie Settings</a>
+          </div>
+
+          <div class="social-links">
+            <a href="#" aria-label="Twitter">
+              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="#" aria-label="GitHub">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            </a>
+            <a href="#" aria-label="Discord">
+              <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.893.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+            </a>
           </div>
         </div>
       </div>
@@ -1369,10 +1424,10 @@ async def landing_page(request: Request):
       const navButtons = document.querySelectorAll('.nav-btn');
       const sections = document.querySelectorAll('.feature-section');
       const sidebar = document.getElementById('sidebar');
-      const navList = document.getElementById('navList');
 
       function syncActiveNav() {{
-        const focalLine = window.innerHeight * 0.35;
+        if (window.innerWidth <= 900) return;
+        const focalLine = window.innerHeight * 0.4;
         let currentSection = sections[0];
 
         sections.forEach((section) => {{
@@ -1383,11 +1438,7 @@ async def landing_page(request: Request):
         }});
 
         navButtons.forEach((btn) => {{
-          const isActive = btn.dataset.target === currentSection.id;
-          btn.classList.toggle('active', isActive);
-          if (isActive && window.innerWidth <= 900) {{
-            btn.scrollIntoView({{ behavior: 'smooth', block: 'nearest', inline: 'center' }});
-          }}
+          btn.classList.toggle('active', btn.dataset.target === currentSection.id);
         }});
 
         const theme = currentSection.getAttribute('data-theme');
@@ -1407,9 +1458,7 @@ async def landing_page(request: Request):
           e.preventDefault();
           const target = document.getElementById(btn.dataset.target);
           if (target) {{
-            const yOffset = window.innerWidth <= 900 ? -70 : 0;
-            const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
-            window.scrollTo({{ top: y, behavior: 'smooth' }});
+            target.scrollIntoView({{ behavior: 'smooth' }});
           }}
         }});
       }});
@@ -1432,7 +1481,7 @@ async def signup_get(request: Request):
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
         <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
-        <p class="text-xs text-text-secondary mb-6">Set up your Memory Notes gateway account.</p>
+        <p class="text-xs text-text-secondary mb-6">Set up your Memory Notes gateway account[cite: 1].</p>
         <form method="POST" action="/signup">
             <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
@@ -1521,7 +1570,7 @@ async def login_get(request: Request):
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
         <h2 class="text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
-        <p class="text-xs text-text-secondary mb-6">Log in to your account.</p>
+        <p class="text-xs text-text-secondary mb-6">Log in to your account[cite: 1].</p>
         <form method="POST" action="/login">
             <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
@@ -1638,7 +1687,7 @@ async def console_page(request: Request):
             </li>
         """ for ws in workspaces)
     else:
-        repo_list_html = '<div class="p-3 text-xs text-[#8e8e8e]">No repositories found. Connect MCP to Claude/Cursor to log changes.</div>'
+        repo_list_html = '<div class="p-3 text-xs text-[#8e8e8e]">No repositories found. Connect MCP to Claude/Cursor to log changes[cite: 1].</div>'
 
     if selected_workspace:
         if nodes:
@@ -1677,7 +1726,7 @@ async def console_page(request: Request):
                     </div>
                     <div class="node-title">{node['title']}</div>
                     <div class="node-snippet">{node['summary'][:90]}...</div>
-                    <div class="node-footer">Tap/Double-click to expand note</div>
+                    <div class="node-footer">Double-click to expand note</div>
                 </div>
                 """
             
@@ -1690,7 +1739,7 @@ async def console_page(request: Request):
             <div class="empty-canvas-state">
                 <div class="empty-icon">⚡</div>
                 <h3>No CodeBase Data</h3>
-                <p>No CodeBase Data Connect mcp to AI models and store CodeBase Logs</p>
+                <p>No CodeBase Data Connect mcp to AI models and store CodeBase Logs[cite: 1]</p>
                 <code>mcpServers -&gt; memory-notes</code>
             </div>
             """
@@ -1699,7 +1748,7 @@ async def console_page(request: Request):
         <div class="empty-canvas-state">
             <div class="empty-icon">📁</div>
             <h3>Manage Code Base</h3>
-            <p>Select a codebase from the sidebar to view its architecture nodes and logs.</p>
+            <p>Select a codebase from the sidebar to view its architecture nodes and logs[cite: 1].</p>
         </div>
         """
 
@@ -1707,7 +1756,7 @@ async def console_page(request: Request):
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Console - Codebase Manager</title>
 <style>
 :root {{
@@ -1743,13 +1792,12 @@ body {{
   background: black;
   border: 1px solid var(--border-color);
   color: var(--text-muted);
-  padding: 10px;
+  padding: 8px;
   border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }}
 
 .floating-toggle {{
@@ -1770,7 +1818,7 @@ body {{
   box-sizing: border-box;
   padding: 12px;
   z-index: 40;
-  transition: transform 0.3s ease, width 0.3s ease, padding 0.3s ease;
+  transition: transform 0.3s ease, width 0.3s ease;
 }}
 
 #sidebar-toggle:checked ~ .sidebar {{
@@ -1778,14 +1826,13 @@ body {{
   width: 0;
   padding: 0;
   overflow: hidden;
-  border: none;
 }}
 
 @media (max-width: 768px) {{
   .sidebar {{
     position: absolute;
     height: 100%;
-    box-shadow: 15px 0 35px rgba(0,0,0,0.4);
+    box-shadow: 10px 0 30px rgba(0,0,0,0.5);
   }}
   #sidebar-toggle:checked ~ .sidebar {{
     transform: translateX(-100%);
@@ -1818,7 +1865,7 @@ body {{
 }}
 
 .chat-item {{
-  padding: 12px;
+  padding: 10px 12px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 13px;
@@ -1854,7 +1901,7 @@ body {{
 .plan-badge {{ font-size: 11px; color: var(--text-muted); }}
 
 .logout-btn {{
-  all: unset; color: #f87171; font-size: 12px; cursor: pointer; padding: 6px 12px; display: block;
+  all: unset; color: #f87171; font-size: 12px; cursor: pointer; padding: 4px 12px; display: block;
 }}
 .logout-btn:hover {{ text-decoration: underline; }}
 
@@ -1908,7 +1955,7 @@ body {{
 /* Empty State */
 .empty-canvas-state {{
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  text-align: center; max-width: 380px; width: 85%; background: white; border: 1px solid #e2e2e7; padding: 24px; border-radius: 12px;
+  text-align: center; max-width: 380px; background: white; border: 1px solid #e2e2e7; padding: 32px; border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.04);
 }}
 .empty-icon {{ font-size: 32px; margin-bottom: 12px; }}
@@ -1918,19 +1965,19 @@ body {{
 
 /* Modal Popup for Node Details */
 .modal-overlay {{
-  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; padding: 16px;
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center;
 }}
 .modal-overlay.active {{ display: flex; }}
 .modal-card {{
-  background: white; width: 500px; max-width: 100%; max-height: 85vh; overflow-y: auto; border-radius: 12px; border: 1px solid #e4e4e7; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); padding: 20px; position: relative;
+  background: white; width: 500px; max-width: 90%; border-radius: 12px; border: 1px solid #e4e4e7; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); padding: 24px; position: relative;
 }}
 .modal-close {{
-  position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; cursor: pointer; color: #71717a; padding: 4px;
+  position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 18px; cursor: pointer; color: #71717a;
 }}
-.modal-title {{ font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #18181b; padding-right: 24px; }}
+.modal-title {{ font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #18181b; }}
 .modal-section {{ margin-bottom: 12px; }}
 .modal-label {{ font-size: 11px; font-weight: bold; text-transform: uppercase; color: #71717a; margin-bottom: 4px; }}
-.modal-body {{ font-size: 13px; color: #3f3f46; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; line-height: 1.5; word-break: break-word; }}
+.modal-body {{ font-size: 13px; color: #3f3f46; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; line-height: 1.5; }}
 </style>
 </head>
 <body>
@@ -1951,7 +1998,7 @@ body {{
     <div class="sidebar-section-title">Repositories &amp; Codebases</div>
     <ul class="chat-list">
       <li class="chat-item" style="border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:6px; padding-bottom:6px;">
-        <a href="/dashboard" style="color:inherit; text-decoration:none; display:block;">⚙️ Database & Settings</a>
+        <a href="/dashboard" style="color:inherit; text-decoration:none;">⚙️ Database & Settings</a>
       </li>
       {repo_list_html}
     </ul>
@@ -2099,7 +2146,7 @@ async def dashboard_get(request: Request):
         <input type="text" readonly value="{flash_key}" id="newApiKeyField" class="w-full font-mono text-xs bg-surface-white border border-border-muted p-2 rounded">
         <button id="btnCopyKey" onclick="copyToClipboard('{flash_key}', 'btnCopyKey')" class="bg-secondary-container text-on-surface px-4 py-2 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy</button>
     </div>
-    <p class="text-xs text-text-secondary mt-2">Use this as your Bearer Token for Claude or direct API configurations.</p>
+    <p class="text-xs text-text-secondary mt-2">Use this as your Bearer Token for Claude or direct API configurations[cite: 1].</p>
 </div>
 """
 
@@ -2138,7 +2185,7 @@ async def dashboard_get(request: Request):
         <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
             <div>
                 <h1 class="text-2xl font-bold text-on-surface mb-1">Database & API Settings</h1>
-                <p class="text-xs text-text-secondary">Manage your Neon database connection string and MCP API keys.</p>
+                <p class="text-xs text-text-secondary">Manage your Neon database connection string and MCP API keys[cite: 1].</p>
             </div>
             <a href="/console" class="text-xs font-semibold text-primary underline">← Back to Console</a>
         </div>
@@ -2148,7 +2195,7 @@ async def dashboard_get(request: Request):
         <!-- 1. Endpoint & Connection URL -->
         <div class="bg-surface-white border border-border-muted p-4 sm:p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">1. MCP Server Endpoint</h2>
-            <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector.</p>
+            <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector[cite: 1].</p>
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <input type="text" readonly value="{mcp_endpoint}" id="mcpEndpointField" class="w-full font-mono text-xs bg-surface-container-low border border-border-muted p-2.5 rounded">
                 <button id="btnCopyEndpoint" onclick="copyToClipboard('{mcp_endpoint}', 'btnCopyEndpoint')" class="bg-surface-white text-on-surface px-4 py-2.5 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy URL</button>
@@ -2158,7 +2205,7 @@ async def dashboard_get(request: Request):
         <!-- 2. Neon Database Connection String Settings -->
         <div class="bg-surface-white border border-border-muted p-4 sm:p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">2. Neon Database Connection String</h2>
-            <p class="text-xs text-text-secondary mb-3">Paste the same PostgreSQL connection string your mobile notes app uses to sync.</p>
+            <p class="text-xs text-text-secondary mb-3">Paste the same PostgreSQL connection string your mobile notes app uses to sync[cite: 1].</p>
             {conn_status}
             <form method="POST" action="/dashboard/connection-string" class="mt-4">
                 <div class="mb-3">
@@ -2171,7 +2218,7 @@ async def dashboard_get(request: Request):
         <!-- 3. API Keys Management -->
         <div class="bg-surface-white border border-border-muted p-4 sm:p-6 rounded-xl shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">3. MCP API Keys</h2>
-            <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps.</p>
+            <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps[cite: 1].</p>
             <div class="divide-y border-border-muted mb-4">
                 {rows}
             </div>
