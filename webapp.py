@@ -238,11 +238,14 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
 
     .showcase-container {{
-      position: relative;
-      width: 100%;
-      padding-bottom: 80px;
-      font-family: var(--font-main);
-    }}
+  position: relative;
+  width: 100%;
+  margin-top: 180px; /* Pushes the entire section down */
+  padding-top: 40px;  /* Additional internal buffer */
+  padding-bottom: 80px;
+  font-family: var(--font-main);
+  clear: both;
+}}
 
     .sticky-nav-wrapper {{
       position: absolute;
@@ -259,10 +262,10 @@ def _page(title: str, body: str) -> HTMLResponse:
 
     .sticky-sidebar {{
       position: sticky;
-      top: 90px;
+      top: 110px;
       width: 260px;
       pointer-events: auto;
-      padding-top: 8px;
+      padding-top: 12px;
     }}
 
     .menu-badge-btn {{
