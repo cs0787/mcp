@@ -1,11 +1,12 @@
 """
-Memory Notes - Web Application (Responsive, Scaled & Zoom-Proof Architecture Engine)
+Memory Notes - Web Application (Full Responsive, Scroll-Driven Architecture & Active Nav Sync)
 Full Python Starlette ASGI Application with:
-- Darkroom Engineering Lenis Smooth Scrolling
-- Non-overlapping, zoom-proof Instant Context Pipeline bounded by both width and viewport height
-- Scroll-pinned animation scrubbing starting from the terminal quickstart section
-- Responsive Core Capabilities navigation with bi-directional IntersectionObserver sync
+- Darkroom Engineering Lenis Smooth Scrolling (@studio-freight/lenis)
+- Scroll-pinned animation sequence starting seamlessly from the "Connect in 30 Seconds" terminal block down through the Instant Context Pipeline
+- 100% Proportional Aspect-Ratio Vector Engine locked inside browser viewports (impervious to browser tab zoom)
+- Accurate bi-directional scroll-spy synchronization for Core Capabilities navigation
 - 2D Codebase Console Graph Interface with Module Clustering & Touch/Pan Support
+- Multi-Tenant Isolated PostgreSQL (Neon DB) FastMCP Architecture
 """
 
 import asyncpg
@@ -165,24 +166,18 @@ def _page(title: str, body: str) -> HTMLResponse:
         opacity: 1;
     }}
 
-    /* Zoom-Proof Dual-Axis Clamped Pipeline Canvas */
+    /* Neon-Style Zoom Lock Proportional Canvas */
     .diagram-scaler-wrapper {{
         width: 100%;
-        max-width: min(1000px, 94vw);
-        max-height: 68vh;
-        aspect-ratio: 1000 / 524;
+        max-width: 1000px;
         margin: 0 auto;
         position: relative;
         container-type: inline-size;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }}
 
     .diagram-container {{
         position: relative;
         width: 100%;
-        height: 100%;
         aspect-ratio: 1000 / 524;
         background-color: #000000;
         overflow: hidden;
@@ -247,7 +242,6 @@ def _page(title: str, body: str) -> HTMLResponse:
       width: 100%;
       padding-bottom: 80px;
       font-family: var(--font-main);
-      z-index: 20;
     }}
 
     .sticky-nav-wrapper {{
@@ -757,24 +751,24 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. STICKY SCROLL-PINNED CONTINUOUS PIPELINE SECTION -->
+    <!-- 2. STICKY SCROLL-PINNED CONTINUOUS PIPELINE SECTION (Continuous Scroll Scrubbing) -->
     <div id="pipelineTrack" class="relative bg-[#000000]" style="height: 250vh;">
-      <section id="pipeline" class="sticky top-0 min-h-screen flex flex-col justify-center py-6 bg-[#000000] text-white border-b border-neutral-800 select-none overflow-hidden">
-        <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center my-auto">
+      <section id="pipeline" class="sticky top-0 h-screen flex flex-col justify-center py-6 bg-[#000000] text-white border-b border-neutral-800 select-none overflow-hidden">
+        <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center h-full">
             
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2 mb-3">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-4">
                 <div>
                     <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-1 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
                         Scroll to Flow
                     </p>
-                    <h2 class="text-white text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">
+                    <h2 class="text-white text-2xl sm:text-3xl font-bold tracking-tight">
                         Instant Context Pipeline
                     </h2>
                 </div>
             </div>
 
-            <!-- Proportional Diagram Scaler Wrapper -->
+            <!-- Proportional Diagram Scaler Wrapper (Locks Vector & Badges from Browser Tab Zoom Distortions) -->
             <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] overflow-hidden relative">
               <div id="pipelineViewport" class="diagram-container">
                 <!-- Grid Columns -->
@@ -996,10 +990,12 @@ async def landing_page(request: Request):
                 }}
 
                 function updateScrollPipeline() {{
+                  // Animation sequence anchors from top of "Connect in 30 Seconds" through the pipeline track
                   const qRect = quickstartSection ? quickstartSection.getBoundingClientRect() : null;
                   const tRect = pipelineTrack.getBoundingClientRect();
                   const winH = window.innerHeight;
 
+                  // Trigger point begins when Quickstart section scrolls into view
                   const startY = qRect ? qRect.top : tRect.top;
                   const totalDistance = (tRect.bottom - startY) - winH;
                   if (totalDistance <= 0) return;
