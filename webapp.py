@@ -2,10 +2,8 @@
 Memory Notes - Web Application
 Full Python Starlette ASGI Application with:
 - Monochromatic Tailwind CSS Design System
-- Interactive Spotlight Grid Hero with Clean Standard Action Buttons ("Get Started" & "See more")
-- Live Emerging Architecture Pipeline Canvas (Neon DB -> FastMCP Broker -> AI Apps)
-- Multi-Tab Quick-Start Terminal Snippets (Claude Desktop / Cursor / cURL)
-- Developer Feature Deep Dives & Full-Stack Auth / Multi-Tenant Dashboard
+- Mobile-Responsive Layouts with Collapsible Drawer Sidebar
+- Interactive Spotlight Grid Hero & Instant Context Pipeline Canvas
 - Console Workspace 2D Infinite Canvas Node Interface for Logged-In Users
 """
 
@@ -24,7 +22,7 @@ def _page(title: str, body: str) -> HTMLResponse:
 <html class="scroll-smooth" lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
 <title>{title} - Memory Notes</title>
 
 <!-- Fonts -->
@@ -152,7 +150,7 @@ def _page(title: str, body: str) -> HTMLResponse:
         position: absolute;
         right: 0;
         top: 48px;
-        width: 300px;
+        width: 280px;
         background: #ffffff;
         border: 1px solid #E2E2E7;
         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
@@ -162,448 +160,6 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
     .settings-dropdown.active {{
         display: block;
-    }}
-
-    /* Core Capabilities Showcase Scaffolding */
-    :root {{
-      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-      --neon-green: #00e599;
-      --dark-bg: #000000;
-      --light-bg: #ffffff;
-      --footer-bg: #F5F5F5;
-    }}
-
-    .showcase-container {{
-      position: relative;
-      width: 100%;
-      padding-bottom: 80px;
-      font-family: var(--font-main);
-    }}
-
-    .sticky-nav-wrapper {{
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 80px;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-      pointer-events: none;
-      z-index: 20;
-    }}
-
-    .sticky-sidebar {{
-      position: sticky;
-      top: 90px;
-      width: 260px;
-      pointer-events: auto;
-      padding-top: 8px;
-    }}
-
-    .menu-badge-btn {{
-      display: inline-flex;
-      align-items: center;
-      padding: 10px 18px;
-      border: unset;
-      border-radius: 12px;
-      color: #000000;
-      background: #facc15;
-      font-family: var(--font-main);
-      font-weight: 800;
-      font-size: 13.5px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      box-shadow: 0 4px 14px -2px rgba(250, 204, 21, 0.45);
-      cursor: default;
-      pointer-events: none;
-      user-select: none;
-      margin-bottom: 20px;
-      margin-left: 0;
-      text-align: left;
-    }}
-
-    .nav-list {{
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }}
-
-    .nav-btn {{
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14.5px;
-      font-weight: 500;
-      color: #71717a;
-      text-decoration: none;
-      transition: color 0.2s ease;
-      cursor: pointer;
-    }}
-
-    .nav-btn:hover {{
-      color: #ffffff;
-    }}
-
-    .nav-btn.active {{
-      color: #ffffff;
-      font-weight: 700;
-    }}
-
-    .sticky-sidebar.theme-light .nav-btn {{
-      color: #71717a;
-    }}
-    .sticky-sidebar.theme-light .nav-btn:hover {{
-      color: #000000;
-    }}
-    .sticky-sidebar.theme-light .nav-btn.active {{
-      color: #000000;
-    }}
-
-    .nav-dot {{
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background-color: transparent;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-    }}
-
-    .nav-btn.active .nav-dot {{
-      background-color: var(--neon-green);
-      box-shadow: 0 0 10px rgba(0, 229, 153, 0.9);
-      transform: scale(1.3);
-    }}
-
-    .feature-section {{
-      width: 100%;
-      min-height: 85vh;
-      padding: 90px 0;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      scroll-margin-top: 0;
-    }}
-
-    .section-inner {{
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      column-gap: 56px;
-    }}
-
-    .section-content {{
-      grid-column: 2;
-      max-width: 820px;
-    }}
-
-    .section-dark {{
-      background-color: #000000;
-      color: #e2e8f0;
-    }}
-    .section-dark .hero-heading {{ color: #ffffff; }}
-    .section-dark .lead-text {{ color: #a1a1aa; }}
-    .section-dark .checklist li {{ color: #d4d4d8; }}
-
-    .section-light {{
-      background-color: #ffffff;
-      color: #000000;
-    }}
-    .section-light .hero-heading {{ color: #000000; }}
-    .section-light .lead-text {{ color: #52525b; }}
-    .section-light .checklist li {{ color: #27272a; }}
-
-    .hero-heading {{
-      font-size: clamp(30px, 4vw, 48px);
-      font-weight: 800;
-      letter-spacing: -0.035em;
-      line-height: 1.15;
-      margin-bottom: 20px;
-    }}
-
-    .lead-text {{
-      font-size: 17px;
-      line-height: 1.6;
-      margin-bottom: 28px;
-    }}
-
-    .checklist {{
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 32px;
-    }}
-
-    .checklist li {{
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 15px;
-      font-weight: 600;
-    }}
-
-    .checklist li .check-icon {{
-      color: var(--neon-green);
-      font-weight: 800;
-      font-size: 15px;
-    }}
-
-    .terminal-box {{
-      background: #09090b;
-      border: 1px solid #27272a;
-      border-radius: 12px;
-      overflow: hidden;
-      font-family: var(--font-mono);
-      max-width: 740px;
-      box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.7);
-    }}
-
-    .terminal-topbar {{
-      background: #18181b;
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }}
-
-    .terminal-dots {{
-      display: flex;
-      gap: 6px;
-    }}
-
-    .terminal-dots span {{
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }}
-
-    .dot-red {{ background: #ef4444; }}
-    .dot-yellow {{ background: #eab308; }}
-    .dot-green {{ background: #22c55e; }}
-
-    .terminal-title {{
-      font-size: 12px;
-      color: #a1a1aa;
-      font-weight: 500;
-      margin-left: 6px;
-    }}
-
-    .terminal-code {{
-      padding: 20px;
-      font-size: 13.5px;
-      color: #e4e4e7;
-      overflow-x: auto;
-      line-height: 1.65;
-    }}
-
-    .hl-key {{ color: #38bdf8; }}
-    .hl-str {{ color: #fbbf24; }}
-    .hl-green {{ color: #4ade80; }}
-    .hl-dim {{ color: #71717a; }}
-
-    .neon-footer {{
-      background-color: var(--footer-bg);
-      border-top: 1px solid #e5e5e5;
-      color: #52525b;
-      padding: 80px 24px 48px;
-      font-family: var(--font-main);
-      position: relative;
-      z-index: 30;
-      clear: both;
-    }}
-
-    .footer-container {{
-      max-width: 1200px;
-      margin: 0 auto;
-    }}
-
-    .footer-top {{
-      display: grid;
-      grid-template-columns: 2fr repeat(4, 1fr);
-      gap: 48px;
-      margin-bottom: 64px;
-    }}
-
-    .footer-brand {{
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }}
-
-    .footer-logo {{
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      color: #18181b;
-      font-weight: 800;
-      font-size: 20px;
-      letter-spacing: -0.03em;
-    }}
-
-    .footer-logo svg {{
-      width: 24px;
-      height: 24px;
-    }}
-
-    .footer-tagline {{
-      font-size: 14px;
-      color: #71717a;
-      max-width: 270px;
-      line-height: 1.5;
-    }}
-
-    .status-badge {{
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      width: fit-content;
-      margin-top: 8px;
-      padding: 6px 12px;
-      border-radius: 9999px;
-      background: #ffffff;
-      border: 1px solid #e4e4e7;
-      color: #3f3f46;
-      font-size: 12px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s ease;
-    }}
-
-    .status-badge:hover {{
-      background: #f4f4f5;
-      border-color: #d4d4d8;
-      color: #18181b;
-    }}
-
-    .status-dot {{
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background-color: #16a34a;
-      box-shadow: 0 0 8px #16a34a;
-    }}
-
-    .footer-col h4 {{
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #18181b;
-      margin-bottom: 20px;
-    }}
-
-    .footer-col ul {{
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }}
-
-    .footer-col ul li a {{
-      color: #71717a;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      transition: color 0.15s ease;
-      display: inline-block;
-    }}
-
-    .footer-col ul li a:hover {{
-      color: #18181b;
-      font-weight: 600;
-    }}
-
-    .footer-bottom {{
-      border-top: 1px solid #e5e5e5;
-      padding-top: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 20px;
-      font-size: 13px;
-      color: #71717a;
-    }}
-
-    .footer-bottom-links {{
-      display: flex;
-      align-items: center;
-      gap: 24px;
-    }}
-
-    .footer-bottom-links a {{
-      color: #71717a;
-      text-decoration: none;
-      transition: color 0.15s ease;
-    }}
-
-    .footer-bottom-links a:hover {{
-      color: #18181b;
-    }}
-
-    .social-links {{
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }}
-
-    .social-links a {{
-      color: #71717a;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.15s ease;
-      text-decoration: none;
-    }}
-
-    .social-links a:hover {{
-      color: #18181b;
-    }}
-
-    .social-links svg {{
-      width: 18px;
-      height: 18px;
-      fill: currentColor;
-    }}
-
-    @media (max-width: 900px) {{
-      .sticky-nav-wrapper {{
-        position: static;
-        padding: 40px 24px 0;
-      }}
-      .sticky-sidebar {{
-        position: static;
-        width: 100%;
-      }}
-      .section-inner {{
-        display: block;
-        padding: 0 24px;
-      }}
-      .section-content {{
-        width: 100%;
-      }}
-      .feature-section {{
-        padding: 60px 0;
-        min-height: auto;
-      }}
-      .footer-top {{
-        grid-template-columns: 1fr 1fr;
-        gap: 36px;
-      }}
-      .footer-brand {{
-        grid-column: 1 / -1;
-      }}
-      .footer-bottom {{
-        flex-direction: column;
-        align-items: flex-start;
-      }}
     }}
 </style>
 </head>
@@ -664,11 +220,11 @@ def _navbar(request: Request, user_email: str | None = None) -> str:
         """
 
     return f"""
-<nav class="sticky top-0 z-50 flex justify-between items-center w-full px-6 lg:px-12 py-3 bg-surface-white border-b border-border-muted">
+<nav class="sticky top-0 z-50 flex justify-between items-center w-full px-4 sm:px-6 lg:px-12 py-3 bg-surface-white border-b border-border-muted">
     <div class="flex items-center gap-4">
-        <a href="/" class="text-xl font-bold text-on-surface no-underline tracking-tight">Memory Notes</a>
+        <a href="/" class="text-lg sm:text-xl font-bold text-on-surface no-underline tracking-tight">Memory Notes</a>
     </div>
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-3">
         {right_actions}
     </div>
 </nav>
@@ -724,28 +280,28 @@ async def landing_page(request: Request):
 {nav_html}
 <main class="flex-grow">
     <!-- Hero Section -->
-    <section class="relative pt-20 pb-20 border-b border-border-muted hero-interactive-grid"
+    <section class="relative pt-12 pb-16 sm:pt-20 sm:pb-20 border-b border-border-muted hero-interactive-grid"
              onmousemove="const r = this.getBoundingClientRect(); this.style.setProperty('--x', (event.clientX - r.left) + 'px'); this.style.setProperty('--y', (event.clientY - r.top) + 'px');">
-        <div class="max-w-6xl mx-auto px-6 lg:px-12 relative z-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 relative z-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
             <div class="flex-1 space-y-4 text-center lg:text-left">
                 <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-surface-white border border-border-muted text-xs font-mono text-on-surface-variant mb-2 shadow-xs">
                     <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                     Model Context Protocol Active
                 </div>
-                <h1 class="text-4xl lg:text-[54px] lg:leading-[60px] font-bold text-on-surface tracking-tight max-w-2xl">
+                <h1 class="text-3xl sm:text-4xl lg:text-[54px] lg:leading-[60px] font-bold text-on-surface tracking-tight max-w-2xl">
                     Structured Freedom for Your Thoughts.
                 </h1>
-                <p class="text-base lg:text-lg text-on-surface-variant max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                <p class="text-sm sm:text-base lg:text-lg text-on-surface-variant max-w-xl mx-auto lg:mx-0 leading-relaxed">
                     A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents. Read and write thoughts dynamically.
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-3">
-                    <a href="{' /console' if user_id else '/signup'}" class="bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Get Started</a>
-                    <a href="#quickstart" class="bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline shadow-sm">See more</a>
+                    <a href="{' /console' if user_id else '/signup'}" class="w-full sm:w-auto text-center bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Get Started</a>
+                    <a href="#quickstart" class="w-full sm:w-auto text-center bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline shadow-sm">See more</a>
                 </div>
             </div>
             
             <div class="flex-1 w-full max-w-md lg:max-w-none flex items-center justify-center">
-                <div class="p-6 bg-surface-white border border-border-muted rounded-xl shadow-md text-left w-full max-w-md font-mono text-xs">
+                <div class="p-4 sm:p-6 bg-surface-white border border-border-muted rounded-xl shadow-md text-left w-full max-w-md font-mono text-xs overflow-x-auto">
                     <div class="flex items-center justify-between pb-3 mb-3 border-b border-border-muted">
                         <span class="font-bold text-primary">● MCP MEMORY GATEWAY</span>
                         <span class="text-text-secondary">Connected</span>
@@ -759,17 +315,17 @@ async def landing_page(request: Request):
     </section>
 
     <!-- 1. Live Interactive Code / Terminal Block -->
-    <section id="quickstart" class="py-16 bg-surface-white border-b border-border-muted">
-        <div class="max-w-6xl mx-auto px-6 lg:px-12">
+    <section id="quickstart" class="py-12 sm:py-16 bg-surface-white border-b border-border-muted">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
                 <div>
-                    <h2 class="text-2xl lg:text-3xl font-bold text-on-surface mb-2">Connect in 30 Seconds</h2>
-                    <p class="text-sm text-on-surface-variant">Add your MCP Memory endpoint to your AI client configuration file.</p>
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-on-surface mb-2">Connect in 30 Seconds</h2>
+                    <p class="text-xs sm:text-sm text-on-surface-variant">Add your MCP Memory endpoint to your AI client configuration file.</p>
                 </div>
-                <div class="flex items-center bg-surface-container-low border border-border-muted p-1 rounded-lg gap-1">
-                    <button id="tab-claude" onclick="setTerminalTab('claude')" class="px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors">Claude Desktop</button>
-                    <button id="tab-cursor" onclick="setTerminalTab('cursor')" class="px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors">Cursor / IDE</button>
-                    <button id="tab-curl" onclick="setTerminalTab('curl')" class="px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors">cURL / HTTP</button>
+                <div class="flex items-center bg-surface-container-low border border-border-muted p-1 rounded-lg gap-1 overflow-x-auto w-full md:w-auto">
+                    <button id="tab-claude" onclick="setTerminalTab('claude')" class="px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors whitespace-nowrap">Claude Desktop</button>
+                    <button id="tab-cursor" onclick="setTerminalTab('cursor')" class="px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors whitespace-nowrap">Cursor / IDE</button>
+                    <button id="tab-curl" onclick="setTerminalTab('curl')" class="px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors whitespace-nowrap">cURL / HTTP</button>
                 </div>
             </div>
 
@@ -779,14 +335,14 @@ async def landing_page(request: Request):
                         <span class="w-3 h-3 rounded-full bg-[#ff5f56] inline-block"></span>
                         <span class="w-3 h-3 rounded-full bg-[#ffbd2e] inline-block"></span>
                         <span class="w-3 h-3 rounded-full bg-[#27c93f] inline-block"></span>
-                        <span class="ml-2 text-neutral-400 text-[11px]">mcp_configuration.json</span>
+                        <span class="ml-2 text-neutral-400 text-[11px] truncate">mcp_configuration.json</span>
                     </div>
-                    <button id="btnCopySnippet" onclick="copyToClipboard(document.querySelector('#snippet-container pre:not(.hidden)').innerText, 'btnCopySnippet')" class="px-3 py-1 rounded bg-[#26262b] hover:bg-[#323238] text-neutral-300 text-[11px] border border-neutral-700 transition-colors">
-                        Copy Snippet
+                    <button id="btnCopySnippet" onclick="copyToClipboard(document.querySelector('#snippet-container pre:not(.hidden)').innerText, 'btnCopySnippet')" class="px-3 py-1 rounded bg-[#26262b] hover:bg-[#323238] text-neutral-300 text-[11px] border border-neutral-700 transition-colors whitespace-nowrap">
+                        Copy
                     </button>
                 </div>
 
-                <div id="snippet-container" class="p-5 overflow-x-auto text-neutral-300 leading-relaxed">
+                <div id="snippet-container" class="p-4 sm:p-5 overflow-x-auto text-neutral-300 leading-relaxed">
                     <pre id="snippet-claude"><code>{claude_config_snippet}</code></pre>
                     <pre id="snippet-cursor" class="hidden"><code>{cursor_config_snippet}</code></pre>
                     <pre id="snippet-curl" class="hidden"><code>{curl_config_snippet}</code></pre>
@@ -796,8 +352,8 @@ async def landing_page(request: Request):
     </section>
 
     <!-- 2. EXACT NEON-STYLE ARCHITECTURE CANVAS WITH EMBEDDED EXACT ANIMATION -->
-    <section id="pipeline" class="py-20 bg-[#000000] text-white border-b border-neutral-800 overflow-hidden select-none">
-        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+    <section id="pipeline" class="py-12 sm:py-20 bg-[#000000] text-white border-b border-neutral-800 overflow-hidden select-none">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
             
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mb-8">
                 <div>
@@ -805,15 +361,15 @@ async def landing_page(request: Request):
                         <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
                         Live Branching Architecture
                     </p>
-                    <h2 class="text-white text-3xl font-bold tracking-tight">
+                    <h2 class="text-white text-2xl sm:text-3xl font-bold tracking-tight">
                         Instant Context Pipeline
                     </h2>
                 </div>
             </div>
 
-            <!-- Embedded Exact Animation Diagram Container -->
-            <div class="w-full flex justify-center bg-[#000000] rounded-2xl border border-white/[0.08] p-4 overflow-x-auto shadow-2xl">
-              <div class="diagram-container" style="transform: scale(0.95); transform-origin: center;">
+            <!-- Embedded Exact Animation Diagram Container with Mobile Scroll Support -->
+            <div class="w-full flex justify-center bg-[#000000] rounded-2xl border border-white/[0.08] p-2 sm:p-4 overflow-x-auto shadow-2xl">
+              <div class="diagram-container" style="transform: scale(0.75); transform-origin: center; @media (min-width: 640px) {{ transform: scale(0.95); }}">
                 <!-- Grid Columns -->
                 <div class="vertical-grid">
                   <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
@@ -1173,7 +729,7 @@ async def landing_page(request: Request):
     <!-- Core Capabilities Showcase Container -->
     <div class="showcase-container">
       
-      <div class="sticky-nav-wrapper">
+      <div class="sticky-nav-wrapper hidden lg:block">
         <nav class="sticky-sidebar" id="sidebar">
           <button class="menu-badge-btn" aria-hidden="true" tabindex="-1">CORE CAPABILITIES</button>
           <ul class="nav-list">
@@ -1207,8 +763,8 @@ async def landing_page(request: Request):
       </div>
 
       <section id="trigram-search" class="feature-section section-dark" data-theme="dark">
-        <div class="section-inner">
-          <div class="section-content">
+        <div class="section-inner" style="grid-template-columns: 1fr; lg:grid-template-columns: 260px 1fr;">
+          <div class="section-content" style="grid-column: 1 / -1; lg:grid-column: 2;">
             <h2 class="hero-heading">Zero-Latency Trigram Search. Never miss a fragmented thought.</h2>
             <p class="lead-text">Memory Notes harnesses PostgreSQL trigram matching (<code>pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds.</p>
             
@@ -1237,7 +793,7 @@ async def landing_page(request: Request):
 
       <section id="ai-memory-sync" class="feature-section section-light" data-theme="light">
         <div class="section-inner">
-          <div class="section-content">
+          <div class="section-content" style="grid-column: 1 / -1; lg:grid-column: 2;">
             <h2 class="hero-heading">Autonomous AI Memory Sync. Bi-directional writes from your agent.</h2>
             <p class="lead-text">Claude and Cursor don't just inspect your past notes—they can create new workspace folders, append structured summaries, or update documents directly from prompt context.</p>
             
@@ -1268,7 +824,7 @@ async def landing_page(request: Request):
 
       <section id="zen-canvas" class="feature-section section-dark" data-theme="dark">
         <div class="section-inner">
-          <div class="section-content">
+          <div class="section-content" style="grid-column: 1 / -1; lg:grid-column: 2;">
             <h2 class="hero-heading">Zen Canvas. Distraction-free writing surface.</h2>
             <p class="lead-text">A writing environment that strips away the superfluous, centering your thoughts and fading interface clutter away during deep focus.</p>
             
@@ -1283,7 +839,7 @@ async def landing_page(request: Request):
 
       <section id="non-linear" class="feature-section section-light" data-theme="light">
         <div class="section-inner">
-          <div class="section-content">
+          <div class="section-content" style="grid-column: 1 / -1; lg:grid-column: 2;">
             <h2 class="hero-heading">Non-Linear Connectivity. An interconnected web of knowledge.</h2>
             <p class="lead-text">Link thoughts effortlessly with bi-directional wikilinks to visualize complex patterns, relationships, and emergent ideas.</p>
             
@@ -1298,7 +854,7 @@ async def landing_page(request: Request):
 
       <section id="open-protocol" class="feature-section section-dark" data-theme="dark">
         <div class="section-inner">
-          <div class="section-content">
+          <div class="section-content" style="grid-column: 1 / -1; lg:grid-column: 2;">
             <h2 class="hero-heading">Open Protocol Standards. Zero lock-in, complete control.</h2>
             <p class="lead-text">Built directly on Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer independence and easy tooling integrations.</p>
             
@@ -1411,6 +967,7 @@ async def landing_page(request: Request):
       const sidebar = document.getElementById('sidebar');
 
       function syncActiveNav() {{
+        if (window.innerWidth < 1024) return;
         const focalLine = window.innerHeight * 0.4;
         let currentSection = sections[0];
 
@@ -1462,9 +1019,9 @@ async def signup_get(request: Request):
     
     body = f"""
 {_navbar(request)}
-<main class="flex-grow flex items-center justify-center py-16 px-6">
-    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
-        <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
+<main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
+        <h2 class="text-xl sm:text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
         <p class="text-xs text-text-secondary mb-6">Set up your Memory Notes gateway account.</p>
         <form method="POST" action="/signup">
             <input type="hidden" name="next" value="{next_}">
@@ -1500,9 +1057,9 @@ async def signup_post(request: Request):
     if error:
         body = f"""
 {_navbar(request)}
-<main class="flex-grow flex items-center justify-center py-16 px-6">
-    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
-        <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
+<main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
+        <h2 class="text-xl sm:text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
         <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">{error}</div>
         <form method="POST" action="/signup">
             <input type="hidden" name="next" value="{next_}">
@@ -1527,9 +1084,9 @@ async def signup_post(request: Request):
     except asyncpg.exceptions.UniqueViolationError:
         body = f"""
 {_navbar(request)}
-<main class="flex-grow flex items-center justify-center py-16 px-6">
-    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
-        <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
+<main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
+        <h2 class="text-xl sm:text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
         <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">An account with that email already exists.</div>
         <p class="text-xs"><a href="/login?next={next_}" class="text-primary font-semibold underline">Log in instead</a></p>
     </div>
@@ -1551,9 +1108,9 @@ async def login_get(request: Request):
     
     body = f"""
 {_navbar(request)}
-<main class="flex-grow flex items-center justify-center py-16 px-6">
-    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
-        <h2 class="text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
+<main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
+        <h2 class="text-xl sm:text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
         <p class="text-xs text-text-secondary mb-6">Log in to your account.</p>
         <form method="POST" action="/login">
             <input type="hidden" name="next" value="{next_}">
@@ -1586,9 +1143,9 @@ async def login_post(request: Request):
     if user is None or not security.verify_password(password, user["password_hash"]):
         body = f"""
 {_navbar(request)}
-<main class="flex-grow flex items-center justify-center py-16 px-6">
-    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
-        <h2 class="text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
+<main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
+        <h2 class="text-xl sm:text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
         <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">Incorrect email or password.</div>
         <form method="POST" action="/login">
             <input type="hidden" name="next" value="{next_}">
@@ -1621,7 +1178,7 @@ async def logout(request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Console Page (Custom Codebase Manager 2D Node Canvas UI)
+# Console Page (Custom Codebase Manager 2D Node Canvas UI - Mobile Optimized)
 # ---------------------------------------------------------------------------
 async def console_page(request: Request):
     user_id = _require_login(request)
@@ -1702,14 +1259,15 @@ async def console_page(request: Request):
 
                 nodes_html += f"""
                 <div class="canvas-node" style="left: {x}px; top: {y}px; width: {card_width}px;" 
-                     ondblclick="openNodeModal('Step {step_idx}: {title_esc}', '{summary_esc}', '{why_esc}', '{impact_esc}')">
+                     ondblclick="openNodeModal('Step {step_idx}: {title_esc}', '{summary_esc}', '{why_esc}', '{impact_esc}')"
+                     onclick="openNodeModal('Step {step_idx}: {title_esc}', '{summary_esc}', '{why_esc}', '{impact_esc}')">
                     <div class="node-header">
                         <span class="node-step">Step {step_idx}</span>
                         <span class="node-status">✓</span>
                     </div>
                     <div class="node-title">{node['title']}</div>
                     <div class="node-snippet">{node['summary'][:90]}...</div>
-                    <div class="node-footer">Double-click to expand note</div>
+                    <div class="node-footer">Tap to view note</div>
                 </div>
                 """
             
@@ -1731,7 +1289,7 @@ async def console_page(request: Request):
         <div class="empty-canvas-state">
             <div class="empty-icon">📁</div>
             <h3>Manage Code Base</h3>
-            <p>Select a codebase from the sidebar to view its architecture nodes and logs.</p>
+            <p>Select a codebase from the sidebar menu to view its architecture nodes and logs.</p>
         </div>
         """
 
@@ -1739,7 +1297,7 @@ async def console_page(request: Request):
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>Console - Codebase Manager</title>
 <style>
 :root {{
@@ -1754,7 +1312,9 @@ body {{
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
+  -webkit-text-size-adjust: 100%;
 }}
 
 .container {{
@@ -1766,6 +1326,7 @@ body {{
       linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%, transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%, transparent);
   background-size: 55px 55px;
   display: flex;
+  position: relative;
 }}
 
 #sidebar-toggle {{ display: none; }}
@@ -1774,26 +1335,26 @@ body {{
   background: black;
   border: 1px solid var(--border-color);
   color: var(--text-muted);
-  padding: 8px;
+  padding: 10px;
   border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 50;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }}
 
 .floating-toggle {{
   position: fixed;
   top: 12px;
   left: 12px;
-  z-index: 10;
-  display: none;
+  z-index: 40;
+  display: flex;
 }}
 
-#sidebar-toggle:checked ~ .floating-toggle {{ display: flex; }}
-
 .sidebar {{
-  width: 260px;
+  width: 280px;
   background-color: var(--sidebar-bg);
   border-right: 1px solid var(--border-color);
   display: flex;
@@ -1801,15 +1362,32 @@ body {{
   height: 100%;
   box-sizing: border-box;
   padding: 12px;
-  z-index: 5;
-  transition: transform 0.3s ease, width 0.3s ease;
+  z-index: 30;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}}
+
+@media (min-width: 768px) {{
+  .sidebar {{
+    position: relative;
+    transform: translateX(0);
+  }}
+  .floating-toggle {{
+    display: none;
+  }}
+  #sidebar-toggle:checked ~ .sidebar {{
+    transform: translateX(-100%);
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+  }}
 }}
 
 #sidebar-toggle:checked ~ .sidebar {{
-  transform: translateX(-100%);
-  width: 0;
-  padding: 0;
-  overflow: hidden;
+  transform: translateX(0);
 }}
 
 .sidebar-header {{
@@ -1820,7 +1398,7 @@ body {{
   padding: 4px;
 }}
 
-.sidebar-brand {{ font-size: 14px; font-weight: 600; color: var(--text-main); }}
+.sidebar-brand {{ font-size: 15px; font-weight: 600; color: var(--text-main); }}
 .sidebar-section-title {{ font-size: 12px; font-weight: 500; color: var(--text-muted); padding: 8px 12px; }}
 
 .chat-list {{
@@ -1829,13 +1407,14 @@ body {{
   list-style: none;
   padding: 0;
   margin: 0;
+  -webkit-overflow-scrolling: touch;
 }}
 
 .chat-item {{
-  padding: 10px 12px;
+  padding: 12px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -1862,13 +1441,13 @@ body {{
 .user-info {{ display: flex; align-items: center; gap: 10px; font-size: 14px; }}
 .user-name {{ color: white; }}
 .avatar {{
-  width: 24px; height: 24px; background-color: #3b82f6; color: white;
+  width: 26px; height: 26px; background-color: #3b82f6; color: white;
   border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;
 }}
 .plan-badge {{ font-size: 11px; color: var(--text-muted); }}
 
 .logout-btn {{
-  all: unset; color: #f87171; font-size: 12px; cursor: pointer; padding: 4px 12px; display: block;
+  all: unset; color: #f87171; font-size: 13px; cursor: pointer; padding: 6px 12px; display: block;
 }}
 .logout-btn:hover {{ text-decoration: underline; }}
 
@@ -1879,6 +1458,7 @@ body {{
   overflow: auto;
   cursor: grab;
   background: transparent;
+  -webkit-overflow-scrolling: touch;
 }}
 .main-canvas:active {{ cursor: grabbing; }}
 
@@ -1899,6 +1479,7 @@ body {{
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }}
 .canvas-node:hover {{
   transform: translateY(-3px);
@@ -1921,34 +1502,41 @@ body {{
 /* Empty State */
 .empty-canvas-state {{
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  text-align: center; max-width: 380px; background: white; border: 1px solid #e2e2e7; padding: 32px; border-radius: 12px;
+  text-align: center; max-width: 340px; width: 90%; background: white; border: 1px solid #e2e2e7; padding: 24px; border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.04);
 }}
 .empty-icon {{ font-size: 32px; margin-bottom: 12px; }}
 .empty-canvas-state h3 {{ font-size: 16px; font-weight: bold; margin: 0 0 8px 0; color: #111; }}
 .empty-canvas-state p {{ font-size: 12px; color: #666; line-height: 1.5; margin: 0 0 16px 0; }}
-.empty-canvas-state code {{ display: block; background: #f4f4f5; padding: 8px; border-radius: 6px; font-family: monospace; font-size: 11px; color: #333; }}
+.empty-canvas-state code {{ display: block; background: #f4f4f5; padding: 8px; border-radius: 6px; font-family: monospace; font-size: 11px; color: #333; overflow-x: auto; }}
 
 /* Modal Popup for Node Details */
 .modal-overlay {{
-  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center;
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 16px;
 }}
 .modal-overlay.active {{ display: flex; }}
 .modal-card {{
-  background: white; width: 500px; max-width: 90%; border-radius: 12px; border: 1px solid #e4e4e7; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); padding: 24px; position: relative;
+  background: white; width: 100%; max-width: 500px; border-radius: 12px; border: 1px solid #e4e4e7; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); padding: 20px; position: relative; max-height: 85vh; overflow-y: auto;
 }}
 .modal-close {{
-  position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 18px; cursor: pointer; color: #71717a;
+  position: absolute; top: 14px; right: 14px; background: none; border: none; font-size: 20px; cursor: pointer; color: #71717a; padding: 4px;
 }}
-.modal-title {{ font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #18181b; }}
+.modal-title {{ font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #18181b; padding-right: 24px; }}
 .modal-section {{ margin-bottom: 12px; }}
 .modal-label {{ font-size: 11px; font-weight: bold; text-transform: uppercase; color: #71717a; margin-bottom: 4px; }}
-.modal-body {{ font-size: 13px; color: #3f3f46; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; line-height: 1.5; }}
+.modal-body {{ font-size: 13px; color: #3f3f46; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; line-height: 1.5; word-break: break-word; }}
 </style>
 </head>
 <body>
 <div class="container">
   <input type="checkbox" id="sidebar-toggle" />
+
+  <label for="sidebar-toggle" class="toggle-btn floating-toggle" title="Toggle Sidebar">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+      <line x1="9" y1="3" x2="9" y2="21"></line>
+    </svg>
+  </label>
 
   <aside class="sidebar">
     <div class="sidebar-header">
@@ -1983,13 +1571,6 @@ body {{
     </div>
   </aside>
 
-  <label for="sidebar-toggle" class="toggle-btn floating-toggle" title="Toggle Sidebar">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-      <line x1="9" y1="3" x2="9" y2="21"></line>
-    </svg>
-  </label>
-
   <main class="main-canvas" id="canvasArea">
     {canvas_content}
   </main>
@@ -2023,6 +1604,7 @@ body {{
   let isDragging = false;
   let startX, startY, scrollLeft, scrollTop;
 
+  // Mouse & Touch drag handling for infinite 2D canvas
   canvas.addEventListener('mousedown', (e) => {{
     if(e.target.closest('.canvas-node')) return;
     isDragging = true;
@@ -2032,8 +1614,19 @@ body {{
     scrollTop = canvas.scrollTop;
   }});
 
+  canvas.addEventListener('touchstart', (e) => {{
+    if(e.target.closest('.canvas-node')) return;
+    isDragging = true;
+    startX = e.touches[0].pageX - canvas.offsetLeft;
+    startY = e.touches[0].pageY - canvas.offsetTop;
+    scrollLeft = canvas.scrollLeft;
+    scrollTop = canvas.scrollTop;
+  }}, {{passive: true}});
+
   canvas.addEventListener('mouseleave', () => {{ isDragging = false; }});
   canvas.addEventListener('mouseup', () => {{ isDragging = false; }});
+  canvas.addEventListener('touchend', () => {{ isDragging = false; }});
+
   canvas.addEventListener('mousemove', (e) => {{
     if(!isDragging) return;
     e.preventDefault();
@@ -2042,6 +1635,14 @@ body {{
     canvas.scrollLeft = scrollLeft - (x - startX);
     canvas.scrollTop = scrollTop - (y - startY);
   }});
+
+  canvas.addEventListener('touchmove', (e) => {{
+    if(!isDragging) return;
+    const x = e.touches[0].pageX - canvas.offsetLeft;
+    const y = e.touches[0].pageY - canvas.offsetTop;
+    canvas.scrollLeft = scrollLeft - (x - startX);
+    canvas.scrollTop = scrollTop - (y - startY);
+  }}, {{passive: true}});
 
   function openNodeModal(title, summary, rationale, impact) {{
     document.getElementById('modalTitle').innerText = title;
@@ -2084,7 +1685,7 @@ async def dashboard_get(request: Request):
     flash_html = ""
     if flash_key:
         flash_html = f"""
-<div class="mb-6 p-4 bg-surface-container-low border border-primary rounded-lg">
+<div class="mb-6 p-4 bg-surface-container-low border border-primary rounded-lg overflow-x-auto">
     <strong class="text-xs uppercase font-mono text-primary block mb-1">New API Key (Shown Once — Copy Now):</strong>
     <div class="flex items-center gap-2 mt-2">
         <input type="text" readonly value="{flash_key}" id="newApiKeyField" class="w-full font-mono text-xs bg-surface-white border border-border-muted p-2 rounded">
@@ -2096,7 +1697,7 @@ async def dashboard_get(request: Request):
 
     if user["connection_string_encrypted"]:
         masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
-        conn_status = f'<p class="text-xs text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
+        conn_status = f'<p class="text-xs text-text-secondary">Currently linked: <code class="text-on-surface font-mono break-all">{masked}</code></p>'
     else:
         conn_status = '<div class="p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">No Neon connection string set yet. Claude connector will fail until configured.</div>'
 
@@ -2104,12 +1705,12 @@ async def dashboard_get(request: Request):
     active_keys = [k for k in keys if k["revoked_at"] is None]
     if active_keys:
         rows = "".join(f"""
-<div class="flex items-center justify-between py-3 border-b border-border-muted last:border-0">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b border-border-muted last:border-0 gap-2">
     <div>
         <div class="text-sm font-semibold text-on-surface">{k['label']}</div>
         <div class="text-xs text-text-secondary">Created {k['created_at'].strftime('%b %d, %Y')}{f" • Last used {k['last_used_at'].strftime('%b %d, %Y')}" if k['last_used_at'] else ""}</div>
     </div>
-    <form method="POST" action="/dashboard/api-key/revoke" class="m-0">
+    <form method="POST" action="/dashboard/api-key/revoke" class="m-0 self-end sm:self-auto">
         <input type="hidden" name="key_id" value="{k['id']}">
         <button type="submit" class="text-error text-xs font-semibold hover:underline" onclick="return confirm('Revoke this key? Apps using it will disconnect immediately.');">Revoke</button>
     </form>
@@ -2124,11 +1725,11 @@ async def dashboard_get(request: Request):
 
     body = f"""
 {nav_html}
-<main class="flex-grow py-10 px-6 bg-surface-white">
+<main class="flex-grow py-8 px-4 sm:px-6 bg-surface-white">
     <div class="max-w-3xl mx-auto">
-        <div class="mb-6 flex justify-between items-center">
+        <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-                <h1 class="text-2xl font-bold text-on-surface mb-1">Database & API Settings</h1>
+                <h1 class="text-xl sm:text-2xl font-bold text-on-surface mb-1">Database & API Settings</h1>
                 <p class="text-xs text-text-secondary">Manage your Neon database connection string and MCP API keys.</p>
             </div>
             <a href="/console" class="text-xs font-semibold text-primary underline">← Back to Console</a>
@@ -2137,17 +1738,17 @@ async def dashboard_get(request: Request):
         {flash_html}
 
         <!-- 1. Endpoint & Connection URL -->
-        <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
+        <div class="bg-surface-white border border-border-muted p-5 sm:p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">1. MCP Server Endpoint</h2>
             <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector.</p>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <input type="text" readonly value="{mcp_endpoint}" id="mcpEndpointField" class="w-full font-mono text-xs bg-surface-container-low border border-border-muted p-2.5 rounded">
                 <button id="btnCopyEndpoint" onclick="copyToClipboard('{mcp_endpoint}', 'btnCopyEndpoint')" class="bg-surface-white text-on-surface px-4 py-2.5 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy URL</button>
             </div>
         </div>
 
         <!-- 2. Neon Database Connection String Settings -->
-        <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
+        <div class="bg-surface-white border border-border-muted p-5 sm:p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">2. Neon Database Connection String</h2>
             <p class="text-xs text-text-secondary mb-3">Paste the same PostgreSQL connection string your mobile notes app uses to sync.</p>
             {conn_status}
@@ -2155,19 +1756,19 @@ async def dashboard_get(request: Request):
                 <div class="mb-3">
                     <input type="text" name="connection_string" placeholder="postgresql://user:password@ep-xxx.neon.tech/dbname" required class="w-full px-4 py-2.5 border border-border-muted rounded text-xs font-mono focus:outline-none focus:border-primary">
                 </div>
-                <button type="submit" class="bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505]">Save Connection String</button>
+                <button type="submit" class="w-full sm:w-auto bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505]">Save Connection String</button>
             </form>
         </div>
 
         <!-- 3. API Keys Management -->
-        <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
+        <div class="bg-surface-white border border-border-muted p-5 sm:p-6 rounded-xl shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">3. MCP API Keys</h2>
             <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps.</p>
-            <div class="divide-y border-border-muted mb-4">
+            <div class="divide-y border-border-muted mb-4 overflow-x-auto">
                 {rows}
             </div>
             <form method="POST" action="/dashboard/api-key/create">
-                <button type="submit" class="bg-surface-white text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors">Generate New Manual API Key</button>
+                <button type="submit" class="w-full sm:w-auto bg-surface-white text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors">Generate New Manual API Key</button>
             </form>
         </div>
     </div>
@@ -2214,7 +1815,7 @@ async def create_api_key(request: Request):
 async def revoke_api_key(request: Request):
     user_id = _require_login(request)
     if not user_id:
-        return RedirectResponse(("/login"), status_code=302)
+        return RedirectResponse("/login", status_code=302)
 
     form = await request.form()
     key_id = str(form.get("key_id", ""))
@@ -2227,8 +1828,8 @@ async def revoke_api_key(request: Request):
 
 def _dashboard_error(message: str) -> HTMLResponse:
     body = f"""
-<main class="flex-grow flex items-center justify-center py-16 px-6 bg-surface-white">
-    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm text-center">
+<main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6 bg-surface-white">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm text-center">
         <h2 class="text-lg font-bold text-error mb-2">Error</h2>
         <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-6 border border-red-200">{message}</div>
         <a href="/dashboard" class="inline-block bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] no-underline">Back to Settings</a>
