@@ -1,10 +1,11 @@
 """
-Memory Notes - Web Application
+Memory Notes - Web Application (Responsive, Scaled & Enhanced Architecture Engine)
 Full Python Starlette ASGI Application with:
-- Desktop: Exact original pinned sticky sidebar with live scroll tracking and desktop canvas[cite: 1].
-- Mobile & Tablet: Standard stacked sections without sticky nav overhead, styled after Neon's mobile layout.
-- Horizontal friction-free scroll for the architecture pipeline diagram on mobile devices[cite: 1].
-- Complete multi-user OAuth 2.1, FastMCP, and 2D Interactive Console Canvas support[cite: 1, 5, 8].
+- Proportional Aspect-Ratio Vector Engine (Zoom/Scale lock modeled after Neon)
+- Directed Graph Visualizer in Console with Pan, Zoom & Mini-HUD Controls
+- Module Layer Color Grouping & Cross-Referenced Notes & Decisions
+- Multi-Tab Quick-Start Terminal Snippets (Claude Desktop / Cursor / cURL)
+- FastMCP Multi-Tenant Database & Control Plane Settings
 """
 
 import asyncpg
@@ -145,6 +146,67 @@ def _page(title: str, body: str) -> HTMLResponse:
         opacity: 1;
     }}
 
+    /* Neon-Style Zoom Lock Proportional Canvas */
+    .diagram-scaler-wrapper {{
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
+        position: relative;
+        container-type: inline-size;
+    }}
+
+    .diagram-container {{
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1000 / 524;
+        background-color: #000000;
+        overflow: hidden;
+    }}
+
+    .vertical-grid {{
+        position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 3.5%; pointer-events: none; opacity: 0.12;
+    }}
+    .grid-line {{ width: 1px; height: 100%; background-color: #ffffff; }}
+    
+    svg.canvas {{
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+    }}
+
+    .line-green {{ stroke: #00e599; stroke-width: 1.5; fill: none; }}
+    .line-green-dash {{ stroke: #00e599; stroke-width: 1.5; stroke-dasharray: 4 4; fill: none; }}
+    .line-white-dash {{ stroke: #71767c; stroke-width: 1.5; stroke-dasharray: 4 4; fill: none; }}
+    .line-white-solid {{ stroke: #71767c; stroke-width: 1.5; fill: none; }}
+    .ruler-tick {{ stroke: #25282c; stroke-width: 1.5; transition: stroke 0.25s ease; }}
+    .ruler-tick.lit {{ stroke: #00e599; }}
+    .tick-active {{ stroke: #00e599; stroke-width: 1.5; }}
+
+    /* Proportional Scaled Badges */
+    .badge {{
+        position: absolute; transform: translate(-50%, -50%) scale(0.7); display: flex; align-items: center; gap: 0.6cqw; font-size: clamp(8px, 1.2cqw, 12px); font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
+        transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
+    }}
+    .badge.visible {{ opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }}
+    .badge-white {{ background: #ffffff; color: #000000; padding: 0.5cqw 1.2cqw; font-weight: 600; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1); }}
+    .badge-yellow {{ background: #fcee0a; color: #000000; padding: 0.6cqw 1.4cqw; font-weight: 700; font-size: clamp(9px, 1.3cqw, 13px); box-shadow: 0 0 28px rgba(252, 238, 10, 0.45); }}
+    .badge-dark {{ background: #25282e; color: #b1b8c0; border: 1px solid #383c44; padding: 0.4cqw 1.1cqw; font-size: clamp(8px, 1.1cqw, 11.5px); }}
+    
+    .circle-icon {{
+        position: absolute; transform: translate(-50%, -50%) scale(0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; opacity: 0;
+        transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }}
+    .circle-icon.visible {{ opacity: 1; transform: translate(-50%, -50%) scale(1); }}
+    .check-node {{ width: 1.5cqw; height: 1.5cqw; min-width: 14px; min-height: 14px; background: #00e599; color: #000000; font-size: clamp(7px, 0.9cqw, 9px); font-weight: 900; box-shadow: 0 0 10px rgba(0, 229, 153, 0.7); }}
+    .outline-node {{ width: 2cqw; height: 2cqw; min-width: 18px; min-height: 18px; border-radius: 50%; background: #0b0d10; border: 1px solid #30353c; color: #8b949e; }}
+    .hollow-node {{ width: 0.7cqw; height: 0.7cqw; min-width: 7px; min-height: 7px; background: #000000; border: 1.5px solid #00e599; border-radius: 50%; }}
+
+    .meta-text {{
+        position: absolute; transform: translateX(-50%); font-size: clamp(7.5px, 0.95cqw, 9.5px); color: #7d8590; text-align: center; line-height: 1.35; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.4s ease;
+    }}
+    .meta-text.visible {{ opacity: 1; }}
+    .timestamp {{ font-size: clamp(7.5px, 0.95cqw, 9.5px); color: #555d68; letter-spacing: 0.3px; }}
+    .glow-dot {{ fill: #00e599; filter: url(#glow); opacity: 0; transition: opacity 0.2s ease; }}
+    .glow-dot.active {{ opacity: 1; }}
+
     /* Core Capabilities Showcase Scaffolding */
     :root {{
       --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -251,24 +313,12 @@ def _page(title: str, body: str) -> HTMLResponse:
       cursor: pointer;
     }}
 
-    .nav-btn:hover {{
-      color: #ffffff;
-    }}
+    .nav-btn:hover {{ color: #ffffff; }}
+    .nav-btn.active {{ color: #ffffff; font-weight: 700; }}
 
-    .nav-btn.active {{
-      color: #ffffff;
-      font-weight: 700;
-    }}
-
-    .sticky-sidebar.theme-light .nav-btn {{
-      color: #71717a;
-    }}
-    .sticky-sidebar.theme-light .nav-btn:hover {{
-      color: #000000;
-    }}
-    .sticky-sidebar.theme-light .nav-btn.active {{
-      color: #000000;
-    }}
+    .sticky-sidebar.theme-light .nav-btn {{ color: #71717a; }}
+    .sticky-sidebar.theme-light .nav-btn:hover {{ color: #000000; }}
+    .sticky-sidebar.theme-light .nav-btn.active {{ color: #000000; }}
 
     .nav-dot {{
       width: 6px;
@@ -310,18 +360,12 @@ def _page(title: str, body: str) -> HTMLResponse:
       max-width: 820px;
     }}
 
-    .section-dark {{
-      background-color: #000000;
-      color: #e2e8f0;
-    }}
+    .section-dark {{ background-color: #000000; color: #e2e8f0; }}
     .section-dark .hero-heading {{ color: #ffffff; }}
     .section-dark .lead-text {{ color: #a1a1aa; }}
     .section-dark .checklist li {{ color: #d4d4d8; }}
 
-    .section-light {{
-      background-color: #ffffff;
-      color: #000000;
-    }}
+    .section-light {{ background-color: #ffffff; color: #000000; }}
     .section-light .hero-heading {{ color: #000000; }}
     .section-light .lead-text {{ color: #52525b; }}
     .section-light .checklist li {{ color: #27272a; }}
@@ -381,17 +425,8 @@ def _page(title: str, body: str) -> HTMLResponse:
       gap: 8px;
     }}
 
-    .terminal-dots {{
-      display: flex;
-      gap: 6px;
-    }}
-
-    .terminal-dots span {{
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }}
-
+    .terminal-dots {{ display: flex; gap: 6px; }}
+    .terminal-dots span {{ width: 10px; height: 10px; border-radius: 50%; }}
     .dot-red {{ background: #ef4444; }}
     .dot-yellow {{ background: #eab308; }}
     .dot-green {{ background: #22c55e; }}
@@ -427,24 +462,14 @@ def _page(title: str, body: str) -> HTMLResponse:
       clear: both;
     }}
 
-    .footer-container {{
-      max-width: 1200px;
-      margin: 0 auto;
-    }}
-
+    .footer-container {{ max-width: 1200px; margin: 0 auto; }}
     .footer-top {{
       display: grid;
       grid-template-columns: 2fr repeat(4, 1fr);
       gap: 48px;
       margin-bottom: 64px;
     }}
-
-    .footer-brand {{
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }}
-
+    .footer-brand {{ display: flex; flex-direction: column; gap: 16px; }}
     .footer-logo {{
       display: inline-flex;
       align-items: center;
@@ -455,19 +480,9 @@ def _page(title: str, body: str) -> HTMLResponse:
       font-size: 20px;
       letter-spacing: -0.03em;
     }}
-
-    .footer-logo svg {{
-      width: 24px;
-      height: 24px;
-    }}
-
-    .footer-tagline {{
-      font-size: 14px;
-      color: #71717a;
-      max-width: 270px;
-      line-height: 1.5;
-    }}
-
+    .footer-logo svg {{ width: 24px; height: 24px; }}
+    .footer-tagline {{ font-size: 14px; color: #71717a; max-width: 270px; line-height: 1.5; }}
+    
     .status-badge {{
       display: inline-flex;
       align-items: center;
@@ -482,53 +497,12 @@ def _page(title: str, body: str) -> HTMLResponse:
       font-size: 12px;
       font-weight: 600;
       text-decoration: none;
-      transition: all 0.2s ease;
     }}
-
-    .status-badge:hover {{
-      background: #f4f4f5;
-      border-color: #d4d4d8;
-      color: #18181b;
-    }}
-
-    .status-dot {{
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background-color: #16a34a;
-      box-shadow: 0 0 8px #16a34a;
-    }}
-
-    .footer-col h4 {{
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #18181b;
-      margin-bottom: 20px;
-    }}
-
-    .footer-col ul {{
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding: 0;
-    }}
-
-    .footer-col ul li a {{
-      color: #71717a;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      transition: color 0.15s ease;
-      display: inline-block;
-    }}
-
-    .footer-col ul li a:hover {{
-      color: #18181b;
-      font-weight: 600;
-    }}
+    .status-dot {{ width: 6px; height: 6px; border-radius: 50%; background-color: #16a34a; box-shadow: 0 0 8px #16a34a; }}
+    .footer-col h4 {{ font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #18181b; margin-bottom: 20px; }}
+    .footer-col ul {{ list-style: none; display: flex; flex-direction: column; gap: 12px; padding: 0; }}
+    .footer-col ul li a {{ color: #71717a; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.15s ease; }}
+    .footer-col ul li a:hover {{ color: #18181b; font-weight: 600; }}
 
     .footer-bottom {{
       border-top: 1px solid #e5e5e5;
@@ -542,77 +516,15 @@ def _page(title: str, body: str) -> HTMLResponse:
       color: #71717a;
     }}
 
-    .footer-bottom-links {{
-      display: flex;
-      align-items: center;
-      gap: 24px;
-    }}
-
-    .footer-bottom-links a {{
-      color: #71717a;
-      text-decoration: none;
-      transition: color 0.15s ease;
-    }}
-
-    .footer-bottom-links a:hover {{
-      color: #18181b;
-    }}
-
-    .social-links {{
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }}
-
-    .social-links a {{
-      color: #71717a;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.15s ease;
-      text-decoration: none;
-    }}
-
-    .social-links a:hover {{
-      color: #18181b;
-    }}
-
-    .social-links svg {{
-      width: 18px;
-      height: 18px;
-      fill: currentColor;
-    }}
-
-    /* Mobile Only Adjustments: Exactly like Neon mobile view */
     @media (max-width: 900px) {{
-      .sticky-nav-wrapper {{
-        display: none !important;
-      }}
-      .mobile-feature-badge {{
-        display: inline-flex;
-      }}
-      .section-inner {{
-        display: block;
-        padding: 0 20px;
-      }}
-      .section-content {{
-        width: 100%;
-      }}
-      .feature-section {{
-        padding: 60px 0;
-        min-height: auto;
-      }}
-      .footer-top {{
-        grid-template-columns: 1fr 1fr;
-        gap: 36px;
-      }}
-      .footer-brand {{
-        grid-column: 1 / -1;
-      }}
-      .footer-bottom {{
-        flex-direction: column;
-        align-items: flex-start;
-      }}
+      .sticky-nav-wrapper {{ display: none !important; }}
+      .mobile-feature-badge {{ display: inline-flex; }}
+      .section-inner {{ display: block; padding: 0 20px; }}
+      .section-content {{ width: 100%; }}
+      .feature-section {{ padding: 60px 0; min-height: auto; }}
+      .footer-top {{ grid-template-columns: 1fr 1fr; gap: 36px; }}
+      .footer-brand {{ grid-column: 1 / -1; }}
+      .footer-bottom {{ flex-direction: column; align-items: flex-start; }}
     }}
 </style>
 </head>
@@ -741,7 +653,7 @@ async def landing_page(request: Request):
                     Structured Freedom for Your Thoughts.
                 </h1>
                 <p class="text-sm sm:text-base lg:text-lg text-on-surface-variant max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                    A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents. Read and write thoughts dynamically.
+                    A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents[cite: 1]. Read and write thoughts dynamically[cite: 1].
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-3">
                     <a href="{' /console' if user_id else '/signup'}" class="w-full sm:w-auto text-center bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Get Started</a>
@@ -769,7 +681,7 @@ async def landing_page(request: Request):
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
                 <div>
                     <h2 class="text-2xl lg:text-3xl font-bold text-on-surface mb-2">Connect in 30 Seconds</h2>
-                    <p class="text-sm text-on-surface-variant">Add your MCP Memory endpoint to your AI client configuration file.</p>
+                    <p class="text-sm text-on-surface-variant">Add your MCP Memory endpoint to your AI client configuration file[cite: 1].</p>
                 </div>
                 <div class="flex items-center bg-surface-container-low border border-border-muted p-1 rounded-lg gap-1 overflow-x-auto max-w-full">
                     <button id="tab-claude" onclick="setTerminalTab('claude')" class="px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors whitespace-nowrap">Claude Desktop</button>
@@ -800,8 +712,8 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. EXACT ARCHITECTURE CANVAS -->
-    <section id="pipeline" class="py-16 sm:py-20 bg-[#000000] text-white border-b border-neutral-800 overflow-hidden select-none">
+    <!-- 2. PROPORTIONAL ASPECT-LOCKED ARCHITECTURE CANVAS -->
+    <section id="pipeline" class="py-16 sm:py-20 bg-[#000000] text-white border-b border-neutral-800 select-none">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
             
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-3 mb-6">
@@ -814,13 +726,10 @@ async def landing_page(request: Request):
                         Instant Context Pipeline
                     </h2>
                 </div>
-                <div class="text-[11px] mono text-neutral-400 flex items-center gap-1.5 lg:hidden">
-                    <span>⇄ Swipe horizontally to inspect</span>
-                </div>
             </div>
 
-            <!-- Architecture Diagram Container -->
-            <div class="w-full bg-[#000000] rounded-2xl border border-white/[0.08] overflow-x-auto shadow-2xl p-2 sm:p-4" style="-webkit-overflow-scrolling: touch;">
+            <!-- Proportional Scaler Wrapper (Locks diagram in view across all screen zooms) -->
+            <div class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000]">
               <div class="diagram-container">
                 <!-- Grid Columns -->
                 <div class="vertical-grid">
@@ -918,141 +827,95 @@ async def landing_page(request: Request):
                   <circle id="head-dot" class="glow-dot" r="3.5" cx="0" cy="0" />
                 </svg>
 
-                <!-- Top Negotiation Status Badges -->
-                <div id="el-neg1-txt" class="meta-text" style="top: 54px; left: 450px;">negotiation<br>started</div>
-                <div id="el-neg1-ico" class="circle-icon check-node" style="top: 111px; left: 450px;">✓</div>
+                <!-- Top Negotiation Badges -->
+                <div id="el-neg1-txt" class="meta-text" style="top: 10.3%; left: 45%;">negotiation<br>started</div>
+                <div id="el-neg1-ico" class="circle-icon check-node" style="top: 21.2%; left: 45%;">✓</div>
 
-                <div id="el-neg2-txt" class="meta-text" style="top: 54px; left: 591px;">negotiation<br>complete</div>
-                <div id="el-neg2-ico" class="circle-icon check-node" style="top: 111px; left: 591px;">✓</div>
+                <div id="el-neg2-txt" class="meta-text" style="top: 10.3%; left: 59.1%;">negotiation<br>complete</div>
+                <div id="el-neg2-ico" class="circle-icon check-node" style="top: 21.2%; left: 59.1%;">✓</div>
 
                 <!-- Upper Badges -->
-                <div id="el-db-ico" class="circle-icon outline-node" style="top: 172px; left: 226px;">
+                <div id="el-db-ico" class="circle-icon outline-node" style="top: 32.8%; left: 22.6%;">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
                 </div>
 
-                <div id="el-req-data" class="badge badge-dark" style="top: 118px; left: 327px;">
+                <div id="el-req-data" class="badge badge-dark" style="top: 22.5%; left: 32.7%;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
                   request data
                 </div>
 
-                <!-- MCP SERVER -->
-                <div id="el-mcp" class="badge badge-yellow" style="top: 172px; left: 520px;">
+                <!-- MCP SERVER PINNED -->
+                <div id="el-mcp" class="badge badge-yellow" style="top: 32.8%; left: 52%;">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
                   mcp-server
                 </div>
 
-                <div id="el-req-tools" class="badge badge-dark" style="top: 118px; left: 713px;">
+                <div id="el-req-tools" class="badge badge-dark" style="top: 22.5%; left: 71.3%;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg>
                   request tools
                 </div>
 
-                <div id="el-bot-ico" class="circle-icon outline-node" style="top: 172px; left: 828px;">
+                <div id="el-bot-ico" class="circle-icon outline-node" style="top: 32.8%; left: 82.8%;">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
                 </div>
 
-                <div id="el-hollow-top" class="circle-icon hollow-node" style="top: 228px; left: 828px;"></div>
+                <div id="el-hollow-top" class="circle-icon hollow-node" style="top: 43.5%; left: 82.8%;"></div>
 
-                <!-- Main Central Timeline Badges -->
-                <div id="el-notes" class="badge badge-white" style="top: 262px; left: 74px;">
+                <!-- Main Central Timeline -->
+                <div id="el-notes" class="badge badge-white" style="top: 50%; left: 7.4%;">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
                   Memory Notes
                 </div>
-                <div id="el-notes-sub" class="meta-text" style="top: 288px; left: 74px;">Notes added<br>by you</div>
+                <div id="el-notes-sub" class="meta-text" style="top: 55%; left: 7.4%;">Notes added<br>by you</div>
 
-                <div id="el-sync-txt" class="meta-text" style="top: 272px; left: 156px; font-size: 10px;">sync</div>
+                <div id="el-sync-txt" class="meta-text" style="top: 52%; left: 15.6%; font-size: 10px;">sync</div>
 
-                <div id="el-neondb" class="badge badge-white" style="top: 262px; left: 240px;">
+                <div id="el-neondb" class="badge badge-white" style="top: 50%; left: 24%;">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
                   neon db
                 </div>
-                <div id="el-neondb-sub" class="meta-text" style="top: 288px; left: 240px;">Stores all notes</div>
-                <div id="el-neondb-time" class="meta-text timestamp" style="top: 318px; left: 240px;">18:24:00</div>
+                <div id="el-neondb-sub" class="meta-text" style="top: 55%; left: 24%;">Stores all notes</div>
+                <div id="el-neondb-time" class="meta-text timestamp" style="top: 60.7%; left: 24%;">18:24:00</div>
 
-                <div id="el-time-mid" class="meta-text timestamp" style="top: 224px; left: 410px;">19:08:12</div>
+                <div id="el-time-mid" class="meta-text timestamp" style="top: 42.7%; left: 41%;">19:08:12</div>
 
-                <div id="el-grant-ico" class="circle-icon check-node" style="top: 298px; left: 625px;">✓</div>
-                <div id="el-grant-txt" class="meta-text" style="top: 320px; left: 625px;">tools & data<br>access granted</div>
+                <div id="el-grant-ico" class="circle-icon check-node" style="top: 56.8%; left: 62.5%;">✓</div>
+                <div id="el-grant-txt" class="meta-text" style="top: 61%; left: 62.5%;">tools & data<br>access granted</div>
 
-                <div id="el-time-right" class="meta-text timestamp" style="top: 298px; left: 743px;">20:32:04</div>
+                <div id="el-time-right" class="meta-text timestamp" style="top: 56.8%; left: 74.3%;">20:32:04</div>
 
-                <div id="el-ai-apps" class="badge badge-white" style="top: 262px; left: 918px;">
+                <div id="el-ai-apps" class="badge badge-white" style="top: 50%; left: 91.8%;">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg>
                   ai apps
                 </div>
-                <div id="el-ai-apps-sub" class="meta-text" style="top: 288px; left: 918px;">AI Agents / Apps</div>
+                <div id="el-ai-apps-sub" class="meta-text" style="top: 55%; left: 91.8%;">AI Agents / Apps</div>
 
-                <!-- Center Bottom Protocol Negotiation Node -->
-                <div id="el-proto-ico" class="circle-icon outline-node" style="top: 338px; left: 520px; width: 26px; height: 26px;">
+                <!-- Protocol Center Bottom -->
+                <div id="el-proto-ico" class="circle-icon outline-node" style="top: 64.5%; left: 52%;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </div>
-                <div id="el-proto-txt" class="meta-text" style="top: 365px; left: 520px;">protocol<br>negotiation</div>
+                <div id="el-proto-txt" class="meta-text" style="top: 69.6%; left: 52%;">protocol<br>negotiation</div>
 
                 <!-- Lower Flow Elements -->
-                <div id="el-hollow-bot" class="circle-icon hollow-node" style="top: 334px; left: 918px;"></div>
+                <div id="el-hollow-bot" class="circle-icon hollow-node" style="top: 63.7%; left: 91.8%;"></div>
 
-                <div id="el-write" class="badge badge-dark" style="top: 380px; left: 830px;">
+                <div id="el-write" class="badge badge-dark" style="top: 72.5%; left: 83%;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                   write note
                 </div>
 
-                <div id="el-proc-ico" class="circle-icon check-node" style="top: 440px; left: 625px;">✓</div>
-                <div id="el-proc-txt" class="meta-text" style="top: 462px; left: 625px;">note processed<br>by mcp-server</div>
+                <div id="el-proc-ico" class="circle-icon check-node" style="top: 84%; left: 62.5%;">✓</div>
+                <div id="el-proc-txt" class="meta-text" style="top: 88.2%; left: 62.5%;">note processed<br>by mcp-server</div>
 
-                <div id="el-saved-ico" class="circle-icon check-node" style="top: 440px; left: 265px;">✓</div>
-                <div id="el-saved-txt" class="meta-text" style="top: 462px; left: 265px;">note saved<br>in neon db</div>
+                <div id="el-saved-ico" class="circle-icon check-node" style="top: 84%; left: 26.5%;">✓</div>
+                <div id="el-saved-txt" class="meta-text" style="top: 88.2%; left: 26.5%;">note saved<br>in neon db</div>
 
-                <div id="el-sync-ico" class="circle-icon check-node" style="top: 440px; left: 76px;">✓</div>
-                <div id="el-sync-bot-txt" class="meta-text" style="top: 462px; left: 76px;">sync<br>(auto / manual)</div>
+                <div id="el-sync-ico" class="circle-icon check-node" style="top: 84%; left: 7.6%;">✓</div>
+                <div id="el-sync-bot-txt" class="meta-text" style="top: 88.2%; left: 7.6%;">sync<br>(auto / manual)</div>
               </div>
             </div>
 
-            <!-- Embedding Exact Diagram Styles & Animation Controller -->
-            <style>
-              .diagram-container {{
-                position: relative;
-                width: 1000px;
-                height: 524px;
-                background-color: #000000;
-                overflow: hidden;
-                margin: 0 auto;
-                flex-shrink: 0;
-              }}
-              .vertical-grid {{
-                position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 35px; pointer-events: none; opacity: 0.12;
-              }}
-              .grid-line {{ width: 1px; height: 100%; background-color: #ffffff; }}
-              svg.canvas {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }}
-              .line-green {{ stroke: #00e599; stroke-width: 1.5; fill: none; }}
-              .line-green-dash {{ stroke: #00e599; stroke-width: 1.5; stroke-dasharray: 4 4; fill: none; }}
-              .line-white-dash {{ stroke: #71767c; stroke-width: 1.5; stroke-dasharray: 4 4; fill: none; }}
-              .line-white-solid {{ stroke: #71767c; stroke-width: 1.5; fill: none; }}
-              .ruler-tick {{ stroke: #25282c; stroke-width: 1.5; transition: stroke 0.25s ease; }}
-              .ruler-tick.lit {{ stroke: #00e599; }}
-              .tick-active {{ stroke: #00e599; stroke-width: 1.5; }}
-              .badge {{
-                position: absolute; transform: translate(-50%, -50%) scale(0.65); display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
-                transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
-              }}
-              .badge.visible {{ opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }}
-              .badge-white {{ background: #ffffff; color: #000000; padding: 6px 14px; font-weight: 600; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1); }}
-              .badge-yellow {{ background: #fcee0a; color: #000000; padding: 7px 18px; font-weight: 700; font-size: 13px; box-shadow: 0 0 28px rgba(252, 238, 10, 0.45); }}
-              .badge-dark {{ background: #25282e; color: #b1b8c0; border: 1px solid #383c44; padding: 5px 14px; font-size: 11.5px; }}
-              .circle-icon {{
-                position: absolute; transform: translate(-50%, -50%) scale(0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; opacity: 0;
-                transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-              }}
-              .circle-icon.visible {{ opacity: 1; transform: translate(-50%, -50%) scale(1); }}
-              .check-node {{ width: 15px; height: 15px; background: #00e599; color: #000000; font-size: 9px; font-weight: 900; box-shadow: 0 0 10px rgba(0, 229, 153, 0.7); }}
-              .outline-node {{ width: 20px; height: 20px; border-radius: 50%; background: #0b0d10; border: 1px solid #30353c; color: #8b949e; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }}
-              .hollow-node {{ width: 7px; height: 7px; background: #000000; border: 1.5px solid #00e599; border-radius: 50%; }}
-              .meta-text {{
-                position: absolute; transform: translateX(-50%); font-size: 9.5px; color: #7d8590; text-align: center; line-height: 1.35; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.4s ease;
-              }}
-              .meta-text.visible {{ opacity: 1; }}
-              .timestamp {{ font-size: 9.5px; color: #555d68; letter-spacing: 0.3px; }}
-              .glow-dot {{ fill: #00e599; filter: url(#glow); opacity: 0; transition: opacity 0.2s ease; }}
-              .glow-dot.active {{ opacity: 1; }}
-            </style>
+            <!-- Animation Controller Script -->
             <script>
               document.addEventListener('DOMContentLoaded', () => {{
                 const allPaths = document.querySelectorAll('.diagram-container svg.canvas path:not(defs path)');
@@ -1180,7 +1043,7 @@ async def landing_page(request: Request):
     </div>
 </section>
 
-    <!-- Core Capabilities Showcase: Sticky on PC/Desktop, Sequentially Stacked on Mobile -->
+    <!-- Core Capabilities Showcase -->
     <div class="showcase-container">
       
       <div class="sticky-nav-wrapper">
@@ -1637,7 +1500,7 @@ async def logout(request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Console Page (Custom Codebase Manager 2D Node Canvas UI)
+# Console Page (Dynamic Multi-Tree & Module Clustered Directed Graph Engine)
 # ---------------------------------------------------------------------------
 async def console_page(request: Request):
     user_id = _require_login(request)
@@ -1656,6 +1519,7 @@ async def console_page(request: Request):
 
     workspaces = []
     nodes = []
+    edges = []
     selected_workspace = request.query_params.get("ws", "")
 
     if user["connection_string_encrypted"]:
@@ -1669,14 +1533,24 @@ async def console_page(request: Request):
             if selected_workspace:
                 node_rows = await user_pool.fetch(
                     """
-                    SELECT id, sequence_index, title, summary, rationale, impact_analysis, affected_components, status, created_at
+                    SELECT id, node_type, sequence_index, title, summary, rationale, impact_analysis, affected_components, status, central_hub_id, created_at
                     FROM project_nodes
-                    WHERE workspace = $1 AND node_type = 'codebase_change'
-                    ORDER BY sequence_index ASC
+                    WHERE workspace = $1
+                    ORDER BY sequence_index ASC NULLS LAST, created_at ASC
                     """,
                     selected_workspace
                 )
                 nodes = [dict(r) for r in node_rows]
+
+                edge_rows = await user_pool.fetch(
+                    """
+                    SELECT source_node_id, target_node_id, relation_type
+                    FROM project_edges
+                    WHERE workspace = $1
+                    """,
+                    selected_workspace
+                )
+                edges = [dict(r) for r in edge_rows]
         except Exception:
             pass
 
@@ -1693,53 +1567,96 @@ async def console_page(request: Request):
         if nodes:
             nodes_html = ""
             svg_lines_html = ""
-            card_width = 240
-            card_height = 140
-            spacing_x = 320
-            start_x = 80
-            start_y = 180
-
-            for i, node in enumerate(nodes):
-                x = start_x + (i * spacing_x)
-                y = start_y + (60 if i % 2 == 1 else -40)
+            card_width = 250
+            card_height = 145
+            
+            # Position Dictionary for Graph Rendering
+            pos_dict = {}
+            linear_index = 0
+            hub_index = 0
+            
+            for node in nodes:
+                nid = str(node['id'])
+                ntype = node.get('node_type', 'codebase_change')
                 
-                if i > 0:
-                    prev_x = start_x + ((i - 1) * spacing_x) + (card_width / 2)
-                    prev_y = start_y + (60 if (i - 1) % 2 == 1 else -40) + (card_height / 2)
-                    curr_cx = x + (card_width / 2)
-                    curr_cy = y + (card_height / 2)
-                    svg_lines_html += f'<line x1="{prev_x}" y1="{prev_y}" x2="{curr_cx}" y2="{curr_cy}" stroke="#52525b" stroke-width="2" stroke-dasharray="4 4" />'
+                # Dynamic layout distribution
+                if ntype == 'hub':
+                    x = 100 + (hub_index * 420)
+                    y = 80
+                    hub_index += 1
+                elif ntype == 'concept':
+                    x = 100 + (linear_index * 320)
+                    y = 220
+                    linear_index += 1
+                else: # codebase_change
+                    x = 100 + (linear_index * 320)
+                    y = 400 + (70 if linear_index % 2 == 1 else -40)
+                    linear_index += 1
 
+                pos_dict[nid] = (x, y)
+
+            # Draw Graph Edges
+            for edge in edges:
+                s_id = str(edge['source_node_id'])
+                t_id = str(edge['target_node_id'])
+                if s_id in pos_dict and t_id in pos_dict:
+                    sx, sy = pos_dict[s_id]
+                    tx, ty = pos_dict[t_id]
+                    scx, scy = sx + (card_width / 2), sy + (card_height / 2)
+                    tcx, tcy = tx + (card_width / 2), ty + (card_height / 2)
+                    
+                    stroke_color = "#3b82f6" if edge.get('relation_type') == 'belongs_to_hub' else "#00e599"
+                    svg_lines_html += f'<line x1="{scx}" y1="{scy}" x2="{tcx}" y2="{tcy}" stroke="{stroke_color}" stroke-width="2" stroke-dasharray="4 4" />'
+
+            # Render Nodes
+            for node in nodes:
+                nid = str(node['id'])
+                x, y = pos_dict[nid]
                 title_esc = node['title'].replace('"', '&quot;')
                 summary_esc = node['summary'].replace('"', '&quot;')
                 why_esc = (node['rationale'] or 'No rationale provided').replace('"', '&quot;')
                 impact_esc = (node['impact_analysis'] or 'None').replace('"', '&quot;')
-                step_idx = node['sequence_index'] or (i + 1)
+                step_idx = node['sequence_index'] or '-'
+                ntype = node.get('node_type', 'codebase_change')
+                
+                # Module Layer Classification
+                layer_badge = ""
+                border_cls = "border-[#d4d4d8]"
+                if ntype == 'hub':
+                    layer_badge = '<span class="bg-amber-100 text-amber-800 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">HUB</span>'
+                    border_cls = "border-amber-400 bg-amber-50/20"
+                elif ntype == 'concept':
+                    layer_badge = '<span class="bg-blue-100 text-blue-800 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">CONCEPT</span>'
+                    border_cls = "border-blue-400 bg-blue-50/20"
+                else:
+                    layer_badge = f'<span class="node-step">Step {step_idx}</span>'
 
                 nodes_html += f"""
-                <div class="canvas-node" style="left: {x}px; top: {y}px; width: {card_width}px;" 
-                     ondblclick="openNodeModal('Step {step_idx}: {title_esc}', '{summary_esc}', '{why_esc}', '{impact_esc}')"
-                     onclick="openNodeModal('Step {step_idx}: {title_esc}', '{summary_esc}', '{why_esc}', '{impact_esc}')">
+                <div class="canvas-node {border_cls}" style="left: {x}px; top: {y}px; width: {card_width}px;" 
+                     ondblclick="openNodeModal('{title_esc}', '{summary_esc}', '{why_esc}', '{impact_esc}')"
+                     onclick="openNodeModal('{title_esc}', '{summary_esc}', '{why_esc}', '{impact_esc}')">
                     <div class="node-header">
-                        <span class="node-step">Step {step_idx}</span>
+                        {layer_badge}
                         <span class="node-status">✓</span>
                     </div>
                     <div class="node-title">{node['title']}</div>
                     <div class="node-snippet">{node['summary'][:90]}...</div>
-                    <div class="node-footer">Double-click to expand note</div>
+                    <div class="node-footer">Double-click / Tap to inspect</div>
                 </div>
                 """
             
             canvas_content = f"""
-            <svg class="canvas-svg">{svg_lines_html}</svg>
-            {nodes_html}
+            <div id="canvasViewport" style="transform-origin: 0 0; position: absolute; top: 0; left: 0;">
+                <svg class="canvas-svg">{svg_lines_html}</svg>
+                {nodes_html}
+            </div>
             """
         else:
             canvas_content = f"""
             <div class="empty-canvas-state">
                 <div class="empty-icon">⚡</div>
                 <h3>No CodeBase Data</h3>
-                <p>No CodeBase Data Connect mcp to AI models and store CodeBase Logs[cite: 1]</p>
+                <p>No CodeBase Data. Connect MCP to AI models and store CodeBase Logs[cite: 1].</p>
                 <code>mcpServers -&gt; memory-notes</code>
             </div>
             """
@@ -1909,7 +1826,7 @@ body {{
 .main-canvas {{
   flex: 1;
   position: relative;
-  overflow: auto;
+  overflow: hidden;
   cursor: grab;
   background: transparent;
   -webkit-overflow-scrolling: touch;
@@ -1919,25 +1836,24 @@ body {{
 .canvas-svg {{
   position: absolute;
   top: 0; left: 0;
-  width: 5000px; height: 5000px;
+  width: 6000px; height: 6000px;
   pointer-events: none;
 }}
 
 .canvas-node {{
   position: absolute;
   background: #ffffff;
-  border: 1px solid #d4d4d8;
+  border: 1px solid;
   border-radius: 8px;
   padding: 14px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
   user-select: none;
 }}
 .canvas-node:hover {{
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  border-color: #000000;
 }}
 .node-header {{
   display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
@@ -1951,6 +1867,32 @@ body {{
 .node-footer {{
   margin-top: 10px; padding-top: 6px; border-top: 1px solid #f1f5f9; font-size: 10px; color: #0284c7; text-align: right;
 }}
+
+/* Mini HUD Controls */
+.canvas-hud {{
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  z-index: 30;
+}}
+.hud-btn {{
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #3f3f46;
+}}
+.hud-btn:hover {{ background: #f4f4f5; color: #18181b; }}
 
 /* Empty State */
 .empty-canvas-state {{
@@ -2024,8 +1966,13 @@ body {{
     </svg>
   </label>
 
-  <main class="main-canvas" id="canvasArea">
+  <main class="main-canvas" id="canvasContainer">
     {canvas_content}
+    <div class="canvas-hud">
+      <button class="hud-btn" onclick="zoomCanvas(0.1)">+</button>
+      <button class="hud-btn" onclick="resetZoom()">100%</button>
+      <button class="hud-btn" onclick="zoomCanvas(-0.1)">-</button>
+    </div>
   </main>
 </div>
 
@@ -2053,51 +2000,71 @@ body {{
 </div>
 
 <script>
-  const canvas = document.getElementById('canvasArea');
+  const container = document.getElementById('canvasContainer');
+  const viewport = document.getElementById('canvasViewport');
+  let scale = 1.0;
+  let panX = 0, panY = 0;
   let isDragging = false;
-  let startX, startY, scrollLeft, scrollTop;
+  let startX, startY;
 
-  // Mouse Drag Support
-  canvas.addEventListener('mousedown', (e) => {{
-    if(e.target.closest('.canvas-node')) return;
+  function updateTransform() {{
+    if(viewport) {{
+      viewport.style.transform = `translate(${{panX}}px, ${{panY}}px) scale(${{scale}})`;
+    }}
+  }}
+
+  container.addEventListener('mousedown', (e) => {{
+    if(e.target.closest('.canvas-node') || e.target.closest('.canvas-hud')) return;
     isDragging = true;
-    startX = e.pageX - canvas.offsetLeft;
-    startY = e.pageY - canvas.offsetTop;
-    scrollLeft = canvas.scrollLeft;
-    scrollTop = canvas.scrollTop;
+    startX = e.clientX - panX;
+    startY = e.clientY - panY;
   }});
 
-  canvas.addEventListener('mouseleave', () => {{ isDragging = false; }});
-  canvas.addEventListener('mouseup', () => {{ isDragging = false; }});
-  canvas.addEventListener('mousemove', (e) => {{
+  window.addEventListener('mouseup', () => {{ isDragging = false; }});
+  window.addEventListener('mousemove', (e) => {{
     if(!isDragging) return;
+    panX = e.clientX - startX;
+    panY = e.clientY - startY;
+    updateTransform();
+  }});
+
+  // Touch Screen Pan
+  container.addEventListener('touchstart', (e) => {{
+    if(e.target.closest('.canvas-node') || e.target.closest('.canvas-hud')) return;
+    isDragging = true;
+    const touch = e.touches[0];
+    startX = touch.clientX - panX;
+    startY = touch.clientY - panY;
+  }}, {{ passive: true }});
+
+  container.addEventListener('touchend', () => {{ isDragging = false; }});
+  container.addEventListener('touchmove', (e) => {{
+    if(!isDragging) return;
+    const touch = e.touches[0];
+    panX = touch.clientX - startX;
+    panY = touch.clientY - startY;
+    updateTransform();
+  }}, {{ passive: true }});
+
+  // Wheel Zoom
+  container.addEventListener('wheel', (e) => {{
     e.preventDefault();
-    const x = e.pageX - canvas.offsetLeft;
-    const y = e.pageY - canvas.offsetTop;
-    canvas.scrollLeft = scrollLeft - (x - startX);
-    canvas.scrollTop = scrollTop - (y - startY);
-  }});
+    const zoomFactor = e.deltaY < 0 ? 1.08 : 0.92;
+    scale = Math.min(Math.max(0.4, scale * zoomFactor), 2.5);
+    updateTransform();
+  }}, {{ passive: false }});
 
-  // Touch Drag Support for Mobile & Tablets
-  canvas.addEventListener('touchstart', (e) => {{
-    if(e.target.closest('.canvas-node')) return;
-    isDragging = true;
-    const touch = e.touches[0];
-    startX = touch.pageX - canvas.offsetLeft;
-    startY = touch.pageY - canvas.offsetTop;
-    scrollLeft = canvas.scrollLeft;
-    scrollTop = canvas.scrollTop;
-  }}, {{ passive: true }});
+  function zoomCanvas(delta) {{
+    scale = Math.min(Math.max(0.4, scale + delta), 2.5);
+    updateTransform();
+  }}
 
-  canvas.addEventListener('touchend', () => {{ isDragging = false; }});
-  canvas.addEventListener('touchmove', (e) => {{
-    if(!isDragging) return;
-    const touch = e.touches[0];
-    const x = touch.pageX - canvas.offsetLeft;
-    const y = touch.pageY - canvas.offsetTop;
-    canvas.scrollLeft = scrollLeft - (x - startX);
-    canvas.scrollTop = scrollTop - (y - startY);
-  }}, {{ passive: true }});
+  function resetZoom() {{
+    scale = 1.0;
+    panX = 0;
+    panY = 0;
+    updateTransform();
+  }}
 
   function openNodeModal(title, summary, rationale, impact) {{
     document.getElementById('modalTitle').innerText = title;
@@ -2152,7 +2119,7 @@ async def dashboard_get(request: Request):
 
     if user["connection_string_encrypted"]:
         masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
-        conn_status = f'<p class="text-xs text-text-secondary break-all">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
+        conn_status = f'<p class="text-xs text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
     else:
         conn_status = '<div class="p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">No Neon connection string set yet. Claude connector will fail until configured.</div>'
 
@@ -2160,12 +2127,12 @@ async def dashboard_get(request: Request):
     active_keys = [k for k in keys if k["revoked_at"] is None]
     if active_keys:
         rows = "".join(f"""
-<div class="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b border-border-muted last:border-0 gap-2">
+<div class="flex items-center justify-between py-3 border-b border-border-muted last:border-0">
     <div>
         <div class="text-sm font-semibold text-on-surface">{k['label']}</div>
         <div class="text-xs text-text-secondary">Created {k['created_at'].strftime('%b %d, %Y')}{f" • Last used {k['last_used_at'].strftime('%b %d, %Y')}" if k['last_used_at'] else ""}</div>
     </div>
-    <form method="POST" action="/dashboard/api-key/revoke" class="m-0 self-end sm:self-auto">
+    <form method="POST" action="/dashboard/api-key/revoke" class="m-0">
         <input type="hidden" name="key_id" value="{k['id']}">
         <button type="submit" class="text-error text-xs font-semibold hover:underline" onclick="return confirm('Revoke this key? Apps using it will disconnect immediately.');">Revoke</button>
     </form>
@@ -2180,9 +2147,9 @@ async def dashboard_get(request: Request):
 
     body = f"""
 {nav_html}
-<main class="flex-grow py-10 px-4 sm:px-6 bg-surface-white">
+<main class="flex-grow py-10 px-6 bg-surface-white">
     <div class="max-w-3xl mx-auto">
-        <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <div class="mb-6 flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold text-on-surface mb-1">Database & API Settings</h1>
                 <p class="text-xs text-text-secondary">Manage your Neon database connection string and MCP API keys[cite: 1].</p>
@@ -2193,17 +2160,17 @@ async def dashboard_get(request: Request):
         {flash_html}
 
         <!-- 1. Endpoint & Connection URL -->
-        <div class="bg-surface-white border border-border-muted p-4 sm:p-6 rounded-xl mb-6 shadow-sm">
+        <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">1. MCP Server Endpoint</h2>
             <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector[cite: 1].</p>
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <div class="flex items-center gap-2">
                 <input type="text" readonly value="{mcp_endpoint}" id="mcpEndpointField" class="w-full font-mono text-xs bg-surface-container-low border border-border-muted p-2.5 rounded">
                 <button id="btnCopyEndpoint" onclick="copyToClipboard('{mcp_endpoint}', 'btnCopyEndpoint')" class="bg-surface-white text-on-surface px-4 py-2.5 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy URL</button>
             </div>
         </div>
 
         <!-- 2. Neon Database Connection String Settings -->
-        <div class="bg-surface-white border border-border-muted p-4 sm:p-6 rounded-xl mb-6 shadow-sm">
+        <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">2. Neon Database Connection String</h2>
             <p class="text-xs text-text-secondary mb-3">Paste the same PostgreSQL connection string your mobile notes app uses to sync[cite: 1].</p>
             {conn_status}
@@ -2211,19 +2178,19 @@ async def dashboard_get(request: Request):
                 <div class="mb-3">
                     <input type="text" name="connection_string" placeholder="postgresql://user:password@ep-xxx.neon.tech/dbname" required class="w-full px-4 py-2.5 border border-border-muted rounded text-xs font-mono focus:outline-none focus:border-primary">
                 </div>
-                <button type="submit" class="w-full sm:w-auto bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505]">Save Connection String</button>
+                <button type="submit" class="bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505]">Save Connection String</button>
             </form>
         </div>
 
         <!-- 3. API Keys Management -->
-        <div class="bg-surface-white border border-border-muted p-4 sm:p-6 rounded-xl shadow-sm">
+        <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">3. MCP API Keys</h2>
             <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps[cite: 1].</p>
             <div class="divide-y border-border-muted mb-4">
                 {rows}
             </div>
             <form method="POST" action="/dashboard/api-key/create">
-                <button type="submit" class="w-full sm:w-auto bg-surface-white text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors">Generate New Manual API Key</button>
+                <button type="submit" class="bg-surface-white text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors">Generate New Manual API Key</button>
             </form>
         </div>
     </div>
@@ -2283,8 +2250,8 @@ async def revoke_api_key(request: Request):
 
 def _dashboard_error(message: str) -> HTMLResponse:
     body = f"""
-<main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6 bg-surface-white">
-    <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm text-center">
+<main class="flex-grow flex items-center justify-center py-16 px-6 bg-surface-white">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm text-center">
         <h2 class="text-lg font-bold text-error mb-2">Error</h2>
         <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-6 border border-red-200">{message}</div>
         <a href="/dashboard" class="inline-block bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] no-underline">Back to Settings</a>
