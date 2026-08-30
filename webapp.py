@@ -1,11 +1,12 @@
 """
-Memory Notes - Web Application (Sticky Scroll-Pinned Pipeline & Lenis Smooth Scroll)
+Memory Notes - Web Application (Full Responsive, Scroll-Driven Architecture & Active Nav Sync)
 Full Python Starlette ASGI Application with:
 - Darkroom Engineering Lenis Smooth Scrolling (@studio-freight/lenis)
-- Sticky Scroll-Pinning for Instant Context Pipeline: Locks in view while user scrolls to scrub the animation from 0% to 100%
-- Proportional Zoom-Lock Vector Architecture Canvas
-- 2D Codebase Console Graph Interface with Pan/Zoom & Node Modals
-- FastMCP Multi-Tenant Database & Control Plane Settings
+- Scroll-pinned animation sequence starting seamlessly from the "Connect in 30 Seconds" terminal block down through the Instant Context Pipeline
+- 100% Proportional Aspect-Ratio Vector Engine locked inside browser viewports (impervious to browser tab zoom)
+- Accurate bi-directional scroll-spy synchronization for Core Capabilities navigation
+- 2D Codebase Console Graph Interface with Module Clustering & Touch/Pan Support
+- Multi-Tenant Isolated PostgreSQL (Neon DB) FastMCP Architecture
 """
 
 import asyncpg
@@ -199,7 +200,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     .ruler-tick.lit {{ stroke: #00e599; }}
     .tick-active {{ stroke: #00e599; stroke-width: 1.5; }}
 
-    /* Proportional Scaled Badges */
+    /* Proportional Badges Scaled to Container Query Width (cqw) */
     .badge {{
         position: absolute; transform: translate(-50%, -50%) scale(0.7); display: flex; align-items: center; gap: 0.6cqw; font-size: clamp(8px, 1.2cqw, 12px); font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
         transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
@@ -553,7 +554,7 @@ def _page(title: str, body: str) -> HTMLResponse:
 <!-- Global Lenis Smooth Scroll Initializer -->
 <script>
     const lenis = new Lenis({{
-      duration: 1.3,
+      duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
@@ -713,7 +714,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 1. Live Interactive Code / Terminal Block -->
+    <!-- 1. "Connect in 30 Seconds" Section -->
     <section id="quickstart" class="py-12 sm:py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
@@ -750,8 +751,8 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. STICKY SCROLL-PINNED CONTINUOUS PIPELINE SECTION -->
-    <div id="pipelineTrack" class="relative bg-[#000000]" style="height: 260vh;">
+    <!-- 2. STICKY SCROLL-PINNED CONTINUOUS PIPELINE SECTION (Continuous Scroll Scrubbing) -->
+    <div id="pipelineTrack" class="relative bg-[#000000]" style="height: 250vh;">
       <section id="pipeline" class="sticky top-0 h-screen flex flex-col justify-center py-6 bg-[#000000] text-white border-b border-neutral-800 select-none overflow-hidden">
         <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center h-full">
             
@@ -765,18 +766,10 @@ async def landing_page(request: Request):
                         Instant Context Pipeline
                     </h2>
                 </div>
-
-                <!-- Pipeline HUD Zoom Controls -->
-                <div class="flex items-center bg-[#18181b] border border-[#27272a] rounded-lg p-1 gap-1 text-xs mono z-20 shadow-lg" data-lenis-prevent>
-                    <button type="button" onclick="pipelineZoom(0.15)" class="px-2.5 py-1 bg-[#26262b] hover:bg-[#323238] text-white rounded transition-colors" title="Zoom In">+</button>
-                    <span id="pipelineZoomDisplay" class="px-2 text-neutral-400 min-w-[48px] text-center">100%</span>
-                    <button type="button" onclick="pipelineZoom(-0.15)" class="px-2.5 py-1 bg-[#26262b] hover:bg-[#323238] text-white rounded transition-colors" title="Zoom Out">-</button>
-                    <button type="button" onclick="pipelineResetZoom()" class="px-2.5 py-1 bg-[#26262b] hover:bg-[#323238] text-neutral-300 rounded transition-colors ml-1">Reset</button>
-                </div>
             </div>
 
-            <!-- Proportional Diagram Scaler Wrapper -->
-            <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] overflow-hidden relative cursor-grab active:cursor-grabbing">
+            <!-- Proportional Diagram Scaler Wrapper (Locks Vector & Badges from Browser Tab Zoom Distortions) -->
+            <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] overflow-hidden relative">
               <div id="pipelineViewport" class="diagram-container">
                 <!-- Grid Columns -->
                 <div class="vertical-grid">
@@ -935,7 +928,7 @@ async def landing_page(request: Request):
                 <div id="el-ai-apps-sub" class="meta-text" style="top: 55%; left: 91.8%;">AI Agents / Apps</div>
 
                 <div id="el-proto-ico" class="circle-icon outline-node" style="top: 64.5%; left: 52%;">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </div>
                 <div id="el-proto-txt" class="meta-text" style="top: 69.6%; left: 52%;">protocol<br>negotiation</div>
 
@@ -957,12 +950,13 @@ async def landing_page(request: Request):
               </div>
             </div>
 
-            <!-- Scroll-Driven Pipeline Scrubbing Script -->
+            <!-- Scroll-Driven Pipeline Animation Script -->
             <script>
               document.addEventListener('DOMContentLoaded', () => {{
                 const allPaths = document.querySelectorAll('#pipelineViewport svg.canvas path:not(defs path)');
                 const dot = document.getElementById('head-dot');
                 const pipelineTrack = document.getElementById('pipelineTrack');
+                const quickstartSection = document.getElementById('quickstart');
                 const ticks = document.querySelectorAll('#pipelineViewport #ticks line:not(.tick-active)');
                 if (!allPaths.length || !pipelineTrack) return;
 
@@ -996,13 +990,18 @@ async def landing_page(request: Request):
                 }}
 
                 function updateScrollPipeline() {{
-                  const rect = pipelineTrack.getBoundingClientRect();
+                  // Animation sequence anchors from top of "Connect in 30 Seconds" through the pipeline track
+                  const qRect = quickstartSection ? quickstartSection.getBoundingClientRect() : null;
+                  const tRect = pipelineTrack.getBoundingClientRect();
                   const winH = window.innerHeight;
-                  const totalScrollDistance = rect.height - winH;
-                  if (totalScrollDistance <= 0) return;
-                  
-                  // Progress starts exactly when track hits top (0.0) and finishes when it leaves (1.0)
-                  const progress = Math.min(Math.max(-rect.top / totalScrollDistance, 0), 1);
+
+                  // Trigger point begins when Quickstart section scrolls into view
+                  const startY = qRect ? qRect.top : tRect.top;
+                  const totalDistance = (tRect.bottom - startY) - winH;
+                  if (totalDistance <= 0) return;
+
+                  const scrollOffset = (winH * 0.5) - startY;
+                  const progress = Math.min(Math.max(scrollOffset / totalDistance, 0), 1);
 
                   // 1. Initial Source Nodes
                   setElementVisibility('el-notes', 0.02, progress);
@@ -1100,72 +1099,6 @@ async def landing_page(request: Request):
                 window.addEventListener('resize', updateScrollPipeline);
                 updateScrollPipeline();
               }});
-
-              // Pipeline Zoom & Pan HUD Controller
-              let pScale = 1.0;
-              let pPanX = 0, pPanY = 0;
-              let pIsDragging = false;
-              let pStartX = 0, pStartY = 0;
-
-              const pContainer = document.getElementById('pipelineContainer');
-              const pViewport = document.getElementById('pipelineViewport');
-              const pDisplay = document.getElementById('pipelineZoomDisplay');
-
-              function updatePipelineTransform() {{
-                if (!pViewport) return;
-                pViewport.style.transform = `translate(${{pPanX}}px, ${{pPanY}}px) scale(${{pScale}})`;
-                pViewport.style.transformOrigin = 'center center';
-                pViewport.style.transition = pIsDragging ? 'none' : 'transform 0.15s ease-out';
-                if (pDisplay) {{
-                  pDisplay.innerText = `${{Math.round(pScale * 100)}}%`;
-                }}
-              }}
-
-              function pipelineZoom(delta) {{
-                pScale = Math.min(Math.max(0.6, pScale + delta), 2.2);
-                if (pScale === 1.0) {{ pPanX = 0; pPanY = 0; }}
-                updatePipelineTransform();
-              }}
-
-              function pipelineResetZoom() {{
-                pScale = 1.0;
-                pPanX = 0;
-                pPanY = 0;
-                updatePipelineTransform();
-              }}
-
-              if (pContainer) {{
-                pContainer.addEventListener('mousedown', (e) => {{
-                  if (e.target.closest('button')) return;
-                  pIsDragging = true;
-                  pStartX = e.clientX - pPanX;
-                  pStartY = e.clientY - pPanY;
-                }});
-
-                window.addEventListener('mouseup', () => {{ pIsDragging = false; }});
-                window.addEventListener('mousemove', (e) => {{
-                  if (!pIsDragging) return;
-                  pPanX = e.clientX - pStartX;
-                  pPanY = e.clientY - pStartY;
-                  updatePipelineTransform();
-                }});
-
-                pContainer.addEventListener('touchstart', (e) => {{
-                  if (e.touches.length === 1) {{
-                    pIsDragging = true;
-                    pStartX = e.touches[0].clientX - pPanX;
-                    pStartY = e.touches[0].clientY - pPanY;
-                  }}
-                }}, {{ passive: true }});
-
-                pContainer.addEventListener('touchend', () => {{ pIsDragging = false; }});
-                pContainer.addEventListener('touchmove', (e) => {{
-                  if (!pIsDragging || e.touches.length !== 1) return;
-                  pPanX = e.touches[0].clientX - pStartX;
-                  pPanY = e.touches[0].clientY - pStartY;
-                  updatePipelineTransform();
-                }}, {{ passive: true }});
-              }}
             </script>
         </div>
 
@@ -1180,7 +1113,7 @@ async def landing_page(request: Request):
           <button class="menu-badge-btn" aria-hidden="true" tabindex="-1">CORE CAPABILITIES</button>
           <ul class="nav-list">
             <li>
-              <a class="nav-btn active" data-target="trigram-search">
+              <a class="nav-btn" data-target="trigram-search">
                 <span class="nav-dot"></span>Zero-Latency Trigram Search
               </a>
             </li>
@@ -1412,38 +1345,37 @@ async def landing_page(request: Request):
       </div>
     </footer>
 
+    <!-- Accurate Bi-Directional Intersection Observer for Core Capabilities Navigation -->
     <script>
       const navButtons = document.querySelectorAll('.nav-btn');
       const sections = document.querySelectorAll('.feature-section');
       const sidebar = document.getElementById('sidebar');
 
-      function syncActiveNav() {{
-        if (window.innerWidth <= 900) return;
-        const focalLine = window.innerHeight * 0.4;
-        let currentSection = sections[0];
+      const observerOptions = {{
+        root: null,
+        rootMargin: '-20% 0px -55% 0px',
+        threshold: 0
+      }};
 
-        sections.forEach((section) => {{
-          const rect = section.getBoundingClientRect();
-          if (rect.top <= focalLine && rect.bottom >= focalLine) {{
-            currentSection = section;
+      const sectionObserver = new IntersectionObserver((entries) => {{
+        entries.forEach((entry) => {{
+          if (entry.isIntersecting) {{
+            const targetId = entry.target.id;
+            navButtons.forEach((btn) => {{
+              btn.classList.toggle('active', btn.dataset.target === targetId);
+            }});
+
+            const theme = entry.target.getAttribute('data-theme');
+            if (theme === 'light') {{
+              sidebar.classList.add('theme-light');
+            }} else {{
+              sidebar.classList.remove('theme-light');
+            }}
           }}
         }});
+      }}, observerOptions);
 
-        navButtons.forEach((btn) => {{
-          btn.classList.toggle('active', btn.dataset.target === currentSection.id);
-        }});
-
-        const theme = currentSection.getAttribute('data-theme');
-        if (theme === 'light') {{
-          sidebar.classList.add('theme-light');
-        }} else {{
-          sidebar.classList.remove('theme-light');
-        }}
-      }}
-
-      lenis.on('scroll', syncActiveNav);
-      window.addEventListener('resize', syncActiveNav);
-      syncActiveNav();
+      sections.forEach((sec) => sectionObserver.observe(sec));
 
       navButtons.forEach((btn) => {{
         btn.addEventListener('click', (e) => {{
