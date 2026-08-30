@@ -2,8 +2,10 @@
 Memory Notes - Web Application
 Full Python Starlette ASGI Application with:
 - Monochromatic Tailwind CSS Design System
-- Mobile-Responsive Layouts with Collapsible Drawer Sidebar
-- Interactive Spotlight Grid Hero & Instant Context Pipeline Canvas
+- Interactive Spotlight Grid Hero with Clean Standard Action Buttons ("Get Started" & "See more")
+- Live Emerging Architecture Pipeline Canvas (Neon DB -> FastMCP Broker -> AI Apps)
+- Multi-Tab Quick-Start Terminal Snippets (Claude Desktop / Cursor / cURL)
+- Developer Feature Deep Dives & Full-Stack Auth / Multi-Tenant Dashboard
 - Console Workspace 2D Infinite Canvas Node Interface for Logged-In Users
 """
 
@@ -367,9 +369,9 @@ async def landing_page(request: Request):
                 </div>
             </div>
 
-            <!-- Embedded Exact Animation Diagram Container with Mobile Scroll Support -->
+            <!-- Embedded Exact Animation Diagram Container -->
             <div class="w-full flex justify-center bg-[#000000] rounded-2xl border border-white/[0.08] p-2 sm:p-4 overflow-x-auto shadow-2xl">
-              <div class="diagram-container" style="transform: scale(0.75); transform-origin: center; @media (min-width: 640px) {{ transform: scale(0.95); }}">
+              <div class="diagram-container" style="transform: scale(0.75); transform-origin: center;">
                 <!-- Grid Columns -->
                 <div class="vertical-grid">
                   <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
@@ -531,7 +533,7 @@ async def landing_page(request: Request):
 
                 <!-- Center Bottom Protocol Negotiation Node -->
                 <div id="el-proto-ico" class="circle-icon outline-node" style="top: 338px; left: 520px; width: 26px; height: 26px;">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l-.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </div>
                 <div id="el-proto-txt" class="meta-text" style="top: 365px; left: 520px;">protocol<br>negotiation</div>
 
@@ -539,7 +541,7 @@ async def landing_page(request: Request):
                 <div id="el-hollow-bot" class="circle-icon hollow-node" style="top: 334px; left: 918px;"></div>
 
                 <div id="el-write" class="badge badge-dark" style="top: 380px; left: 830px;">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                   write note
                 </div>
 
@@ -763,8 +765,8 @@ async def landing_page(request: Request):
       </div>
 
       <section id="trigram-search" class="feature-section section-dark" data-theme="dark">
-        <div class="section-inner" style="grid-template-columns: 1fr; lg:grid-template-columns: 260px 1fr;">
-          <div class="section-content" style="grid-column: 1 / -1; lg:grid-column: 2;">
+        <div class="section-inner">
+          <div class="section-content">
             <h2 class="hero-heading">Zero-Latency Trigram Search. Never miss a fragmented thought.</h2>
             <p class="lead-text">Memory Notes harnesses PostgreSQL trigram matching (<code>pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds.</p>
             
@@ -793,7 +795,7 @@ async def landing_page(request: Request):
 
       <section id="ai-memory-sync" class="feature-section section-light" data-theme="light">
         <div class="section-inner">
-          <div class="section-content" style="grid-column: 1 / -1; lg:grid-column: 2;">
+          <div class="section-content">
             <h2 class="hero-heading">Autonomous AI Memory Sync. Bi-directional writes from your agent.</h2>
             <p class="lead-text">Claude and Cursor don't just inspect your past notes—they can create new workspace folders, append structured summaries, or update documents directly from prompt context.</p>
             
@@ -824,7 +826,7 @@ async def landing_page(request: Request):
 
       <section id="zen-canvas" class="feature-section section-dark" data-theme="dark">
         <div class="section-inner">
-          <div class="section-content" style="grid-column: 1 / -1; lg:grid-column: 2;">
+          <div class="section-content">
             <h2 class="hero-heading">Zen Canvas. Distraction-free writing surface.</h2>
             <p class="lead-text">A writing environment that strips away the superfluous, centering your thoughts and fading interface clutter away during deep focus.</p>
             
@@ -839,7 +841,7 @@ async def landing_page(request: Request):
 
       <section id="non-linear" class="feature-section section-light" data-theme="light">
         <div class="section-inner">
-          <div class="section-content" style="grid-column: 1 / -1; lg:grid-column: 2;">
+          <div class="section-content">
             <h2 class="hero-heading">Non-Linear Connectivity. An interconnected web of knowledge.</h2>
             <p class="lead-text">Link thoughts effortlessly with bi-directional wikilinks to visualize complex patterns, relationships, and emergent ideas.</p>
             
@@ -854,7 +856,7 @@ async def landing_page(request: Request):
 
       <section id="open-protocol" class="feature-section section-dark" data-theme="dark">
         <div class="section-inner">
-          <div class="section-content" style="grid-column: 1 / -1; lg:grid-column: 2;">
+          <div class="section-content">
             <h2 class="hero-heading">Open Protocol Standards. Zero lock-in, complete control.</h2>
             <p class="lead-text">Built directly on Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer independence and easy tooling integrations.</p>
             
@@ -1604,7 +1606,6 @@ body {{
   let isDragging = false;
   let startX, startY, scrollLeft, scrollTop;
 
-  // Mouse & Touch drag handling for infinite 2D canvas
   canvas.addEventListener('mousedown', (e) => {{
     if(e.target.closest('.canvas-node')) return;
     isDragging = true;
