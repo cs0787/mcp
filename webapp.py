@@ -1,10 +1,10 @@
 """
-Memory Notes - Web Application (Responsive, Scaled & Enhanced Architecture Engine)
+Memory Notes - Web Application (Lenis Smooth Scroll & Scroll-Driven Pipeline Animation)
 Full Python Starlette ASGI Application with:
-- Proportional Aspect-Ratio Vector Engine (Zoom/Scale lock modeled after Neon)
-- Directed Graph Visualizer in Console with Pan, Zoom & Mini-HUD Controls
-- Module Layer Color Grouping & Cross-Referenced Notes & Decisions
-- Multi-Tab Quick-Start Terminal Snippets (Claude Desktop / Cursor / cURL)
+- Darkroom Engineering Lenis Smooth Scrolling (@studio-freight/lenis)
+- Scrubbed, scroll-driven Instant Context Pipeline Animation (drawing vector tracks, glowing heads & revealing badges progressively on scroll)
+- Interactive HUD Zoom In / Zoom Out Controls & Aspect-Ratio Scaled Vector Canvas
+- 2D Codebase Console Graph Interface with Pan/Zoom & Node Modals
 - FastMCP Multi-Tenant Database & Control Plane Settings
 """
 
@@ -20,7 +20,7 @@ import tenant_pools
 
 def _page(title: str, body: str) -> HTMLResponse:
     return HTMLResponse(f"""<!DOCTYPE html>
-<html class="scroll-smooth" lang="en">
+<html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -31,6 +31,9 @@ def _page(title: str, body: str) -> HTMLResponse:
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+<!-- Lenis Smooth Scroll Script -->
+<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
 
 <!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -115,6 +118,22 @@ def _page(title: str, body: str) -> HTMLResponse:
 </script>
 
 <style>
+    html.lenis, html.lenis body {{
+      height: auto;
+    }}
+    .lenis.lenis-smooth {{
+      scroll-behavior: auto !important;
+    }}
+    .lenis.lenis-smooth [data-lenis-prevent] {{
+      overscroll-behavior: contain;
+    }}
+    .lenis.lenis-stopped {{
+      overflow: hidden;
+    }}
+    .lenis.lenis-smooth iframe {{
+      pointer-events: none;
+    }}
+
     .mono {{ font-family: 'JetBrains Mono', monospace; }}
 
     /* Hero Spotlight Grid */
@@ -183,7 +202,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     /* Proportional Scaled Badges */
     .badge {{
         position: absolute; transform: translate(-50%, -50%) scale(0.7); display: flex; align-items: center; gap: 0.6cqw; font-size: clamp(8px, 1.2cqw, 12px); font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
-        transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
+        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
     }}
     .badge.visible {{ opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }}
     .badge-white {{ background: #ffffff; color: #000000; padding: 0.5cqw 1.2cqw; font-weight: 600; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1); }}
@@ -192,7 +211,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     
     .circle-icon {{
         position: absolute; transform: translate(-50%, -50%) scale(0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; opacity: 0;
-        transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }}
     .circle-icon.visible {{ opacity: 1; transform: translate(-50%, -50%) scale(1); }}
     .check-node {{ width: 1.5cqw; height: 1.5cqw; min-width: 14px; min-height: 14px; background: #00e599; color: #000000; font-size: clamp(7px, 0.9cqw, 9px); font-weight: 900; box-shadow: 0 0 10px rgba(0, 229, 153, 0.7); }}
@@ -200,7 +219,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     .hollow-node {{ width: 0.7cqw; height: 0.7cqw; min-width: 7px; min-height: 7px; background: #000000; border: 1.5px solid #00e599; border-radius: 50%; }}
 
     .meta-text {{
-        position: absolute; transform: translateX(-50%); font-size: clamp(7.5px, 0.95cqw, 9.5px); color: #7d8590; text-align: center; line-height: 1.35; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.4s ease;
+        position: absolute; transform: translateX(-50%); font-size: clamp(7.5px, 0.95cqw, 9.5px); color: #7d8590; text-align: center; line-height: 1.35; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.3s ease;
     }}
     .meta-text.visible {{ opacity: 1; }}
     .timestamp {{ font-size: clamp(7.5px, 0.95cqw, 9.5px); color: #555d68; letter-spacing: 0.3px; }}
@@ -530,7 +549,26 @@ def _page(title: str, body: str) -> HTMLResponse:
 </head>
 <body class="bg-surface-white text-on-surface font-body-md min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
 {body}
+
+<!-- Global Lenis Smooth Scroll Initializer -->
 <script>
+    const lenis = new Lenis({{
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.8,
+      infinite: false,
+    }});
+
+    function raf(time) {{
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }}
+    requestAnimationFrame(raf);
+
     function copyToClipboard(text, btnId) {{
         navigator.clipboard.writeText(text).then(() => {{
             const btn = document.getElementById(btnId);
@@ -712,25 +750,33 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. PROPORTIONAL ASPECT-LOCKED ARCHITECTURE CANVAS -->
-    <section id="pipeline" class="py-16 sm:py-20 bg-[#000000] text-white border-b border-neutral-800 select-none">
+    <!-- 2. SCROLL-DRIVEN CONTINUOUS PIPELINE ANIMATION SECTION -->
+    <section id="pipeline" class="py-20 sm:py-28 bg-[#000000] text-white border-b border-neutral-800 select-none relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
             
-            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-3 mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-6">
                 <div>
                     <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-2 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
-                        Live Branching Architecture
+                        Scroll-Driven Flow
                     </p>
                     <h2 class="text-white text-2xl sm:text-3xl font-bold tracking-tight">
                         Instant Context Pipeline
                     </h2>
                 </div>
+
+                <!-- Pipeline HUD Zoom Controls -->
+                <div class="flex items-center bg-[#18181b] border border-[#27272a] rounded-lg p-1 gap-1 text-xs mono z-20 shadow-lg" data-lenis-prevent>
+                    <button type="button" onclick="pipelineZoom(0.15)" class="px-2.5 py-1 bg-[#26262b] hover:bg-[#323238] text-white rounded transition-colors" title="Zoom In">+</button>
+                    <span id="pipelineZoomDisplay" class="px-2 text-neutral-400 min-w-[48px] text-center">100%</span>
+                    <button type="button" onclick="pipelineZoom(-0.15)" class="px-2.5 py-1 bg-[#26262b] hover:bg-[#323238] text-white rounded transition-colors" title="Zoom Out">-</button>
+                    <button type="button" onclick="pipelineResetZoom()" class="px-2.5 py-1 bg-[#26262b] hover:bg-[#323238] text-neutral-300 rounded transition-colors ml-1">Reset</button>
+                </div>
             </div>
 
-            <!-- Proportional Scaler Wrapper (Locks diagram in view across all screen zooms) -->
-            <div class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000]">
-              <div class="diagram-container">
+            <!-- Proportional Diagram Scaler Wrapper -->
+            <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] overflow-hidden relative cursor-grab active:cursor-grabbing">
+              <div id="pipelineViewport" class="diagram-container">
                 <!-- Grid Columns -->
                 <div class="vertical-grid">
                   <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
@@ -827,14 +873,13 @@ async def landing_page(request: Request):
                   <circle id="head-dot" class="glow-dot" r="3.5" cx="0" cy="0" />
                 </svg>
 
-                <!-- Top Negotiation Badges -->
+                <!-- Badges -->
                 <div id="el-neg1-txt" class="meta-text" style="top: 10.3%; left: 45%;">negotiation<br>started</div>
                 <div id="el-neg1-ico" class="circle-icon check-node" style="top: 21.2%; left: 45%;">✓</div>
 
                 <div id="el-neg2-txt" class="meta-text" style="top: 10.3%; left: 59.1%;">negotiation<br>complete</div>
                 <div id="el-neg2-ico" class="circle-icon check-node" style="top: 21.2%; left: 59.1%;">✓</div>
 
-                <!-- Upper Badges -->
                 <div id="el-db-ico" class="circle-icon outline-node" style="top: 32.8%; left: 22.6%;">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
                 </div>
@@ -844,7 +889,6 @@ async def landing_page(request: Request):
                   request data
                 </div>
 
-                <!-- MCP SERVER PINNED -->
                 <div id="el-mcp" class="badge badge-yellow" style="top: 32.8%; left: 52%;">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
                   mcp-server
@@ -861,7 +905,6 @@ async def landing_page(request: Request):
 
                 <div id="el-hollow-top" class="circle-icon hollow-node" style="top: 43.5%; left: 82.8%;"></div>
 
-                <!-- Main Central Timeline -->
                 <div id="el-notes" class="badge badge-white" style="top: 50%; left: 7.4%;">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
                   Memory Notes
@@ -890,13 +933,11 @@ async def landing_page(request: Request):
                 </div>
                 <div id="el-ai-apps-sub" class="meta-text" style="top: 55%; left: 91.8%;">AI Agents / Apps</div>
 
-                <!-- Protocol Center Bottom -->
                 <div id="el-proto-ico" class="circle-icon outline-node" style="top: 64.5%; left: 52%;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </div>
                 <div id="el-proto-txt" class="meta-text" style="top: 69.6%; left: 52%;">protocol<br>negotiation</div>
 
-                <!-- Lower Flow Elements -->
                 <div id="el-hollow-bot" class="circle-icon hollow-node" style="top: 63.7%; left: 91.8%;"></div>
 
                 <div id="el-write" class="badge badge-dark" style="top: 72.5%; left: 83%;">
@@ -915,128 +956,213 @@ async def landing_page(request: Request):
               </div>
             </div>
 
-            <!-- Animation Controller Script -->
+            <!-- Scroll-Driven Pipeline Scrubbing Script -->
             <script>
               document.addEventListener('DOMContentLoaded', () => {{
-                const allPaths = document.querySelectorAll('.diagram-container svg.canvas path:not(defs path)');
+                const allPaths = document.querySelectorAll('#pipelineViewport svg.canvas path:not(defs path)');
                 const dot = document.getElementById('head-dot');
-                if (!allPaths.length || !dot) return;
+                const pipelineSection = document.getElementById('pipeline');
+                const ticks = document.querySelectorAll('#pipelineViewport #ticks line:not(.tick-active)');
+                if (!allPaths.length || !pipelineSection) return;
 
-                function animateDraw(id, duration, delay = 0, ease = 'cubic-bezier(0.25, 1, 0.5, 1)', trackDot = false) {{
-                  const p = document.getElementById(id);
-                  if (!p) return;
-                  const len = p.getTotalLength();
-                  setTimeout(() => {{
-                    p.style.transition = `stroke-dashoffset ${{duration}}s ${{ease}}`;
-                    p.style.strokeDashoffset = '0';
-                    if (trackDot) {{
-                      dot.classList.add('active');
-                      const start = performance.now();
-                      function updateDot(time) {{
-                        const progress = Math.min(1, (time - start) / (duration * 1000));
-                        const point = p.getPointAtLength(progress * len);
-                        dot.setAttribute('cx', point.x);
-                        dot.setAttribute('cy', point.y);
-                        if (progress < 1) requestAnimationFrame(updateDot);
-                        else dot.classList.remove('active');
-                      }}
-                      requestAnimationFrame(updateDot);
-                    }}
-                  }}, delay * 1000);
-                }}
-
-                function reveal(id, delay) {{
-                  setTimeout(() => {{
-                    const el = document.getElementById(id);
-                    if (el) el.classList.add('visible');
-                  }}, delay * 1000);
-                }}
-
+                const pathLengths = {{}};
                 allPaths.forEach(path => {{
                   const len = path.getTotalLength();
+                  pathLengths[path.id] = len;
                   path.style.strokeDasharray = `${{len}} ${{len}}`;
                   path.style.strokeDashoffset = len;
+                  path.style.transition = 'none';
                 }});
 
-                reveal('el-notes', 0.1);
-                reveal('el-notes-sub', 0.2);
-                animateDraw('path-sync-arrow', 0.35, 0.3);
-                reveal('el-sync-txt', 0.45);
+                function setPathProgress(id, startP, endP, currentP) {{
+                  const p = document.getElementById(id);
+                  if (!p) return;
+                  const len = pathLengths[id];
+                  if (currentP < startP) {{
+                    p.style.strokeDashoffset = len;
+                  }} else if (currentP > endP) {{
+                    p.style.strokeDashoffset = 0;
+                  }} else {{
+                    const localProg = (currentP - startP) / (endP - startP);
+                    p.style.strokeDashoffset = len * (1 - localProg);
+                  }}
+                }}
 
-                animateDraw('path-main', 2.0, 0.4, 'linear', true);
+                function setElementVisibility(id, triggerProg, currentP) {{
+                  const el = document.getElementById(id);
+                  if (!el) return;
+                  el.classList.toggle('visible', currentP >= triggerProg);
+                }}
 
-                document.querySelectorAll('.diagram-container #ticks line').forEach((tick, i) => {{
-                  setTimeout(() => tick.classList.add('lit'), 400 + i * 75);
-                }});
+                function updateScrollPipeline() {{
+                  const rect = pipelineSection.getBoundingClientRect();
+                  const winH = window.innerHeight;
+                  const totalRange = rect.height + winH * 0.4;
+                  const currentScroll = winH - rect.top;
+                  const progress = Math.min(Math.max(currentScroll / totalRange, 0), 1);
 
-                reveal('el-neondb', 0.7);
-                reveal('el-neondb-sub', 0.8);
-                reveal('el-neondb-time', 0.9);
+                  // 1. Initial Source Nodes
+                  setElementVisibility('el-notes', 0.05, progress);
+                  setElementVisibility('el-notes-sub', 0.07, progress);
+                  setPathProgress('path-sync-arrow', 0.08, 0.12, progress);
+                  setElementVisibility('el-sync-txt', 0.12, progress);
 
-                animateDraw('path-db-up', 0.35, 0.95);
-                reveal('el-db-ico', 1.15);
-                animateDraw('path-req-data', 0.4, 1.25);
-                reveal('el-req-data', 1.45);
+                  // 2. Main Central Timeline & Ticks
+                  setPathProgress('path-main', 0.10, 0.55, progress);
+                  
+                  const pMain = document.getElementById('path-main');
+                  if (progress >= 0.10 && progress <= 0.55 && pMain && dot) {{
+                    dot.classList.add('active');
+                    const localProg = (progress - 0.10) / (0.55 - 0.10);
+                    const pt = pMain.getPointAtLength(localProg * pathLengths['path-main']);
+                    dot.setAttribute('cx', pt.x);
+                    dot.setAttribute('cy', pt.y);
+                  }} else if (dot) {{
+                    dot.classList.remove('active');
+                  }}
 
-                animateDraw('path-data-to-mcp', 0.5, 1.65);
-                setTimeout(() => {{ const t19 = document.getElementById('tick-19'); if(t19) t19.style.opacity = '1'; }}, 1800);
-                reveal('el-time-mid', 1.85);
-                reveal('el-mcp', 2.05);
-
-                animateDraw('path-neg-1', 0.35, 2.15);
-                reveal('el-neg1-ico', 2.3);
-                reveal('el-neg1-txt', 2.3);
-
-                animateDraw('path-protocol', 0.4, 2.3);
-                reveal('el-proto-ico', 2.55);
-                reveal('el-proto-txt', 2.65);
-
-                animateDraw('path-neg-2', 0.35, 2.75);
-                reveal('el-neg2-ico', 2.9);
-                reveal('el-neg2-txt', 2.9);
-
-                animateDraw('path-granted', 0.4, 2.95);
-                reveal('el-grant-ico', 3.25);
-                reveal('el-grant-txt', 3.25);
-
-                animateDraw('path-mcp-to-tools', 0.4, 2.95);
-                reveal('el-req-tools', 3.25);
-                animateDraw('path-tools-to-apps', 0.4, 3.45);
-                reveal('el-bot-ico', 3.65);
-
-                animateDraw('path-apps-down', 0.3, 3.75);
-                reveal('el-hollow-top', 3.85);
-                setTimeout(() => {{ const t20 = document.getElementById('tick-20'); if(t20) t20.style.opacity = '1'; }}, 3900);
-                reveal('el-time-right', 3.95);
-                reveal('el-ai-apps', 4.05);
-                reveal('el-ai-apps-sub', 4.15);
-
-                animateDraw('path-ai-to-note', 0.4, 4.25);
-                reveal('el-hollow-bot', 4.45);
-                reveal('el-write', 4.65);
-
-                animateDraw('path-note-to-proc', 0.4, 4.85);
-                reveal('el-proc-ico', 5.15);
-                reveal('el-proc-txt', 5.25);
-
-                animateDraw('path-lower-flow', 0.8, 5.35, 'linear');
-
-                animateDraw('path-ret-db', 0.35, 6.05);
-                reveal('el-saved-ico', 6.25);
-                reveal('el-saved-txt', 6.25);
-
-                animateDraw('path-ret-sync', 0.5, 6.45);
-                reveal('el-sync-ico', 6.85);
-                reveal('el-sync-bot-txt', 6.95);
-
-                setTimeout(() => {{
-                  document.querySelectorAll('.diagram-container .line-green-dash, .diagram-container .line-white-dash').forEach(p => {{
-                    p.style.transition = 'none';
-                    p.style.strokeDasharray = '4 4';
-                    p.style.strokeDashoffset = '0';
+                  ticks.forEach((tick, i) => {{
+                    const tickProg = 0.15 + (i / ticks.length) * 0.35;
+                    tick.classList.toggle('lit', progress >= tickProg);
                   }});
-                }}, 7300);
+
+                  // 3. Database Node & Data Request
+                  setElementVisibility('el-neondb', 0.18, progress);
+                  setElementVisibility('el-neondb-sub', 0.20, progress);
+                  setElementVisibility('el-neondb-time', 0.22, progress);
+
+                  setPathProgress('path-db-up', 0.22, 0.26, progress);
+                  setElementVisibility('el-db-ico', 0.26, progress);
+                  setPathProgress('path-req-data', 0.26, 0.32, progress);
+                  setElementVisibility('el-req-data', 0.32, progress);
+
+                  // 4. MCP Server & Negotiations
+                  setPathProgress('path-data-to-mcp', 0.32, 0.38, progress);
+                  const t19 = document.getElementById('tick-19');
+                  if (t19) t19.style.opacity = progress >= 0.36 ? '1' : '0';
+                  setElementVisibility('el-time-mid', 0.37, progress);
+                  setElementVisibility('el-mcp', 0.39, progress);
+
+                  setPathProgress('path-neg-1', 0.39, 0.44, progress);
+                  setElementVisibility('el-neg1-ico', 0.44, progress);
+                  setElementVisibility('el-neg1-txt', 0.44, progress);
+
+                  setPathProgress('path-protocol', 0.42, 0.48, progress);
+                  setElementVisibility('el-proto-ico', 0.48, progress);
+                  setElementVisibility('el-proto-txt', 0.48, progress);
+
+                  setPathProgress('path-neg-2', 0.45, 0.50, progress);
+                  setElementVisibility('el-neg2-ico', 0.50, progress);
+                  setElementVisibility('el-neg2-txt', 0.50, progress);
+
+                  setPathProgress('path-granted', 0.48, 0.54, progress);
+                  setElementVisibility('el-grant-ico', 0.54, progress);
+                  setElementVisibility('el-grant-txt', 0.54, progress);
+
+                  // 5. Tools & AI Apps
+                  setPathProgress('path-mcp-to-tools', 0.48, 0.54, progress);
+                  setElementVisibility('el-req-tools', 0.54, progress);
+                  setPathProgress('path-tools-to-apps', 0.54, 0.60, progress);
+                  setElementVisibility('el-bot-ico', 0.60, progress);
+
+                  setPathProgress('path-apps-down', 0.60, 0.65, progress);
+                  setElementVisibility('el-hollow-top', 0.65, progress);
+                  const t20 = document.getElementById('tick-20');
+                  if (t20) t20.style.opacity = progress >= 0.64 ? '1' : '0';
+                  setElementVisibility('el-time-right', 0.65, progress);
+                  setElementVisibility('el-ai-apps', 0.67, progress);
+                  setElementVisibility('el-ai-apps-sub', 0.69, progress);
+
+                  // 6. Return Flow, Processing & Sync Confirmation
+                  setPathProgress('path-ai-to-note', 0.68, 0.74, progress);
+                  setElementVisibility('el-hollow-bot', 0.72, progress);
+                  setElementVisibility('el-write', 0.74, progress);
+
+                  setPathProgress('path-note-to-proc', 0.74, 0.80, progress);
+                  setElementVisibility('el-proc-ico', 0.80, progress);
+                  setElementVisibility('el-proc-txt', 0.80, progress);
+
+                  setPathProgress('path-lower-flow', 0.80, 0.90, progress);
+
+                  setPathProgress('path-ret-db', 0.90, 0.94, progress);
+                  setElementVisibility('el-saved-ico', 0.94, progress);
+                  setElementVisibility('el-saved-txt', 0.94, progress);
+
+                  setPathProgress('path-ret-sync', 0.92, 0.98, progress);
+                  setElementVisibility('el-sync-ico', 0.98, progress);
+                  setElementVisibility('el-sync-bot-txt', 0.98, progress);
+                }}
+
+                lenis.on('scroll', updateScrollPipeline);
+                window.addEventListener('resize', updateScrollPipeline);
+                updateScrollPipeline();
               }});
+
+              // Pipeline Zoom & Pan HUD Controller
+              let pScale = 1.0;
+              let pPanX = 0, pPanY = 0;
+              let pIsDragging = false;
+              let pStartX = 0, pStartY = 0;
+
+              const pContainer = document.getElementById('pipelineContainer');
+              const pViewport = document.getElementById('pipelineViewport');
+              const pDisplay = document.getElementById('pipelineZoomDisplay');
+
+              function updatePipelineTransform() {{
+                if (!pViewport) return;
+                pViewport.style.transform = `translate(${{pPanX}}px, ${{pPanY}}px) scale(${{pScale}})`;
+                pViewport.style.transformOrigin = 'center center';
+                pViewport.style.transition = pIsDragging ? 'none' : 'transform 0.15s ease-out';
+                if (pDisplay) {{
+                  pDisplay.innerText = `${{Math.round(pScale * 100)}}%`;
+                }}
+              }}
+
+              function pipelineZoom(delta) {{
+                pScale = Math.min(Math.max(0.6, pScale + delta), 2.2);
+                if (pScale === 1.0) {{ pPanX = 0; pPanY = 0; }}
+                updatePipelineTransform();
+              }}
+
+              function pipelineResetZoom() {{
+                pScale = 1.0;
+                pPanX = 0;
+                pPanY = 0;
+                updatePipelineTransform();
+              }}
+
+              if (pContainer) {{
+                pContainer.addEventListener('mousedown', (e) => {{
+                  if (e.target.closest('button')) return;
+                  pIsDragging = true;
+                  pStartX = e.clientX - pPanX;
+                  pStartY = e.clientY - pPanY;
+                }});
+
+                window.addEventListener('mouseup', () => {{ pIsDragging = false; }});
+                window.addEventListener('mousemove', (e) => {{
+                  if (!pIsDragging) return;
+                  pPanX = e.clientX - pStartX;
+                  pPanY = e.clientY - pStartY;
+                  updatePipelineTransform();
+                }});
+
+                pContainer.addEventListener('touchstart', (e) => {{
+                  if (e.touches.length === 1) {{
+                    pIsDragging = true;
+                    pStartX = e.touches[0].clientX - pPanX;
+                    pStartY = e.touches[0].clientY - pPanY;
+                  }}
+                }}, {{ passive: true }});
+
+                pContainer.addEventListener('touchend', () => {{ pIsDragging = false; }});
+                pContainer.addEventListener('touchmove', (e) => {{
+                  if (!pIsDragging || e.touches.length !== 1) return;
+                  pPanX = e.touches[0].clientX - pStartX;
+                  pPanY = e.touches[0].clientY - pStartY;
+                  updatePipelineTransform();
+                }}, {{ passive: true }});
+              }}
             </script>
         </div>
 
@@ -1312,7 +1438,7 @@ async def landing_page(request: Request):
         }}
       }}
 
-      window.addEventListener('scroll', syncActiveNav, {{ passive: true }});
+      lenis.on('scroll', syncActiveNav);
       window.addEventListener('resize', syncActiveNav);
       syncActiveNav();
 
@@ -1321,7 +1447,7 @@ async def landing_page(request: Request):
           e.preventDefault();
           const target = document.getElementById(btn.dataset.target);
           if (target) {{
-            target.scrollIntoView({{ behavior: 'smooth' }});
+            lenis.scrollTo(target, {{ offset: 0, duration: 1.2 }});
           }}
         }});
       }});
@@ -1570,7 +1696,6 @@ async def console_page(request: Request):
             card_width = 250
             card_height = 145
             
-            # Position Dictionary for Graph Rendering
             pos_dict = {}
             linear_index = 0
             hub_index = 0
@@ -1579,7 +1704,6 @@ async def console_page(request: Request):
                 nid = str(node['id'])
                 ntype = node.get('node_type', 'codebase_change')
                 
-                # Dynamic layout distribution
                 if ntype == 'hub':
                     x = 100 + (hub_index * 420)
                     y = 80
@@ -1588,14 +1712,13 @@ async def console_page(request: Request):
                     x = 100 + (linear_index * 320)
                     y = 220
                     linear_index += 1
-                else: # codebase_change
+                else:
                     x = 100 + (linear_index * 320)
                     y = 400 + (70 if linear_index % 2 == 1 else -40)
                     linear_index += 1
 
                 pos_dict[nid] = (x, y)
 
-            # Draw Graph Edges
             for edge in edges:
                 s_id = str(edge['source_node_id'])
                 t_id = str(edge['target_node_id'])
@@ -1608,7 +1731,6 @@ async def console_page(request: Request):
                     stroke_color = "#3b82f6" if edge.get('relation_type') == 'belongs_to_hub' else "#00e599"
                     svg_lines_html += f'<line x1="{scx}" y1="{scy}" x2="{tcx}" y2="{tcy}" stroke="{stroke_color}" stroke-width="2" stroke-dasharray="4 4" />'
 
-            # Render Nodes
             for node in nodes:
                 nid = str(node['id'])
                 x, y = pos_dict[nid]
@@ -1619,7 +1741,6 @@ async def console_page(request: Request):
                 step_idx = node['sequence_index'] or '-'
                 ntype = node.get('node_type', 'codebase_change')
                 
-                # Module Layer Classification
                 layer_badge = ""
                 border_cls = "border-[#d4d4d8]"
                 if ntype == 'hub':
@@ -1923,7 +2044,7 @@ body {{
 </style>
 </head>
 <body>
-<div class="container">
+<div class="container" data-lenis-prevent>
   <input type="checkbox" id="sidebar-toggle" />
 
   <aside class="sidebar">
@@ -2028,7 +2149,6 @@ body {{
     updateTransform();
   }});
 
-  // Touch Screen Pan
   container.addEventListener('touchstart', (e) => {{
     if(e.target.closest('.canvas-node') || e.target.closest('.canvas-hud')) return;
     isDragging = true;
@@ -2046,7 +2166,6 @@ body {{
     updateTransform();
   }}, {{ passive: true }});
 
-  // Wheel Zoom
   container.addEventListener('wheel', (e) => {{
     e.preventDefault();
     const zoomFactor = e.deltaY < 0 ? 1.08 : 0.92;
