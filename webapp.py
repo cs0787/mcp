@@ -1,9 +1,9 @@
 """
-Memory Notes - Web Application (Sticky Scroll-Pinned Pipeline & Lenis Smooth Scroll)
+Memory Notes - Web Application (Lenis Smooth Scroll & Scroll-Driven Pipeline Animation)
 Full Python Starlette ASGI Application with:
 - Darkroom Engineering Lenis Smooth Scrolling (@studio-freight/lenis)
-- Sticky Scroll-Pinning for Instant Context Pipeline: Locks in view while user scrolls to scrub the animation from 0% to 100%
-- Proportional Zoom-Lock Vector Architecture Canvas
+- Scrubbed, scroll-driven Instant Context Pipeline Animation (drawing vector tracks, glowing heads & revealing badges progressively on scroll)
+- Interactive HUD Zoom In / Zoom Out Controls & Aspect-Ratio Scaled Vector Canvas
 - 2D Codebase Console Graph Interface with Pan/Zoom & Node Modals
 - FastMCP Multi-Tenant Database & Control Plane Settings
 """
@@ -553,13 +553,13 @@ def _page(title: str, body: str) -> HTMLResponse:
 <!-- Global Lenis Smooth Scroll Initializer -->
 <script>
     const lenis = new Lenis({{
-      duration: 1.3,
+      duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 1.0,
-      touchMultiplier: 1.6,
+      touchMultiplier: 1.8,
       infinite: false,
     }});
 
@@ -750,16 +750,15 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. STICKY SCROLL-PINNED CONTINUOUS PIPELINE SECTION -->
-    <div id="pipelineTrack" class="relative bg-[#000000]" style="height: 260vh;">
-      <section id="pipeline" class="sticky top-0 h-screen flex flex-col justify-center py-6 bg-[#000000] text-white border-b border-neutral-800 select-none overflow-hidden">
-        <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center h-full">
+    <!-- 2. SCROLL-DRIVEN CONTINUOUS PIPELINE ANIMATION SECTION -->
+    <section id="pipeline" class="py-20 sm:py-28 bg-[#000000] text-white border-b border-neutral-800 select-none relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
             
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-6">
                 <div>
-                    <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-1 flex items-center gap-2">
+                    <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-2 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
-                        Scroll to Flow
+                        Scroll-Driven Flow
                     </p>
                     <h2 class="text-white text-2xl sm:text-3xl font-bold tracking-tight">
                         Instant Context Pipeline
@@ -935,7 +934,7 @@ async def landing_page(request: Request):
                 <div id="el-ai-apps-sub" class="meta-text" style="top: 55%; left: 91.8%;">AI Agents / Apps</div>
 
                 <div id="el-proto-ico" class="circle-icon outline-node" style="top: 64.5%; left: 52%;">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </div>
                 <div id="el-proto-txt" class="meta-text" style="top: 69.6%; left: 52%;">protocol<br>negotiation</div>
 
@@ -962,9 +961,9 @@ async def landing_page(request: Request):
               document.addEventListener('DOMContentLoaded', () => {{
                 const allPaths = document.querySelectorAll('#pipelineViewport svg.canvas path:not(defs path)');
                 const dot = document.getElementById('head-dot');
-                const pipelineTrack = document.getElementById('pipelineTrack');
+                const pipelineSection = document.getElementById('pipeline');
                 const ticks = document.querySelectorAll('#pipelineViewport #ticks line:not(.tick-active)');
-                if (!allPaths.length || !pipelineTrack) return;
+                if (!allPaths.length || !pipelineSection) return;
 
                 const pathLengths = {{}};
                 allPaths.forEach(path => {{
@@ -996,27 +995,25 @@ async def landing_page(request: Request):
                 }}
 
                 function updateScrollPipeline() {{
-                  const rect = pipelineTrack.getBoundingClientRect();
+                  const rect = pipelineSection.getBoundingClientRect();
                   const winH = window.innerHeight;
-                  const totalScrollDistance = rect.height - winH;
-                  if (totalScrollDistance <= 0) return;
-                  
-                  // Progress starts exactly when track hits top (0.0) and finishes when it leaves (1.0)
-                  const progress = Math.min(Math.max(-rect.top / totalScrollDistance, 0), 1);
+                  const totalRange = rect.height + winH * 0.4;
+                  const currentScroll = winH - rect.top;
+                  const progress = Math.min(Math.max(currentScroll / totalRange, 0), 1);
 
                   // 1. Initial Source Nodes
-                  setElementVisibility('el-notes', 0.02, progress);
-                  setElementVisibility('el-notes-sub', 0.04, progress);
-                  setPathProgress('path-sync-arrow', 0.05, 0.10, progress);
-                  setElementVisibility('el-sync-txt', 0.10, progress);
+                  setElementVisibility('el-notes', 0.05, progress);
+                  setElementVisibility('el-notes-sub', 0.07, progress);
+                  setPathProgress('path-sync-arrow', 0.08, 0.12, progress);
+                  setElementVisibility('el-sync-txt', 0.12, progress);
 
                   // 2. Main Central Timeline & Ticks
-                  setPathProgress('path-main', 0.08, 0.52, progress);
+                  setPathProgress('path-main', 0.10, 0.55, progress);
                   
                   const pMain = document.getElementById('path-main');
-                  if (progress >= 0.08 && progress <= 0.52 && pMain && dot) {{
+                  if (progress >= 0.10 && progress <= 0.55 && pMain && dot) {{
                     dot.classList.add('active');
-                    const localProg = (progress - 0.08) / (0.52 - 0.08);
+                    const localProg = (progress - 0.10) / (0.55 - 0.10);
                     const pt = pMain.getPointAtLength(localProg * pathLengths['path-main']);
                     dot.setAttribute('cx', pt.x);
                     dot.setAttribute('cy', pt.y);
@@ -1025,18 +1022,18 @@ async def landing_page(request: Request):
                   }}
 
                   ticks.forEach((tick, i) => {{
-                    const tickProg = 0.12 + (i / ticks.length) * 0.38;
+                    const tickProg = 0.15 + (i / ticks.length) * 0.35;
                     tick.classList.toggle('lit', progress >= tickProg);
                   }});
 
                   // 3. Database Node & Data Request
-                  setElementVisibility('el-neondb', 0.16, progress);
-                  setElementVisibility('el-neondb-sub', 0.18, progress);
-                  setElementVisibility('el-neondb-time', 0.20, progress);
+                  setElementVisibility('el-neondb', 0.18, progress);
+                  setElementVisibility('el-neondb-sub', 0.20, progress);
+                  setElementVisibility('el-neondb-time', 0.22, progress);
 
-                  setPathProgress('path-db-up', 0.20, 0.25, progress);
-                  setElementVisibility('el-db-ico', 0.25, progress);
-                  setPathProgress('path-req-data', 0.25, 0.32, progress);
+                  setPathProgress('path-db-up', 0.22, 0.26, progress);
+                  setElementVisibility('el-db-ico', 0.26, progress);
+                  setPathProgress('path-req-data', 0.26, 0.32, progress);
                   setElementVisibility('el-req-data', 0.32, progress);
 
                   // 4. MCP Server & Negotiations
@@ -1169,8 +1166,8 @@ async def landing_page(request: Request):
             </script>
         </div>
 
-      </section>
     </div>
+</section>
 
     <!-- Core Capabilities Showcase -->
     <div class="showcase-container">
