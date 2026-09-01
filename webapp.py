@@ -178,17 +178,17 @@ def _page(title: str, body: str) -> HTMLResponse:
         position: relative;
         width: 100%;
         aspect-ratio: 1000 / 524;
-        background-color: #000000;
-        overflow: hidden;
+        background-color: transparent;
+        overflow: visible;
     }}
 
     .vertical-grid {{
-        position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 3.5%; pointer-events: none; opacity: 0.12;
+        position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 3.5%; pointer-events: none; opacity: 0.12; z-index: 0;
     }}
     .grid-line {{ width: 1px; height: 100%; background-color: #ffffff; }}
     
     svg.canvas {{
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;
     }}
 
     .line-green {{ stroke: #00e599; stroke-width: 1.5; fill: none; }}
@@ -750,7 +750,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. SCROLL-DRIVEN PINNED PIPELINE ANIMATION SECTION -->
+<!-- 2. SCROLL-DRIVEN PINNED PIPELINE ANIMATION SECTION -->
 <section id="pipeline" class="bg-[#000000] text-white border-b border-neutral-800 relative">
 
     <!-- Pinned scroll-jack wrapper: the diagram stays fixed in view while the
@@ -759,22 +759,10 @@ async def landing_page(request: Request):
       <div id="pipelineSticky" class="sticky top-0 flex items-center pt-16 sm:pt-20" style="height: 100vh;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 w-full">
             
-          <!-- MOVED HEADING: Now pinned inside the sticky container -->
-          <div class="pt-8 sm:pt-12 pb-8 sm:pb-10">
-              <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-2 flex items-center gap-2">
-                  <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
-                  Scroll-Driven Flow
-              </p>
-              <h2 class="text-white text-2xl sm:text-3xl font-bold tracking-tight">
-                  Instant Context Pipeline
-              </h2>
-          </div>
-
-
-              <!-- Proportional Diagram Scaler Wrapper -->
-              <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] overflow-hidden relative select-none">
-                <div id="pipelineViewport" class="diagram-container">
-                <!-- Grid Columns -->
+            <!-- Proportional Diagram Scaler Wrapper with Expanded Top & Bottom Padding -->
+            <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl pt-12 pb-10 px-2 sm:pt-16 sm:pb-12 sm:px-4 bg-[#000000] overflow-hidden relative select-none">
+            
+                <!-- Grid Columns (Moved up to parent so they stretch behind the headline to the top/bottom edges) -->
                 <div class="vertical-grid">
                   <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
                   <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
@@ -784,6 +772,19 @@ async def landing_page(request: Request):
                   <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
                   <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
                 </div>
+
+                <!-- MOVED HEADING: Now pinned inside the animation window overlapping the grid lines -->
+                <div class="relative z-10 mb-8 sm:mb-10 text-center flex flex-col items-center">
+                    <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-2 flex items-center justify-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
+                        Scroll-Driven Flow
+                    </p>
+                    <h2 class="text-white text-2xl sm:text-3xl font-bold tracking-tight">
+                        Instant Context Pipeline
+                    </h2>
+                </div>
+
+                <div id="pipelineViewport" class="diagram-container">
 
                 <!-- Vector Canvas -->
                 <svg class="canvas" viewBox="0 0 1000 524">
