@@ -751,22 +751,25 @@ async def landing_page(request: Request):
     </section>
 
     <!-- 2. SCROLL-DRIVEN PINNED PIPELINE ANIMATION SECTION -->
-    <section id="pipeline" class="bg-[#000000] text-white border-b border-neutral-800 relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-16 sm:pt-24 pb-8 sm:pb-10">
-            <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-2 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
-                Scroll-Driven Flow
-            </p>
-            <h2 class="text-white text-2xl sm:text-3xl font-bold tracking-tight">
-                Instant Context Pipeline
-            </h2>
-        </div>
+<section id="pipeline" class="bg-[#000000] text-white border-b border-neutral-800 relative">
 
-        <!-- Pinned scroll-jack wrapper: the diagram stays fixed in view while the
-             animation plays out, then releases naturally once it completes. -->
-        <div id="pipelineScrollWrapper" class="relative" style="height: 300vh;">
-          <div id="pipelineSticky" class="sticky top-0 flex items-center" style="height: 100vh;">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 w-full">
+    <!-- Pinned scroll-jack wrapper: the diagram stays fixed in view while the
+         animation plays out, then releases naturally once it completes. -->
+    <div id="pipelineScrollWrapper" class="relative" style="height: 300vh;">
+      <div id="pipelineSticky" class="sticky top-0 flex items-center" style="height: 100vh;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 w-full">
+            
+          <!-- MOVED HEADING: Now pinned inside the sticky container -->
+          <div class="pt-8 sm:pt-12 pb-8 sm:pb-10">
+              <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-2 flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
+                  Scroll-Driven Flow
+              </p>
+              <h2 class="text-white text-2xl sm:text-3xl font-bold tracking-tight">
+                  Instant Context Pipeline
+              </h2>
+          </div>
+
 
               <!-- Proportional Diagram Scaler Wrapper -->
               <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] overflow-hidden relative select-none">
