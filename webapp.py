@@ -750,33 +750,27 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. SCROLL-DRIVEN CONTINUOUS PIPELINE ANIMATION SECTION -->
-    <section id="pipeline" class="py-20 sm:py-28 bg-[#000000] text-white border-b border-neutral-800 select-none relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
-            
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 mb-6">
-                <div>
-                    <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-2 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
-                        Scroll-Driven Flow
-                    </p>
-                    <h2 class="text-white text-2xl sm:text-3xl font-bold tracking-tight">
-                        Instant Context Pipeline
-                    </h2>
-                </div>
+    <!-- 2. SCROLL-DRIVEN PINNED PIPELINE ANIMATION SECTION -->
+    <section id="pipeline" class="bg-[#000000] text-white border-b border-neutral-800 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-16 sm:pt-24 pb-8 sm:pb-10">
+            <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-2 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
+                Scroll-Driven Flow
+            </p>
+            <h2 class="text-white text-2xl sm:text-3xl font-bold tracking-tight">
+                Instant Context Pipeline
+            </h2>
+        </div>
 
-                <!-- Pipeline HUD Zoom Controls -->
-                <div class="flex items-center bg-[#18181b] border border-[#27272a] rounded-lg p-1 gap-1 text-xs mono z-20 shadow-lg" data-lenis-prevent>
-                    <button type="button" onclick="pipelineZoom(0.15)" class="px-2.5 py-1 bg-[#26262b] hover:bg-[#323238] text-white rounded transition-colors" title="Zoom In">+</button>
-                    <span id="pipelineZoomDisplay" class="px-2 text-neutral-400 min-w-[48px] text-center">100%</span>
-                    <button type="button" onclick="pipelineZoom(-0.15)" class="px-2.5 py-1 bg-[#26262b] hover:bg-[#323238] text-white rounded transition-colors" title="Zoom Out">-</button>
-                    <button type="button" onclick="pipelineResetZoom()" class="px-2.5 py-1 bg-[#26262b] hover:bg-[#323238] text-neutral-300 rounded transition-colors ml-1">Reset</button>
-                </div>
-            </div>
+        <!-- Pinned scroll-jack wrapper: the diagram stays fixed in view while the
+             animation plays out, then releases naturally once it completes. -->
+        <div id="pipelineScrollWrapper" class="relative" style="height: 300vh;">
+          <div id="pipelineSticky" class="sticky top-0 flex items-center" style="height: 100vh;">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 w-full">
 
-            <!-- Proportional Diagram Scaler Wrapper -->
-            <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] overflow-hidden relative cursor-grab active:cursor-grabbing">
-              <div id="pipelineViewport" class="diagram-container">
+              <!-- Proportional Diagram Scaler Wrapper -->
+              <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] overflow-hidden relative select-none">
+                <div id="pipelineViewport" class="diagram-container">
                 <!-- Grid Columns -->
                 <div class="vertical-grid">
                   <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
@@ -953,17 +947,21 @@ async def landing_page(request: Request):
 
                 <div id="el-sync-ico" class="circle-icon check-node" style="top: 84%; left: 7.6%;">✓</div>
                 <div id="el-sync-bot-txt" class="meta-text" style="top: 88.2%; left: 7.6%;">sync<br>(auto / manual)</div>
+                </div>
               </div>
-            </div>
 
-            <!-- Scroll-Driven Pipeline Scrubbing Script -->
-            <script>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scroll-Driven Pipeline Scrubbing Script -->
+        <script>
               document.addEventListener('DOMContentLoaded', () => {{
                 const allPaths = document.querySelectorAll('#pipelineViewport svg.canvas path:not(defs path)');
                 const dot = document.getElementById('head-dot');
-                const pipelineSection = document.getElementById('pipeline');
+                const pipelineWrapper = document.getElementById('pipelineScrollWrapper');
                 const ticks = document.querySelectorAll('#pipelineViewport #ticks line:not(.tick-active)');
-                if (!allPaths.length || !pipelineSection) return;
+                if (!allPaths.length || !pipelineWrapper) return;
 
                 const pathLengths = {{}};
                 allPaths.forEach(path => {{
@@ -995,11 +993,11 @@ async def landing_page(request: Request):
                 }}
 
                 function updateScrollPipeline() {{
-                  const rect = pipelineSection.getBoundingClientRect();
-                  const winH = window.innerHeight;
-                  const totalRange = rect.height + winH * 0.4;
-                  const currentScroll = winH - rect.top;
-                  const progress = Math.min(Math.max(currentScroll / totalRange, 0), 1);
+                  const rect = pipelineWrapper.getBoundingClientRect();
+                  const scrollableDistance = rect.height - window.innerHeight;
+                  const progress = scrollableDistance > 0
+                    ? Math.min(Math.max(-rect.top / scrollableDistance, 0), 1)
+                    : 0;
 
                   // 1. Initial Source Nodes
                   setElementVisibility('el-notes', 0.05, progress);
@@ -1097,74 +1095,7 @@ async def landing_page(request: Request):
                 window.addEventListener('resize', updateScrollPipeline);
                 updateScrollPipeline();
               }});
-
-              // Pipeline Zoom & Pan HUD Controller
-              let pScale = 1.0;
-              let pPanX = 0, pPanY = 0;
-              let pIsDragging = false;
-              let pStartX = 0, pStartY = 0;
-
-              const pContainer = document.getElementById('pipelineContainer');
-              const pViewport = document.getElementById('pipelineViewport');
-              const pDisplay = document.getElementById('pipelineZoomDisplay');
-
-              function updatePipelineTransform() {{
-                if (!pViewport) return;
-                pViewport.style.transform = `translate(${{pPanX}}px, ${{pPanY}}px) scale(${{pScale}})`;
-                pViewport.style.transformOrigin = 'center center';
-                pViewport.style.transition = pIsDragging ? 'none' : 'transform 0.15s ease-out';
-                if (pDisplay) {{
-                  pDisplay.innerText = `${{Math.round(pScale * 100)}}%`;
-                }}
-              }}
-
-              function pipelineZoom(delta) {{
-                pScale = Math.min(Math.max(0.6, pScale + delta), 2.2);
-                if (pScale === 1.0) {{ pPanX = 0; pPanY = 0; }}
-                updatePipelineTransform();
-              }}
-
-              function pipelineResetZoom() {{
-                pScale = 1.0;
-                pPanX = 0;
-                pPanY = 0;
-                updatePipelineTransform();
-              }}
-
-              if (pContainer) {{
-                pContainer.addEventListener('mousedown', (e) => {{
-                  if (e.target.closest('button')) return;
-                  pIsDragging = true;
-                  pStartX = e.clientX - pPanX;
-                  pStartY = e.clientY - pPanY;
-                }});
-
-                window.addEventListener('mouseup', () => {{ pIsDragging = false; }});
-                window.addEventListener('mousemove', (e) => {{
-                  if (!pIsDragging) return;
-                  pPanX = e.clientX - pStartX;
-                  pPanY = e.clientY - pStartY;
-                  updatePipelineTransform();
-                }});
-
-                pContainer.addEventListener('touchstart', (e) => {{
-                  if (e.touches.length === 1) {{
-                    pIsDragging = true;
-                    pStartX = e.touches[0].clientX - pPanX;
-                    pStartY = e.touches[0].clientY - pPanY;
-                  }}
-                }}, {{ passive: true }});
-
-                pContainer.addEventListener('touchend', () => {{ pIsDragging = false; }});
-                pContainer.addEventListener('touchmove', (e) => {{
-                  if (!pIsDragging || e.touches.length !== 1) return;
-                  pPanX = e.touches[0].clientX - pStartX;
-                  pPanY = e.touches[0].clientY - pStartY;
-                  updatePipelineTransform();
-                }}, {{ passive: true }});
-              }}
             </script>
-        </div>
 
     </div>
 </section>
@@ -1519,7 +1450,7 @@ async def signup_post(request: Request):
                 <label class="block text-xs font-semibold text-on-surface mb-1">Password</label>
                 <input type="password" name="password" minlength="8" required class="w-full px-4 py-2 border border-border-muted rounded text-sm">
             </div>
-            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border border-[#050505]">Sign Up</button>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-xs font-semibold border border-[#050505]">Sign Up</button>
         </form>
     </div>
 </main>
@@ -1605,7 +1536,7 @@ async def login_post(request: Request):
                 <label class="block text-xs font-semibold text-on-surface mb-1">Password</label>
                 <input type="password" name="password" required class="w-full px-4 py-2 border border-border-muted rounded text-sm">
             </div>
-            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border border-[#050505]">Log In</button>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-xs font-semibold border border-[#050505]">Log In</button>
         </form>
     </div>
 </main>
