@@ -1,12 +1,12 @@
 """
-Memory Notes - Web Application (Zoom-Proof Architecture & Real-Time Nav Sync)
+Memory Notes - Web Application (Restored Pure Vector Animation & Smooth Scroll)
 Full Python Starlette ASGI Application with:
+- Restored original SVG vector flow animation (drawing tracks, glowing head, ruler ticks & node reveals)
+- Triggered automatically via IntersectionObserver when entering the section
 - Darkroom Engineering Lenis Smooth Scrolling (@studio-freight/lenis)
-- Scrubbed, scroll-driven Instant Context Pipeline Animation starting from the terminal quickstart section
-- Zoom-proof, dual-axis clamped aspect-ratio vector engine (no top/bottom clipping across zoom levels)
-- Accurate real-time focal scroll-spy synchronization for Core Capabilities navigation
+- Dual-axis clamped diagram scaler to ensure full diagram visibility across all browser zoom levels
+- Real-time scroll-spy synchronization for Core Capabilities navigation
 - 2D Codebase Console Graph Interface with Module Clustering & Touch/Pan Support
-- FastMCP Multi-Tenant Database & Control Plane Settings
 """
 
 import asyncpg
@@ -169,8 +169,8 @@ def _page(title: str, body: str) -> HTMLResponse:
     /* Zoom-Proof Dual-Axis Clamped Pipeline Canvas */
     .diagram-scaler-wrapper {{
         width: 100%;
-        max-width: min(960px, 90vw);
-        max-height: min(480px, 56vh);
+        max-width: min(980px, 92vw);
+        max-height: min(520px, 62vh);
         aspect-ratio: 1000 / 524;
         margin: 0 auto;
         position: relative;
@@ -206,10 +206,10 @@ def _page(title: str, body: str) -> HTMLResponse:
     .ruler-tick.lit {{ stroke: #00e599; }}
     .tick-active {{ stroke: #00e599; stroke-width: 1.5; }}
 
-    /* Proportional Badges Scaled to Container Query Width (cqw) */
+    /* Proportional Scaled Badges */
     .badge {{
-        position: absolute; transform: translate(-50%, -50%) scale(0.7); display: flex; align-items: center; gap: 0.6cqw; font-size: clamp(8px, 1.2cqw, 12px); font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
-        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+        position: absolute; transform: translate(-50%, -50%) scale(0.65); display: flex; align-items: center; gap: 0.6cqw; font-size: clamp(8px, 1.2cqw, 12px); font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
+        transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
     }}
     .badge.visible {{ opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }}
     .badge-white {{ background: #ffffff; color: #000000; padding: 0.5cqw 1.2cqw; font-weight: 600; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1); }}
@@ -218,7 +218,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     
     .circle-icon {{
         position: absolute; transform: translate(-50%, -50%) scale(0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; opacity: 0;
-        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
     }}
     .circle-icon.visible {{ opacity: 1; transform: translate(-50%, -50%) scale(1); }}
     .check-node {{ width: 1.5cqw; height: 1.5cqw; min-width: 14px; min-height: 14px; background: #00e599; color: #000000; font-size: clamp(7px, 0.9cqw, 9px); font-weight: 900; box-shadow: 0 0 10px rgba(0, 229, 153, 0.7); }}
@@ -226,14 +226,14 @@ def _page(title: str, body: str) -> HTMLResponse:
     .hollow-node {{ width: 0.7cqw; height: 0.7cqw; min-width: 7px; min-height: 7px; background: #000000; border: 1.5px solid #00e599; border-radius: 50%; }}
 
     .meta-text {{
-        position: absolute; transform: translateX(-50%); font-size: clamp(7.5px, 0.95cqw, 9.5px); color: #7d8590; text-align: center; line-height: 1.35; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.3s ease;
+        position: absolute; transform: translateX(-50%); font-size: clamp(7.5px, 0.95cqw, 9.5px); color: #7d8590; text-align: center; line-height: 1.35; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.4s ease;
     }}
     .meta-text.visible {{ opacity: 1; }}
     .timestamp {{ font-size: clamp(7.5px, 0.95cqw, 9.5px); color: #555d68; letter-spacing: 0.3px; }}
     .glow-dot {{ fill: #00e599; filter: url(#glow); opacity: 0; transition: opacity 0.2s ease; }}
     .glow-dot.active {{ opacity: 1; }}
 
-    /* Core Capabilities Showcase Scaffolding */
+    /* Core Capabilities Showcase */
     :root {{
       --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -760,18 +760,17 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. STICKY SCROLL-PINNED PIPELINE SECTION -->
-    <div id="pipelineTrack" class="relative bg-[#000000]" style="height: 240vh;">
-      <section id="pipeline" class="sticky top-[58px] h-[calc(100vh-58px)] flex flex-col justify-center py-4 bg-[#000000] text-white border-b border-neutral-800 select-none overflow-hidden">
-        <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center my-auto">
+    <!-- 2. INSTANT CONTEXT PIPELINE SECTION (Restored Pure Animation) -->
+    <section id="pipeline" class="py-16 sm:py-24 bg-[#000000] text-white border-b border-neutral-800 select-none relative">
+        <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-12">
             
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2 mb-3">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2 mb-8">
                 <div>
                     <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-1 flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
-                        Scroll to Flow
+                        Live Branching Architecture
                     </p>
-                    <h2 class="text-white text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">
+                    <h2 class="text-white text-2xl sm:text-3xl font-bold tracking-tight">
                         Instant Context Pipeline
                     </h2>
                 </div>
@@ -937,7 +936,7 @@ async def landing_page(request: Request):
                 <div id="el-ai-apps-sub" class="meta-text" style="top: 55%; left: 91.8%;">AI Agents / Apps</div>
 
                 <div id="el-proto-ico" class="circle-icon outline-node" style="top: 64.5%; left: 52%;">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </div>
                 <div id="el-proto-txt" class="meta-text" style="top: 69.6%; left: 52%;">protocol<br>negotiation</div>
 
@@ -959,158 +958,151 @@ async def landing_page(request: Request):
               </div>
             </div>
 
-            <!-- Scroll-Driven Pipeline Animation Script -->
+            <!-- Restored Pure Timing Animation Script -->
             <script>
               document.addEventListener('DOMContentLoaded', () => {{
                 const allPaths = document.querySelectorAll('#pipelineViewport svg.canvas path:not(defs path)');
                 const dot = document.getElementById('head-dot');
-                const pipelineTrack = document.getElementById('pipelineTrack');
-                const quickstartSection = document.getElementById('quickstart');
-                const ticks = document.querySelectorAll('#pipelineViewport #ticks line:not(.tick-active)');
-                if (!allPaths.length || !pipelineTrack) return;
+                const pipelineSection = document.getElementById('pipeline');
+                if (!allPaths.length || !dot || !pipelineSection) return;
 
-                const pathLengths = {{}};
+                let hasAnimated = false;
+
                 allPaths.forEach(path => {{
                   const len = path.getTotalLength();
-                  pathLengths[path.id] = len;
                   path.style.strokeDasharray = `${{len}} ${{len}}`;
                   path.style.strokeDashoffset = len;
-                  path.style.transition = 'none';
                 }});
 
-                function setPathProgress(id, startP, endP, currentP) {{
+                function animateDraw(id, duration, delay = 0, ease = 'cubic-bezier(0.25, 1, 0.5, 1)', trackDot = false) {{
                   const p = document.getElementById(id);
                   if (!p) return;
-                  const len = pathLengths[id];
-                  if (currentP < startP) {{
-                    p.style.strokeDashoffset = len;
-                  }} else if (currentP > endP) {{
-                    p.style.strokeDashoffset = 0;
-                  }} else {{
-                    const localProg = (currentP - startP) / (endP - startP);
-                    p.style.strokeDashoffset = len * (1 - localProg);
-                  }}
+                  const len = p.getTotalLength();
+                  setTimeout(() => {{
+                    p.style.transition = `stroke-dashoffset ${{duration}}s ${{ease}}`;
+                    p.style.strokeDashoffset = '0';
+                    if (trackDot) {{
+                      dot.classList.add('active');
+                      const start = performance.now();
+                      function updateDot(time) {{
+                        const progress = Math.min(1, (time - start) / (duration * 1000));
+                        const point = p.getPointAtLength(progress * len);
+                        dot.setAttribute('cx', point.x);
+                        dot.setAttribute('cy', point.y);
+                        if (progress < 1) requestAnimationFrame(updateDot);
+                        else dot.classList.remove('active');
+                      }}
+                      requestAnimationFrame(updateDot);
+                    }}
+                  }}, delay * 1000);
                 }}
 
-                function setElementVisibility(id, triggerProg, currentP) {{
-                  const el = document.getElementById(id);
-                  if (!el) return;
-                  el.classList.toggle('visible', currentP >= triggerProg);
+                function reveal(id, delay) {{
+                  setTimeout(() => {{
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('visible');
+                  }}, delay * 1000);
                 }}
 
-                function updateScrollPipeline() {{
-                  const qRect = quickstartSection ? quickstartSection.getBoundingClientRect() : null;
-                  const tRect = pipelineTrack.getBoundingClientRect();
-                  const winH = window.innerHeight;
+                function triggerPipelineAnimation() {{
+                  if (hasAnimated) return;
+                  hasAnimated = true;
 
-                  const startY = qRect ? qRect.top : tRect.top;
-                  const totalDistance = (tRect.bottom - startY) - winH;
-                  if (totalDistance <= 0) return;
+                  reveal('el-notes', 0.1);
+                  reveal('el-notes-sub', 0.2);
+                  animateDraw('path-sync-arrow', 0.35, 0.3);
+                  reveal('el-sync-txt', 0.45);
 
-                  const scrollOffset = (winH * 0.5) - startY;
-                  const progress = Math.min(Math.max(scrollOffset / totalDistance, 0), 1);
+                  animateDraw('path-main', 2.0, 0.4, 'linear', true);
 
-                  // 1. Initial Source Nodes
-                  setElementVisibility('el-notes', 0.02, progress);
-                  setElementVisibility('el-notes-sub', 0.04, progress);
-                  setPathProgress('path-sync-arrow', 0.05, 0.10, progress);
-                  setElementVisibility('el-sync-txt', 0.10, progress);
-
-                  // 2. Main Central Timeline & Ticks
-                  setPathProgress('path-main', 0.08, 0.52, progress);
-                  
-                  const pMain = document.getElementById('path-main');
-                  if (progress >= 0.08 && progress <= 0.52 && pMain && dot) {{
-                    dot.classList.add('active');
-                    const localProg = (progress - 0.08) / (0.52 - 0.08);
-                    const pt = pMain.getPointAtLength(localProg * pathLengths['path-main']);
-                    dot.setAttribute('cx', pt.x);
-                    dot.setAttribute('cy', pt.y);
-                  }} else if (dot) {{
-                    dot.classList.remove('active');
-                  }}
-
-                  ticks.forEach((tick, i) => {{
-                    const tickProg = 0.12 + (i / ticks.length) * 0.38;
-                    tick.classList.toggle('lit', progress >= tickProg);
+                  document.querySelectorAll('#pipelineViewport #ticks line').forEach((tick, i) => {{
+                    setTimeout(() => tick.classList.add('lit'), 400 + i * 75);
                   }});
 
-                  // 3. Database Node & Data Request
-                  setElementVisibility('el-neondb', 0.16, progress);
-                  setElementVisibility('el-neondb-sub', 0.18, progress);
-                  setElementVisibility('el-neondb-time', 0.20, progress);
+                  reveal('el-neondb', 0.7);
+                  reveal('el-neondb-sub', 0.8);
+                  reveal('el-neondb-time', 0.9);
 
-                  setPathProgress('path-db-up', 0.20, 0.25, progress);
-                  setElementVisibility('el-db-ico', 0.25, progress);
-                  setPathProgress('path-req-data', 0.25, 0.32, progress);
-                  setElementVisibility('el-req-data', 0.32, progress);
+                  animateDraw('path-db-up', 0.35, 0.95);
+                  reveal('el-db-ico', 1.15);
+                  animateDraw('path-req-data', 0.4, 1.25);
+                  reveal('el-req-data', 1.45);
 
-                  // 4. MCP Server & Negotiations
-                  setPathProgress('path-data-to-mcp', 0.32, 0.38, progress);
-                  const t19 = document.getElementById('tick-19');
-                  if (t19) t19.style.opacity = progress >= 0.36 ? '1' : '0';
-                  setElementVisibility('el-time-mid', 0.37, progress);
-                  setElementVisibility('el-mcp', 0.39, progress);
+                  animateDraw('path-data-to-mcp', 0.5, 1.65);
+                  setTimeout(() => {{ const t19 = document.getElementById('tick-19'); if(t19) t19.style.opacity = '1'; }}, 1800);
+                  reveal('el-time-mid', 1.85);
+                  reveal('el-mcp', 2.05);
 
-                  setPathProgress('path-neg-1', 0.39, 0.44, progress);
-                  setElementVisibility('el-neg1-ico', 0.44, progress);
-                  setElementVisibility('el-neg1-txt', 0.44, progress);
+                  animateDraw('path-neg-1', 0.35, 2.15);
+                  reveal('el-neg1-ico', 2.3);
+                  reveal('el-neg1-txt', 2.3);
 
-                  setPathProgress('path-protocol', 0.42, 0.48, progress);
-                  setElementVisibility('el-proto-ico', 0.48, progress);
-                  setElementVisibility('el-proto-txt', 0.48, progress);
+                  animateDraw('path-protocol', 0.4, 2.3);
+                  reveal('el-proto-ico', 2.55);
+                  reveal('el-proto-txt', 2.65);
 
-                  setPathProgress('path-neg-2', 0.45, 0.50, progress);
-                  setElementVisibility('el-neg2-ico', 0.50, progress);
-                  setElementVisibility('el-neg2-txt', 0.50, progress);
+                  animateDraw('path-neg-2', 0.35, 2.75);
+                  reveal('el-neg2-ico', 2.9);
+                  reveal('el-neg2-txt', 2.9);
 
-                  setPathProgress('path-granted', 0.48, 0.54, progress);
-                  setElementVisibility('el-grant-ico', 0.54, progress);
-                  setElementVisibility('el-grant-txt', 0.54, progress);
+                  animateDraw('path-granted', 0.4, 2.95);
+                  reveal('el-grant-ico', 3.25);
+                  reveal('el-grant-txt', 3.25);
 
-                  // 5. Tools & AI Apps
-                  setPathProgress('path-mcp-to-tools', 0.48, 0.54, progress);
-                  setElementVisibility('el-req-tools', 0.54, progress);
-                  setPathProgress('path-tools-to-apps', 0.54, 0.60, progress);
-                  setElementVisibility('el-bot-ico', 0.60, progress);
+                  animateDraw('path-mcp-to-tools', 0.4, 2.95);
+                  reveal('el-req-tools', 3.25);
+                  animateDraw('path-tools-to-apps', 0.4, 3.45);
+                  reveal('el-bot-ico', 3.65);
 
-                  setPathProgress('path-apps-down', 0.60, 0.65, progress);
-                  setElementVisibility('el-hollow-top', 0.65, progress);
-                  const t20 = document.getElementById('tick-20');
-                  if (t20) t20.style.opacity = progress >= 0.64 ? '1' : '0';
-                  setElementVisibility('el-time-right', 0.65, progress);
-                  setElementVisibility('el-ai-apps', 0.67, progress);
-                  setElementVisibility('el-ai-apps-sub', 0.69, progress);
+                  animateDraw('path-apps-down', 0.3, 3.75);
+                  reveal('el-hollow-top', 3.85);
+                  setTimeout(() => {{ const t20 = document.getElementById('tick-20'); if(t20) t20.style.opacity = '1'; }}, 3900);
+                  reveal('el-time-right', 3.95);
+                  reveal('el-ai-apps', 4.05);
+                  reveal('el-ai-apps-sub', 4.15);
 
-                  // 6. Return Flow, Processing & Sync Confirmation
-                  setPathProgress('path-ai-to-note', 0.68, 0.74, progress);
-                  setElementVisibility('el-hollow-bot', 0.72, progress);
-                  setElementVisibility('el-write', 0.74, progress);
+                  animateDraw('path-ai-to-note', 0.4, 4.25);
+                  reveal('el-hollow-bot', 4.45);
+                  reveal('el-write', 4.65);
 
-                  setPathProgress('path-note-to-proc', 0.74, 0.80, progress);
-                  setElementVisibility('el-proc-ico', 0.80, progress);
-                  setElementVisibility('el-proc-txt', 0.80, progress);
+                  animateDraw('path-note-to-proc', 0.4, 4.85);
+                  reveal('el-proc-ico', 5.15);
+                  reveal('el-proc-txt', 5.25);
 
-                  setPathProgress('path-lower-flow', 0.80, 0.90, progress);
+                  animateDraw('path-lower-flow', 0.8, 5.35, 'linear');
 
-                  setPathProgress('path-ret-db', 0.90, 0.94, progress);
-                  setElementVisibility('el-saved-ico', 0.94, progress);
-                  setElementVisibility('el-saved-txt', 0.94, progress);
+                  animateDraw('path-ret-db', 0.35, 6.05);
+                  reveal('el-saved-ico', 6.25);
+                  reveal('el-saved-txt', 6.25);
 
-                  setPathProgress('path-ret-sync', 0.92, 0.98, progress);
-                  setElementVisibility('el-sync-ico', 0.98, progress);
-                  setElementVisibility('el-sync-bot-txt', 0.98, progress);
+                  animateDraw('path-ret-sync', 0.5, 6.45);
+                  reveal('el-sync-ico', 6.85);
+                  reveal('el-sync-bot-txt', 6.95);
+
+                  setTimeout(() => {{
+                    document.querySelectorAll('#pipelineViewport .line-green-dash, #pipelineViewport .line-white-dash').forEach(p => {{
+                      p.style.transition = 'none';
+                      p.style.strokeDasharray = '4 4';
+                      p.style.strokeDashoffset = '0';
+                    }});
+                  }}, 7300);
                 }}
 
-                lenis.on('scroll', updateScrollPipeline);
-                window.addEventListener('resize', updateScrollPipeline);
-                updateScrollPipeline();
+                // Trigger smoothly when entering the section viewport
+                const pipelineObserver = new IntersectionObserver((entries) => {{
+                  entries.forEach(entry => {{
+                    if (entry.isIntersecting) {{
+                      triggerPipelineAnimation();
+                    }}
+                  }});
+                }}, {{ threshold: 0.25 }});
+
+                pipelineObserver.observe(pipelineSection);
               }});
             </script>
         </div>
 
-      </section>
-    </div>
+    </section>
 
     <!-- Core Capabilities Showcase -->
     <div class="showcase-container">
@@ -1120,7 +1112,7 @@ async def landing_page(request: Request):
           <button class="menu-badge-btn" aria-hidden="true" tabindex="-1">CORE CAPABILITIES</button>
           <ul class="nav-list">
             <li>
-              <a class="nav-btn" data-target="trigram-search">
+              <a class="nav-btn active" data-target="trigram-search">
                 <span class="nav-dot"></span>Zero-Latency Trigram Search
               </a>
             </li>
