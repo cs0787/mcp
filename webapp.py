@@ -1,10 +1,11 @@
 """
-Memory Notes - Web Application (Lenis Smooth Scroll & Scroll-Driven Pipeline Animation)
+Memory Notes - Web Application (Zoom-Proof Architecture & Real-Time Nav Sync)
 Full Python Starlette ASGI Application with:
 - Darkroom Engineering Lenis Smooth Scrolling (@studio-freight/lenis)
-- Scrubbed, scroll-driven Instant Context Pipeline Animation (drawing vector tracks, glowing heads & revealing badges progressively on scroll)
-- Interactive HUD Zoom In / Zoom Out Controls & Aspect-Ratio Scaled Vector Canvas
-- 2D Codebase Console Graph Interface with Pan/Zoom & Node Modals
+- Scrubbed, scroll-driven Instant Context Pipeline Animation starting from the terminal quickstart section
+- Zoom-proof, dual-axis clamped aspect-ratio vector engine (no top/bottom clipping across zoom levels)
+- Accurate real-time focal scroll-spy synchronization for Core Capabilities navigation
+- 2D Codebase Console Graph Interface with Module Clustering & Touch/Pan Support
 - FastMCP Multi-Tenant Database & Control Plane Settings
 """
 
@@ -165,21 +166,27 @@ def _page(title: str, body: str) -> HTMLResponse:
         opacity: 1;
     }}
 
-    /* Neon-Style Zoom Lock Proportional Canvas */
+    /* Zoom-Proof Dual-Axis Clamped Pipeline Canvas */
     .diagram-scaler-wrapper {{
         width: 100%;
-        max-width: 1000px;
+        max-width: min(960px, 90vw);
+        max-height: min(480px, 56vh);
+        aspect-ratio: 1000 / 524;
         margin: 0 auto;
         position: relative;
         container-type: inline-size;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }}
 
     .diagram-container {{
         position: relative;
         width: 100%;
+        height: 100%;
         aspect-ratio: 1000 / 524;
         background-color: #000000;
-        overflow: hidden;
+        overflow: visible;
     }}
 
     .vertical-grid {{
@@ -188,7 +195,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     .grid-line {{ width: 1px; height: 100%; background-color: #ffffff; }}
     
     svg.canvas {{
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;
     }}
 
     .line-green {{ stroke: #00e599; stroke-width: 1.5; fill: none; }}
@@ -199,7 +206,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     .ruler-tick.lit {{ stroke: #00e599; }}
     .tick-active {{ stroke: #00e599; stroke-width: 1.5; }}
 
-    /* Proportional Scaled Badges */
+    /* Proportional Badges Scaled to Container Query Width (cqw) */
     .badge {{
         position: absolute; transform: translate(-50%, -50%) scale(0.7); display: flex; align-items: center; gap: 0.6cqw; font-size: clamp(8px, 1.2cqw, 12px); font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
         transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
@@ -239,13 +246,16 @@ def _page(title: str, body: str) -> HTMLResponse:
     .showcase-container {{
       position: relative;
       width: 100%;
+      background-color: #000000;
+      padding-top: 60px;
       padding-bottom: 80px;
       font-family: var(--font-main);
+      z-index: 20;
     }}
 
     .sticky-nav-wrapper {{
       position: absolute;
-      top: 0;
+      top: 60px;
       left: 0;
       right: 0;
       bottom: 80px;
@@ -258,7 +268,7 @@ def _page(title: str, body: str) -> HTMLResponse:
 
     .sticky-sidebar {{
       position: sticky;
-      top: 90px;
+      top: 84px;
       width: 260px;
       pointer-events: auto;
       padding-top: 8px;
@@ -559,7 +569,7 @@ def _page(title: str, body: str) -> HTMLResponse:
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 1.0,
-      touchMultiplier: 1.8,
+      touchMultiplier: 1.6,
       infinite: false,
     }});
 
@@ -713,7 +723,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 1. Live Interactive Code / Terminal Block -->
+    <!-- 1. "Connect in 30 Seconds" Section -->
     <section id="quickstart" class="py-12 sm:py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
@@ -750,27 +760,26 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. SCROLL-DRIVEN PINNED PIPELINE ANIMATION SECTION -->
-    <section id="pipeline" class="bg-[#000000] text-white border-b border-neutral-800 relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-16 sm:pt-24 pb-8 sm:pb-10">
-            <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-2 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
-                Scroll-Driven Flow
-            </p>
-            <h2 class="text-white text-2xl sm:text-3xl font-bold tracking-tight">
-                Instant Context Pipeline
-            </h2>
-        </div>
+    <!-- 2. STICKY SCROLL-PINNED PIPELINE SECTION -->
+    <div id="pipelineTrack" class="relative bg-[#000000]" style="height: 240vh;">
+      <section id="pipeline" class="sticky top-[58px] h-[calc(100vh-58px)] flex flex-col justify-center py-4 bg-[#000000] text-white border-b border-neutral-800 select-none overflow-hidden">
+        <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-12 flex flex-col justify-center my-auto">
+            
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2 mb-3">
+                <div>
+                    <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-1 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
+                        Scroll to Flow
+                    </p>
+                    <h2 class="text-white text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">
+                        Instant Context Pipeline
+                    </h2>
+                </div>
+            </div>
 
-        <!-- Pinned scroll-jack wrapper: the diagram stays fixed in view while the
-             animation plays out, then releases naturally once it completes. -->
-        <div id="pipelineScrollWrapper" class="relative" style="height: 300vh;">
-          <div id="pipelineSticky" class="sticky top-0 flex items-center" style="height: 100vh;">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 w-full">
-
-              <!-- Proportional Diagram Scaler Wrapper -->
-              <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] overflow-hidden relative select-none">
-                <div id="pipelineViewport" class="diagram-container">
+            <!-- Proportional Diagram Scaler Wrapper -->
+            <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] relative">
+              <div id="pipelineViewport" class="diagram-container">
                 <!-- Grid Columns -->
                 <div class="vertical-grid">
                   <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
@@ -947,21 +956,18 @@ async def landing_page(request: Request):
 
                 <div id="el-sync-ico" class="circle-icon check-node" style="top: 84%; left: 7.6%;">✓</div>
                 <div id="el-sync-bot-txt" class="meta-text" style="top: 88.2%; left: 7.6%;">sync<br>(auto / manual)</div>
-                </div>
               </div>
-
             </div>
-          </div>
-        </div>
 
-        <!-- Scroll-Driven Pipeline Scrubbing Script -->
-        <script>
+            <!-- Scroll-Driven Pipeline Animation Script -->
+            <script>
               document.addEventListener('DOMContentLoaded', () => {{
                 const allPaths = document.querySelectorAll('#pipelineViewport svg.canvas path:not(defs path)');
                 const dot = document.getElementById('head-dot');
-                const pipelineWrapper = document.getElementById('pipelineScrollWrapper');
+                const pipelineTrack = document.getElementById('pipelineTrack');
+                const quickstartSection = document.getElementById('quickstart');
                 const ticks = document.querySelectorAll('#pipelineViewport #ticks line:not(.tick-active)');
-                if (!allPaths.length || !pipelineWrapper) return;
+                if (!allPaths.length || !pipelineTrack) return;
 
                 const pathLengths = {{}};
                 allPaths.forEach(path => {{
@@ -993,25 +999,30 @@ async def landing_page(request: Request):
                 }}
 
                 function updateScrollPipeline() {{
-                  const rect = pipelineWrapper.getBoundingClientRect();
-                  const scrollableDistance = rect.height - window.innerHeight;
-                  const progress = scrollableDistance > 0
-                    ? Math.min(Math.max(-rect.top / scrollableDistance, 0), 1)
-                    : 0;
+                  const qRect = quickstartSection ? quickstartSection.getBoundingClientRect() : null;
+                  const tRect = pipelineTrack.getBoundingClientRect();
+                  const winH = window.innerHeight;
+
+                  const startY = qRect ? qRect.top : tRect.top;
+                  const totalDistance = (tRect.bottom - startY) - winH;
+                  if (totalDistance <= 0) return;
+
+                  const scrollOffset = (winH * 0.5) - startY;
+                  const progress = Math.min(Math.max(scrollOffset / totalDistance, 0), 1);
 
                   // 1. Initial Source Nodes
-                  setElementVisibility('el-notes', 0.05, progress);
-                  setElementVisibility('el-notes-sub', 0.07, progress);
-                  setPathProgress('path-sync-arrow', 0.08, 0.12, progress);
-                  setElementVisibility('el-sync-txt', 0.12, progress);
+                  setElementVisibility('el-notes', 0.02, progress);
+                  setElementVisibility('el-notes-sub', 0.04, progress);
+                  setPathProgress('path-sync-arrow', 0.05, 0.10, progress);
+                  setElementVisibility('el-sync-txt', 0.10, progress);
 
                   // 2. Main Central Timeline & Ticks
-                  setPathProgress('path-main', 0.10, 0.55, progress);
+                  setPathProgress('path-main', 0.08, 0.52, progress);
                   
                   const pMain = document.getElementById('path-main');
-                  if (progress >= 0.10 && progress <= 0.55 && pMain && dot) {{
+                  if (progress >= 0.08 && progress <= 0.52 && pMain && dot) {{
                     dot.classList.add('active');
-                    const localProg = (progress - 0.10) / (0.55 - 0.10);
+                    const localProg = (progress - 0.08) / (0.52 - 0.08);
                     const pt = pMain.getPointAtLength(localProg * pathLengths['path-main']);
                     dot.setAttribute('cx', pt.x);
                     dot.setAttribute('cy', pt.y);
@@ -1020,18 +1031,18 @@ async def landing_page(request: Request):
                   }}
 
                   ticks.forEach((tick, i) => {{
-                    const tickProg = 0.15 + (i / ticks.length) * 0.35;
+                    const tickProg = 0.12 + (i / ticks.length) * 0.38;
                     tick.classList.toggle('lit', progress >= tickProg);
                   }});
 
                   // 3. Database Node & Data Request
-                  setElementVisibility('el-neondb', 0.18, progress);
-                  setElementVisibility('el-neondb-sub', 0.20, progress);
-                  setElementVisibility('el-neondb-time', 0.22, progress);
+                  setElementVisibility('el-neondb', 0.16, progress);
+                  setElementVisibility('el-neondb-sub', 0.18, progress);
+                  setElementVisibility('el-neondb-time', 0.20, progress);
 
-                  setPathProgress('path-db-up', 0.22, 0.26, progress);
-                  setElementVisibility('el-db-ico', 0.26, progress);
-                  setPathProgress('path-req-data', 0.26, 0.32, progress);
+                  setPathProgress('path-db-up', 0.20, 0.25, progress);
+                  setElementVisibility('el-db-ico', 0.25, progress);
+                  setPathProgress('path-req-data', 0.25, 0.32, progress);
                   setElementVisibility('el-req-data', 0.32, progress);
 
                   // 4. MCP Server & Negotiations
@@ -1096,9 +1107,10 @@ async def landing_page(request: Request):
                 updateScrollPipeline();
               }});
             </script>
+        </div>
 
+      </section>
     </div>
-</section>
 
     <!-- Core Capabilities Showcase -->
     <div class="showcase-container">
@@ -1108,7 +1120,7 @@ async def landing_page(request: Request):
           <button class="menu-badge-btn" aria-hidden="true" tabindex="-1">CORE CAPABILITIES</button>
           <ul class="nav-list">
             <li>
-              <a class="nav-btn active" data-target="trigram-search">
+              <a class="nav-btn" data-target="trigram-search">
                 <span class="nav-dot"></span>Zero-Latency Trigram Search
               </a>
             </li>
@@ -1340,28 +1352,30 @@ async def landing_page(request: Request):
       </div>
     </footer>
 
+    <!-- Real-Time Focal Scroll-Spy Synchronization for Core Capabilities -->
     <script>
       const navButtons = document.querySelectorAll('.nav-btn');
       const sections = document.querySelectorAll('.feature-section');
       const sidebar = document.getElementById('sidebar');
 
-      function syncActiveNav() {{
+      function syncActiveCapabilitiesNav() {{
         if (window.innerWidth <= 900) return;
-        const focalLine = window.innerHeight * 0.4;
-        let currentSection = sections[0];
+        const focalY = window.innerHeight * 0.45;
+        let activeSec = sections[0];
 
-        sections.forEach((section) => {{
-          const rect = section.getBoundingClientRect();
-          if (rect.top <= focalLine && rect.bottom >= focalLine) {{
-            currentSection = section;
+        sections.forEach((sec) => {{
+          const rect = sec.getBoundingClientRect();
+          if (rect.top <= focalY && rect.bottom >= focalY) {{
+            activeSec = sec;
           }}
         }});
 
         navButtons.forEach((btn) => {{
-          btn.classList.toggle('active', btn.dataset.target === currentSection.id);
+          const isActive = btn.dataset.target === activeSec.id;
+          btn.classList.toggle('active', isActive);
         }});
 
-        const theme = currentSection.getAttribute('data-theme');
+        const theme = activeSec.getAttribute('data-theme');
         if (theme === 'light') {{
           sidebar.classList.add('theme-light');
         }} else {{
@@ -1369,9 +1383,9 @@ async def landing_page(request: Request):
         }}
       }}
 
-      lenis.on('scroll', syncActiveNav);
-      window.addEventListener('resize', syncActiveNav);
-      syncActiveNav();
+      lenis.on('scroll', syncActiveCapabilitiesNav);
+      window.addEventListener('resize', syncActiveCapabilitiesNav);
+      syncActiveCapabilitiesNav();
 
       navButtons.forEach((btn) => {{
         btn.addEventListener('click', (e) => {{
@@ -1450,7 +1464,7 @@ async def signup_post(request: Request):
                 <label class="block text-xs font-semibold text-on-surface mb-1">Password</label>
                 <input type="password" name="password" minlength="8" required class="w-full px-4 py-2 border border-border-muted rounded text-sm">
             </div>
-            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-xs font-semibold border border-[#050505]">Sign Up</button>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border border-[#050505]">Sign Up</button>
         </form>
     </div>
 </main>
@@ -1536,7 +1550,7 @@ async def login_post(request: Request):
                 <label class="block text-xs font-semibold text-on-surface mb-1">Password</label>
                 <input type="password" name="password" required class="w-full px-4 py-2 border border-border-muted rounded text-sm">
             </div>
-            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-xs font-semibold border border-[#050505]">Log In</button>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border border-[#050505]">Log In</button>
         </form>
     </div>
 </main>
