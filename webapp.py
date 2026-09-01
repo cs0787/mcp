@@ -756,7 +756,7 @@ async def landing_page(request: Request):
     <!-- Pinned scroll-jack wrapper: the diagram stays fixed in view while the
          animation plays out, then releases naturally once it completes. -->
     <div id="pipelineScrollWrapper" class="relative" style="height: 300vh;">
-      <div id="pipelineSticky" class="sticky top-0 flex items-center" style="height: 100vh;">
+      <div id="pipelineSticky" class="sticky top-0 flex items-center pt-16 sm:pt-20" style="height: 100vh;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 w-full">
             
           <!-- MOVED HEADING: Now pinned inside the sticky container -->
