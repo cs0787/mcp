@@ -1,12 +1,11 @@
 """
-Memory Notes - Web Application (Restored Pure Vector Animation & Smooth Scroll)
+Memory Notes - Web Application (Lenis Smooth Scroll & Scroll-Driven Pipeline Animation)
 Full Python Starlette ASGI Application with:
-- Restored original SVG vector flow animation (drawing tracks, glowing head, ruler ticks & node reveals)
-- Triggered automatically via IntersectionObserver when entering the section
 - Darkroom Engineering Lenis Smooth Scrolling (@studio-freight/lenis)
-- Dual-axis clamped diagram scaler to ensure full diagram visibility across all browser zoom levels
-- Real-time scroll-spy synchronization for Core Capabilities navigation
-- 2D Codebase Console Graph Interface with Module Clustering & Touch/Pan Support
+- Scrubbed, scroll-driven Instant Context Pipeline Animation (drawing vector tracks, glowing heads & revealing badges progressively on scroll)
+- Interactive HUD Zoom In / Zoom Out Controls & Aspect-Ratio Scaled Vector Canvas
+- 2D Codebase Console Graph Interface with Pan/Zoom & Node Modals
+- FastMCP Multi-Tenant Database & Control Plane Settings
 """
 
 import asyncpg
@@ -166,27 +165,21 @@ def _page(title: str, body: str) -> HTMLResponse:
         opacity: 1;
     }}
 
-    /* Zoom-Proof Dual-Axis Clamped Pipeline Canvas */
+    /* Neon-Style Zoom Lock Proportional Canvas */
     .diagram-scaler-wrapper {{
         width: 100%;
-        max-width: min(980px, 92vw);
-        max-height: min(520px, 62vh);
-        aspect-ratio: 1000 / 524;
+        max-width: 1000px;
         margin: 0 auto;
         position: relative;
         container-type: inline-size;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }}
 
     .diagram-container {{
         position: relative;
         width: 100%;
-        height: 100%;
         aspect-ratio: 1000 / 524;
         background-color: #000000;
-        overflow: visible;
+        overflow: hidden;
     }}
 
     .vertical-grid {{
@@ -195,7 +188,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     .grid-line {{ width: 1px; height: 100%; background-color: #ffffff; }}
     
     svg.canvas {{
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: visible;
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
     }}
 
     .line-green {{ stroke: #00e599; stroke-width: 1.5; fill: none; }}
@@ -208,8 +201,8 @@ def _page(title: str, body: str) -> HTMLResponse:
 
     /* Proportional Scaled Badges */
     .badge {{
-        position: absolute; transform: translate(-50%, -50%) scale(0.65); display: flex; align-items: center; gap: 0.6cqw; font-size: clamp(8px, 1.2cqw, 12px); font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
-        transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
+        position: absolute; transform: translate(-50%, -50%) scale(0.7); display: flex; align-items: center; gap: 0.6cqw; font-size: clamp(8px, 1.2cqw, 12px); font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
+        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
     }}
     .badge.visible {{ opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }}
     .badge-white {{ background: #ffffff; color: #000000; padding: 0.5cqw 1.2cqw; font-weight: 600; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1); }}
@@ -218,7 +211,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     
     .circle-icon {{
         position: absolute; transform: translate(-50%, -50%) scale(0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; opacity: 0;
-        transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }}
     .circle-icon.visible {{ opacity: 1; transform: translate(-50%, -50%) scale(1); }}
     .check-node {{ width: 1.5cqw; height: 1.5cqw; min-width: 14px; min-height: 14px; background: #00e599; color: #000000; font-size: clamp(7px, 0.9cqw, 9px); font-weight: 900; box-shadow: 0 0 10px rgba(0, 229, 153, 0.7); }}
@@ -226,14 +219,14 @@ def _page(title: str, body: str) -> HTMLResponse:
     .hollow-node {{ width: 0.7cqw; height: 0.7cqw; min-width: 7px; min-height: 7px; background: #000000; border: 1.5px solid #00e599; border-radius: 50%; }}
 
     .meta-text {{
-        position: absolute; transform: translateX(-50%); font-size: clamp(7.5px, 0.95cqw, 9.5px); color: #7d8590; text-align: center; line-height: 1.35; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.4s ease;
+        position: absolute; transform: translateX(-50%); font-size: clamp(7.5px, 0.95cqw, 9.5px); color: #7d8590; text-align: center; line-height: 1.35; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.3s ease;
     }}
     .meta-text.visible {{ opacity: 1; }}
     .timestamp {{ font-size: clamp(7.5px, 0.95cqw, 9.5px); color: #555d68; letter-spacing: 0.3px; }}
     .glow-dot {{ fill: #00e599; filter: url(#glow); opacity: 0; transition: opacity 0.2s ease; }}
     .glow-dot.active {{ opacity: 1; }}
 
-    /* Core Capabilities Showcase */
+    /* Core Capabilities Showcase Scaffolding */
     :root {{
       --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -246,16 +239,13 @@ def _page(title: str, body: str) -> HTMLResponse:
     .showcase-container {{
       position: relative;
       width: 100%;
-      background-color: #000000;
-      padding-top: 60px;
       padding-bottom: 80px;
       font-family: var(--font-main);
-      z-index: 20;
     }}
 
     .sticky-nav-wrapper {{
       position: absolute;
-      top: 60px;
+      top: 0;
       left: 0;
       right: 0;
       bottom: 80px;
@@ -268,7 +258,7 @@ def _page(title: str, body: str) -> HTMLResponse:
 
     .sticky-sidebar {{
       position: sticky;
-      top: 84px;
+      top: 90px;
       width: 260px;
       pointer-events: auto;
       padding-top: 8px;
@@ -569,7 +559,7 @@ def _page(title: str, body: str) -> HTMLResponse:
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 1.0,
-      touchMultiplier: 1.6,
+      touchMultiplier: 1.8,
       infinite: false,
     }});
 
@@ -723,7 +713,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 1. "Connect in 30 Seconds" Section -->
+    <!-- 1. Live Interactive Code / Terminal Block -->
     <section id="quickstart" class="py-12 sm:py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
@@ -760,25 +750,27 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. INSTANT CONTEXT PIPELINE SECTION (Restored Pure Animation) -->
-    <section id="pipeline" class="py-16 sm:py-24 bg-[#000000] text-white border-b border-neutral-800 select-none relative">
-        <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-12">
-            
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2 mb-8">
-                <div>
-                    <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-1 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
-                        Live Branching Architecture
-                    </p>
-                    <h2 class="text-white text-2xl sm:text-3xl font-bold tracking-tight">
-                        Instant Context Pipeline
-                    </h2>
-                </div>
-            </div>
+    <!-- 2. SCROLL-DRIVEN PINNED PIPELINE ANIMATION SECTION -->
+    <section id="pipeline" class="bg-[#000000] text-white border-b border-neutral-800 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-16 sm:pt-24 pb-8 sm:pb-10">
+            <p class="mono text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-2 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
+                Scroll-Driven Flow
+            </p>
+            <h2 class="text-white text-2xl sm:text-3xl font-bold tracking-tight">
+                Instant Context Pipeline
+            </h2>
+        </div>
 
-            <!-- Proportional Diagram Scaler Wrapper -->
-            <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] relative">
-              <div id="pipelineViewport" class="diagram-container">
+        <!-- Pinned scroll-jack wrapper: the diagram stays fixed in view while the
+             animation plays out, then releases naturally once it completes. -->
+        <div id="pipelineScrollWrapper" class="relative" style="height: 300vh;">
+          <div id="pipelineSticky" class="sticky top-0 flex items-center" style="height: 100vh;">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 w-full">
+
+              <!-- Proportional Diagram Scaler Wrapper -->
+              <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] overflow-hidden relative select-none">
+                <div id="pipelineViewport" class="diagram-container">
                 <!-- Grid Columns -->
                 <div class="vertical-grid">
                   <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
@@ -936,7 +928,7 @@ async def landing_page(request: Request):
                 <div id="el-ai-apps-sub" class="meta-text" style="top: 55%; left: 91.8%;">AI Agents / Apps</div>
 
                 <div id="el-proto-ico" class="circle-icon outline-node" style="top: 64.5%; left: 52%;">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </div>
                 <div id="el-proto-txt" class="meta-text" style="top: 69.6%; left: 52%;">protocol<br>negotiation</div>
 
@@ -955,154 +947,158 @@ async def landing_page(request: Request):
 
                 <div id="el-sync-ico" class="circle-icon check-node" style="top: 84%; left: 7.6%;">✓</div>
                 <div id="el-sync-bot-txt" class="meta-text" style="top: 88.2%; left: 7.6%;">sync<br>(auto / manual)</div>
+                </div>
               </div>
-            </div>
 
-            <!-- Restored Pure Timing Animation Script -->
-            <script>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scroll-Driven Pipeline Scrubbing Script -->
+        <script>
               document.addEventListener('DOMContentLoaded', () => {{
                 const allPaths = document.querySelectorAll('#pipelineViewport svg.canvas path:not(defs path)');
                 const dot = document.getElementById('head-dot');
-                const pipelineSection = document.getElementById('pipeline');
-                if (!allPaths.length || !dot || !pipelineSection) return;
+                const pipelineWrapper = document.getElementById('pipelineScrollWrapper');
+                const ticks = document.querySelectorAll('#pipelineViewport #ticks line:not(.tick-active)');
+                if (!allPaths.length || !pipelineWrapper) return;
 
-                let hasAnimated = false;
-
+                const pathLengths = {{}};
                 allPaths.forEach(path => {{
                   const len = path.getTotalLength();
+                  pathLengths[path.id] = len;
                   path.style.strokeDasharray = `${{len}} ${{len}}`;
                   path.style.strokeDashoffset = len;
+                  path.style.transition = 'none';
                 }});
 
-                function animateDraw(id, duration, delay = 0, ease = 'cubic-bezier(0.25, 1, 0.5, 1)', trackDot = false) {{
+                function setPathProgress(id, startP, endP, currentP) {{
                   const p = document.getElementById(id);
                   if (!p) return;
-                  const len = p.getTotalLength();
-                  setTimeout(() => {{
-                    p.style.transition = `stroke-dashoffset ${{duration}}s ${{ease}}`;
-                    p.style.strokeDashoffset = '0';
-                    if (trackDot) {{
-                      dot.classList.add('active');
-                      const start = performance.now();
-                      function updateDot(time) {{
-                        const progress = Math.min(1, (time - start) / (duration * 1000));
-                        const point = p.getPointAtLength(progress * len);
-                        dot.setAttribute('cx', point.x);
-                        dot.setAttribute('cy', point.y);
-                        if (progress < 1) requestAnimationFrame(updateDot);
-                        else dot.classList.remove('active');
-                      }}
-                      requestAnimationFrame(updateDot);
-                    }}
-                  }}, delay * 1000);
+                  const len = pathLengths[id];
+                  if (currentP < startP) {{
+                    p.style.strokeDashoffset = len;
+                  }} else if (currentP > endP) {{
+                    p.style.strokeDashoffset = 0;
+                  }} else {{
+                    const localProg = (currentP - startP) / (endP - startP);
+                    p.style.strokeDashoffset = len * (1 - localProg);
+                  }}
                 }}
 
-                function reveal(id, delay) {{
-                  setTimeout(() => {{
-                    const el = document.getElementById(id);
-                    if (el) el.classList.add('visible');
-                  }}, delay * 1000);
+                function setElementVisibility(id, triggerProg, currentP) {{
+                  const el = document.getElementById(id);
+                  if (!el) return;
+                  el.classList.toggle('visible', currentP >= triggerProg);
                 }}
 
-                function triggerPipelineAnimation() {{
-                  if (hasAnimated) return;
-                  hasAnimated = true;
+                function updateScrollPipeline() {{
+                  const rect = pipelineWrapper.getBoundingClientRect();
+                  const scrollableDistance = rect.height - window.innerHeight;
+                  const progress = scrollableDistance > 0
+                    ? Math.min(Math.max(-rect.top / scrollableDistance, 0), 1)
+                    : 0;
 
-                  reveal('el-notes', 0.1);
-                  reveal('el-notes-sub', 0.2);
-                  animateDraw('path-sync-arrow', 0.35, 0.3);
-                  reveal('el-sync-txt', 0.45);
+                  // 1. Initial Source Nodes
+                  setElementVisibility('el-notes', 0.05, progress);
+                  setElementVisibility('el-notes-sub', 0.07, progress);
+                  setPathProgress('path-sync-arrow', 0.08, 0.12, progress);
+                  setElementVisibility('el-sync-txt', 0.12, progress);
 
-                  animateDraw('path-main', 2.0, 0.4, 'linear', true);
+                  // 2. Main Central Timeline & Ticks
+                  setPathProgress('path-main', 0.10, 0.55, progress);
+                  
+                  const pMain = document.getElementById('path-main');
+                  if (progress >= 0.10 && progress <= 0.55 && pMain && dot) {{
+                    dot.classList.add('active');
+                    const localProg = (progress - 0.10) / (0.55 - 0.10);
+                    const pt = pMain.getPointAtLength(localProg * pathLengths['path-main']);
+                    dot.setAttribute('cx', pt.x);
+                    dot.setAttribute('cy', pt.y);
+                  }} else if (dot) {{
+                    dot.classList.remove('active');
+                  }}
 
-                  document.querySelectorAll('#pipelineViewport #ticks line').forEach((tick, i) => {{
-                    setTimeout(() => tick.classList.add('lit'), 400 + i * 75);
+                  ticks.forEach((tick, i) => {{
+                    const tickProg = 0.15 + (i / ticks.length) * 0.35;
+                    tick.classList.toggle('lit', progress >= tickProg);
                   }});
 
-                  reveal('el-neondb', 0.7);
-                  reveal('el-neondb-sub', 0.8);
-                  reveal('el-neondb-time', 0.9);
+                  // 3. Database Node & Data Request
+                  setElementVisibility('el-neondb', 0.18, progress);
+                  setElementVisibility('el-neondb-sub', 0.20, progress);
+                  setElementVisibility('el-neondb-time', 0.22, progress);
 
-                  animateDraw('path-db-up', 0.35, 0.95);
-                  reveal('el-db-ico', 1.15);
-                  animateDraw('path-req-data', 0.4, 1.25);
-                  reveal('el-req-data', 1.45);
+                  setPathProgress('path-db-up', 0.22, 0.26, progress);
+                  setElementVisibility('el-db-ico', 0.26, progress);
+                  setPathProgress('path-req-data', 0.26, 0.32, progress);
+                  setElementVisibility('el-req-data', 0.32, progress);
 
-                  animateDraw('path-data-to-mcp', 0.5, 1.65);
-                  setTimeout(() => {{ const t19 = document.getElementById('tick-19'); if(t19) t19.style.opacity = '1'; }}, 1800);
-                  reveal('el-time-mid', 1.85);
-                  reveal('el-mcp', 2.05);
+                  // 4. MCP Server & Negotiations
+                  setPathProgress('path-data-to-mcp', 0.32, 0.38, progress);
+                  const t19 = document.getElementById('tick-19');
+                  if (t19) t19.style.opacity = progress >= 0.36 ? '1' : '0';
+                  setElementVisibility('el-time-mid', 0.37, progress);
+                  setElementVisibility('el-mcp', 0.39, progress);
 
-                  animateDraw('path-neg-1', 0.35, 2.15);
-                  reveal('el-neg1-ico', 2.3);
-                  reveal('el-neg1-txt', 2.3);
+                  setPathProgress('path-neg-1', 0.39, 0.44, progress);
+                  setElementVisibility('el-neg1-ico', 0.44, progress);
+                  setElementVisibility('el-neg1-txt', 0.44, progress);
 
-                  animateDraw('path-protocol', 0.4, 2.3);
-                  reveal('el-proto-ico', 2.55);
-                  reveal('el-proto-txt', 2.65);
+                  setPathProgress('path-protocol', 0.42, 0.48, progress);
+                  setElementVisibility('el-proto-ico', 0.48, progress);
+                  setElementVisibility('el-proto-txt', 0.48, progress);
 
-                  animateDraw('path-neg-2', 0.35, 2.75);
-                  reveal('el-neg2-ico', 2.9);
-                  reveal('el-neg2-txt', 2.9);
+                  setPathProgress('path-neg-2', 0.45, 0.50, progress);
+                  setElementVisibility('el-neg2-ico', 0.50, progress);
+                  setElementVisibility('el-neg2-txt', 0.50, progress);
 
-                  animateDraw('path-granted', 0.4, 2.95);
-                  reveal('el-grant-ico', 3.25);
-                  reveal('el-grant-txt', 3.25);
+                  setPathProgress('path-granted', 0.48, 0.54, progress);
+                  setElementVisibility('el-grant-ico', 0.54, progress);
+                  setElementVisibility('el-grant-txt', 0.54, progress);
 
-                  animateDraw('path-mcp-to-tools', 0.4, 2.95);
-                  reveal('el-req-tools', 3.25);
-                  animateDraw('path-tools-to-apps', 0.4, 3.45);
-                  reveal('el-bot-ico', 3.65);
+                  // 5. Tools & AI Apps
+                  setPathProgress('path-mcp-to-tools', 0.48, 0.54, progress);
+                  setElementVisibility('el-req-tools', 0.54, progress);
+                  setPathProgress('path-tools-to-apps', 0.54, 0.60, progress);
+                  setElementVisibility('el-bot-ico', 0.60, progress);
 
-                  animateDraw('path-apps-down', 0.3, 3.75);
-                  reveal('el-hollow-top', 3.85);
-                  setTimeout(() => {{ const t20 = document.getElementById('tick-20'); if(t20) t20.style.opacity = '1'; }}, 3900);
-                  reveal('el-time-right', 3.95);
-                  reveal('el-ai-apps', 4.05);
-                  reveal('el-ai-apps-sub', 4.15);
+                  setPathProgress('path-apps-down', 0.60, 0.65, progress);
+                  setElementVisibility('el-hollow-top', 0.65, progress);
+                  const t20 = document.getElementById('tick-20');
+                  if (t20) t20.style.opacity = progress >= 0.64 ? '1' : '0';
+                  setElementVisibility('el-time-right', 0.65, progress);
+                  setElementVisibility('el-ai-apps', 0.67, progress);
+                  setElementVisibility('el-ai-apps-sub', 0.69, progress);
 
-                  animateDraw('path-ai-to-note', 0.4, 4.25);
-                  reveal('el-hollow-bot', 4.45);
-                  reveal('el-write', 4.65);
+                  // 6. Return Flow, Processing & Sync Confirmation
+                  setPathProgress('path-ai-to-note', 0.68, 0.74, progress);
+                  setElementVisibility('el-hollow-bot', 0.72, progress);
+                  setElementVisibility('el-write', 0.74, progress);
 
-                  animateDraw('path-note-to-proc', 0.4, 4.85);
-                  reveal('el-proc-ico', 5.15);
-                  reveal('el-proc-txt', 5.25);
+                  setPathProgress('path-note-to-proc', 0.74, 0.80, progress);
+                  setElementVisibility('el-proc-ico', 0.80, progress);
+                  setElementVisibility('el-proc-txt', 0.80, progress);
 
-                  animateDraw('path-lower-flow', 0.8, 5.35, 'linear');
+                  setPathProgress('path-lower-flow', 0.80, 0.90, progress);
 
-                  animateDraw('path-ret-db', 0.35, 6.05);
-                  reveal('el-saved-ico', 6.25);
-                  reveal('el-saved-txt', 6.25);
+                  setPathProgress('path-ret-db', 0.90, 0.94, progress);
+                  setElementVisibility('el-saved-ico', 0.94, progress);
+                  setElementVisibility('el-saved-txt', 0.94, progress);
 
-                  animateDraw('path-ret-sync', 0.5, 6.45);
-                  reveal('el-sync-ico', 6.85);
-                  reveal('el-sync-bot-txt', 6.95);
-
-                  setTimeout(() => {{
-                    document.querySelectorAll('#pipelineViewport .line-green-dash, #pipelineViewport .line-white-dash').forEach(p => {{
-                      p.style.transition = 'none';
-                      p.style.strokeDasharray = '4 4';
-                      p.style.strokeDashoffset = '0';
-                    }});
-                  }}, 7300);
+                  setPathProgress('path-ret-sync', 0.92, 0.98, progress);
+                  setElementVisibility('el-sync-ico', 0.98, progress);
+                  setElementVisibility('el-sync-bot-txt', 0.98, progress);
                 }}
 
-                // Trigger smoothly when entering the section viewport
-                const pipelineObserver = new IntersectionObserver((entries) => {{
-                  entries.forEach(entry => {{
-                    if (entry.isIntersecting) {{
-                      triggerPipelineAnimation();
-                    }}
-                  }});
-                }}, {{ threshold: 0.25 }});
-
-                pipelineObserver.observe(pipelineSection);
+                lenis.on('scroll', updateScrollPipeline);
+                window.addEventListener('resize', updateScrollPipeline);
+                updateScrollPipeline();
               }});
             </script>
-        </div>
 
-    </section>
+    </div>
+</section>
 
     <!-- Core Capabilities Showcase -->
     <div class="showcase-container">
@@ -1344,30 +1340,28 @@ async def landing_page(request: Request):
       </div>
     </footer>
 
-    <!-- Real-Time Focal Scroll-Spy Synchronization for Core Capabilities -->
     <script>
       const navButtons = document.querySelectorAll('.nav-btn');
       const sections = document.querySelectorAll('.feature-section');
       const sidebar = document.getElementById('sidebar');
 
-      function syncActiveCapabilitiesNav() {{
+      function syncActiveNav() {{
         if (window.innerWidth <= 900) return;
-        const focalY = window.innerHeight * 0.45;
-        let activeSec = sections[0];
+        const focalLine = window.innerHeight * 0.4;
+        let currentSection = sections[0];
 
-        sections.forEach((sec) => {{
-          const rect = sec.getBoundingClientRect();
-          if (rect.top <= focalY && rect.bottom >= focalY) {{
-            activeSec = sec;
+        sections.forEach((section) => {{
+          const rect = section.getBoundingClientRect();
+          if (rect.top <= focalLine && rect.bottom >= focalLine) {{
+            currentSection = section;
           }}
         }});
 
         navButtons.forEach((btn) => {{
-          const isActive = btn.dataset.target === activeSec.id;
-          btn.classList.toggle('active', isActive);
+          btn.classList.toggle('active', btn.dataset.target === currentSection.id);
         }});
 
-        const theme = activeSec.getAttribute('data-theme');
+        const theme = currentSection.getAttribute('data-theme');
         if (theme === 'light') {{
           sidebar.classList.add('theme-light');
         }} else {{
@@ -1375,9 +1369,9 @@ async def landing_page(request: Request):
         }}
       }}
 
-      lenis.on('scroll', syncActiveCapabilitiesNav);
-      window.addEventListener('resize', syncActiveCapabilitiesNav);
-      syncActiveCapabilitiesNav();
+      lenis.on('scroll', syncActiveNav);
+      window.addEventListener('resize', syncActiveNav);
+      syncActiveNav();
 
       navButtons.forEach((btn) => {{
         btn.addEventListener('click', (e) => {{
@@ -1456,7 +1450,7 @@ async def signup_post(request: Request):
                 <label class="block text-xs font-semibold text-on-surface mb-1">Password</label>
                 <input type="password" name="password" minlength="8" required class="w-full px-4 py-2 border border-border-muted rounded text-sm">
             </div>
-            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border border-[#050505]">Sign Up</button>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-xs font-semibold border border-[#050505]">Sign Up</button>
         </form>
     </div>
 </main>
@@ -1542,7 +1536,7 @@ async def login_post(request: Request):
                 <label class="block text-xs font-semibold text-on-surface mb-1">Password</label>
                 <input type="password" name="password" required class="w-full px-4 py-2 border border-border-muted rounded text-sm">
             </div>
-            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border border-[#050505]">Log In</button>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-xs font-semibold border border-[#050505]">Log In</button>
         </form>
     </div>
 </main>
