@@ -168,7 +168,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     /* Neon-Style Zoom Lock Proportional Canvas */
     .diagram-scaler-wrapper {{
         width: 100%;
-        max-width: 880px;
+        max-width: 1200px;
         margin: 0 auto;
         position: relative;
         container-type: inline-size;
