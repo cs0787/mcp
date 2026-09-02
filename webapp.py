@@ -206,28 +206,28 @@ def _page(title: str, body: str) -> HTMLResponse:
 
     /* Proportional Scaled Badges */
     .badge {{
-        position: absolute; transform: translate(-50%, -50%) scale(0.7); display: flex; align-items: center; gap: 0.6cqw; font-size: clamp(8px, 1.2cqw, 12px); font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
+        position: absolute; transform: translate(-50%, -50%) scale(0.7); display: flex; align-items: center; gap: 0.6cqw; font-size: 1.2cqw; font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
         transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
     }}
     .badge.visible {{ opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }}
     .badge-white {{ background: #ffffff; color: #000000; padding: 0.5cqw 1.2cqw; font-weight: 600; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1); }}
-    .badge-yellow {{ background: #fcee0a; color: #000000; padding: 0.6cqw 1.4cqw; font-weight: 700; font-size: clamp(9px, 1.3cqw, 13px); box-shadow: 0 0 28px rgba(252, 238, 10, 0.45); }}
-    .badge-dark {{ background: #25282e; color: #b1b8c0; border: 1px solid #383c44; padding: 0.4cqw 1.1cqw; font-size: clamp(8px, 1.1cqw, 11.5px); }}
+    .badge-yellow {{ background: #fcee0a; color: #000000; padding: 0.6cqw 1.4cqw; font-weight: 700; font-size: 1.3cqw; box-shadow: 0 0 28px rgba(252, 238, 10, 0.45); }}
+    .badge-dark {{ background: #25282e; color: #b1b8c0; border: 1px solid #383c44; padding: 0.4cqw 1.1cqw; font-size: 1.1cqw; }}
     
     .circle-icon {{
         position: absolute; transform: translate(-50%, -50%) scale(0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; opacity: 0;
         transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     }}
     .circle-icon.visible {{ opacity: 1; transform: translate(-50%, -50%) scale(1); }}
-    .check-node {{ width: 1.5cqw; height: 1.5cqw; min-width: 14px; min-height: 14px; background: #00e599; color: #000000; font-size: clamp(7px, 0.9cqw, 9px); font-weight: 900; box-shadow: 0 0 10px rgba(0, 229, 153, 0.7); }}
-    .outline-node {{ width: 2cqw; height: 2cqw; min-width: 18px; min-height: 18px; border-radius: 50%; background: #0b0d10; border: 1px solid #30353c; color: #8b949e; }}
-    .hollow-node {{ width: 0.7cqw; height: 0.7cqw; min-width: 7px; min-height: 7px; background: #000000; border: 1.5px solid #00e599; border-radius: 50%; }}
+    .check-node {{ width: 1.5cqw; height: 1.5cqw; background: #00e599; color: #000000; font-size: 0.9cqw; font-weight: 900; box-shadow: 0 0 10px rgba(0, 229, 153, 0.7); }}
+    .outline-node {{ width: 2cqw; height: 2cqw; border-radius: 50%; background: #0b0d10; border: 1px solid #30353c; color: #8b949e; }}
+    .hollow-node {{ width: 0.7cqw; height: 0.7cqw; background: #000000; border: 1.5px solid #00e599; border-radius: 50%; }}
 
     .meta-text {{
-        position: absolute; transform: translateX(-50%); font-size: clamp(7.5px, 0.95cqw, 9.5px); color: #7d8590; text-align: center; line-height: 1.35; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.3s ease;
+        position: absolute; transform: translateX(-50%); font-size: 0.95cqw; color: #7d8590; text-align: center; line-height: 1.35; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.3s ease;
     }}
     .meta-text.visible {{ opacity: 1; }}
-    .timestamp {{ font-size: clamp(7.5px, 0.95cqw, 9.5px); color: #555d68; letter-spacing: 0.3px; }}
+    .timestamp {{ font-size: 0.95cqw; color: #555d68; letter-spacing: 0.3px; }}
     .glow-dot {{ fill: #00e599; filter: url(#glow); opacity: 0; transition: opacity 0.2s ease; }}
     .glow-dot.active {{ opacity: 1; }}
 
@@ -696,7 +696,7 @@ async def landing_page(request: Request):
                     Structured Freedom for Your Thoughts.
                 </h1>
                 <p class="text-sm sm:text-base lg:text-lg text-on-surface-variant max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                    A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents[cite: 1]. Read and write thoughts dynamically[cite: 1].
+                    A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents. Read and write thoughts dynamically.
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-3">
                     <a href="{' /console' if user_id else '/signup'}" class="w-full sm:w-auto text-center bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Get Started</a>
@@ -724,7 +724,7 @@ async def landing_page(request: Request):
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
                 <div>
                     <h2 class="text-2xl lg:text-3xl font-bold text-on-surface mb-2">Connect in 30 Seconds</h2>
-                    <p class="text-sm text-on-surface-variant">Add your MCP Memory endpoint to your AI client configuration file[cite: 1].</p>
+                    <p class="text-sm text-on-surface-variant">Add your MCP Memory endpoint to your AI client configuration file.</p>
                 </div>
                 <div class="flex items-center bg-surface-container-low border border-border-muted p-1 rounded-lg gap-1 overflow-x-auto max-w-full">
                     <button id="tab-claude" onclick="setTerminalTab('claude')" class="px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors whitespace-nowrap">Claude Desktop</button>
@@ -1150,12 +1150,12 @@ async def landing_page(request: Request):
           <div class="section-content">
             <span class="mobile-feature-badge">01 • Trigram Search</span>
             <h2 class="hero-heading">Zero-Latency Trigram Search. Never miss a fragmented thought.</h2>
-            <p class="lead-text">Memory Notes harnesses PostgreSQL trigram matching (<code>pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds[cite: 1].</p>
+            <p class="lead-text">Memory Notes harnesses PostgreSQL trigram matching (<code>pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds.</p>
             
             <ul class="checklist">
-              <li><span class="check-icon">✓</span> Typo-tolerant substring & fuzzy similarity scoring[cite: 1]</li>
-              <li><span class="check-icon">✓</span> Automatic fallback to ILIKE if extensions are missing[cite: 1]</li>
-              <li><span class="check-icon">✓</span> Indexed lookups executing in under 4ms[cite: 1]</li>
+              <li><span class="check-icon">✓</span> Typo-tolerant substring & fuzzy similarity scoring</li>
+              <li><span class="check-icon">✓</span> Automatic fallback to ILIKE if extensions are missing</li>
+              <li><span class="check-icon">✓</span> Indexed lookups executing in under 4ms</li>
             </ul>
 
             <div class="terminal-box">
@@ -1180,12 +1180,12 @@ async def landing_page(request: Request):
           <div class="section-content">
             <span class="mobile-feature-badge">02 • Autonomous Sync</span>
             <h2 class="hero-heading">Autonomous AI Memory Sync. Bi-directional writes from your agent.</h2>
-            <p class="lead-text">Claude and Cursor don't just inspect your past notes—they can create new workspace folders, append structured summaries, or update documents directly from prompt context[cite: 1].</p>
+            <p class="lead-text">Claude and Cursor don't just inspect your past notes—they can create new workspace folders, append structured summaries, or update documents directly from prompt context.</p>
             
             <ul class="checklist">
-              <li><span class="check-icon">✓</span> Explicit bigint epoch timestamping for Last-Write-Wins (LWW)[cite: 1]</li>
-              <li><span class="check-icon">✓</span> Reactive Jetpack Compose Room sync down to Android[cite: 1]</li>
-              <li><span class="check-icon">✓</span> Automated schema compaction for continuous agent memory[cite: 1]</li>
+              <li><span class="check-icon">✓</span> Explicit bigint epoch timestamping for Last-Write-Wins (LWW)</li>
+              <li><span class="check-icon">✓</span> Reactive Jetpack Compose Room sync down to Android</li>
+              <li><span class="check-icon">✓</span> Automated schema compaction for continuous agent memory</li>
             </ul>
 
             <div class="terminal-box">
@@ -1212,12 +1212,12 @@ async def landing_page(request: Request):
           <div class="section-content">
             <span class="mobile-feature-badge">03 • Zen Canvas</span>
             <h2 class="hero-heading">Zen Canvas. Distraction-free writing surface.</h2>
-            <p class="lead-text">A writing environment that strips away the superfluous, centering your thoughts and fading interface clutter away during deep focus[cite: 1].</p>
+            <p class="lead-text">A writing environment that strips away the superfluous, centering your thoughts and fading interface clutter away during deep focus.</p>
             
             <ul class="checklist">
-              <li><span class="check-icon">✓</span> Clean Markdown canvas with zero UI distraction[cite: 1]</li>
-              <li><span class="check-icon">✓</span> Full keyboard-first command palette navigation[cite: 1]</li>
-              <li><span class="check-icon">✓</span> Instant local-first caching for zero-latency typing[cite: 1]</li>
+              <li><span class="check-icon">✓</span> Clean Markdown canvas with zero UI distraction</li>
+              <li><span class="check-icon">✓</span> Full keyboard-first command palette navigation</li>
+              <li><span class="check-icon">✓</span> Instant local-first caching for zero-latency typing</li>
             </ul>
           </div>
         </div>
@@ -1228,12 +1228,12 @@ async def landing_page(request: Request):
           <div class="section-content">
             <span class="mobile-feature-badge">04 • Connectivity</span>
             <h2 class="hero-heading">Non-Linear Connectivity. An interconnected web of knowledge.</h2>
-            <p class="lead-text">Link thoughts effortlessly with bi-directional wikilinks to visualize complex patterns, relationships, and emergent ideas[cite: 1].</p>
+            <p class="lead-text">Link thoughts effortlessly with bi-directional wikilinks to visualize complex patterns, relationships, and emergent ideas.</p>
             
             <ul class="checklist">
-              <li><span class="check-icon">✓</span> Bi-directional backlinks and automatic connection mapping[cite: 1]</li>
-              <li><span class="check-icon">✓</span> Interactive visual node graph for complex mental models[cite: 1]</li>
-              <li><span class="check-icon">✓</span> Dynamic workspace clustering by topic and reference[cite: 1]</li>
+              <li><span class="check-icon">✓</span> Bi-directional backlinks and automatic connection mapping</li>
+              <li><span class="check-icon">✓</span> Interactive visual node graph for complex mental models</li>
+              <li><span class="check-icon">✓</span> Dynamic workspace clustering by topic and reference</li>
             </ul>
           </div>
         </div>
@@ -1244,12 +1244,12 @@ async def landing_page(request: Request):
           <div class="section-content">
             <span class="mobile-feature-badge">05 • Open Standards</span>
             <h2 class="hero-heading">Open Protocol Standards. Zero lock-in, complete control.</h2>
-            <p class="lead-text">Built directly on Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer independence and easy tooling integrations[cite: 1].</p>
+            <p class="lead-text">Built directly on Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer independence and easy tooling integrations.</p>
             
             <ul class="checklist">
-              <li><span class="check-icon">✓</span> Server runtime powered by FastMCP and Python 3.12[cite: 1]</li>
-              <li><span class="check-icon">✓</span> Streamable HTTP with Server-Sent Events (SSE)[cite: 1]</li>
-              <li><span class="check-icon">✓</span> Multi-tenant isolation with portable data export[cite: 1]</li>
+              <li><span class="check-icon">✓</span> Server runtime powered by FastMCP and Python 3.12</li>
+              <li><span class="check-icon">✓</span> Streamable HTTP with Server-Sent Events (SSE)</li>
+              <li><span class="check-icon">✓</span> Multi-tenant isolation with portable data export</li>
             </ul>
           </div>
         </div>
@@ -1271,7 +1271,7 @@ async def landing_page(request: Request):
               </svg>
               <span>Memory Notes</span>
             </a>
-            <p class="footer-tagline">Structured freedom for your thoughts. A private notes application and long-term memory bridge for Claude, Cursor, and custom AI agents[cite: 1].</p>
+            <p class="footer-tagline">Structured freedom for your thoughts. A private notes application and long-term memory bridge for Claude, Cursor, and custom AI agents.</p>
             <a href="#" class="status-badge">
               <span class="status-dot"></span>
               MCP Gateway Connected
@@ -1410,7 +1410,7 @@ async def signup_get(request: Request):
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
         <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
-        <p class="text-xs text-text-secondary mb-6">Set up your Memory Notes gateway account[cite: 1].</p>
+        <p class="text-xs text-text-secondary mb-6">Set up your Memory Notes gateway account.</p>
         <form method="POST" action="/signup">
             <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
@@ -1499,7 +1499,7 @@ async def login_get(request: Request):
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
         <h2 class="text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
-        <p class="text-xs text-text-secondary mb-6">Log in to your account[cite: 1].</p>
+        <p class="text-xs text-text-secondary mb-6">Log in to your account.</p>
         <form method="POST" action="/login">
             <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
@@ -1627,7 +1627,7 @@ async def console_page(request: Request):
             </li>
         """ for ws in workspaces)
     else:
-        repo_list_html = '<div class="p-3 text-xs text-[#8e8e8e]">No repositories found. Connect MCP to Claude/Cursor to log changes[cite: 1].</div>'
+        repo_list_html = '<div class="p-3 text-xs text-[#8e8e8e]">No repositories found. Connect MCP to Claude/Cursor to log changes.</div>'
 
     if selected_workspace:
         if nodes:
@@ -1717,7 +1717,7 @@ async def console_page(request: Request):
             <div class="empty-canvas-state">
                 <div class="empty-icon">⚡</div>
                 <h3>No CodeBase Data</h3>
-                <p>No CodeBase Data. Connect MCP to AI models and store CodeBase Logs[cite: 1].</p>
+                <p>No CodeBase Data. Connect MCP to AI models and store CodeBase Logs.</p>
                 <code>mcpServers -&gt; memory-notes</code>
             </div>
             """
@@ -1726,7 +1726,7 @@ async def console_page(request: Request):
         <div class="empty-canvas-state">
             <div class="empty-icon">📁</div>
             <h3>Manage Code Base</h3>
-            <p>Select a codebase from the sidebar to view its architecture nodes and logs[cite: 1].</p>
+            <p>Select a codebase from the sidebar to view its architecture nodes and logs.</p>
         </div>
         """
 
@@ -2172,7 +2172,7 @@ async def dashboard_get(request: Request):
         <input type="text" readonly value="{flash_key}" id="newApiKeyField" class="w-full font-mono text-xs bg-surface-white border border-border-muted p-2 rounded">
         <button id="btnCopyKey" onclick="copyToClipboard('{flash_key}', 'btnCopyKey')" class="bg-secondary-container text-on-surface px-4 py-2 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy</button>
     </div>
-    <p class="text-xs text-text-secondary mt-2">Use this as your Bearer Token for Claude or direct API configurations[cite: 1].</p>
+    <p class="text-xs text-text-secondary mt-2">Use this as your Bearer Token for Claude or direct API configurations.</p>
 </div>
 """
 
@@ -2211,7 +2211,7 @@ async def dashboard_get(request: Request):
         <div class="mb-6 flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold text-on-surface mb-1">Database & API Settings</h1>
-                <p class="text-xs text-text-secondary">Manage your Neon database connection string and MCP API keys[cite: 1].</p>
+                <p class="text-xs text-text-secondary">Manage your Neon database connection string and MCP API keys.</p>
             </div>
             <a href="/console" class="text-xs font-semibold text-primary underline">← Back to Console</a>
         </div>
@@ -2221,7 +2221,7 @@ async def dashboard_get(request: Request):
         <!-- 1. Endpoint & Connection URL -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">1. MCP Server Endpoint</h2>
-            <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector[cite: 1].</p>
+            <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector.</p>
             <div class="flex items-center gap-2">
                 <input type="text" readonly value="{mcp_endpoint}" id="mcpEndpointField" class="w-full font-mono text-xs bg-surface-container-low border border-border-muted p-2.5 rounded">
                 <button id="btnCopyEndpoint" onclick="copyToClipboard('{mcp_endpoint}', 'btnCopyEndpoint')" class="bg-surface-white text-on-surface px-4 py-2.5 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy URL</button>
@@ -2231,7 +2231,7 @@ async def dashboard_get(request: Request):
         <!-- 2. Neon Database Connection String Settings -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">2. Neon Database Connection String</h2>
-            <p class="text-xs text-text-secondary mb-3">Paste the same PostgreSQL connection string your mobile notes app uses to sync[cite: 1].</p>
+            <p class="text-xs text-text-secondary mb-3">Paste the same PostgreSQL connection string your mobile notes app uses to sync.</p>
             {conn_status}
             <form method="POST" action="/dashboard/connection-string" class="mt-4">
                 <div class="mb-3">
@@ -2244,7 +2244,7 @@ async def dashboard_get(request: Request):
         <!-- 3. API Keys Management -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">3. MCP API Keys</h2>
-            <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps[cite: 1].</p>
+            <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps.</p>
             <div class="divide-y border-border-muted mb-4">
                 {rows}
             </div>
