@@ -27,7 +27,7 @@ from webapp import routes as webapp_routes
 from tenant_context import current_pool
 
 mcp = FastMCP(
-    "notes-codebase-mcp",
+    "memory-base",
     instructions=(
         "Tools for personal notes sync and structured codebase architectural management. "
         "Use log_sequential_codebase_change to record plain-English summaries, rationale, and "
@@ -63,7 +63,6 @@ def _rows_to_json(rows) -> str:
 def _sanitize_summary(text: Optional[str]) -> str:
     if not text:
         return ""
-    # Strip accidental markdown code blocks
     if "```" in text:
         lines = [l for l in text.splitlines() if not l.strip().startswith("```")]
         text = "\n".join(lines)
@@ -350,9 +349,6 @@ async def log_sequential_codebase_change(
     """
     Logs a codebase change into an immutable chronological linear chain (1 -> 2 -> 3).
     Automatically links to the previous change in the repository.
-    
-    IMPORTANT: Never pass raw code syntax blocks. Summarize strictly in plain English:
-    (1) What logic changed, (2) Why it was altered, and (3) Downstream project impact.
     """
     pool = _get_pool()
     await _ensure_codebase_tables(pool)
@@ -425,8 +421,6 @@ async def log_sequential_codebase_change(
 async def get_codebase_context(workspace: str, limit: int = 15) -> str:
     """
     Retrieves complete codebase history and recent architectural logs for a project workspace.
-    Use this tool whenever you start working on a project to understand what files were changed, 
-    why they were altered, and what downstream modules are affected.
     """
     pool = _get_pool()
     await _ensure_codebase_tables(pool)
@@ -465,7 +459,6 @@ async def get_codebase_context(workspace: str, limit: int = 15) -> str:
 async def get_linear_codebase_timeline(workspace: str, limit: int = 25) -> str:
     """
     Returns the ordered step-by-step linear change chain (Step 1 -> Step 2 -> Step 3).
-    Allows AI agents to quickly understand the entire chronological evolution of a repository.
     """
     pool = _get_pool()
     await _ensure_codebase_tables(pool)
@@ -510,7 +503,6 @@ async def create_or_connect_hub_concept(
 ) -> str:
     """
     Creates a central anchor hub node or connects radial spoke concept nodes to a central hub.
-    Use this for high-level module architecture mapping and domain grouping.
     """
     pool = _get_pool()
     await _ensure_codebase_tables(pool)
