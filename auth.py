@@ -2,7 +2,7 @@
 Multi-user bearer-token auth for the MCP server.
 
 Every MCP request must include: Authorization: Bearer <MCP_API_KEY>
-Routes used by the website (landing page, signup, login, dashboard) are exempt.
+Routes used by the website, APK downloads, and mobile authentication are exempt.
 """
 
 import hashlib
@@ -16,8 +16,16 @@ import tenant_pools
 from tenant_context import current_user_id, current_pool
 
 # Paths that do not require Bearer token auth
-WEBAPP_EXACT_PATHS = {"/", ""}
-WEBAPP_PATH_PREFIXES = ("/signup", "/login", "/logout", "/dashboard", "/static" , "/console")
+WEBAPP_EXACT_PATHS = {"/", "", "/download", "/MemoryBase.apk"}
+WEBAPP_PATH_PREFIXES = (
+    "/signup",
+    "/login",
+    "/logout",
+    "/dashboard",
+    "/static",
+    "/console",
+    "/api/mobile",
+)
 
 
 def hash_token(raw_key: str) -> str:
@@ -37,7 +45,7 @@ class BearerAuthMiddleware:
 
         from oauth import EXEMPT_PATHS
 
-        # Allow public web app pages and OAuth discovery endpoints through unauthenticated
+        # Allow public web app pages, APK downloads, mobile endpoints, and OAuth discovery unauthenticated
         if (
             path in WEBAPP_EXACT_PATHS
             or path in EXEMPT_PATHS
