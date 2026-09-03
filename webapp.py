@@ -1,16 +1,18 @@
 """
-Memory Notes - Web Application (Lenis Smooth Scroll & Scroll-Driven Pipeline Animation)
+MemoryBase - Web Application & Mobile Control Gateway
 Full Python Starlette ASGI Application with:
-- Darkroom Engineering Lenis Smooth Scrolling (@studio-freight/lenis)
-- Scrubbed, scroll-driven Instant Context Pipeline Animation (drawing vector tracks, glowing heads & revealing badges progressively on scroll)
-- Interactive HUD Zoom In / Zoom Out Controls & Aspect-Ratio Scaled Vector Canvas
+- Direct Android APK distribution endpoints (/download and /MemoryBase.apk)
+- Mobile authentication endpoint returning decrypted Neon connection strings
+- Lenis Smooth Scrolling (@studio-freight/lenis)
+- Scrubbed, scroll-driven Instant Context Pipeline Animation
 - 2D Codebase Console Graph Interface with Pan/Zoom & Node Modals
 - FastMCP Multi-Tenant Database & Control Plane Settings
 """
 
+import os
 import asyncpg
 from starlette.requests import Request
-from starlette.responses import HTMLResponse, RedirectResponse
+from starlette.responses import HTMLResponse, RedirectResponse, JSONResponse, FileResponse
 from starlette.routing import Route
 
 import db_control
@@ -24,7 +26,7 @@ def _page(title: str, body: str) -> HTMLResponse:
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>{title} - Memory Notes</title>
+<title>{title} - MemoryBase</title>
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -136,7 +138,6 @@ def _page(title: str, body: str) -> HTMLResponse:
 
     .mono {{ font-family: 'JetBrains Mono', monospace; }}
 
-    /* Hero Spotlight Grid */
     .hero-interactive-grid {{
         --color: #E1E1E1;
         background-color: #F8F8F8;
@@ -165,7 +166,6 @@ def _page(title: str, body: str) -> HTMLResponse:
         opacity: 1;
     }}
 
-    /* Neon-Style Zoom Lock Proportional Canvas */
     .diagram-scaler-wrapper {{
         width: 100%;
         max-width: min(1000px, calc((100vh - 200px) * 1000 / 524));
@@ -204,7 +204,6 @@ def _page(title: str, body: str) -> HTMLResponse:
     .ruler-tick.lit {{ stroke: #00e599; }}
     .tick-active {{ stroke: #00e599; stroke-width: 1.5; }}
 
-    /* Proportional Scaled Badges */
     .badge {{
         position: absolute; transform: translate(-50%, -50%) scale(0.7); display: flex; align-items: center; gap: 0.6cqw; font-size: 1.2cqw; font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
         transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
@@ -231,7 +230,6 @@ def _page(title: str, body: str) -> HTMLResponse:
     .glow-dot {{ fill: #00e599; filter: url(#glow); opacity: 0; transition: opacity 0.2s ease; }}
     .glow-dot.active {{ opacity: 1; }}
 
-    /* Core Capabilities Showcase Scaffolding */
     :root {{
       --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -615,10 +613,12 @@ def _safe_next(raw: str | None) -> str:
 def _navbar(request: Request, user_email: str | None = None) -> str:
     if user_email:
         right_actions = """
+        <a href="/download" class="text-xs sm:text-sm font-semibold text-on-surface hover:text-primary transition-colors no-underline">Get APK</a>
         <a href="/console" class="bg-secondary-container text-on-surface px-3 sm:px-4 py-2 rounded text-xs sm:text-sm font-semibold hover:bg-secondary-fixed transition-colors no-underline">Console</a>
         """
     else:
         right_actions = """
+        <a href="/download" class="text-xs sm:text-sm font-semibold text-on-surface hover:text-primary transition-colors no-underline">Get APK</a>
         <a href="/login" class="bg-surface-white text-on-surface px-3 sm:px-4 py-2 rounded text-xs sm:text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors no-underline">Log In</a>
         <a href="/signup" class="bg-secondary-container text-on-surface px-3 sm:px-4 py-2 rounded text-xs sm:text-sm font-semibold hover:bg-secondary-fixed transition-colors no-underline">Get Started</a>
         """
@@ -626,13 +626,73 @@ def _navbar(request: Request, user_email: str | None = None) -> str:
     return f"""
 <nav class="sticky top-0 z-50 flex justify-between items-center w-full px-4 sm:px-6 lg:px-12 py-3 bg-surface-white border-b border-border-muted">
     <div class="flex items-center gap-2 sm:gap-4">
-        <a href="/" class="text-lg sm:text-xl font-bold text-on-surface no-underline tracking-tight">Memory Notes</a>
+        <a href="/" class="text-lg sm:text-xl font-bold text-on-surface no-underline tracking-tight">MemoryBase</a>
     </div>
     <div class="flex items-center gap-2 sm:gap-4">
         {right_actions}
     </div>
 </nav>
 """
+
+
+# ---------------------------------------------------------------------------
+# Direct APK Download Route
+# ---------------------------------------------------------------------------
+async def download_apk(request: Request):
+    apk_path = os.path.join(os.path.dirname(__file__), "MemoryBase.apk")
+    if not os.path.exists(apk_path):
+        return HTMLResponse(
+            """
+            <div style="font-family:sans-serif; padding:40px; text-align:center;">
+                <h2>APK Not Found</h2>
+                <p>Ensure <code>MemoryBase.apk</code> is uploaded to your root application directory.</p>
+                <a href="/">← Return Home</a>
+            </div>
+            """,
+            status_code=404,
+        )
+    return FileResponse(
+        path=apk_path,
+        media_type="application/vnd.android.package-archive",
+        filename="MemoryBase.apk",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Mobile Login Gateway (Returns Decrypted Neon String)
+# ---------------------------------------------------------------------------
+async def mobile_login(request: Request):
+    try:
+        data = await request.json()
+    except Exception:
+        return JSONResponse({"error": "Invalid JSON body"}, status_code=400)
+
+    email = str(data.get("email", "")).strip().lower()
+    password = str(data.get("password", ""))
+
+    if not email or not password:
+        return JSONResponse({"error": "Email and password are required"}, status_code=400)
+
+    pool = db_control.get_control_pool()
+    user = await db_control.get_user_by_email(pool, email)[cite: 2]
+
+    if user is None or not security.verify_password(password, user["password_hash"]):[cite: 2, 5]
+        return JSONResponse({"error": "Invalid email or password"}, status_code=401)
+
+    decrypted_conn_str = None
+    if user["connection_string_encrypted"]:[cite: 2]
+        try:
+            decrypted_conn_str = security.decrypt_text(user["connection_string_encrypted"])[cite: 5]
+        except Exception:
+            return JSONResponse({"error": "Failed to decrypt connection string"}, status_code=500)
+
+    return JSONResponse({
+        "status": "success",
+        "user_id": str(user["id"]),[cite: 2]
+        "email": user["email"],[cite: 2]
+        "has_connection_string": decrypted_conn_str is not None,
+        "connection_string": decrypted_conn_str,
+    })
 
 
 # ---------------------------------------------------------------------------
@@ -643,16 +703,16 @@ async def landing_page(request: Request):
     user_email = None
     if user_id:
         pool = db_control.get_control_pool()
-        user = await db_control.get_user_by_id(pool, user_id)
+        user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
         if user:
-            user_email = user["email"]
+            user_email = user["email"][cite: 2]
 
     base_url = str(request.base_url).rstrip("/")
     nav_html = _navbar(request, user_email)
 
     claude_config_snippet = f"""{{
   "mcpServers": {{
-    "memory-notes": {{
+    "memory-base": {{
       "url": "{base_url}/mcp",
       "headers": {{
         "Authorization": "Bearer sbmcp_your_api_key_here"
@@ -665,7 +725,7 @@ async def landing_page(request: Request):
 {{
   "servers": [
     {{
-      "name": "memory-notes",
+      "name": "memory-base",
       "transport": "sse",
       "url": "{base_url}/mcp",
       "headers": {{
@@ -699,6 +759,10 @@ async def landing_page(request: Request):
                     A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents. Read and write thoughts dynamically.
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-3">
+                    <a href="/download" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#050505] text-white px-5 py-3 text-sm font-semibold rounded border border-[#050505] hover:bg-neutral-800 transition-colors shadow-sm no-underline">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993s-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9994.4482.9994.9993s-.4483.9997-.9994.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.4114 13.8533 8.083 12 8.083s-3.5902.3284-5.1368.8667L4.8409 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396"/></svg>
+                        Download Android App (.apk)
+                    </a>
                     <a href="{' /console' if user_id else '/signup'}" class="w-full sm:w-auto text-center bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Get Started</a>
                     <a href="#quickstart" class="w-full sm:w-auto text-center bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline shadow-sm">See more</a>
                 </div>
@@ -757,12 +821,6 @@ async def landing_page(request: Request):
 
     <!-- 2. SCROLL-DRIVEN PINNED PIPELINE ANIMATION SECTION -->
     <section id="pipeline" class="bg-[#000000] text-white border-b border-neutral-800 relative z-10">
-        <!-- Pinned scroll-jack wrapper: the heading + diagram stay fixed together in
-             view while the animation plays out, then release naturally once it completes.
-             overflow:hidden on the sticky box is a hard clamp so nothing can ever be
-             pushed out of view or bleed into the section below, at any zoom level or
-             viewport height -- the diagram's own max-width (see .diagram-scaler-wrapper)
-             is sized off 100vh so this clamp should normally never even need to trigger. -->
         <div id="pipelineScrollWrapper" class="relative" style="height: 300vh;">
           <div id="pipelineSticky" class="sticky top-0 flex flex-col items-center justify-center" style="height: 100vh; overflow: hidden;">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 w-full">
@@ -780,7 +838,6 @@ async def landing_page(request: Request):
               <!-- Proportional Diagram Scaler Wrapper -->
               <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] overflow-hidden relative select-none flex-shrink-0">
                 <div id="pipelineViewport" class="diagram-container">
-                <!-- Grid Columns -->
                 <div class="vertical-grid">
                   <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
                   <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
@@ -791,7 +848,6 @@ async def landing_page(request: Request):
                   <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
                 </div>
 
-                <!-- Vector Canvas -->
                 <svg class="canvas" viewBox="0 0 1000 524">
                   <defs>
                     <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
@@ -806,21 +862,16 @@ async def landing_page(request: Request):
                     </filter>
                   </defs>
 
-                  <!-- Main Central Timeline Track -->
                   <path id="path-main" d="M 74 262 L 950 262" class="line-green" />
                   <path id="path-sync-arrow" d="M 132 262 L 188 262" class="line-green" marker-end="url(#arrow-green)" />
 
-                  <!-- Ruler Ticks -->
                   <g id="ticks">
                     <line x1="292" y1="256" x2="292" y2="268" class="ruler-tick" />
                     <line x1="316" y1="258" x2="316" y2="266" class="ruler-tick" />
                     <line x1="340" y1="256" x2="340" y2="268" class="ruler-tick" />
                     <line x1="364" y1="258" x2="364" y2="266" class="ruler-tick" />
                     <line x1="388" y1="256" x2="388" y2="268" class="ruler-tick" />
-                    
-                    <!-- 19:08:12 Tick -->
                     <line id="tick-19" x1="410" y1="244" x2="410" y2="268" class="ruler-tick tick-active" style="opacity: 0;" />
-
                     <line x1="434" y1="258" x2="434" y2="266" class="ruler-tick" />
                     <line x1="458" y1="256" x2="458" y2="268" class="ruler-tick" />
                     <line x1="482" y1="258" x2="482" y2="266" class="ruler-tick" />
@@ -834,10 +885,7 @@ async def landing_page(request: Request):
                     <line x1="674" y1="258" x2="674" y2="266" class="ruler-tick" />
                     <line x1="698" y1="256" x2="698" y2="268" class="ruler-tick" />
                     <line x1="722" y1="258" x2="722" y2="266" class="ruler-tick" />
-
-                    <!-- 20:32:04 Tick -->
                     <line id="tick-20" x1="743" y1="248" x2="743" y2="276" class="ruler-tick tick-active" style="opacity: 0;" />
-
                     <line x1="766" y1="258" x2="766" y2="266" class="ruler-tick" />
                     <line x1="790" y1="256" x2="790" y2="268" class="ruler-tick" />
                     <line x1="814" y1="258" x2="814" y2="266" class="ruler-tick" />
@@ -845,38 +893,29 @@ async def landing_page(request: Request):
                     <line x1="862" y1="258" x2="862" y2="266" class="ruler-tick" />
                   </g>
 
-                  <!-- Upper Left Branch Flow -->
                   <path id="path-db-up" d="M 226 262 V 182" class="line-green-dash" />
                   <path id="path-req-data" d="M 226 162 V 138 Q 226 118 248 118 H 268" class="line-white-dash" />
                   <path id="path-data-to-mcp" d="M 390 118 H 410 Q 426 118 426 140 V 158 Q 426 172 444 172 H 455" class="line-white-dash" />
 
-                  <!-- Negotiation Status Lines -->
                   <path id="path-neg-1" d="M 450 85 V 157" class="line-green-dash" />
                   <path id="path-neg-2" d="M 591 85 V 157" class="line-green-dash" />
 
-                  <!-- Upper Right Branch Flow -->
                   <path id="path-mcp-to-tools" d="M 584 172 H 598 Q 614 172 614 150 V 138 Q 614 118 632 118 H 648" class="line-white-dash" />
                   <path id="path-tools-to-apps" d="M 776 118 H 806 Q 828 118 828 138 V 162" class="line-white-dash" />
                   <path id="path-apps-down" d="M 828 182 V 262" class="line-green-dash" />
 
-                  <!-- Center Protocol Negotiation Line -->
                   <path id="path-protocol" d="M 520 188 V 328" class="line-white-dash" />
-
-                  <!-- Access Granted Line -->
                   <path id="path-granted" d="M 572 188 V 276 Q 572 298 598 298 H 618" class="line-white-solid" />
 
-                  <!-- Lower Return Flow -->
                   <path id="path-ai-to-note" d="M 918 278 V 356 Q 918 380 892 380 H 885" class="line-green-dash" />
                   <path id="path-note-to-proc" d="M 775 380 H 760 Q 747 380 747 408 V 418 Q 747 440 726 440 H 635" class="line-white-solid" />
                   <path id="path-lower-flow" d="M 615 440 L 280 440" class="line-green-dash" marker-end="url(#arrow-green)" />
                   <path id="path-ret-db" d="M 248 440 H 236 Q 236 400 236 360" class="line-green-dash" marker-end="url(#arrow-green)" />
                   <path id="path-ret-sync" d="M 248 440 H 76 V 340" class="line-green-dash" marker-end="url(#arrow-green)" />
 
-                  <!-- Leading Glow Head -->
                   <circle id="head-dot" class="glow-dot" r="3.5" cx="0" cy="0" />
                 </svg>
 
-                <!-- Badges -->
                 <div id="el-neg1-txt" class="meta-text" style="top: 10.3%; left: 45%;">negotiation<br>started</div>
                 <div id="el-neg1-ico" class="circle-icon check-node" style="top: 21.2%; left: 45%;">✓</div>
 
@@ -910,7 +949,7 @@ async def landing_page(request: Request):
 
                 <div id="el-notes" class="badge badge-white" style="top: 50%; left: 7.4%;">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
-                  Memory Notes
+                  MemoryBase
                 </div>
                 <div id="el-notes-sub" class="meta-text" style="top: 55%; left: 7.4%;">Notes added<br>by you</div>
 
@@ -963,7 +1002,6 @@ async def landing_page(request: Request):
           </div>
         </div>
 
-        <!-- Scroll-Driven Pipeline Scrubbing Script -->
         <script>
               document.addEventListener('DOMContentLoaded', () => {{
                 const allPaths = document.querySelectorAll('#pipelineViewport svg.canvas path:not(defs path)');
@@ -1008,13 +1046,11 @@ async def landing_page(request: Request):
                     ? Math.min(Math.max(-rect.top / scrollableDistance, 0), 1)
                     : 0;
 
-                  // 1. Initial Source Nodes
                   setElementVisibility('el-notes', 0.05, progress);
                   setElementVisibility('el-notes-sub', 0.07, progress);
                   setPathProgress('path-sync-arrow', 0.08, 0.12, progress);
                   setElementVisibility('el-sync-txt', 0.12, progress);
 
-                  // 2. Main Central Timeline & Ticks
                   setPathProgress('path-main', 0.10, 0.55, progress);
                   
                   const pMain = document.getElementById('path-main');
@@ -1033,7 +1069,6 @@ async def landing_page(request: Request):
                     tick.classList.toggle('lit', progress >= tickProg);
                   }});
 
-                  // 3. Database Node & Data Request
                   setElementVisibility('el-neondb', 0.18, progress);
                   setElementVisibility('el-neondb-sub', 0.20, progress);
                   setElementVisibility('el-neondb-time', 0.22, progress);
@@ -1043,7 +1078,6 @@ async def landing_page(request: Request):
                   setPathProgress('path-req-data', 0.26, 0.32, progress);
                   setElementVisibility('el-req-data', 0.32, progress);
 
-                  // 4. MCP Server & Negotiations
                   setPathProgress('path-data-to-mcp', 0.32, 0.38, progress);
                   const t19 = document.getElementById('tick-19');
                   if (t19) t19.style.opacity = progress >= 0.36 ? '1' : '0';
@@ -1066,7 +1100,6 @@ async def landing_page(request: Request):
                   setElementVisibility('el-grant-ico', 0.54, progress);
                   setElementVisibility('el-grant-txt', 0.54, progress);
 
-                  // 5. Tools & AI Apps
                   setPathProgress('path-mcp-to-tools', 0.48, 0.54, progress);
                   setElementVisibility('el-req-tools', 0.54, progress);
                   setPathProgress('path-tools-to-apps', 0.54, 0.60, progress);
@@ -1080,7 +1113,6 @@ async def landing_page(request: Request):
                   setElementVisibility('el-ai-apps', 0.67, progress);
                   setElementVisibility('el-ai-apps-sub', 0.69, progress);
 
-                  // 6. Return Flow, Processing & Sync Confirmation
                   setPathProgress('path-ai-to-note', 0.68, 0.74, progress);
                   setElementVisibility('el-hollow-bot', 0.72, progress);
                   setElementVisibility('el-write', 0.74, progress);
@@ -1104,43 +1136,21 @@ async def landing_page(request: Request):
                 window.addEventListener('resize', updateScrollPipeline);
                 updateScrollPipeline();
               }});
-            </script>
-
+        </script>
     </div>
 </section>
 
     <!-- Core Capabilities Showcase -->
     <div class="showcase-container">
-      
       <div class="sticky-nav-wrapper">
         <nav class="sticky-sidebar" id="sidebar">
           <button class="menu-badge-btn" aria-hidden="true" tabindex="-1">CORE CAPABILITIES</button>
           <ul class="nav-list">
-            <li>
-              <a class="nav-btn active" data-target="trigram-search">
-                <span class="nav-dot"></span>Zero-Latency Trigram Search
-              </a>
-            </li>
-            <li>
-              <a class="nav-btn" data-target="ai-memory-sync">
-                <span class="nav-dot"></span>Autonomous AI Memory Sync
-              </a>
-            </li>
-            <li>
-              <a class="nav-btn" data-target="zen-canvas">
-                <span class="nav-dot"></span>Zen Canvas
-              </a>
-            </li>
-            <li>
-              <a class="nav-btn" data-target="non-linear">
-                <span class="nav-dot"></span>Non-Linear Connectivity
-              </a>
-            </li>
-            <li>
-              <a class="nav-btn" data-target="open-protocol">
-                <span class="nav-dot"></span>Open Protocol Standards
-              </a>
-            </li>
+            <li><a class="nav-btn active" data-target="trigram-search"><span class="nav-dot"></span>Zero-Latency Trigram Search</a></li>
+            <li><a class="nav-btn" data-target="ai-memory-sync"><span class="nav-dot"></span>Autonomous AI Memory Sync</a></li>
+            <li><a class="nav-btn" data-target="zen-canvas"><span class="nav-dot"></span>Zen Canvas</a></li>
+            <li><a class="nav-btn" data-target="non-linear"><span class="nav-dot"></span>Non-Linear Connectivity</a></li>
+            <li><a class="nav-btn" data-target="open-protocol"><span class="nav-dot"></span>Open Protocol Standards</a></li>
           </ul>
         </nav>
       </div>
@@ -1150,8 +1160,7 @@ async def landing_page(request: Request):
           <div class="section-content">
             <span class="mobile-feature-badge">01 • Trigram Search</span>
             <h2 class="hero-heading">Zero-Latency Trigram Search. Never miss a fragmented thought.</h2>
-            <p class="lead-text">Memory Notes harnesses PostgreSQL trigram matching (<code>pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds.</p>
-            
+            <p class="lead-text">MemoryBase harnesses PostgreSQL trigram matching (<code>pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds.</p>
             <ul class="checklist">
               <li><span class="check-icon">✓</span> Typo-tolerant substring & fuzzy similarity scoring</li>
               <li><span class="check-icon">✓</span> Automatic fallback to ILIKE if extensions are missing</li>
@@ -1181,7 +1190,6 @@ async def landing_page(request: Request):
             <span class="mobile-feature-badge">02 • Autonomous Sync</span>
             <h2 class="hero-heading">Autonomous AI Memory Sync. Bi-directional writes from your agent.</h2>
             <p class="lead-text">Claude and Cursor don't just inspect your past notes—they can create new workspace folders, append structured summaries, or update documents directly from prompt context.</p>
-            
             <ul class="checklist">
               <li><span class="check-icon">✓</span> Explicit bigint epoch timestamping for Last-Write-Wins (LWW)</li>
               <li><span class="check-icon">✓</span> Reactive Jetpack Compose Room sync down to Android</li>
@@ -1213,7 +1221,6 @@ async def landing_page(request: Request):
             <span class="mobile-feature-badge">03 • Zen Canvas</span>
             <h2 class="hero-heading">Zen Canvas. Distraction-free writing surface.</h2>
             <p class="lead-text">A writing environment that strips away the superfluous, centering your thoughts and fading interface clutter away during deep focus.</p>
-            
             <ul class="checklist">
               <li><span class="check-icon">✓</span> Clean Markdown canvas with zero UI distraction</li>
               <li><span class="check-icon">✓</span> Full keyboard-first command palette navigation</li>
@@ -1229,7 +1236,6 @@ async def landing_page(request: Request):
             <span class="mobile-feature-badge">04 • Connectivity</span>
             <h2 class="hero-heading">Non-Linear Connectivity. An interconnected web of knowledge.</h2>
             <p class="lead-text">Link thoughts effortlessly with bi-directional wikilinks to visualize complex patterns, relationships, and emergent ideas.</p>
-            
             <ul class="checklist">
               <li><span class="check-icon">✓</span> Bi-directional backlinks and automatic connection mapping</li>
               <li><span class="check-icon">✓</span> Interactive visual node graph for complex mental models</li>
@@ -1245,7 +1251,6 @@ async def landing_page(request: Request):
             <span class="mobile-feature-badge">05 • Open Standards</span>
             <h2 class="hero-heading">Open Protocol Standards. Zero lock-in, complete control.</h2>
             <p class="lead-text">Built directly on Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer independence and easy tooling integrations.</p>
-            
             <ul class="checklist">
               <li><span class="check-icon">✓</span> Server runtime powered by FastMCP and Python 3.12</li>
               <li><span class="check-icon">✓</span> Streamable HTTP with Server-Sent Events (SSE)</li>
@@ -1254,14 +1259,12 @@ async def landing_page(request: Request):
           </div>
         </div>
       </section>
-
     </div>
 
     <!-- Neon-Style Modern Footer -->
     <footer class="neon-footer">
       <div class="footer-container">
         <div class="footer-top">
-          
           <div class="footer-brand">
             <a href="/" class="footer-logo">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1269,7 +1272,7 @@ async def landing_page(request: Request):
                 <path d="M2 17L12 22L22 17" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M2 12L12 17L22 12" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <span>Memory Notes</span>
+              <span>MemoryBase</span>
             </a>
             <p class="footer-tagline">Structured freedom for your thoughts. A private notes application and long-term memory bridge for Claude, Cursor, and custom AI agents.</p>
             <a href="#" class="status-badge">
@@ -1283,8 +1286,7 @@ async def landing_page(request: Request):
             <ul>
               <li><a href="#trigram-search">Trigram Fuzzy Search</a></li>
               <li><a href="#ai-memory-sync">Autonomous AI Sync</a></li>
-              <li><a href="#zen-canvas">Zen Canvas</a></li>
-              <li><a href="#non-linear">Graph Connectivity</a></li>
+              <li><a href="/download">Download Android App</a></li>
               <li><a href="/console">Developer Console</a></li>
             </ul>
           </div>
@@ -1295,7 +1297,6 @@ async def landing_page(request: Request):
               <li><a href="#">MCP Protocol Guide</a></li>
               <li><a href="#">Cursor Setup</a></li>
               <li><a href="#">Claude Desktop Integration</a></li>
-              <li><a href="#">pg_trgm Search Docs</a></li>
               <li><a href="#">API Specification</a></li>
             </ul>
           </div>
@@ -1306,7 +1307,6 @@ async def landing_page(request: Request):
               <li><a href="#">FastMCP Starlette ASGI</a></li>
               <li><a href="#">SSE Stream Handshakes</a></li>
               <li><a href="#">Android Room Schema</a></li>
-              <li><a href="#">CLI Quickstart</a></li>
               <li><a href="#">GitHub Repository</a></li>
             </ul>
           </div>
@@ -1317,33 +1317,17 @@ async def landing_page(request: Request):
               <li><a href="#">About</a></li>
               <li><a href="#">Changelog</a></li>
               <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">Terms of Service</a></li>
               <li><a href="#">Security &amp; Multi-Tenancy</a></li>
             </ul>
           </div>
-
         </div>
 
         <div class="footer-bottom">
-          <div>&copy; 2026 Memory Notes. Structured Freedom.</div>
-
+          <div>&copy; 2026 MemoryBase. Structured Freedom.</div>
           <div class="footer-bottom-links">
             <a href="#">Privacy Policy</a>
             <a href="#">Terms of Service</a>
             <a href="#">Security</a>
-            <a href="#">Cookie Settings</a>
-          </div>
-
-          <div class="social-links">
-            <a href="#" aria-label="Twitter">
-              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            </a>
-            <a href="#" aria-label="GitHub">
-              <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-            </a>
-            <a href="#" aria-label="Discord">
-              <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.893.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-            </a>
           </div>
         </div>
       </div>
@@ -1398,7 +1382,7 @@ async def landing_page(request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Signup
+# Signup & Login
 # ---------------------------------------------------------------------------
 async def signup_get(request: Request):
     next_ = _safe_next(request.query_params.get("next"))
@@ -1410,7 +1394,7 @@ async def signup_get(request: Request):
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
         <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
-        <p class="text-xs text-text-secondary mb-6">Set up your Memory Notes gateway account.</p>
+        <p class="text-xs text-text-secondary mb-6">Set up your MemoryBase gateway account.</p>
         <form method="POST" action="/signup">
             <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
@@ -1468,7 +1452,7 @@ async def signup_post(request: Request):
 
     pool = db_control.get_control_pool()
     try:
-        user_id = await db_control.create_user(pool, email, security.hash_password(password))
+        user_id = await db_control.create_user(pool, email, security.hash_password(password))[cite: 2, 5]
     except asyncpg.exceptions.UniqueViolationError:
         body = f"""
 {_navbar(request)}
@@ -1486,9 +1470,6 @@ async def signup_post(request: Request):
     return RedirectResponse("/console", status_code=302)
 
 
-# ---------------------------------------------------------------------------
-# Login
-# ---------------------------------------------------------------------------
 async def login_get(request: Request):
     next_ = _safe_next(request.query_params.get("next"))
     if _require_login(request):
@@ -1499,7 +1480,7 @@ async def login_get(request: Request):
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
         <h2 class="text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
-        <p class="text-xs text-text-secondary mb-6">Log in to your account.</p>
+        <p class="text-xs text-text-secondary mb-6">Log in to your MemoryBase account.</p>
         <form method="POST" action="/login">
             <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
@@ -1526,9 +1507,9 @@ async def login_post(request: Request):
     next_ = _safe_next(str(form.get("next", "")))
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_email(pool, email)
+    user = await db_control.get_user_by_email(pool, email)[cite: 2]
 
-    if user is None or not security.verify_password(password, user["password_hash"]):
+    if user is None or not security.verify_password(password, user["password_hash"]):[cite: 2, 5]
         body = f"""
 {_navbar(request)}
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
@@ -1552,7 +1533,7 @@ async def login_post(request: Request):
 """
         return _page("Log in", body)
 
-    request.session["user_id"] = str(user["id"])
+    request.session["user_id"] = str(user["id"])[cite: 2]
     return RedirectResponse("/console", status_code=302)
 
 
@@ -1574,12 +1555,12 @@ async def console_page(request: Request):
         return RedirectResponse("/login", status_code=302)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
+    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
     if user is None:
         request.session.clear()
         return RedirectResponse("/login", status_code=302)
 
-    user_email = user["email"]
+    user_email = user["email"][cite: 2]
     display_name = user_email.split("@")[0].capitalize()
     initial = display_name[0].upper()
 
@@ -1588,10 +1569,10 @@ async def console_page(request: Request):
     edges = []
     selected_workspace = request.query_params.get("ws", "")
 
-    if user["connection_string_encrypted"]:
+    if user["connection_string_encrypted"]:[cite: 2]
         try:
-            conn_str = security.decrypt_text(user["connection_string_encrypted"])
-            user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
+            conn_str = security.decrypt_text(user["connection_string_encrypted"])[cite: 5]
+            user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)[cite: 2, 8]
             
             ws_rows = await user_pool.fetch("SELECT DISTINCT workspace FROM project_nodes ORDER BY workspace ASC")
             workspaces = [r["workspace"] for r in ws_rows]
@@ -1718,7 +1699,7 @@ async def console_page(request: Request):
                 <div class="empty-icon">⚡</div>
                 <h3>No CodeBase Data</h3>
                 <p>No CodeBase Data. Connect MCP to AI models and store CodeBase Logs.</p>
-                <code>mcpServers -&gt; memory-notes</code>
+                <code>mcpServers -&gt; memory-base</code>
             </div>
             """
     else:
@@ -1735,7 +1716,7 @@ async def console_page(request: Request):
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Console - Codebase Manager</title>
+<title>Console - MemoryBase</title>
 <style>
 :root {{
   --sidebar-bg: #171717;
@@ -1883,7 +1864,6 @@ body {{
 }}
 .logout-btn:hover {{ text-decoration: underline; }}
 
-/* 2D Interactive Canvas Area */
 .main-canvas {{
   flex: 1;
   position: relative;
@@ -1929,7 +1909,6 @@ body {{
   margin-top: 10px; padding-top: 6px; border-top: 1px solid #f1f5f9; font-size: 10px; color: #0284c7; text-align: right;
 }}
 
-/* Mini HUD Controls */
 .canvas-hud {{
   position: absolute;
   bottom: 20px;
@@ -1955,7 +1934,6 @@ body {{
 }}
 .hud-btn:hover {{ background: #f4f4f5; color: #18181b; }}
 
-/* Empty State */
 .empty-canvas-state {{
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
   text-align: center; max-width: 380px; background: white; border: 1px solid #e2e2e7; padding: 32px; border-radius: 12px;
@@ -1966,7 +1944,6 @@ body {{
 .empty-canvas-state p {{ font-size: 12px; color: #666; line-height: 1.5; margin: 0 0 16px 0; }}
 .empty-canvas-state code {{ display: block; background: #f4f4f5; padding: 8px; border-radius: 6px; font-family: monospace; font-size: 11px; color: #333; }}
 
-/* Modal Popup for Node Details */
 .modal-overlay {{
   display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center;
 }}
@@ -1995,7 +1972,7 @@ body {{
           <line x1="9" y1="3" x2="9" y2="21"></line>
         </svg>
       </label>
-      <span class="sidebar-brand">Codebase Vault</span>
+      <span class="sidebar-brand">MemoryBase Vault</span>
     </div>
 
     <div class="sidebar-section-title">Repositories &amp; Codebases</div>
@@ -2157,7 +2134,7 @@ async def dashboard_get(request: Request):
         return RedirectResponse("/login", status_code=302)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
+    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
     if user is None:
         request.session.clear()
         return RedirectResponse("/login", status_code=302)
@@ -2176,14 +2153,14 @@ async def dashboard_get(request: Request):
 </div>
 """
 
-    if user["connection_string_encrypted"]:
-        masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
+    if user["connection_string_encrypted"]:[cite: 2]
+        masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))[cite: 5]
         conn_status = f'<p class="text-xs text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
     else:
         conn_status = '<div class="p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">No Neon connection string set yet. Claude connector will fail until configured.</div>'
 
-    keys = await db_control.list_api_keys(pool, user_id)
-    active_keys = [k for k in keys if k["revoked_at"] is None]
+    keys = await db_control.list_api_keys(pool, user_id)[cite: 2]
+    active_keys = [k for k in keys if k["revoked_at"] is None][cite: 2]
     if active_keys:
         rows = "".join(f"""
 <div class="flex items-center justify-between py-3 border-b border-border-muted last:border-0">
@@ -2196,13 +2173,13 @@ async def dashboard_get(request: Request):
         <button type="submit" class="text-error text-xs font-semibold hover:underline" onclick="return confirm('Revoke this key? Apps using it will disconnect immediately.');">Revoke</button>
     </form>
 </div>
-""" for k in active_keys)
+""" for k in active_keys)[cite: 2]
     else:
         rows = '<p class="text-xs text-text-secondary">No active API keys found.</p>'
 
     base_url = str(request.base_url).rstrip("/")
     mcp_endpoint = f"{base_url}/mcp"
-    nav_html = _navbar(request, user["email"])
+    nav_html = _navbar(request, user["email"])[cite: 2]
 
     body = f"""
 {nav_html}
@@ -2269,13 +2246,13 @@ async def update_connection_string(request: Request):
     if not (connection_string.startswith("postgresql://") or connection_string.startswith("postgres://")):
         return _dashboard_error("Invalid format: Must start with postgresql://")
 
-    ok, err = await tenant_pools.test_connection_string(connection_string)
+    ok, err = await tenant_pools.test_connection_string(connection_string)[cite: 8]
     if not ok:
         return _dashboard_error(f"Connection test failed: {err}")
 
     pool = db_control.get_control_pool()
-    await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))
-    await tenant_pools.get_manager().invalidate(user_id)
+    await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))[cite: 2, 5]
+    await tenant_pools.get_manager().invalidate(user_id)[cite: 8]
 
     return RedirectResponse("/dashboard", status_code=302)
 
@@ -2286,8 +2263,8 @@ async def create_api_key(request: Request):
         return RedirectResponse("/login", status_code=302)
 
     pool = db_control.get_control_pool()
-    raw_key = security.generate_api_key()
-    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")
+    raw_key = security.generate_api_key()[cite: 5]
+    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")[cite: 2, 5]
     request.session["flash_api_key"] = raw_key
 
     return RedirectResponse("/dashboard", status_code=302)
@@ -2296,13 +2273,13 @@ async def create_api_key(request: Request):
 async def revoke_api_key(request: Request):
     user_id = _require_login(request)
     if not user_id:
-        return RedirectResponse(("/login"), status_code=302)
+        return RedirectResponse("/login", status_code=302)
 
     form = await request.form()
     key_id = str(form.get("key_id", ""))
 
     pool = db_control.get_control_pool()
-    await db_control.revoke_api_key(pool, user_id, key_id)
+    await db_control.revoke_api_key(pool, user_id, key_id)[cite: 2]
 
     return RedirectResponse("/dashboard", status_code=302)
 
@@ -2323,6 +2300,9 @@ def _dashboard_error(message: str) -> HTMLResponse:
 # Route registry
 routes = [
     Route("/", landing_page, methods=["GET"]),
+    Route("/download", download_apk, methods=["GET"]),
+    Route("/MemoryBase.apk", download_apk, methods=["GET"]),
+    Route("/api/mobile/login", mobile_login, methods=["POST"]),
     Route("/signup", signup_get, methods=["GET"]),
     Route("/signup", signup_post, methods=["POST"]),
     Route("/login", login_get, methods=["GET"]),
