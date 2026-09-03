@@ -674,22 +674,22 @@ async def mobile_login(request: Request):
         return JSONResponse({"error": "Email and password are required"}, status_code=400)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_email(pool, email)[cite: 2]
+    user = await db_control.get_user_by_email(pool, email)
 
-    if user is None or not security.verify_password(password, user["password_hash"]):[cite: 2, 5]
+    if user is None or not security.verify_password(password, user["password_hash"]):
         return JSONResponse({"error": "Invalid email or password"}, status_code=401)
 
     decrypted_conn_str = None
-    if user["connection_string_encrypted"]:[cite: 2]
+    if user["connection_string_encrypted"]:
         try:
-            decrypted_conn_str = security.decrypt_text(user["connection_string_encrypted"])[cite: 5]
+            decrypted_conn_str = security.decrypt_text(user["connection_string_encrypted"])
         except Exception:
             return JSONResponse({"error": "Failed to decrypt connection string"}, status_code=500)
 
     return JSONResponse({
         "status": "success",
-        "user_id": str(user["id"]),[cite: 2]
-        "email": user["email"],[cite: 2]
+        "user_id": str(user["id"]),
+        "email": user["email"],
         "has_connection_string": decrypted_conn_str is not None,
         "connection_string": decrypted_conn_str,
     })
@@ -703,9 +703,9 @@ async def landing_page(request: Request):
     user_email = None
     if user_id:
         pool = db_control.get_control_pool()
-        user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
+        user = await db_control.get_user_by_id(pool, user_id)
         if user:
-            user_email = user["email"][cite: 2]
+            user_email = user["email"]
 
     base_url = str(request.base_url).rstrip("/")
     nav_html = _navbar(request, user_email)
@@ -896,17 +896,13 @@ async def landing_page(request: Request):
                   <path id="path-db-up" d="M 226 262 V 182" class="line-green-dash" />
                   <path id="path-req-data" d="M 226 162 V 138 Q 226 118 248 118 H 268" class="line-white-dash" />
                   <path id="path-data-to-mcp" d="M 390 118 H 410 Q 426 118 426 140 V 158 Q 426 172 444 172 H 455" class="line-white-dash" />
-
                   <path id="path-neg-1" d="M 450 85 V 157" class="line-green-dash" />
                   <path id="path-neg-2" d="M 591 85 V 157" class="line-green-dash" />
-
                   <path id="path-mcp-to-tools" d="M 584 172 H 598 Q 614 172 614 150 V 138 Q 614 118 632 118 H 648" class="line-white-dash" />
                   <path id="path-tools-to-apps" d="M 776 118 H 806 Q 828 118 828 138 V 162" class="line-white-dash" />
                   <path id="path-apps-down" d="M 828 182 V 262" class="line-green-dash" />
-
                   <path id="path-protocol" d="M 520 188 V 328" class="line-white-dash" />
                   <path id="path-granted" d="M 572 188 V 276 Q 572 298 598 298 H 618" class="line-white-solid" />
-
                   <path id="path-ai-to-note" d="M 918 278 V 356 Q 918 380 892 380 H 885" class="line-green-dash" />
                   <path id="path-note-to-proc" d="M 775 380 H 760 Q 747 380 747 408 V 418 Q 747 440 726 440 H 635" class="line-white-solid" />
                   <path id="path-lower-flow" d="M 615 440 L 280 440" class="line-green-dash" marker-end="url(#arrow-green)" />
@@ -918,14 +914,12 @@ async def landing_page(request: Request):
 
                 <div id="el-neg1-txt" class="meta-text" style="top: 10.3%; left: 45%;">negotiation<br>started</div>
                 <div id="el-neg1-ico" class="circle-icon check-node" style="top: 21.2%; left: 45%;">✓</div>
-
                 <div id="el-neg2-txt" class="meta-text" style="top: 10.3%; left: 59.1%;">negotiation<br>complete</div>
                 <div id="el-neg2-ico" class="circle-icon check-node" style="top: 21.2%; left: 59.1%;">✓</div>
 
                 <div id="el-db-ico" class="circle-icon outline-node" style="top: 32.8%; left: 22.6%;">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
                 </div>
-
                 <div id="el-req-data" class="badge badge-dark" style="top: 22.5%; left: 32.7%;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
                   request data
@@ -944,7 +938,6 @@ async def landing_page(request: Request):
                 <div id="el-bot-ico" class="circle-icon outline-node" style="top: 32.8%; left: 82.8%;">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
                 </div>
-
                 <div id="el-hollow-top" class="circle-icon hollow-node" style="top: 43.5%; left: 82.8%;"></div>
 
                 <div id="el-notes" class="badge badge-white" style="top: 50%; left: 7.4%;">
@@ -952,7 +945,6 @@ async def landing_page(request: Request):
                   MemoryBase
                 </div>
                 <div id="el-notes-sub" class="meta-text" style="top: 55%; left: 7.4%;">Notes added<br>by you</div>
-
                 <div id="el-sync-txt" class="meta-text" style="top: 52%; left: 15.6%; font-size: 10px;">sync</div>
 
                 <div id="el-neondb" class="badge badge-white" style="top: 50%; left: 24%;">
@@ -979,7 +971,6 @@ async def landing_page(request: Request):
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </div>
                 <div id="el-proto-txt" class="meta-text" style="top: 69.6%; left: 52%;">protocol<br>negotiation</div>
-
                 <div id="el-hollow-bot" class="circle-icon hollow-node" style="top: 63.7%; left: 91.8%;"></div>
 
                 <div id="el-write" class="badge badge-dark" style="top: 72.5%; left: 83%;">
@@ -1452,7 +1443,7 @@ async def signup_post(request: Request):
 
     pool = db_control.get_control_pool()
     try:
-        user_id = await db_control.create_user(pool, email, security.hash_password(password))[cite: 2, 5]
+        user_id = await db_control.create_user(pool, email, security.hash_password(password))
     except asyncpg.exceptions.UniqueViolationError:
         body = f"""
 {_navbar(request)}
@@ -1507,9 +1498,9 @@ async def login_post(request: Request):
     next_ = _safe_next(str(form.get("next", "")))
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_email(pool, email)[cite: 2]
+    user = await db_control.get_user_by_email(pool, email)
 
-    if user is None or not security.verify_password(password, user["password_hash"]):[cite: 2, 5]
+    if user is None or not security.verify_password(password, user["password_hash"]):
         body = f"""
 {_navbar(request)}
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
@@ -1533,7 +1524,7 @@ async def login_post(request: Request):
 """
         return _page("Log in", body)
 
-    request.session["user_id"] = str(user["id"])[cite: 2]
+    request.session["user_id"] = str(user["id"])
     return RedirectResponse("/console", status_code=302)
 
 
@@ -1555,12 +1546,12 @@ async def console_page(request: Request):
         return RedirectResponse("/login", status_code=302)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
+    user = await db_control.get_user_by_id(pool, user_id)
     if user is None:
         request.session.clear()
         return RedirectResponse("/login", status_code=302)
 
-    user_email = user["email"][cite: 2]
+    user_email = user["email"]
     display_name = user_email.split("@")[0].capitalize()
     initial = display_name[0].upper()
 
@@ -1569,10 +1560,10 @@ async def console_page(request: Request):
     edges = []
     selected_workspace = request.query_params.get("ws", "")
 
-    if user["connection_string_encrypted"]:[cite: 2]
+    if user["connection_string_encrypted"]:
         try:
-            conn_str = security.decrypt_text(user["connection_string_encrypted"])[cite: 5]
-            user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)[cite: 2, 8]
+            conn_str = security.decrypt_text(user["connection_string_encrypted"])
+            user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
             
             ws_rows = await user_pool.fetch("SELECT DISTINCT workspace FROM project_nodes ORDER BY workspace ASC")
             workspaces = [r["workspace"] for r in ws_rows]
@@ -2134,7 +2125,7 @@ async def dashboard_get(request: Request):
         return RedirectResponse("/login", status_code=302)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
+    user = await db_control.get_user_by_id(pool, user_id)
     if user is None:
         request.session.clear()
         return RedirectResponse("/login", status_code=302)
@@ -2153,14 +2144,14 @@ async def dashboard_get(request: Request):
 </div>
 """
 
-    if user["connection_string_encrypted"]:[cite: 2]
-        masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))[cite: 5]
+    if user["connection_string_encrypted"]:
+        masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
         conn_status = f'<p class="text-xs text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
     else:
         conn_status = '<div class="p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">No Neon connection string set yet. Claude connector will fail until configured.</div>'
 
-    keys = await db_control.list_api_keys(pool, user_id)[cite: 2]
-    active_keys = [k for k in keys if k["revoked_at"] is None][cite: 2]
+    keys = await db_control.list_api_keys(pool, user_id)
+    active_keys = [k for k in keys if k["revoked_at"] is None]
     if active_keys:
         rows = "".join(f"""
 <div class="flex items-center justify-between py-3 border-b border-border-muted last:border-0">
@@ -2173,13 +2164,13 @@ async def dashboard_get(request: Request):
         <button type="submit" class="text-error text-xs font-semibold hover:underline" onclick="return confirm('Revoke this key? Apps using it will disconnect immediately.');">Revoke</button>
     </form>
 </div>
-""" for k in active_keys)[cite: 2]
+""" for k in active_keys)
     else:
         rows = '<p class="text-xs text-text-secondary">No active API keys found.</p>'
 
     base_url = str(request.base_url).rstrip("/")
     mcp_endpoint = f"{base_url}/mcp"
-    nav_html = _navbar(request, user["email"])[cite: 2]
+    nav_html = _navbar(request, user["email"])
 
     body = f"""
 {nav_html}
@@ -2246,13 +2237,13 @@ async def update_connection_string(request: Request):
     if not (connection_string.startswith("postgresql://") or connection_string.startswith("postgres://")):
         return _dashboard_error("Invalid format: Must start with postgresql://")
 
-    ok, err = await tenant_pools.test_connection_string(connection_string)[cite: 8]
+    ok, err = await tenant_pools.test_connection_string(connection_string)
     if not ok:
         return _dashboard_error(f"Connection test failed: {err}")
 
     pool = db_control.get_control_pool()
-    await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))[cite: 2, 5]
-    await tenant_pools.get_manager().invalidate(user_id)[cite: 8]
+    await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))
+    await tenant_pools.get_manager().invalidate(user_id)
 
     return RedirectResponse("/dashboard", status_code=302)
 
@@ -2263,8 +2254,8 @@ async def create_api_key(request: Request):
         return RedirectResponse("/login", status_code=302)
 
     pool = db_control.get_control_pool()
-    raw_key = security.generate_api_key()[cite: 5]
-    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")[cite: 2, 5]
+    raw_key = security.generate_api_key()
+    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")
     request.session["flash_api_key"] = raw_key
 
     return RedirectResponse("/dashboard", status_code=302)
@@ -2279,7 +2270,7 @@ async def revoke_api_key(request: Request):
     key_id = str(form.get("key_id", ""))
 
     pool = db_control.get_control_pool()
-    await db_control.revoke_api_key(pool, user_id, key_id)[cite: 2]
+    await db_control.revoke_api_key(pool, user_id, key_id)
 
     return RedirectResponse("/dashboard", status_code=302)
 
