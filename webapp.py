@@ -3,6 +3,7 @@ MemoryBase - Web Application & Mobile Control Gateway
 Full Python Starlette ASGI Application with:
 - Direct Android APK distribution endpoints (/download and /MemoryBase.apk)
 - Mobile authentication endpoint returning decrypted Neon connection strings
+- Interactive Hover-Expand Mobile Features Showcase (Skiper52 design)
 - Lenis Smooth Scrolling (@studio-freight/lenis)
 - Scrubbed, scroll-driven Instant Context Pipeline Animation
 - 2D Codebase Console Graph Interface with Pan/Zoom & Node Modals
@@ -164,6 +165,25 @@ def _page(title: str, body: str) -> HTMLResponse:
     }}
     .hero-interactive-grid:hover::after {{
         opacity: 1;
+    }}
+
+    /* Skiper52 Hover Expand Interaction Styling */
+    .expand-card {{
+        flex: 0 0 5.5rem;
+        height: 26rem;
+        transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    }}
+    .expand-card.active {{
+        flex: 0 0 24rem;
+    }}
+    @media (max-width: 768px) {{
+        .expand-card {{
+            flex: 0 0 4.5rem;
+            height: 22rem;
+        }}
+        .expand-card.active {{
+            flex: 0 0 17rem;
+        }}
     }}
 
     .diagram-scaler-wrapper {{
@@ -819,6 +839,129 @@ async def landing_page(request: Request):
         </div>
     </section>
 
+    <!-- NEW: MOBILE APPLICATION SHOWCASE (Skiper52 Expandable Gallery) -->
+    <section id="mobile-showcase" class="py-16 sm:py-24 bg-[#09090b] text-white border-b border-neutral-800 overflow-hidden relative">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 text-center mb-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-800 border border-neutral-700 text-xs font-mono text-[#00e599] mb-3">
+                <span class="w-2 h-2 rounded-full bg-[#00e599] animate-pulse"></span>
+                Companion Mobile Architecture
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
+                MemoryBase in Your Pocket
+            </h2>
+            <p class="text-sm sm:text-base text-neutral-400 max-w-xl mx-auto leading-relaxed">
+                Connect your personal Neon PostgreSQL database to Android. Bi-directional sync with your AI models, distraction-free note canvas, and instant thought visualization.
+            </p>
+        </div>
+
+        <div class="w-full flex items-center justify-center px-4 overflow-x-auto pb-4">
+            <div id="skiperCardsWrapper" class="flex items-center justify-center gap-2 sm:gap-3 max-w-6xl w-full">
+                
+                <!-- Card 1 -->
+                <div class="expand-card active relative cursor-pointer overflow-hidden rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl group" data-index="0">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 flex flex-col justify-end p-5">
+                        <span class="text-[11px] font-mono text-[#00e599] font-bold uppercase tracking-wider mb-1">Feature #01</span>
+                        <h3 class="text-base font-bold text-white mb-1">One-Click Web Auth</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed card-desc">Log in with your website account. Your Neon connection string is securely decrypted and provisioned automatically.</p>
+                    </div>
+                    <div class="w-full h-full bg-gradient-to-br from-[#121217] via-[#1a1a24] to-[#0a0a0d] flex items-center justify-center p-6 text-center">
+                        <div class="p-4 rounded-2xl bg-black/60 border border-white/10 font-mono text-xs text-neutral-400 space-y-2">
+                            <div class="text-[#00e599] font-bold text-sm">POST /api/mobile/login</div>
+                            <div class="text-white">Credentials Verified ✓</div>
+                            <div class="text-[10px] text-neutral-500">Encrypted SharedPreferences Configured</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="expand-card relative cursor-pointer overflow-hidden rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl group" data-index="1">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 flex flex-col justify-end p-5">
+                        <span class="text-[11px] font-mono text-[#00e599] font-bold uppercase tracking-wider mb-1">Feature #02</span>
+                        <h3 class="text-base font-bold text-white mb-1">Real-time Neon HTTP SQL</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed card-desc">Direct HTTPS database sync over Retrofit and OkHttp. Zero server intermediary lag.</p>
+                    </div>
+                    <div class="w-full h-full bg-gradient-to-br from-[#121815] via-[#15241e] to-[#0a0d0b] flex items-center justify-center p-6 text-center">
+                        <div class="p-4 rounded-2xl bg-black/60 border border-white/10 font-mono text-xs text-neutral-400 space-y-2">
+                            <div class="text-[#00e599] font-bold text-sm">Neon-Connection-String</div>
+                            <div class="text-white">SELECT * FROM notes</div>
+                            <div class="text-[10px] text-neutral-500">Last-Write-Wins Compaction Active</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="expand-card relative cursor-pointer overflow-hidden rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl group" data-index="2">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 flex flex-col justify-end p-5">
+                        <span class="text-[11px] font-mono text-[#facc15] font-bold uppercase tracking-wider mb-1">Feature #03</span>
+                        <h3 class="text-base font-bold text-white mb-1">AI Copilot & Gemini</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed card-desc">Ask Gemini & NVIDIA NIM to expand thoughts, suggest backlinks, and summarize architecture graphs.</p>
+                    </div>
+                    <div class="w-full h-full bg-gradient-to-br from-[#1e1c12] via-[#242115] to-[#0d0c0a] flex items-center justify-center p-6 text-center">
+                        <div class="p-4 rounded-2xl bg-black/60 border border-white/10 font-mono text-xs text-neutral-400 space-y-2">
+                            <div class="text-[#facc15] font-bold text-sm">GeminiClient.kt</div>
+                            <div class="text-white">&gt; generateThoughtExpansions()</div>
+                            <div class="text-[10px] text-neutral-500">Direct REST invocation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="expand-card relative cursor-pointer overflow-hidden rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl group" data-index="3">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 flex flex-col justify-end p-5">
+                        <span class="text-[11px] font-mono text-blue-400 font-bold uppercase tracking-wider mb-1">Feature #04</span>
+                        <h3 class="text-base font-bold text-white mb-1">Interactive 2D Mind Palace</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed card-desc">Smooth pan and pinch-zoom node graph in Jetpack Compose to explore non-linear knowledge structures.</p>
+                    </div>
+                    <div class="w-full h-full bg-gradient-to-br from-[#10141f] via-[#141b2a] to-[#0a0c12] flex items-center justify-center p-6 text-center">
+                        <div class="p-4 rounded-2xl bg-black/60 border border-white/10 font-mono text-xs text-neutral-400 space-y-2">
+                            <div class="text-blue-400 font-bold text-sm">PalaceRepository.kt</div>
+                            <div class="text-white">Directed Graph Canvas</div>
+                            <div class="text-[10px] text-neutral-500">60 FPS Hardware Acceleration</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="expand-card relative cursor-pointer overflow-hidden rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl group" data-index="4">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 flex flex-col justify-end p-5">
+                        <span class="text-[11px] font-mono text-purple-400 font-bold uppercase tracking-wider mb-1">Feature #05</span>
+                        <h3 class="text-base font-bold text-white mb-1">OCR & Audio Transcripts</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed card-desc">Capture whiteboard notes with ML Kit OCR or voice memos that index into fuzzy trigram search.</p>
+                    </div>
+                    <div class="w-full h-full bg-gradient-to-br from-[#18111e] via-[#201529] to-[#0e0a12] flex items-center justify-center p-6 text-center">
+                        <div class="p-4 rounded-2xl bg-black/60 border border-white/10 font-mono text-xs text-neutral-400 space-y-2">
+                            <div class="text-purple-400 font-bold text-sm">file_metadata</div>
+                            <div class="text-white">OCR &amp; Transcripts Extracted</div>
+                            <div class="text-[10px] text-neutral-500">Indexed via pg_trgm</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="text-center mt-8">
+            <a href="/download" class="inline-flex items-center gap-2 bg-[#00e599] text-black font-semibold text-xs sm:text-sm px-6 py-3 rounded-xl hover:bg-[#00c985] transition-all shadow-[0_0_20px_rgba(0,229,153,0.3)] no-underline">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993s-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9994.4482.9994.9993s-.4483.9997-.9994.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.4114 13.8533 8.083 12 8.083s-3.5902.3284-5.1368.8667L4.8409 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396"/></svg>
+                Download MemoryBase.apk
+            </a>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {{
+                const cards = document.querySelectorAll('#skiperCardsWrapper .expand-card');
+                cards.forEach((card) => {{
+                    const activate = () => {{
+                        cards.forEach(c => c.classList.remove('active'));
+                        card.classList.add('active');
+                    }};
+                    card.addEventListener('mouseenter', activate);
+                    card.addEventListener('click', activate);
+                }});
+            }});
+        </script>
+    </section>
+
     <!-- 2. SCROLL-DRIVEN PINNED PIPELINE ANIMATION SECTION -->
     <section id="pipeline" class="bg-[#000000] text-white border-b border-neutral-800 relative z-10">
         <div id="pipelineScrollWrapper" class="relative" style="height: 300vh;">
@@ -896,13 +1039,17 @@ async def landing_page(request: Request):
                   <path id="path-db-up" d="M 226 262 V 182" class="line-green-dash" />
                   <path id="path-req-data" d="M 226 162 V 138 Q 226 118 248 118 H 268" class="line-white-dash" />
                   <path id="path-data-to-mcp" d="M 390 118 H 410 Q 426 118 426 140 V 158 Q 426 172 444 172 H 455" class="line-white-dash" />
+
                   <path id="path-neg-1" d="M 450 85 V 157" class="line-green-dash" />
                   <path id="path-neg-2" d="M 591 85 V 157" class="line-green-dash" />
+
                   <path id="path-mcp-to-tools" d="M 584 172 H 598 Q 614 172 614 150 V 138 Q 614 118 632 118 H 648" class="line-white-dash" />
                   <path id="path-tools-to-apps" d="M 776 118 H 806 Q 828 118 828 138 V 162" class="line-white-dash" />
                   <path id="path-apps-down" d="M 828 182 V 262" class="line-green-dash" />
+
                   <path id="path-protocol" d="M 520 188 V 328" class="line-white-dash" />
                   <path id="path-granted" d="M 572 188 V 276 Q 572 298 598 298 H 618" class="line-white-solid" />
+
                   <path id="path-ai-to-note" d="M 918 278 V 356 Q 918 380 892 380 H 885" class="line-green-dash" />
                   <path id="path-note-to-proc" d="M 775 380 H 760 Q 747 380 747 408 V 418 Q 747 440 726 440 H 635" class="line-white-solid" />
                   <path id="path-lower-flow" d="M 615 440 L 280 440" class="line-green-dash" marker-end="url(#arrow-green)" />
@@ -914,6 +1061,7 @@ async def landing_page(request: Request):
 
                 <div id="el-neg1-txt" class="meta-text" style="top: 10.3%; left: 45%;">negotiation<br>started</div>
                 <div id="el-neg1-ico" class="circle-icon check-node" style="top: 21.2%; left: 45%;">✓</div>
+
                 <div id="el-neg2-txt" class="meta-text" style="top: 10.3%; left: 59.1%;">negotiation<br>complete</div>
                 <div id="el-neg2-ico" class="circle-icon check-node" style="top: 21.2%; left: 59.1%;">✓</div>
 
@@ -2186,7 +2334,6 @@ async def dashboard_get(request: Request):
 
         {flash_html}
 
-        <!-- 1. Endpoint & Connection URL -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">1. MCP Server Endpoint</h2>
             <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector.</p>
@@ -2196,7 +2343,6 @@ async def dashboard_get(request: Request):
             </div>
         </div>
 
-        <!-- 2. Neon Database Connection String Settings -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">2. Neon Database Connection String</h2>
             <p class="text-xs text-text-secondary mb-3">Paste the same PostgreSQL connection string your mobile notes app uses to sync.</p>
@@ -2209,7 +2355,6 @@ async def dashboard_get(request: Request):
             </form>
         </div>
 
-        <!-- 3. API Keys Management -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">3. MCP API Keys</h2>
             <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps.</p>
