@@ -4,9 +4,10 @@ Full Python Starlette ASGI Application with:
 - Direct Android APK distribution endpoints (/download and /MemoryBase.apk)
 - Root image serving (/img1.jpeg - /img4.jpeg)
 - Mobile authentication endpoint returning decrypted Neon connection strings
-- Interactive Hover-Expand Mobile Showcase (Sized to standard 1:1.1 card ratio, unnumbered vertical labels)
+- Interactive Mobile Showcase (Width: 1350px, Height: 1165px, unnumbered vertical labels)
 - Lenis Smooth Scrolling (@studio-freight/lenis)
 - Scrubbed, scroll-driven Instant Context Pipeline Animation
+- Working Core Capabilities Scroll-Spy & Smooth Navigation
 - 2D Codebase Console Graph Interface with Pan/Zoom & Node Modals
 - FastMCP Multi-Tenant Database & Control Plane Settings
 """
@@ -168,30 +169,31 @@ def _page(title: str, body: str) -> HTMLResponse:
         opacity: 1;
     }}
 
-    /* Card Ratio Matched to Standard Reference (26rem x 28.5rem, ~1:1.1) */
+    /* Card Standard Dimensions: Width 1350px x Height 1165px */
     .vertical-mode-text {{
         writing-mode: vertical-rl;
         transform: rotate(180deg);
-        letter-spacing: 0.32em;
+        letter-spacing: 0.35em;
     }}
 
     .expand-card {{
-        flex: 0 0 5.2rem;
-        height: 28.5rem;
-        border-radius: 30px;
+        flex: 0 0 5.6rem;
+        height: 1165px;
+        border-radius: 36px;
         transition: all 0.5s cubic-bezier(0.25, 1, 0.35, 1);
     }}
     .expand-card.active {{
-        flex: 0 0 25.5rem;
+        flex: 0 0 1350px;
+        width: 1350px;
     }}
-    @media (max-width: 900px) {{
+    @media (max-width: 1550px) {{
         .expand-card {{
-            flex: 0 0 4.2rem;
-            height: 24rem;
-            border-radius: 22px;
+            height: clamp(520px, 80vw * 1165 / 1350, 1165px);
+            border-radius: 28px;
         }}
         .expand-card.active {{
-            flex: 0 0 19rem;
+            flex: 0 0 min(1350px, 85vw);
+            width: min(1350px, 85vw);
         }}
     }}
 
@@ -580,11 +582,10 @@ def _page(title: str, body: str) -> HTMLResponse:
 </style>
 </head>
 <body class="bg-surface-white text-on-surface font-body-md min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
-{body}
 
-<!-- Global Lenis Smooth Scroll Initializer -->
+<!-- Global Lenis Smooth Scroll Initialized at Body Start -->
 <script>
-    const lenis = new Lenis({{
+    window.lenis = new Lenis({{
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
@@ -596,7 +597,7 @@ def _page(title: str, body: str) -> HTMLResponse:
     }});
 
     function raf(time) {{
-      lenis.raf(time);
+      window.lenis.raf(time);
       requestAnimationFrame(raf);
     }}
     requestAnimationFrame(raf);
@@ -624,6 +625,8 @@ def _page(title: str, body: str) -> HTMLResponse:
         }});
     }}
 </script>
+
+{body}
 </body>
 </html>
 """)
@@ -863,7 +866,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. MOBILE APPLICATION SHOWCASE (Proportional Card Sizing matching Reference with Unnumbered Vertical Labels) -->
+    <!-- 2. MOBILE APPLICATION SHOWCASE (Standard Dimensions: 1350px x 1165px, Unnumbered Collapsed Labels) -->
     <section id="mobile-showcase" class="py-16 sm:py-24 bg-[#050507] text-white border-b border-neutral-800 overflow-hidden relative">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 text-center mb-12">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.05] border border-white/[0.1] text-xs font-mono text-[#00e599] mb-3">
@@ -879,14 +882,14 @@ async def landing_page(request: Request):
         </div>
 
         <div class="w-full flex items-center justify-center px-4 overflow-x-auto pb-6">
-            <div id="skiperCardsWrapper" class="flex items-center justify-center gap-3 sm:gap-4 max-w-6xl w-full">
+            <div id="skiperCardsWrapper" class="flex items-center justify-center gap-3 sm:gap-5 w-full" style="max-width: 1750px;">
                 
                 <!-- Card 1: 2D Spatial Canvas -->
-                <div class="expand-card active group relative cursor-pointer overflow-hidden bg-[#0a0a0c] border border-white/[0.09] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="0">
+                <div class="expand-card active group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="0">
                     <img src="/img1.jpeg" alt="Spatial Canvas" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.7] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none z-10"></div>
 
-                    <!-- Collapsed State: Unnumbered Vertical Text Label with Geometric Accents -->
+                    <!-- Collapsed State: Unnumbered Vertical Text Label -->
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-10 z-20 pointer-events-none transition-all duration-300 opacity-0 group-[.active]:opacity-0 group-[.active]:translate-y-4">
                         <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
                         <span class="vertical-mode-text font-mono text-xs uppercase font-bold text-neutral-300">SPATIAL CANVAS</span>
@@ -894,15 +897,15 @@ async def landing_page(request: Request):
                     </div>
 
                     <!-- Expanded State: Clean Fade-in Details -->
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-8 z-30 pointer-events-none transition-all duration-500 opacity-100 translate-y-0 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-[#00e599] font-bold uppercase tracking-wider mb-1">SPATIAL ENGINE</span>
-                        <h3 class="text-lg sm:text-2xl font-bold text-white mb-2 tracking-tight">Infinite 2D Canvas</h3>
-                        <p class="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3">Interactive node clusters (Portfolio, FluxDoc, Voice) with smooth zoom HUD controls and hardware acceleration.</p>
+                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-10 z-30 pointer-events-none transition-all duration-500 opacity-100 translate-y-0 group-[.active]:opacity-100 group-[.active]:translate-y-0">
+                        <span class="text-xs font-mono text-[#00e599] font-bold uppercase tracking-wider mb-2">SPATIAL ENGINE</span>
+                        <h3 class="text-2xl sm:text-4xl font-bold text-white mb-3 tracking-tight">Infinite 2D Canvas</h3>
+                        <p class="text-sm sm:text-base text-neutral-300 leading-relaxed max-w-xl">Interactive node clusters (Portfolio, FluxDoc, Voice) with smooth zoom HUD controls and 60fps hardware acceleration.</p>
                     </div>
                 </div>
 
                 <!-- Card 2: AI Copilot & DeepSeek R1 -->
-                <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0a0a0c] border border-white/[0.09] hover:border-[#facc15]/40 shadow-2xl transition-all" data-index="1">
+                <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-[#facc15]/40 shadow-2xl transition-all" data-index="1">
                     <img src="/img2.jpeg" alt="AI Copilot" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.7] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none z-10"></div>
 
@@ -912,15 +915,15 @@ async def landing_page(request: Request):
                         <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
 
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-8 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-[#facc15] font-bold uppercase tracking-wider mb-1">REASONING COPILOT</span>
-                        <h3 class="text-lg sm:text-2xl font-bold text-white mb-2 tracking-tight">DeepSeek R1 Assistant</h3>
-                        <p class="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3">Native prompt synthesis to organize data, discover cluster back-links, and analyze mind palace connections on the fly.</p>
+                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-10 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
+                        <span class="text-xs font-mono text-[#facc15] font-bold uppercase tracking-wider mb-2">REASONING COPILOT</span>
+                        <h3 class="text-2xl sm:text-4xl font-bold text-white mb-3 tracking-tight">DeepSeek R1 Assistant</h3>
+                        <p class="text-sm sm:text-base text-neutral-300 leading-relaxed max-w-xl">Native prompt synthesis to organize thoughts, discover cluster back-links, and expand complex architectural graphs.</p>
                     </div>
                 </div>
 
                 <!-- Card 3: Neural Workspaces -->
-                <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0a0a0c] border border-white/[0.09] hover:border-blue-400/40 shadow-2xl transition-all" data-index="2">
+                <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-blue-400/40 shadow-2xl transition-all" data-index="2">
                     <img src="/img3.jpeg" alt="Workspaces" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.7] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none z-10"></div>
 
@@ -930,15 +933,15 @@ async def landing_page(request: Request):
                         <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
 
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-8 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-wider mb-1">PALACE ENGINE</span>
-                        <h3 class="text-lg sm:text-2xl font-bold text-white mb-2 tracking-tight">Neural Workspaces</h3>
-                        <p class="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3">Segment projects with isolated spatial protocols (NEB_13, NEB_92) and dedicated memory palettes.</p>
+                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-10 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
+                        <span class="text-xs font-mono text-blue-400 font-bold uppercase tracking-wider mb-2">PALACE ENGINE</span>
+                        <h3 class="text-2xl sm:text-4xl font-bold text-white mb-3 tracking-tight">Neural Workspaces</h3>
+                        <p class="text-sm sm:text-base text-neutral-300 leading-relaxed max-w-xl">Segment projects into isolated spatial domains with dedicated protocols (NEB_13, NEB_92) and contextual memory clusters.</p>
                     </div>
                 </div>
 
                 <!-- Card 4: Neon DB & Sync Settings -->
-                <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0a0a0c] border border-white/[0.09] hover:border-purple-400/40 shadow-2xl transition-all" data-index="3">
+                <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-purple-400/40 shadow-2xl transition-all" data-index="3">
                     <img src="/img4.jpeg" alt="Neon Cloud Sync" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.7] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none z-10"></div>
 
@@ -948,10 +951,10 @@ async def landing_page(request: Request):
                         <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
 
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-8 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider mb-1">ZERO-CONFIG SYNC</span>
-                        <h3 class="text-lg sm:text-2xl font-bold text-white mb-2 tracking-tight">Neon DB & NIM Config</h3>
-                        <p class="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3">One-touch website authentication provisions your encrypted PostgreSQL string with background auto-sync.</p>
+                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-10 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
+                        <span class="text-xs font-mono text-purple-400 font-bold uppercase tracking-wider mb-2">ZERO-CONFIG SYNC</span>
+                        <h3 class="text-2xl sm:text-4xl font-bold text-white mb-3 tracking-tight">Neon DB & NIM Config</h3>
+                        <p class="text-sm sm:text-base text-neutral-300 leading-relaxed max-w-xl">One-touch website login auto-provisions your encrypted PostgreSQL credentials, enabling instant background sync with zero manual setup.</p>
                     </div>
                 </div>
 
@@ -1312,7 +1315,10 @@ async def landing_page(request: Request):
                   setElementVisibility('el-sync-bot-txt', 0.98, progress);
                 }}
 
-                lenis.on('scroll', updateScrollPipeline);
+                if (window.lenis) {{
+                  window.lenis.on('scroll', updateScrollPipeline);
+                }}
+                window.addEventListener('scroll', updateScrollPipeline, {{ passive: true }});
                 window.addEventListener('resize', updateScrollPipeline);
                 updateScrollPipeline();
               }});
@@ -1320,7 +1326,7 @@ async def landing_page(request: Request):
     </div>
 </section>
 
-    <!-- 4. Core Capabilities Showcase -->
+    <!-- 4. Core Capabilities Showcase (Scroll-Spy Fixed) -->
     <div class="showcase-container">
       <div class="sticky-nav-wrapper">
         <nav class="sticky-sidebar" id="sidebar">
@@ -1513,46 +1519,76 @@ async def landing_page(request: Request):
       </div>
     </footer>
 
+    <!-- Fixed Core Capabilities Scroll-Spy Script -->
     <script>
-      const navButtons = document.querySelectorAll('.nav-btn');
-      const sections = document.querySelectorAll('.feature-section');
-      const sidebar = document.getElementById('sidebar');
+      document.addEventListener('DOMContentLoaded', () => {{
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const sections = document.querySelectorAll('.feature-section');
+        const sidebar = document.getElementById('sidebar');
 
-      function syncActiveNav() {{
-        if (window.innerWidth <= 900) return;
-        const focalLine = window.innerHeight * 0.4;
-        let currentSection = sections[0];
+        function syncActiveNav() {{
+          if (!sections.length || !navButtons.length) return;
+          if (window.innerWidth <= 900) return;
 
-        sections.forEach((section) => {{
-          const rect = section.getBoundingClientRect();
-          if (rect.top <= focalLine && rect.bottom >= focalLine) {{
-            currentSection = section;
+          const triggerLine = window.innerHeight * 0.45;
+          let currentSection = null;
+
+          sections.forEach((section) => {{
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= triggerLine && rect.bottom >= triggerLine) {{
+              currentSection = section;
+            }}
+          }});
+
+          if (!currentSection) {{
+            const firstRect = sections[0].getBoundingClientRect();
+            const lastRect = sections[sections.length - 1].getBoundingClientRect();
+            if (firstRect.top > triggerLine) {{
+              currentSection = sections[0];
+            }} else if (lastRect.bottom < triggerLine) {{
+              currentSection = sections[sections.length - 1];
+            }}
           }}
-        }});
+
+          if (currentSection) {{
+            navButtons.forEach((btn) => {{
+              btn.classList.toggle('active', btn.dataset.target === currentSection.id);
+            }});
+
+            const theme = currentSection.getAttribute('data-theme');
+            if (sidebar) {{
+              if (theme === 'light') {{
+                sidebar.classList.add('theme-light');
+              }} else {{
+                sidebar.classList.remove('theme-light');
+              }}
+            }}
+          }}
+        }}
+
+        if (window.lenis) {{
+          window.lenis.on('scroll', syncActiveNav);
+        }}
+        window.addEventListener('scroll', syncActiveNav, {{ passive: true }});
+        window.addEventListener('resize', syncActiveNav);
+        syncActiveNav();
 
         navButtons.forEach((btn) => {{
-          btn.classList.toggle('active', btn.dataset.target === currentSection.id);
-        }});
+          btn.addEventListener('click', (e) => {{
+            e.preventDefault();
+            const targetId = btn.dataset.target;
+            const target = document.getElementById(targetId);
+            if (target) {{
+              navButtons.forEach((b) => b.classList.remove('active'));
+              btn.classList.add('active');
 
-        const theme = currentSection.getAttribute('data-theme');
-        if (theme === 'light') {{
-          sidebar.classList.add('theme-light');
-        }} else {{
-          sidebar.classList.remove('theme-light');
-        }}
-      }}
-
-      lenis.on('scroll', syncActiveNav);
-      window.addEventListener('resize', syncActiveNav);
-      syncActiveNav();
-
-      navButtons.forEach((btn) => {{
-        btn.addEventListener('click', (e) => {{
-          e.preventDefault();
-          const target = document.getElementById(btn.dataset.target);
-          if (target) {{
-            lenis.scrollTo(target, {{ offset: 0, duration: 1.2 }});
-          }}
+              if (window.lenis) {{
+                window.lenis.scrollTo(target, {{ offset: 0, duration: 1.2 }});
+              }} else {{
+                target.scrollIntoView({{ behavior: 'smooth' }});
+              }}
+            }}
+          }});
         }});
       }});
     </script>
