@@ -723,22 +723,22 @@ async def mobile_login(request: Request):
         return JSONResponse({"error": "Email and password are required"}, status_code=400)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_email(pool, email)[cite: 2]
+    user = await db_control.get_user_by_email(pool, email)
 
-    if user is None or not security.verify_password(password, user["password_hash"]):[cite: 2, 5]
+    if user is None or not security.verify_password(password, user["password_hash"]):
         return JSONResponse({"error": "Invalid email or password"}, status_code=401)
 
     decrypted_conn_str = None
-    if user["connection_string_encrypted"]:[cite: 2]
+    if user["connection_string_encrypted"]:
         try:
-            decrypted_conn_str = security.decrypt_text(user["connection_string_encrypted"])[cite: 5]
+            decrypted_conn_str = security.decrypt_text(user["connection_string_encrypted"])
         except Exception:
             return JSONResponse({"error": "Failed to decrypt connection string"}, status_code=500)
 
     return JSONResponse({
         "status": "success",
-        "user_id": str(user["id"]),[cite: 2]
-        "email": user["email"],[cite: 2]
+        "user_id": str(user["id"]),
+        "email": user["email"],
         "has_connection_string": decrypted_conn_str is not None,
         "connection_string": decrypted_conn_str,
     })
@@ -752,9 +752,9 @@ async def landing_page(request: Request):
     user_email = None
     if user_id:
         pool = db_control.get_control_pool()
-        user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
+        user = await db_control.get_user_by_id(pool, user_id)
         if user:
-            user_email = user["email"][cite: 2]
+            user_email = user["email"]
 
     base_url = str(request.base_url).rstrip("/")
     nav_html = _navbar(request, user_email)
@@ -868,7 +868,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. MOBILE SHOWCASE (Exact 1024x1165 Proportions, Unnumbered Collapsed State, Fully Visible on Hover) -->
+    <!-- 2. MOBILE SHOWCASE (Exact Aspect-Ratio Matched Cards, Unnumbered Collapsed State, Fully Visible on Hover) -->
     <section id="mobile-showcase" class="py-16 sm:py-24 bg-[#050507] text-white border-b border-neutral-800 overflow-hidden relative">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 text-center mb-10">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.05] border border-white/[0.1] text-xs font-mono text-[#00e599] mb-3">
@@ -888,7 +888,7 @@ async def landing_page(request: Request):
                 
                 <!-- Card 1: 2D Spatial Canvas -->
                 <div class="expand-card active group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="0">
-                    <img src="/img1.jpeg" alt="Spatial Canvas" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.8] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
+                    <img src="/img1.jpeg" alt="Spatial Canvas" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
 
                     <!-- Collapsed State: Unnumbered Vertical Text Label -->
@@ -908,7 +908,7 @@ async def landing_page(request: Request):
 
                 <!-- Card 2: AI Copilot & DeepSeek R1 -->
                 <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-[#facc15]/40 shadow-2xl transition-all" data-index="1">
-                    <img src="/img2.jpeg" alt="AI Copilot" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.8] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
+                    <img src="/img2.jpeg" alt="AI Copilot" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
 
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
@@ -926,7 +926,7 @@ async def landing_page(request: Request):
 
                 <!-- Card 3: Neural Workspaces -->
                 <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-blue-400/40 shadow-2xl transition-all" data-index="2">
-                    <img src="/img3.jpeg" alt="Workspaces" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.8] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
+                    <img src="/img3.jpeg" alt="Workspaces" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
 
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
@@ -944,7 +944,7 @@ async def landing_page(request: Request):
 
                 <!-- Card 4: Neon DB & Sync Settings -->
                 <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-purple-400/40 shadow-2xl transition-all" data-index="3">
-                    <img src="/img4.jpeg" alt="Neon Cloud Sync" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.8] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
+                    <img src="/img4.jpeg" alt="Neon Cloud Sync" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
 
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
@@ -1660,7 +1660,7 @@ async def signup_post(request: Request):
 
     pool = db_control.get_control_pool()
     try:
-        user_id = await db_control.create_user(pool, email, security.hash_password(password))[cite: 2, 5]
+        user_id = await db_control.create_user(pool, email, security.hash_password(password))
     except asyncpg.exceptions.UniqueViolationError:
         body = f"""
 {_navbar(request)}
@@ -1715,9 +1715,9 @@ async def login_post(request: Request):
     next_ = _safe_next(str(form.get("next", "")))
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_email(pool, email)[cite: 2]
+    user = await db_control.get_user_by_email(pool, email)
 
-    if user is None or not security.verify_password(password, user["password_hash"]):[cite: 2, 5]
+    if user is None or not security.verify_password(password, user["password_hash"]):
         body = f"""
 {_navbar(request)}
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
@@ -1741,7 +1741,7 @@ async def login_post(request: Request):
 """
         return _page("Log in", body)
 
-    request.session["user_id"] = str(user["id"])[cite: 2]
+    request.session["user_id"] = str(user["id"])
     return RedirectResponse("/console", status_code=302)
 
 
@@ -1763,12 +1763,12 @@ async def console_page(request: Request):
         return RedirectResponse("/login", status_code=302)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
+    user = await db_control.get_user_by_id(pool, user_id)
     if user is None:
         request.session.clear()
         return RedirectResponse("/login", status_code=302)
 
-    user_email = user["email"][cite: 2]
+    user_email = user["email"]
     display_name = user_email.split("@")[0].capitalize()
     initial = display_name[0].upper()
 
@@ -1777,10 +1777,10 @@ async def console_page(request: Request):
     edges = []
     selected_workspace = request.query_params.get("ws", "")
 
-    if user["connection_string_encrypted"]:[cite: 2]
+    if user["connection_string_encrypted"]:
         try:
-            conn_str = security.decrypt_text(user["connection_string_encrypted"])[cite: 5]
-            user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)[cite: 2, 8]
+            conn_str = security.decrypt_text(user["connection_string_encrypted"])
+            user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
             
             ws_rows = await user_pool.fetch("SELECT DISTINCT workspace FROM project_nodes ORDER BY workspace ASC")
             workspaces = [r["workspace"] for r in ws_rows]
@@ -2342,7 +2342,7 @@ async def dashboard_get(request: Request):
         return RedirectResponse("/login", status_code=302)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
+    user = await db_control.get_user_by_id(pool, user_id)
     if user is None:
         request.session.clear()
         return RedirectResponse("/login", status_code=302)
@@ -2361,14 +2361,14 @@ async def dashboard_get(request: Request):
 </div>
 """
 
-    if user["connection_string_encrypted"]:[cite: 2]
-        masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))[cite: 5]
+    if user["connection_string_encrypted"]:
+        masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
         conn_status = f'<p class="text-xs text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
     else:
         conn_status = '<div class="p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">No Neon connection string set yet. Claude connector will fail until configured.</div>'
 
-    keys = await db_control.list_api_keys(pool, user_id)[cite: 2]
-    active_keys = [k for k in keys if k["revoked_at"] is None][cite: 2]
+    keys = await db_control.list_api_keys(pool, user_id)
+    active_keys = [k for k in keys if k["revoked_at"] is None]
     if active_keys:
         rows = "".join(f"""
 <div class="flex items-center justify-between py-3 border-b border-border-muted last:border-0">
@@ -2381,13 +2381,13 @@ async def dashboard_get(request: Request):
         <button type="submit" class="text-error text-xs font-semibold hover:underline" onclick="return confirm('Revoke this key? Apps using it will disconnect immediately.');">Revoke</button>
     </form>
 </div>
-""" for k in active_keys)[cite: 2]
+""" for k in active_keys)
     else:
         rows = '<p class="text-xs text-text-secondary">No active API keys found.</p>'
 
     base_url = str(request.base_url).rstrip("/")
     mcp_endpoint = f"{base_url}/mcp"
-    nav_html = _navbar(request, user["email"])[cite: 2]
+    nav_html = _navbar(request, user["email"])
 
     body = f"""
 {nav_html}
@@ -2403,6 +2403,7 @@ async def dashboard_get(request: Request):
 
         {flash_html}
 
+        <!-- 1. Endpoint & Connection URL -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">1. MCP Server Endpoint</h2>
             <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector.</p>
@@ -2412,6 +2413,7 @@ async def dashboard_get(request: Request):
             </div>
         </div>
 
+        <!-- 2. Neon Database Connection String Settings -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">2. Neon Database Connection String</h2>
             <p class="text-xs text-text-secondary mb-3">Paste the same PostgreSQL connection string your mobile notes app uses to sync.</p>
@@ -2424,6 +2426,7 @@ async def dashboard_get(request: Request):
             </form>
         </div>
 
+        <!-- 3. API Keys Management -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">3. MCP API Keys</h2>
             <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps.</p>
@@ -2451,13 +2454,13 @@ async def update_connection_string(request: Request):
     if not (connection_string.startswith("postgresql://") or connection_string.startswith("postgres://")):
         return _dashboard_error("Invalid format: Must start with postgresql://")
 
-    ok, err = await tenant_pools.test_connection_string(connection_string)[cite: 8]
+    ok, err = await tenant_pools.test_connection_string(connection_string)
     if not ok:
         return _dashboard_error(f"Connection test failed: {err}")
 
     pool = db_control.get_control_pool()
-    await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))[cite: 2, 5]
-    await tenant_pools.get_manager().invalidate(user_id)[cite: 8]
+    await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))
+    await tenant_pools.get_manager().invalidate(user_id)
 
     return RedirectResponse("/dashboard", status_code=302)
 
@@ -2468,8 +2471,8 @@ async def create_api_key(request: Request):
         return RedirectResponse("/login", status_code=302)
 
     pool = db_control.get_control_pool()
-    raw_key = security.generate_api_key()[cite: 5]
-    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")[cite: 2, 5]
+    raw_key = security.generate_api_key()
+    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")
     request.session["flash_api_key"] = raw_key
 
     return RedirectResponse("/dashboard", status_code=302)
@@ -2484,7 +2487,7 @@ async def revoke_api_key(request: Request):
     key_id = str(form.get("key_id", ""))
 
     pool = db_control.get_control_pool()
-    await db_control.revoke_api_key(pool, user_id, key_id)[cite: 2]
+    await db_control.revoke_api_key(pool, user_id, key_id)
 
     return RedirectResponse("/dashboard", status_code=302)
 
