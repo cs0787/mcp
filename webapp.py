@@ -3,7 +3,7 @@ MemoryBase - Web Application & Mobile Control Gateway
 Full Python Starlette ASGI Application with:
 - Direct Android APK distribution endpoints (/download and /MemoryBase.apk)
 - Mobile authentication endpoint returning decrypted Neon connection strings
-- Interactive Hover-Expand Mobile Features Showcase (Skiper52 design)
+- Interactive Hover-Expand Mobile Showcase (Mirroring actual Android App UI)
 - Lenis Smooth Scrolling (@studio-freight/lenis)
 - Scrubbed, scroll-driven Instant Context Pipeline Animation
 - 2D Codebase Console Graph Interface with Pan/Zoom & Node Modals
@@ -167,23 +167,32 @@ def _page(title: str, body: str) -> HTMLResponse:
         opacity: 1;
     }}
 
-    /* Skiper52 Hover Expand Interaction Styling */
+    /* Skiper52 Style Interactive Expandable Cards */
     .expand-card {{
-        flex: 0 0 5.5rem;
-        height: 26rem;
-        transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        flex: 0 0 6.5rem;
+        height: 28rem;
+        transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     }}
     .expand-card.active {{
-        flex: 0 0 24rem;
+        flex: 0 0 25rem;
     }}
-    @media (max-width: 768px) {{
+    @media (max-width: 900px) {{
         .expand-card {{
-            flex: 0 0 4.5rem;
-            height: 22rem;
+            flex: 0 0 4.8rem;
+            height: 24rem;
         }}
         .expand-card.active {{
-            flex: 0 0 17rem;
+            flex: 0 0 19rem;
         }}
+    }}
+
+    /* Mini Spatial Grid Simulation */
+    .mini-spatial-grid {{
+        background-color: #f7f7f9;
+        background-image: 
+            linear-gradient(#e5e7eb 1px, transparent 1px),
+            linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
+        background-size: 20px 20px;
     }}
 
     .diagram-scaler-wrapper {{
@@ -839,100 +848,152 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- NEW: MOBILE APPLICATION SHOWCASE (Skiper52 Expandable Gallery) -->
-    <section id="mobile-showcase" class="py-16 sm:py-24 bg-[#09090b] text-white border-b border-neutral-800 overflow-hidden relative">
+    <!-- 2. MOBILE SHOWCASE SECTION (Custom Interactive Expandable Gallery) -->
+    <section id="mobile-showcase" class="py-16 sm:py-24 bg-[#0a0a0c] text-white border-b border-neutral-800 overflow-hidden relative">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 text-center mb-10">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-800 border border-neutral-700 text-xs font-mono text-[#00e599] mb-3">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-800/80 border border-neutral-700 text-xs font-mono text-[#00e599] mb-3">
                 <span class="w-2 h-2 rounded-full bg-[#00e599] animate-pulse"></span>
-                Companion Mobile Architecture
+                Android Native Architecture
             </div>
             <h2 class="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
-                MemoryBase in Your Pocket
+                Spatial Mind Palace on Mobile
             </h2>
             <p class="text-sm sm:text-base text-neutral-400 max-w-xl mx-auto leading-relaxed">
-                Connect your personal Neon PostgreSQL database to Android. Bi-directional sync with your AI models, distraction-free note canvas, and instant thought visualization.
+                Experience infinite 2D canvas navigation, DeepSeek R1 copilot assistance, and real-time Neon PostgreSQL sync on your phone.
             </p>
         </div>
 
         <div class="w-full flex items-center justify-center px-4 overflow-x-auto pb-4">
             <div id="skiperCardsWrapper" class="flex items-center justify-center gap-2 sm:gap-3 max-w-6xl w-full">
                 
-                <!-- Card 1 -->
+                <!-- Card 1: Infinite Spatial Canvas -->
                 <div class="expand-card active relative cursor-pointer overflow-hidden rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl group" data-index="0">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 flex flex-col justify-end p-5">
-                        <span class="text-[11px] font-mono text-[#00e599] font-bold uppercase tracking-wider mb-1">Feature #01</span>
-                        <h3 class="text-base font-bold text-white mb-1">One-Click Web Auth</h3>
-                        <p class="text-xs text-neutral-300 leading-relaxed card-desc">Log in with your website account. Your Neon connection string is securely decrypted and provisioned automatically.</p>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-20 flex flex-col justify-end p-5 pointer-events-none">
+                        <span class="text-[10px] font-mono text-[#00e599] font-bold uppercase tracking-wider mb-1">01 • SPATIAL ENGINE</span>
+                        <h3 class="text-base font-bold text-white mb-1">Infinite 2D Canvas</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed card-desc">Interactive node clusters (Portfolio, FluxDoc, Voice) with 88% smooth zoom HUD controls.</p>
                     </div>
-                    <div class="w-full h-full bg-gradient-to-br from-[#121217] via-[#1a1a24] to-[#0a0a0d] flex items-center justify-center p-6 text-center">
-                        <div class="p-4 rounded-2xl bg-black/60 border border-white/10 font-mono text-xs text-neutral-400 space-y-2">
-                            <div class="text-[#00e599] font-bold text-sm">POST /api/mobile/login</div>
-                            <div class="text-white">Credentials Verified ✓</div>
-                            <div class="text-[10px] text-neutral-500">Encrypted SharedPreferences Configured</div>
+                    
+                    <!-- Realistic Canvas Simulation from Screenshot -->
+                    <div class="w-full h-full mini-spatial-grid relative p-4 flex items-center justify-center select-none overflow-hidden">
+                        <!-- Simulated Mind Nodes -->
+                        <div class="absolute top-12 left-10 w-16 h-16 rounded-full bg-[#4a6374] text-white text-[11px] font-bold flex items-center justify-center shadow-lg transform -rotate-6">pree</div>
+                        <div class="absolute top-28 left-14 w-20 h-20 rounded-full bg-[#405667] text-white text-xs font-bold flex items-center justify-center shadow-xl">Portfolio</div>
+                        <div class="absolute top-28 right-16 w-18 h-18 rounded-full bg-[#ea7a24] text-white text-xs font-bold flex items-center justify-center shadow-xl z-10">expl</div>
+                        <div class="absolute top-32 right-10 w-16 h-16 rounded-full bg-[#425869] text-white text-[10px] font-bold flex items-center justify-center shadow-lg">he</div>
+                        <div class="absolute bottom-28 left-16 w-18 h-18 rounded-full bg-[#20bf6b] text-white text-xs font-bold flex items-center justify-center shadow-lg">FluxDoc</div>
+                        <div class="absolute bottom-32 right-14 w-18 h-18 rounded-full bg-[#20bf6b] text-white text-xs font-bold flex items-center justify-center shadow-lg">Helo</div>
+                        <div class="absolute bottom-16 left-28 w-16 h-16 rounded-full bg-[#4a6374] text-white text-xs font-bold flex items-center justify-center shadow-lg">voice</div>
+                        
+                        <!-- Floating HUD -->
+                        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-[#17171a] text-white px-3 py-1.5 rounded-full flex items-center gap-3 text-[11px] font-mono shadow-2xl border border-neutral-700/60 z-10">
+                            <span>🔍 88%</span>
+                            <span>🔒</span>
+                            <span>💬</span>
+                            <span class="w-5 h-5 rounded-full bg-white text-black flex items-center justify-center font-bold text-xs">+</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card 2 -->
+                <!-- Card 2: AI Copilot & DeepSeek R1 -->
                 <div class="expand-card relative cursor-pointer overflow-hidden rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl group" data-index="1">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 flex flex-col justify-end p-5">
-                        <span class="text-[11px] font-mono text-[#00e599] font-bold uppercase tracking-wider mb-1">Feature #02</span>
-                        <h3 class="text-base font-bold text-white mb-1">Real-time Neon HTTP SQL</h3>
-                        <p class="text-xs text-neutral-300 leading-relaxed card-desc">Direct HTTPS database sync over Retrofit and OkHttp. Zero server intermediary lag.</p>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-20 flex flex-col justify-end p-5 pointer-events-none">
+                        <span class="text-[10px] font-mono text-[#facc15] font-bold uppercase tracking-wider mb-1">02 • AI COPILOT</span>
+                        <h3 class="text-base font-bold text-white mb-1">DeepSeek R1 Assistant</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed card-desc">Native prompt synthesis to organize data, discover cluster back-links, and analyze mind palaces.</p>
                     </div>
-                    <div class="w-full h-full bg-gradient-to-br from-[#121815] via-[#15241e] to-[#0a0d0b] flex items-center justify-center p-6 text-center">
-                        <div class="p-4 rounded-2xl bg-black/60 border border-white/10 font-mono text-xs text-neutral-400 space-y-2">
-                            <div class="text-[#00e599] font-bold text-sm">Neon-Connection-String</div>
-                            <div class="text-white">SELECT * FROM notes</div>
-                            <div class="text-[10px] text-neutral-500">Last-Write-Wins Compaction Active</div>
+
+                    <!-- Realistic AI Copilot View from Screenshot -->
+                    <div class="w-full h-full bg-[#101012] p-5 flex flex-col justify-between select-none">
+                        <div class="flex justify-between items-center text-xs text-neutral-400 border-b border-neutral-800 pb-2">
+                            <span>Deployments</span>
+                            <span>⚙️</span>
+                        </div>
+                        <div class="text-center my-auto space-y-2">
+                            <div class="inline-block text-xl text-orange-400">✦</div>
+                            <div class="text-sm font-serif text-neutral-200">Hey there, User</div>
+                            <div class="text-[10px] text-neutral-400 max-w-[180px] mx-auto leading-relaxed">Ask anything about your canvas or brainstorm new clusters.</div>
+                            <div class="flex flex-wrap gap-1.5 justify-center pt-2">
+                                <span class="px-2 py-0.5 rounded-full bg-neutral-800 border border-neutral-700 text-[9px] text-neutral-300">Organize Data</span>
+                                <span class="px-2 py-0.5 rounded-full bg-neutral-800 border border-neutral-700 text-[9px] text-neutral-300">Analyse Data</span>
+                                <span class="px-2 py-0.5 rounded-full bg-neutral-800 border border-neutral-700 text-[9px] text-neutral-300">Connect Notes</span>
+                            </div>
+                        </div>
+                        <div class="p-2 rounded-xl bg-neutral-800/80 border border-neutral-700 flex items-center justify-between text-[10px] text-neutral-400">
+                            <span>DeepSeek R1 ▾</span>
+                            <span class="text-neutral-200">🎙️ |||</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card 3 -->
+                <!-- Card 3: Workspaces & Protocols -->
                 <div class="expand-card relative cursor-pointer overflow-hidden rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl group" data-index="2">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 flex flex-col justify-end p-5">
-                        <span class="text-[11px] font-mono text-[#facc15] font-bold uppercase tracking-wider mb-1">Feature #03</span>
-                        <h3 class="text-base font-bold text-white mb-1">AI Copilot & Gemini</h3>
-                        <p class="text-xs text-neutral-300 leading-relaxed card-desc">Ask Gemini & NVIDIA NIM to expand thoughts, suggest backlinks, and summarize architecture graphs.</p>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-20 flex flex-col justify-end p-5 pointer-events-none">
+                        <span class="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-wider mb-1">03 • PALACE ENGINE</span>
+                        <h3 class="text-base font-bold text-white mb-1">Neural Workspaces</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed card-desc">Organize distinct mental repositories with dedicated protocols (NEB_13, NEB_92).</p>
                     </div>
-                    <div class="w-full h-full bg-gradient-to-br from-[#1e1c12] via-[#242115] to-[#0d0c0a] flex items-center justify-center p-6 text-center">
-                        <div class="p-4 rounded-2xl bg-black/60 border border-white/10 font-mono text-xs text-neutral-400 space-y-2">
-                            <div class="text-[#facc15] font-bold text-sm">GeminiClient.kt</div>
-                            <div class="text-white">&gt; generateThoughtExpansions()</div>
-                            <div class="text-[10px] text-neutral-500">Direct REST invocation</div>
+
+                    <!-- Realistic Workspaces View from Screenshot -->
+                    <div class="w-full h-full bg-[#fdfdfd] text-neutral-900 p-5 flex flex-col justify-between select-none">
+                        <div class="flex justify-between items-center text-xs font-bold border-b border-neutral-200 pb-2">
+                            <span>🌐 MEMORYBASE</span>
+                            <span class="w-5 h-5 rounded-full bg-neutral-900 text-white text-[9px] flex items-center justify-center">CH</span>
+                        </div>
+                        <div class="space-y-2 my-auto">
+                            <div class="text-[9px] font-mono text-neutral-500 uppercase tracking-wider">Active: 02</div>
+                            
+                            <div class="p-3 rounded-xl border border-neutral-200 bg-white shadow-xs">
+                                <div class="text-xs font-bold text-neutral-900">Deployments</div>
+                                <div class="text-[9px] text-neutral-500">Spatial memory palace & clusters</div>
+                                <span class="inline-block mt-1 text-[8px] font-mono bg-neutral-100 px-1.5 py-0.5 rounded text-neutral-600 font-semibold">PROTOCOL: NEB_13</span>
+                            </div>
+
+                            <div class="p-3 rounded-xl border border-neutral-200 bg-white shadow-xs">
+                                <div class="text-xs font-bold text-neutral-900">General</div>
+                                <div class="text-[9px] text-neutral-500">Spatial memory palace & clusters</div>
+                                <span class="inline-block mt-1 text-[8px] font-mono bg-neutral-100 px-1.5 py-0.5 rounded text-neutral-600 font-semibold">PROTOCOL: NEB_92</span>
+                            </div>
+                        </div>
+                        <div class="w-full py-1.5 rounded-full bg-neutral-900 text-white text-[10px] font-semibold text-center shadow-md">
+                            Generate Workspace →
                         </div>
                     </div>
                 </div>
 
-                <!-- Card 4 -->
+                <!-- Card 4: Neon Cloud Operations & Settings -->
                 <div class="expand-card relative cursor-pointer overflow-hidden rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl group" data-index="3">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 flex flex-col justify-end p-5">
-                        <span class="text-[11px] font-mono text-blue-400 font-bold uppercase tracking-wider mb-1">Feature #04</span>
-                        <h3 class="text-base font-bold text-white mb-1">Interactive 2D Mind Palace</h3>
-                        <p class="text-xs text-neutral-300 leading-relaxed card-desc">Smooth pan and pinch-zoom node graph in Jetpack Compose to explore non-linear knowledge structures.</p>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-20 flex flex-col justify-end p-5 pointer-events-none">
+                        <span class="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider mb-1">04 • ZERO-CONFIG SYNC</span>
+                        <h3 class="text-base font-bold text-white mb-1">Neon DB & NIM Config</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed card-desc">Automatic serverless database linking, NVIDIA NIM configuration, and background cloud sync.</p>
                     </div>
-                    <div class="w-full h-full bg-gradient-to-br from-[#10141f] via-[#141b2a] to-[#0a0c12] flex items-center justify-center p-6 text-center">
-                        <div class="p-4 rounded-2xl bg-black/60 border border-white/10 font-mono text-xs text-neutral-400 space-y-2">
-                            <div class="text-blue-400 font-bold text-sm">PalaceRepository.kt</div>
-                            <div class="text-white">Directed Graph Canvas</div>
-                            <div class="text-[10px] text-neutral-500">60 FPS Hardware Acceleration</div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Card 5 -->
-                <div class="expand-card relative cursor-pointer overflow-hidden rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl group" data-index="4">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 flex flex-col justify-end p-5">
-                        <span class="text-[11px] font-mono text-purple-400 font-bold uppercase tracking-wider mb-1">Feature #05</span>
-                        <h3 class="text-base font-bold text-white mb-1">OCR & Audio Transcripts</h3>
-                        <p class="text-xs text-neutral-300 leading-relaxed card-desc">Capture whiteboard notes with ML Kit OCR or voice memos that index into fuzzy trigram search.</p>
-                    </div>
-                    <div class="w-full h-full bg-gradient-to-br from-[#18111e] via-[#201529] to-[#0e0a12] flex items-center justify-center p-6 text-center">
-                        <div class="p-4 rounded-2xl bg-black/60 border border-white/10 font-mono text-xs text-neutral-400 space-y-2">
-                            <div class="text-purple-400 font-bold text-sm">file_metadata</div>
-                            <div class="text-white">OCR &amp; Transcripts Extracted</div>
-                            <div class="text-[10px] text-neutral-500">Indexed via pg_trgm</div>
+                    <!-- Realistic Settings View from Screenshot -->
+                    <div class="w-full h-full bg-[#0d0d10] p-5 flex flex-col justify-between select-none text-left font-mono">
+                        <div class="flex justify-between items-center text-xs text-neutral-400 border-b border-neutral-800 pb-2">
+                            <span>Settings & Activity</span>
+                            <span class="text-[#00e599] text-[10px]">Neon DB</span>
+                        </div>
+                        <div class="space-y-2.5 my-auto text-[10px]">
+                            <div class="p-2.5 rounded-xl bg-neutral-900/90 border border-neutral-800">
+                                <div class="text-neutral-400 text-[9px]">Account & Database</div>
+                                <div class="text-white font-bold truncate">Connected to Neon Cloud ✓</div>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-neutral-900/90 border border-neutral-800 space-y-1">
+                                <div class="flex justify-between text-neutral-400 text-[9px]">
+                                    <span>Auto Background Sync</span>
+                                    <span class="text-[#00e599] font-bold">ON</span>
+                                </div>
+                                <div class="text-neutral-300 text-[9px]">Provider: NVIDIA NIM</div>
+                                <div class="text-neutral-300 text-[9px]">Model: DeepSeek R1</div>
+                            </div>
+                            <div class="text-[9px] text-[#00e599] font-semibold">
+                                ↑ Sync All Notes to Cloud Now
+                            </div>
+                        </div>
+                        <div class="text-[9px] text-neutral-500 text-center border-t border-neutral-800 pt-2">
+                            Instant Multi-Tenant Handshake
                         </div>
                     </div>
                 </div>
@@ -962,7 +1023,7 @@ async def landing_page(request: Request):
         </script>
     </section>
 
-    <!-- 2. SCROLL-DRIVEN PINNED PIPELINE ANIMATION SECTION -->
+    <!-- 3. SCROLL-DRIVEN PINNED PIPELINE ANIMATION SECTION -->
     <section id="pipeline" class="bg-[#000000] text-white border-b border-neutral-800 relative z-10">
         <div id="pipelineScrollWrapper" class="relative" style="height: 300vh;">
           <div id="pipelineSticky" class="sticky top-0 flex flex-col items-center justify-center" style="height: 100vh; overflow: hidden;">
@@ -1084,7 +1145,7 @@ async def landing_page(request: Request):
                 </div>
 
                 <div id="el-bot-ico" class="circle-icon outline-node" style="top: 32.8%; left: 82.8%;">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/></svg>
                 </div>
                 <div id="el-hollow-top" class="circle-icon hollow-node" style="top: 43.5%; left: 82.8%;"></div>
 
@@ -1279,7 +1340,7 @@ async def landing_page(request: Request):
     </div>
 </section>
 
-    <!-- Core Capabilities Showcase -->
+    <!-- 4. Core Capabilities Showcase -->
     <div class="showcase-container">
       <div class="sticky-nav-wrapper">
         <nav class="sticky-sidebar" id="sidebar">
@@ -2334,6 +2395,7 @@ async def dashboard_get(request: Request):
 
         {flash_html}
 
+        <!-- 1. Endpoint & Connection URL -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">1. MCP Server Endpoint</h2>
             <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector.</p>
@@ -2343,6 +2405,7 @@ async def dashboard_get(request: Request):
             </div>
         </div>
 
+        <!-- 2. Neon Database Connection String Settings -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">2. Neon Database Connection String</h2>
             <p class="text-xs text-text-secondary mb-3">Paste the same PostgreSQL connection string your mobile notes app uses to sync.</p>
@@ -2355,6 +2418,7 @@ async def dashboard_get(request: Request):
             </form>
         </div>
 
+        <!-- 3. API Keys Management -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">3. MCP API Keys</h2>
             <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps.</p>
