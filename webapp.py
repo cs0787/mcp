@@ -4,7 +4,7 @@ Full Python Starlette ASGI Application with:
 - Direct Android APK distribution endpoints (/download and /MemoryBase.apk)
 - Root image serving (/img1.jpeg - /img4.jpeg)
 - Mobile authentication endpoint returning decrypted Neon connection strings
-- Interactive Hover-Expand Mobile Showcase (with vertical collapsed typography)
+- Interactive Hover-Expand Mobile Showcase (Sized to standard 1:1.1 card ratio, unnumbered vertical labels)
 - Lenis Smooth Scrolling (@studio-freight/lenis)
 - Scrubbed, scroll-driven Instant Context Pipeline Animation
 - 2D Codebase Console Graph Interface with Pan/Zoom & Node Modals
@@ -168,25 +168,27 @@ def _page(title: str, body: str) -> HTMLResponse:
         opacity: 1;
     }}
 
-    /* Futuristic Vertical Typography & Expand Transition */
+    /* Card Ratio Matched to Standard Reference (26rem x 28.5rem, ~1:1.1) */
     .vertical-mode-text {{
         writing-mode: vertical-rl;
         transform: rotate(180deg);
-        letter-spacing: 0.28em;
+        letter-spacing: 0.32em;
     }}
 
     .expand-card {{
         flex: 0 0 5.2rem;
-        height: 29rem;
+        height: 28.5rem;
+        border-radius: 30px;
         transition: all 0.5s cubic-bezier(0.25, 1, 0.35, 1);
     }}
     .expand-card.active {{
-        flex: 0 0 25rem;
+        flex: 0 0 25.5rem;
     }}
     @media (max-width: 900px) {{
         .expand-card {{
             flex: 0 0 4.2rem;
-            height: 25rem;
+            height: 24rem;
+            border-radius: 22px;
         }}
         .expand-card.active {{
             flex: 0 0 19rem;
@@ -695,7 +697,7 @@ async def serve_root_image(request: Request):
 
     img_path = os.path.join(os.path.dirname(__file__), filename)
     if not os.path.exists(img_path):
-        return HTMLResponse(f"Image {filename} not found in root.", status_code=404)
+        return HTMLResponse(f"Image {filename} not found in root directory.", status_code=404)
 
     return FileResponse(img_path, media_type="image/jpeg")
 
@@ -861,7 +863,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. MOBILE APPLICATION SHOWCASE (Vertical Typography & Seamless Fade-in Hover Gallery) -->
+    <!-- 2. MOBILE APPLICATION SHOWCASE (Proportional Card Sizing matching Reference with Unnumbered Vertical Labels) -->
     <section id="mobile-showcase" class="py-16 sm:py-24 bg-[#050507] text-white border-b border-neutral-800 overflow-hidden relative">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 text-center mb-12">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.05] border border-white/[0.1] text-xs font-mono text-[#00e599] mb-3">
@@ -876,79 +878,79 @@ async def landing_page(request: Request):
             </p>
         </div>
 
-        <div class="w-full flex items-center justify-center px-4 overflow-x-auto pb-4">
-            <div id="skiperCardsWrapper" class="flex items-center justify-center gap-2.5 sm:gap-4 max-w-6xl w-full">
+        <div class="w-full flex items-center justify-center px-4 overflow-x-auto pb-6">
+            <div id="skiperCardsWrapper" class="flex items-center justify-center gap-3 sm:gap-4 max-w-6xl w-full">
                 
                 <!-- Card 1: 2D Spatial Canvas -->
-                <div class="expand-card active group relative cursor-pointer overflow-hidden rounded-[26px] bg-[#0c0d11] border border-white/[0.08] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="0">
-                    <img src="/img1.jpeg" alt="Spatial Canvas" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.75] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent pointer-events-none z-10"></div>
+                <div class="expand-card active group relative cursor-pointer overflow-hidden bg-[#0a0a0c] border border-white/[0.09] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="0">
+                    <img src="/img1.jpeg" alt="Spatial Canvas" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.7] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none z-10"></div>
 
-                    <!-- Collapsed State: Vertical Text Label -->
-                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-8 z-20 pointer-events-none transition-all duration-400 opacity-0 group-[.active]:opacity-0 group-[.active]:translate-y-4">
-                        <span class="font-mono text-[11px] font-bold text-[#00e599]">01</span>
+                    <!-- Collapsed State: Unnumbered Vertical Text Label with Geometric Accents -->
+                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-10 z-20 pointer-events-none transition-all duration-300 opacity-0 group-[.active]:opacity-0 group-[.active]:translate-y-4">
+                        <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
                         <span class="vertical-mode-text font-mono text-xs uppercase font-bold text-neutral-300">SPATIAL CANVAS</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#00e599]/80 shadow-[0_0_8px_#00e599]"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
 
-                    <!-- Expanded State: Fade-in Text Details -->
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-7 z-30 pointer-events-none transition-all duration-500 opacity-100 translate-y-0 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-[#00e599] font-bold uppercase tracking-wider mb-1">01 • SPATIAL ENGINE</span>
-                        <h3 class="text-lg sm:text-xl font-bold text-white mb-2 tracking-tight">Infinite 2D Canvas</h3>
-                        <p class="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3">Interactive node clusters (Portfolio, FluxDoc, Voice) with 88% smooth zoom HUD controls and hardware acceleration.</p>
+                    <!-- Expanded State: Clean Fade-in Details -->
+                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-8 z-30 pointer-events-none transition-all duration-500 opacity-100 translate-y-0 group-[.active]:opacity-100 group-[.active]:translate-y-0">
+                        <span class="text-[10px] font-mono text-[#00e599] font-bold uppercase tracking-wider mb-1">SPATIAL ENGINE</span>
+                        <h3 class="text-lg sm:text-2xl font-bold text-white mb-2 tracking-tight">Infinite 2D Canvas</h3>
+                        <p class="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3">Interactive node clusters (Portfolio, FluxDoc, Voice) with smooth zoom HUD controls and hardware acceleration.</p>
                     </div>
                 </div>
 
                 <!-- Card 2: AI Copilot & DeepSeek R1 -->
-                <div class="expand-card group relative cursor-pointer overflow-hidden rounded-[26px] bg-[#0c0d11] border border-white/[0.08] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="1">
-                    <img src="/img2.jpeg" alt="AI Copilot" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.75] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent pointer-events-none z-10"></div>
+                <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0a0a0c] border border-white/[0.09] hover:border-[#facc15]/40 shadow-2xl transition-all" data-index="1">
+                    <img src="/img2.jpeg" alt="AI Copilot" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.7] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none z-10"></div>
 
-                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-8 z-20 pointer-events-none transition-all duration-400 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
-                        <span class="font-mono text-[11px] font-bold text-[#facc15]">02</span>
+                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-10 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
+                        <span class="w-2 h-2 rounded-full bg-[#facc15] shadow-[0_0_10px_#facc15]"></span>
                         <span class="vertical-mode-text font-mono text-xs uppercase font-bold text-neutral-300">DEEPSEEK R1</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#facc15]/80 shadow-[0_0_8px_#facc15]"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
 
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-7 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-[#facc15] font-bold uppercase tracking-wider mb-1">02 • REASONING COPILOT</span>
-                        <h3 class="text-lg sm:text-xl font-bold text-white mb-2 tracking-tight">DeepSeek R1 Assistant</h3>
+                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-8 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
+                        <span class="text-[10px] font-mono text-[#facc15] font-bold uppercase tracking-wider mb-1">REASONING COPILOT</span>
+                        <h3 class="text-lg sm:text-2xl font-bold text-white mb-2 tracking-tight">DeepSeek R1 Assistant</h3>
                         <p class="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3">Native prompt synthesis to organize data, discover cluster back-links, and analyze mind palace connections on the fly.</p>
                     </div>
                 </div>
 
                 <!-- Card 3: Neural Workspaces -->
-                <div class="expand-card group relative cursor-pointer overflow-hidden rounded-[26px] bg-[#0c0d11] border border-white/[0.08] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="2">
-                    <img src="/img3.jpeg" alt="Workspaces" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.75] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent pointer-events-none z-10"></div>
+                <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0a0a0c] border border-white/[0.09] hover:border-blue-400/40 shadow-2xl transition-all" data-index="2">
+                    <img src="/img3.jpeg" alt="Workspaces" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.7] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none z-10"></div>
 
-                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-8 z-20 pointer-events-none transition-all duration-400 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
-                        <span class="font-mono text-[11px] font-bold text-blue-400">03</span>
+                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-10 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
+                        <span class="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_10px_#60a5fa]"></span>
                         <span class="vertical-mode-text font-mono text-xs uppercase font-bold text-neutral-300">WORKSPACES</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-blue-400/80 shadow-[0_0_8px_#60a5fa]"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
 
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-7 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-wider mb-1">03 • PALACE ENGINE</span>
-                        <h3 class="text-lg sm:text-xl font-bold text-white mb-2 tracking-tight">Neural Workspaces</h3>
+                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-8 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
+                        <span class="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-wider mb-1">PALACE ENGINE</span>
+                        <h3 class="text-lg sm:text-2xl font-bold text-white mb-2 tracking-tight">Neural Workspaces</h3>
                         <p class="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3">Segment projects with isolated spatial protocols (NEB_13, NEB_92) and dedicated memory palettes.</p>
                     </div>
                 </div>
 
                 <!-- Card 4: Neon DB & Sync Settings -->
-                <div class="expand-card group relative cursor-pointer overflow-hidden rounded-[26px] bg-[#0c0d11] border border-white/[0.08] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="3">
-                    <img src="/img4.jpeg" alt="Neon Cloud Sync" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.75] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent pointer-events-none z-10"></div>
+                <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0a0a0c] border border-white/[0.09] hover:border-purple-400/40 shadow-2xl transition-all" data-index="3">
+                    <img src="/img4.jpeg" alt="Neon Cloud Sync" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.7] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none z-10"></div>
 
-                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-8 z-20 pointer-events-none transition-all duration-400 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
-                        <span class="font-mono text-[11px] font-bold text-purple-400">04</span>
+                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-10 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
+                        <span class="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_10px_#c084fc]"></span>
                         <span class="vertical-mode-text font-mono text-xs uppercase font-bold text-neutral-300">CLOUD SYNC</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-purple-400/80 shadow-[0_0_8px_#c084fc]"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
 
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-7 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider mb-1">04 • ZERO-CONFIG SYNC</span>
-                        <h3 class="text-lg sm:text-xl font-bold text-white mb-2 tracking-tight">Neon DB & NIM Config</h3>
+                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-8 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
+                        <span class="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider mb-1">ZERO-CONFIG SYNC</span>
+                        <h3 class="text-lg sm:text-2xl font-bold text-white mb-2 tracking-tight">Neon DB & NIM Config</h3>
                         <p class="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3">One-touch website authentication provisions your encrypted PostgreSQL string with background auto-sync.</p>
                     </div>
                 </div>
