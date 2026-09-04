@@ -2,6 +2,7 @@
 MemoryBase - Web Application & Mobile Control Gateway
 Full Python Starlette ASGI Application with:
 - Direct Android APK distribution endpoints (/download and /MemoryBase.apk)
+- Root image serving (/img1.jpeg - /img4.jpeg)
 - Mobile authentication endpoint returning decrypted Neon connection strings
 - Interactive Hover-Expand Mobile Showcase (with vertical collapsed typography)
 - Lenis Smooth Scrolling (@studio-freight/lenis)
@@ -685,6 +686,21 @@ async def download_apk(request: Request):
 
 
 # ---------------------------------------------------------------------------
+# Root Image Serving Route (img1.jpeg - img4.jpeg)
+# ---------------------------------------------------------------------------
+async def serve_root_image(request: Request):
+    filename = request.url.path.lstrip("/")
+    if ".." in filename or "/" in filename or "\\" in filename:
+        return HTMLResponse("Forbidden", status_code=403)
+
+    img_path = os.path.join(os.path.dirname(__file__), filename)
+    if not os.path.exists(img_path):
+        return HTMLResponse(f"Image {filename} not found in root.", status_code=404)
+
+    return FileResponse(img_path, media_type="image/jpeg")
+
+
+# ---------------------------------------------------------------------------
 # Mobile Login Gateway (Returns Decrypted Neon String)
 # ---------------------------------------------------------------------------
 async def mobile_login(request: Request):
@@ -865,7 +881,7 @@ async def landing_page(request: Request):
                 
                 <!-- Card 1: 2D Spatial Canvas -->
                 <div class="expand-card active group relative cursor-pointer overflow-hidden rounded-[26px] bg-[#0c0d11] border border-white/[0.08] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="0">
-                    <img src="img1.jpeg" alt="Spatial Canvas" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.75] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
+                    <img src="/img1.jpeg" alt="Spatial Canvas" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.75] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent pointer-events-none z-10"></div>
 
                     <!-- Collapsed State: Vertical Text Label -->
@@ -885,7 +901,7 @@ async def landing_page(request: Request):
 
                 <!-- Card 2: AI Copilot & DeepSeek R1 -->
                 <div class="expand-card group relative cursor-pointer overflow-hidden rounded-[26px] bg-[#0c0d11] border border-white/[0.08] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="1">
-                    <img src="img2.jpeg" alt="AI Copilot" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.75] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
+                    <img src="/img2.jpeg" alt="AI Copilot" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.75] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent pointer-events-none z-10"></div>
 
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-8 z-20 pointer-events-none transition-all duration-400 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
@@ -903,7 +919,7 @@ async def landing_page(request: Request):
 
                 <!-- Card 3: Neural Workspaces -->
                 <div class="expand-card group relative cursor-pointer overflow-hidden rounded-[26px] bg-[#0c0d11] border border-white/[0.08] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="2">
-                    <img src="img3.jpeg" alt="Workspaces" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.75] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
+                    <img src="/img3.jpeg" alt="Workspaces" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.75] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent pointer-events-none z-10"></div>
 
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-8 z-20 pointer-events-none transition-all duration-400 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
@@ -921,7 +937,7 @@ async def landing_page(request: Request):
 
                 <!-- Card 4: Neon DB & Sync Settings -->
                 <div class="expand-card group relative cursor-pointer overflow-hidden rounded-[26px] bg-[#0c0d11] border border-white/[0.08] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="3">
-                    <img src="img4.jpeg" alt="Neon Cloud Sync" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.75] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
+                    <img src="/img4.jpeg" alt="Neon Cloud Sync" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.75] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent pointer-events-none z-10"></div>
 
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-8 z-20 pointer-events-none transition-all duration-400 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
@@ -1107,7 +1123,7 @@ async def landing_page(request: Request):
                 </div>
 
                 <div id="el-bot-ico" class="circle-icon outline-node" style="top: 32.8%; left: 82.8%;">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/></svg>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
                 </div>
                 <div id="el-hollow-top" class="circle-icon hollow-node" style="top: 43.5%; left: 82.8%;"></div>
 
@@ -2464,6 +2480,10 @@ routes = [
     Route("/", landing_page, methods=["GET"]),
     Route("/download", download_apk, methods=["GET"]),
     Route("/MemoryBase.apk", download_apk, methods=["GET"]),
+    Route("/img1.jpeg", serve_root_image, methods=["GET"]),
+    Route("/img2.jpeg", serve_root_image, methods=["GET"]),
+    Route("/img3.jpeg", serve_root_image, methods=["GET"]),
+    Route("/img4.jpeg", serve_root_image, methods=["GET"]),
     Route("/api/mobile/login", mobile_login, methods=["POST"]),
     Route("/signup", signup_get, methods=["GET"]),
     Route("/signup", signup_post, methods=["POST"]),
