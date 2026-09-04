@@ -4,10 +4,10 @@ Full Python Starlette ASGI Application with:
 - Direct Android APK distribution endpoints (/download and /MemoryBase.apk)
 - Root image serving (/img1.jpeg - /img4.jpeg)
 - Mobile authentication endpoint returning decrypted Neon connection strings
-- Interactive Mobile Showcase (Width: 1350px, Height: 1165px, unnumbered vertical labels)
+- Responsive Mobile Showcase (Aspect ratio matched to 1024x1165, unnumbered vertical labels)
 - Lenis Smooth Scrolling (@studio-freight/lenis)
 - Scrubbed, scroll-driven Instant Context Pipeline Animation
-- Working Core Capabilities Scroll-Spy & Smooth Navigation
+- Dual-mode Core Capabilities Scroll-Spy
 - 2D Codebase Console Graph Interface with Pan/Zoom & Node Modals
 - FastMCP Multi-Tenant Database & Control Plane Settings
 """
@@ -169,31 +169,33 @@ def _page(title: str, body: str) -> HTMLResponse:
         opacity: 1;
     }}
 
-    /* Card Standard Dimensions: Width 1350px x Height 1165px */
+    /* Vertical Typography for Collapsed Cards */
     .vertical-mode-text {{
         writing-mode: vertical-rl;
         transform: rotate(180deg);
-        letter-spacing: 0.35em;
+        letter-spacing: 0.32em;
     }}
 
+    /* Card dimensions calibrated to 1024x1165 aspect ratio */
     .expand-card {{
-        flex: 0 0 5.6rem;
-        height: 1165px;
-        border-radius: 36px;
+        flex: 0 0 5.2rem;
+        height: 28rem;
+        border-radius: 26px;
         transition: all 0.5s cubic-bezier(0.25, 1, 0.35, 1);
     }}
     .expand-card.active {{
-        flex: 0 0 1350px;
-        width: 1350px;
+        flex: 0 0 calc(28rem * 1024 / 1165);
+        width: calc(28rem * 1024 / 1165);
     }}
-    @media (max-width: 1550px) {{
+    @media (max-width: 900px) {{
         .expand-card {{
-            height: clamp(520px, 80vw * 1165 / 1350, 1165px);
-            border-radius: 28px;
+            flex: 0 0 4.2rem;
+            height: 23rem;
+            border-radius: 20px;
         }}
         .expand-card.active {{
-            flex: 0 0 min(1350px, 85vw);
-            width: min(1350px, 85vw);
+            flex: 0 0 calc(23rem * 1024 / 1165);
+            width: calc(23rem * 1024 / 1165);
         }}
     }}
 
@@ -583,7 +585,7 @@ def _page(title: str, body: str) -> HTMLResponse:
 </head>
 <body class="bg-surface-white text-on-surface font-body-md min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
 
-<!-- Global Lenis Smooth Scroll Initialized at Body Start -->
+<!-- Global Lenis Initialized before components load -->
 <script>
     window.lenis = new Lenis({{
       duration: 1.2,
@@ -721,22 +723,22 @@ async def mobile_login(request: Request):
         return JSONResponse({"error": "Email and password are required"}, status_code=400)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_email(pool, email)
+    user = await db_control.get_user_by_email(pool, email)[cite: 2]
 
-    if user is None or not security.verify_password(password, user["password_hash"]):
+    if user is None or not security.verify_password(password, user["password_hash"]):[cite: 2, 5]
         return JSONResponse({"error": "Invalid email or password"}, status_code=401)
 
     decrypted_conn_str = None
-    if user["connection_string_encrypted"]:
+    if user["connection_string_encrypted"]:[cite: 2]
         try:
-            decrypted_conn_str = security.decrypt_text(user["connection_string_encrypted"])
+            decrypted_conn_str = security.decrypt_text(user["connection_string_encrypted"])[cite: 5]
         except Exception:
             return JSONResponse({"error": "Failed to decrypt connection string"}, status_code=500)
 
     return JSONResponse({
         "status": "success",
-        "user_id": str(user["id"]),
-        "email": user["email"],
+        "user_id": str(user["id"]),[cite: 2]
+        "email": user["email"],[cite: 2]
         "has_connection_string": decrypted_conn_str is not None,
         "connection_string": decrypted_conn_str,
     })
@@ -750,9 +752,9 @@ async def landing_page(request: Request):
     user_email = None
     if user_id:
         pool = db_control.get_control_pool()
-        user = await db_control.get_user_by_id(pool, user_id)
+        user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
         if user:
-            user_email = user["email"]
+            user_email = user["email"][cite: 2]
 
     base_url = str(request.base_url).rstrip("/")
     nav_html = _navbar(request, user_email)
@@ -866,9 +868,9 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. MOBILE APPLICATION SHOWCASE (Standard Dimensions: 1350px x 1165px, Unnumbered Collapsed Labels) -->
+    <!-- 2. MOBILE SHOWCASE (Exact 1024x1165 Proportions, Unnumbered Collapsed State, Fully Visible on Hover) -->
     <section id="mobile-showcase" class="py-16 sm:py-24 bg-[#050507] text-white border-b border-neutral-800 overflow-hidden relative">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 text-center mb-12">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 text-center mb-10">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.05] border border-white/[0.1] text-xs font-mono text-[#00e599] mb-3">
                 <span class="w-2 h-2 rounded-full bg-[#00e599] animate-pulse"></span>
                 Companion Mobile Architecture
@@ -881,88 +883,88 @@ async def landing_page(request: Request):
             </p>
         </div>
 
-        <div class="w-full flex items-center justify-center px-4 overflow-x-auto pb-6">
-            <div id="skiperCardsWrapper" class="flex items-center justify-center gap-3 sm:gap-5 w-full" style="max-width: 1750px;">
+        <div class="w-full flex items-center justify-center px-4 overflow-x-auto pb-4">
+            <div id="skiperCardsWrapper" class="flex items-center justify-center gap-2.5 sm:gap-3.5 max-w-6xl w-full">
                 
                 <!-- Card 1: 2D Spatial Canvas -->
                 <div class="expand-card active group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="0">
-                    <img src="/img1.jpeg" alt="Spatial Canvas" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.7] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none z-10"></div>
+                    <img src="/img1.jpeg" alt="Spatial Canvas" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.8] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
 
                     <!-- Collapsed State: Unnumbered Vertical Text Label -->
-                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-10 z-20 pointer-events-none transition-all duration-300 opacity-0 group-[.active]:opacity-0 group-[.active]:translate-y-4">
+                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-0 group-[.active]:opacity-0 group-[.active]:translate-y-4">
                         <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
-                        <span class="vertical-mode-text font-mono text-xs uppercase font-bold text-neutral-300">SPATIAL CANVAS</span>
+                        <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">SPATIAL CANVAS</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
 
                     <!-- Expanded State: Clean Fade-in Details -->
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-10 z-30 pointer-events-none transition-all duration-500 opacity-100 translate-y-0 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-xs font-mono text-[#00e599] font-bold uppercase tracking-wider mb-2">SPATIAL ENGINE</span>
-                        <h3 class="text-2xl sm:text-4xl font-bold text-white mb-3 tracking-tight">Infinite 2D Canvas</h3>
-                        <p class="text-sm sm:text-base text-neutral-300 leading-relaxed max-w-xl">Interactive node clusters (Portfolio, FluxDoc, Voice) with smooth zoom HUD controls and 60fps hardware acceleration.</p>
+                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-100 translate-y-0 group-[.active]:opacity-100 group-[.active]:translate-y-0">
+                        <span class="text-[10px] font-mono text-[#00e599] font-bold uppercase tracking-wider mb-1">SPATIAL ENGINE</span>
+                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Infinite 2D Canvas</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Interactive node clusters with smooth zoom HUD controls and hardware acceleration.</p>
                     </div>
                 </div>
 
                 <!-- Card 2: AI Copilot & DeepSeek R1 -->
                 <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-[#facc15]/40 shadow-2xl transition-all" data-index="1">
-                    <img src="/img2.jpeg" alt="AI Copilot" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.7] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none z-10"></div>
+                    <img src="/img2.jpeg" alt="AI Copilot" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.8] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
 
-                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-10 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
+                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
                         <span class="w-2 h-2 rounded-full bg-[#facc15] shadow-[0_0_10px_#facc15]"></span>
-                        <span class="vertical-mode-text font-mono text-xs uppercase font-bold text-neutral-300">DEEPSEEK R1</span>
+                        <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">DEEPSEEK R1</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
 
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-10 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-xs font-mono text-[#facc15] font-bold uppercase tracking-wider mb-2">REASONING COPILOT</span>
-                        <h3 class="text-2xl sm:text-4xl font-bold text-white mb-3 tracking-tight">DeepSeek R1 Assistant</h3>
-                        <p class="text-sm sm:text-base text-neutral-300 leading-relaxed max-w-xl">Native prompt synthesis to organize thoughts, discover cluster back-links, and expand complex architectural graphs.</p>
+                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
+                        <span class="text-[10px] font-mono text-[#facc15] font-bold uppercase tracking-wider mb-1">REASONING COPILOT</span>
+                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">DeepSeek R1 Assistant</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Native prompt synthesis to organize thoughts, discover cluster back-links, and expand graphs.</p>
                     </div>
                 </div>
 
                 <!-- Card 3: Neural Workspaces -->
                 <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-blue-400/40 shadow-2xl transition-all" data-index="2">
-                    <img src="/img3.jpeg" alt="Workspaces" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.7] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none z-10"></div>
+                    <img src="/img3.jpeg" alt="Workspaces" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.8] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
 
-                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-10 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
+                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
                         <span class="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_10px_#60a5fa]"></span>
-                        <span class="vertical-mode-text font-mono text-xs uppercase font-bold text-neutral-300">WORKSPACES</span>
+                        <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">WORKSPACES</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
 
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-10 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-xs font-mono text-blue-400 font-bold uppercase tracking-wider mb-2">PALACE ENGINE</span>
-                        <h3 class="text-2xl sm:text-4xl font-bold text-white mb-3 tracking-tight">Neural Workspaces</h3>
-                        <p class="text-sm sm:text-base text-neutral-300 leading-relaxed max-w-xl">Segment projects into isolated spatial domains with dedicated protocols (NEB_13, NEB_92) and contextual memory clusters.</p>
+                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
+                        <span class="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-wider mb-1">PALACE ENGINE</span>
+                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Neural Workspaces</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Segment projects into isolated domains with dedicated protocols and contextual memory clusters.</p>
                     </div>
                 </div>
 
                 <!-- Card 4: Neon DB & Sync Settings -->
                 <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-purple-400/40 shadow-2xl transition-all" data-index="3">
-                    <img src="/img4.jpeg" alt="Neon Cloud Sync" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.7] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none z-10"></div>
+                    <img src="/img4.jpeg" alt="Neon Cloud Sync" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.8] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
 
-                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-10 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
+                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
                         <span class="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_10px_#c084fc]"></span>
-                        <span class="vertical-mode-text font-mono text-xs uppercase font-bold text-neutral-300">CLOUD SYNC</span>
+                        <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">CLOUD SYNC</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
 
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-6 sm:p-10 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-xs font-mono text-purple-400 font-bold uppercase tracking-wider mb-2">ZERO-CONFIG SYNC</span>
-                        <h3 class="text-2xl sm:text-4xl font-bold text-white mb-3 tracking-tight">Neon DB & NIM Config</h3>
-                        <p class="text-sm sm:text-base text-neutral-300 leading-relaxed max-w-xl">One-touch website login auto-provisions your encrypted PostgreSQL credentials, enabling instant background sync with zero manual setup.</p>
+                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
+                        <span class="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider mb-1">ZERO-CONFIG SYNC</span>
+                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Neon DB & NIM Config</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">One-touch login auto-provisions your encrypted PostgreSQL credentials with background sync.</p>
                     </div>
                 </div>
 
             </div>
         </div>
 
-        <div class="text-center mt-10">
-            <a href="/download" class="inline-flex items-center gap-2 bg-[#00e599] text-black font-semibold text-xs sm:text-sm px-6 py-3.5 rounded-xl hover:bg-[#00c985] transition-all shadow-[0_0_25px_rgba(0,229,153,0.3)] no-underline">
+        <div class="text-center mt-8">
+            <a href="/download" class="inline-flex items-center gap-2 bg-[#00e599] text-black font-semibold text-xs sm:text-sm px-6 py-3 rounded-xl hover:bg-[#00c985] transition-all shadow-[0_0_20px_rgba(0,229,153,0.3)] no-underline">
                 <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993s-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9994.4482.9994.9993s-.4483.9997-.9994.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.4114 13.8533 8.083 12 8.083s-3.5902.3284-5.1368.8667L4.8409 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396"/></svg>
                 Download MemoryBase.apk
             </a>
@@ -1530,38 +1532,28 @@ async def landing_page(request: Request):
           if (!sections.length || !navButtons.length) return;
           if (window.innerWidth <= 900) return;
 
-          const triggerLine = window.innerHeight * 0.45;
-          let currentSection = null;
+          const scrollY = window.scrollY || window.pageYOffset;
+          const viewportMiddle = scrollY + (window.innerHeight * 0.4);
 
+          let currentSection = sections[0];
           sections.forEach((section) => {{
-            const rect = section.getBoundingClientRect();
-            if (rect.top <= triggerLine && rect.bottom >= triggerLine) {{
+            const top = section.offsetTop;
+            const height = section.offsetHeight;
+            if (viewportMiddle >= top && viewportMiddle < top + height) {{
               currentSection = section;
             }}
           }});
 
-          if (!currentSection) {{
-            const firstRect = sections[0].getBoundingClientRect();
-            const lastRect = sections[sections.length - 1].getBoundingClientRect();
-            if (firstRect.top > triggerLine) {{
-              currentSection = sections[0];
-            }} else if (lastRect.bottom < triggerLine) {{
-              currentSection = sections[sections.length - 1];
-            }}
-          }}
+          navButtons.forEach((btn) => {{
+            btn.classList.toggle('active', btn.dataset.target === currentSection.id);
+          }});
 
-          if (currentSection) {{
-            navButtons.forEach((btn) => {{
-              btn.classList.toggle('active', btn.dataset.target === currentSection.id);
-            }});
-
-            const theme = currentSection.getAttribute('data-theme');
-            if (sidebar) {{
-              if (theme === 'light') {{
-                sidebar.classList.add('theme-light');
-              }} else {{
-                sidebar.classList.remove('theme-light');
-              }}
+          const theme = currentSection.getAttribute('data-theme');
+          if (sidebar) {{
+            if (theme === 'light') {{
+              sidebar.classList.add('theme-light');
+            }} else {{
+              sidebar.classList.remove('theme-light');
             }}
           }}
         }}
@@ -1668,7 +1660,7 @@ async def signup_post(request: Request):
 
     pool = db_control.get_control_pool()
     try:
-        user_id = await db_control.create_user(pool, email, security.hash_password(password))
+        user_id = await db_control.create_user(pool, email, security.hash_password(password))[cite: 2, 5]
     except asyncpg.exceptions.UniqueViolationError:
         body = f"""
 {_navbar(request)}
@@ -1723,9 +1715,9 @@ async def login_post(request: Request):
     next_ = _safe_next(str(form.get("next", "")))
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_email(pool, email)
+    user = await db_control.get_user_by_email(pool, email)[cite: 2]
 
-    if user is None or not security.verify_password(password, user["password_hash"]):
+    if user is None or not security.verify_password(password, user["password_hash"]):[cite: 2, 5]
         body = f"""
 {_navbar(request)}
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
@@ -1749,7 +1741,7 @@ async def login_post(request: Request):
 """
         return _page("Log in", body)
 
-    request.session["user_id"] = str(user["id"])
+    request.session["user_id"] = str(user["id"])[cite: 2]
     return RedirectResponse("/console", status_code=302)
 
 
@@ -1771,12 +1763,12 @@ async def console_page(request: Request):
         return RedirectResponse("/login", status_code=302)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
+    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
     if user is None:
         request.session.clear()
         return RedirectResponse("/login", status_code=302)
 
-    user_email = user["email"]
+    user_email = user["email"][cite: 2]
     display_name = user_email.split("@")[0].capitalize()
     initial = display_name[0].upper()
 
@@ -1785,10 +1777,10 @@ async def console_page(request: Request):
     edges = []
     selected_workspace = request.query_params.get("ws", "")
 
-    if user["connection_string_encrypted"]:
+    if user["connection_string_encrypted"]:[cite: 2]
         try:
-            conn_str = security.decrypt_text(user["connection_string_encrypted"])
-            user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
+            conn_str = security.decrypt_text(user["connection_string_encrypted"])[cite: 5]
+            user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)[cite: 2, 8]
             
             ws_rows = await user_pool.fetch("SELECT DISTINCT workspace FROM project_nodes ORDER BY workspace ASC")
             workspaces = [r["workspace"] for r in ws_rows]
@@ -2350,7 +2342,7 @@ async def dashboard_get(request: Request):
         return RedirectResponse("/login", status_code=302)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
+    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
     if user is None:
         request.session.clear()
         return RedirectResponse("/login", status_code=302)
@@ -2369,14 +2361,14 @@ async def dashboard_get(request: Request):
 </div>
 """
 
-    if user["connection_string_encrypted"]:
-        masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
+    if user["connection_string_encrypted"]:[cite: 2]
+        masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))[cite: 5]
         conn_status = f'<p class="text-xs text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
     else:
         conn_status = '<div class="p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">No Neon connection string set yet. Claude connector will fail until configured.</div>'
 
-    keys = await db_control.list_api_keys(pool, user_id)
-    active_keys = [k for k in keys if k["revoked_at"] is None]
+    keys = await db_control.list_api_keys(pool, user_id)[cite: 2]
+    active_keys = [k for k in keys if k["revoked_at"] is None][cite: 2]
     if active_keys:
         rows = "".join(f"""
 <div class="flex items-center justify-between py-3 border-b border-border-muted last:border-0">
@@ -2389,13 +2381,13 @@ async def dashboard_get(request: Request):
         <button type="submit" class="text-error text-xs font-semibold hover:underline" onclick="return confirm('Revoke this key? Apps using it will disconnect immediately.');">Revoke</button>
     </form>
 </div>
-""" for k in active_keys)
+""" for k in active_keys)[cite: 2]
     else:
         rows = '<p class="text-xs text-text-secondary">No active API keys found.</p>'
 
     base_url = str(request.base_url).rstrip("/")
     mcp_endpoint = f"{base_url}/mcp"
-    nav_html = _navbar(request, user["email"])
+    nav_html = _navbar(request, user["email"])[cite: 2]
 
     body = f"""
 {nav_html}
@@ -2411,7 +2403,6 @@ async def dashboard_get(request: Request):
 
         {flash_html}
 
-        <!-- 1. Endpoint & Connection URL -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">1. MCP Server Endpoint</h2>
             <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector.</p>
@@ -2421,7 +2412,6 @@ async def dashboard_get(request: Request):
             </div>
         </div>
 
-        <!-- 2. Neon Database Connection String Settings -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">2. Neon Database Connection String</h2>
             <p class="text-xs text-text-secondary mb-3">Paste the same PostgreSQL connection string your mobile notes app uses to sync.</p>
@@ -2434,7 +2424,6 @@ async def dashboard_get(request: Request):
             </form>
         </div>
 
-        <!-- 3. API Keys Management -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">3. MCP API Keys</h2>
             <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps.</p>
@@ -2462,13 +2451,13 @@ async def update_connection_string(request: Request):
     if not (connection_string.startswith("postgresql://") or connection_string.startswith("postgres://")):
         return _dashboard_error("Invalid format: Must start with postgresql://")
 
-    ok, err = await tenant_pools.test_connection_string(connection_string)
+    ok, err = await tenant_pools.test_connection_string(connection_string)[cite: 8]
     if not ok:
         return _dashboard_error(f"Connection test failed: {err}")
 
     pool = db_control.get_control_pool()
-    await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))
-    await tenant_pools.get_manager().invalidate(user_id)
+    await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))[cite: 2, 5]
+    await tenant_pools.get_manager().invalidate(user_id)[cite: 8]
 
     return RedirectResponse("/dashboard", status_code=302)
 
@@ -2479,8 +2468,8 @@ async def create_api_key(request: Request):
         return RedirectResponse("/login", status_code=302)
 
     pool = db_control.get_control_pool()
-    raw_key = security.generate_api_key()
-    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")
+    raw_key = security.generate_api_key()[cite: 5]
+    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")[cite: 2, 5]
     request.session["flash_api_key"] = raw_key
 
     return RedirectResponse("/dashboard", status_code=302)
@@ -2495,7 +2484,7 @@ async def revoke_api_key(request: Request):
     key_id = str(form.get("key_id", ""))
 
     pool = db_control.get_control_pool()
-    await db_control.revoke_api_key(pool, user_id, key_id)
+    await db_control.revoke_api_key(pool, user_id, key_id)[cite: 2]
 
     return RedirectResponse("/dashboard", status_code=302)
 
