@@ -45,11 +45,14 @@ class BearerAuthMiddleware:
 
         from oauth import EXEMPT_PATHS
 
-        # Allow public web app pages, APK downloads, mobile endpoints, and OAuth discovery unauthenticated
+        # auth.py (inside BearerAuthMiddleware.__call__)
+
+        # Allow public web app pages, APK downloads, images, mobile auth, and OAuth discovery
         if (
             path in WEBAPP_EXACT_PATHS
             or path in EXEMPT_PATHS
             or any(path.startswith(prefix) for prefix in WEBAPP_PATH_PREFIXES)
+            or any(path.endswith(ext) for ext in (".jpeg", ".jpg", ".png", ".webp", ".apk", ".svg"))
         ):
             await self.app(scope, receive, send)
             return
