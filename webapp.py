@@ -937,7 +937,7 @@ async def landing_page(request: Request):
 
                 <!-- Card 4: Neon DB & Sync Settings -->
                 <div class="expand-card group relative cursor-pointer overflow-hidden rounded-[26px] bg-[#0c0d11] border border-white/[0.08] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="3">
-                    <img src="/img4.jpeg" alt="Neon Cloud Sync" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.75] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
+                    <img src="/img4.png" alt="Neon Cloud Sync" class="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.75] group-[.active]:brightness-[0.95] group-hover:scale-105 transition-all duration-700 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent pointer-events-none z-10"></div>
 
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-8 z-20 pointer-events-none transition-all duration-400 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
