@@ -17,6 +17,7 @@ from typing import List, Optional
 
 from mcp.server.fastmcp import FastMCP
 from starlette.middleware.sessions import SessionMiddleware
+from starlette.middleware.cors import CORSMiddleware
 from starlette.types import ASGIApp, Scope, Receive, Send
 
 import db_control
@@ -748,11 +749,21 @@ app = mcp.streamable_http_app()
 app.router.routes.extend(oauth_routes)
 app.router.routes.extend(webapp_routes)
 
+
 session_secret = os.environ.get("SESSION_SECRET_KEY")
 if not session_secret:
     raise RuntimeError("SESSION_SECRET_KEY environment variable is not set")
 https_only = os.environ.get("SESSION_HTTPS_ONLY", "true").lower() != "false"
 
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.add_middleware(SessionMiddleware, secret_key=session_secret, same_site="lax", https_only=https_only)
 app.add_middleware(BearerAuthMiddleware)
 app.add_middleware(DatabaseInitMiddleware)
