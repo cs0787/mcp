@@ -25,6 +25,7 @@ WEBAPP_PATH_PREFIXES = (
     "/static",
     "/console",
     "/api/mobile",
+    "/api/desktop",  # for Desktop application
 )
 
 
