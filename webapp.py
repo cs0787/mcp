@@ -743,6 +743,94 @@ async def mobile_login(request: Request):
         "connection_string": decrypted_conn_str,
     })
 
+# ---------------------------------------------------------------------------
+# Live Desktop Gateway Endpoints (Vercel)
+# ---------------------------------------------------------------------------
+async def desktop_get_graph(request: Request):
+    user_id = request.headers.get("x-user-id") or _require_login(request)
+    if not user_id:
+        return JSONResponse({"error": "Unauthorized: Missing user credentials"}, status_code=401)
+
+    workspace = request.query_params.get("ws", "Default")
+    pool = db_control.get_control_pool()
+    user = await db_control.get_user_by_id(pool, user_id)
+
+    if not user or not user["connection_string_encrypted"]:
+        return JSONResponse({"nodes": [], "edges": []})
+
+    conn_str = security.decrypt_text(user["connection_string_encrypted"])
+    user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
+
+    nodes = await user_pool.fetch(
+        """
+        SELECT id, node_type, title, summary, rationale, impact_analysis,
+               affected_components as tags, status as model_badge, updated_at
+        FROM project_nodes WHERE workspace = $1
+        ORDER BY created_at ASC
+        """,
+        workspace
+    )
+
+    edges = await user_pool.fetch(
+        """
+        SELECT id, source_node_id, target_node_id, relation_type
+        FROM project_edges WHERE workspace = $1
+        """,
+        workspace
+    )
+
+    return JSONResponse({
+        "nodes": [
+            {
+                "id": str(n["id"]),
+                "type": n["node_type"],
+                "title": n["title"],
+                "summary": n["summary"],
+                "rationale": n["rationale"],
+                "impact": n["impact_analysis"],
+                "tags": n["tags"] or [],
+                "model": n["model_badge"],
+                "updated_at": n["updated_at"]
+            }
+            for n in nodes
+        ],
+        "edges": [
+            {
+                "id": str(e["id"]),
+                "source": str(e["source_node_id"]),
+                "target": str(e["target_node_id"]),
+                "label": e["relation_type"]
+            }
+            for e in edges
+        ]
+    })
+
+
+async def desktop_batch_save_edges(request: Request):
+    user_id = request.headers.get("x-user-id") or _require_login(request)
+    if not user_id:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    body = await request.json()
+    workspace = body.get("workspace", "Default")
+    new_edges = body.get("edges", [])
+
+    pool = db_control.get_control_pool()
+    user = await db_control.get_user_by_id(pool, user_id)
+    conn_str = security.decrypt_text(user["connection_string_encrypted"])
+    user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
+
+    async with user_pool.acquire() as conn:
+        for edge in new_edges:
+            await conn.execute(
+                """
+                INSERT INTO project_edges (workspace, source_node_id, target_node_id, relation_type)
+                VALUES ($1, $2, $3, $4)
+                """,
+                workspace, uuid.UUID(edge["source"]), uuid.UUID(edge["target"]), edge.get("label", "semantic_link")
+            )
+
+    return JSONResponse({"status": "ok", "saved": len(new_edges)})
 
 # ---------------------------------------------------------------------------
 # Landing Page
