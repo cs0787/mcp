@@ -333,6 +333,96 @@ async def search_all(query: str, limit: int = 10) -> str:
     return json.dumps(result, ensure_ascii=False, indent=2)
 
 
+
+# dekstop application
+# Append to server.py
+
+@mcp.tool()
+async def log_chat_summary(
+    workspace: str,
+    title: str,
+    summary: str,
+    key_insights: List[str],
+    action_items: List[str],
+    ai_model_name: str = "Claude 3.5 Sonnet",
+    tags: List[str] = [],
+    central_topic: Optional[str] = None
+) -> str:
+    """
+    Records a high-level conceptual summary of a conversation or brainstorming session 
+    into the user's permanent second brain graph.
+    """
+    pool = _get_pool()
+    await _ensure_codebase_tables(pool)
+
+    cleaned_summary = _sanitize_summary(summary)
+    insights_str = "\n• " + "\n• ".join(key_insights) if key_insights else ""
+    full_rationale = f"Model: {ai_model_name}\nInsights:{insights_str}"
+    impact = "Action Items:\n• " + "\n• ".join(action_items) if action_items else "No immediate action items"
+
+    now_epoch = int(time.time() * 1000)
+
+    # Spawn random coordinates near origin if not yet laid out by canvas
+    import random
+    init_x = random.randint(-400, 400)
+    init_y = random.randint(-400, 400)
+
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            """
+            INSERT INTO project_nodes (
+                workspace, node_type, title, summary, rationale, impact_analysis,
+                affected_components, status, updated_at
+            ) VALUES ($1, 'chat_summary', $2, $3, $4, $5, $6, $7, $8)
+            RETURNING id, title, created_at;
+            """,
+            workspace,
+            title,
+            cleaned_summary,
+            full_rationale,
+            impact,
+            tags,
+            ai_model_name,
+            now_epoch
+        )
+
+    result = {
+        "status": "success",
+        "node_id": str(row["id"]),
+        "title": row["title"],
+        "message": "Chat session summary permanently committed to MemoryBase second brain."
+    }
+    return json.dumps(result, ensure_ascii=False, indent=2)
+
+
+@mcp.tool()
+async def connect_brain_nodes(
+    workspace: str,
+    source_node_id: str,
+    target_node_id: str,
+    relationship_label: str
+) -> str:
+    """
+    Links two conceptual nodes together with a semantic relationship (e.g. 'builds_upon', 'references', 'contradicts').
+    """
+    pool = _get_pool()
+    await _ensure_codebase_tables(pool)
+
+    async with pool.acquire() as conn:
+        await conn.execute(
+            """
+            INSERT INTO project_edges (workspace, source_node_id, target_node_id, relation_type)
+            VALUES ($1, $2, $3, $4)
+            ON CONFLICT DO NOTHING;
+            """,
+            workspace,
+            uuid.UUID(source_node_id),
+            uuid.UUID(target_node_id),
+            relationship_label
+        )
+
+    return json.dumps({"status": "connected", "relationship": relationship_label})
+
 # ---------------------------------------------------------------------------
 # CODEBASE MANAGEMENT & GRAPH STRUCTURING TOOLS
 # ---------------------------------------------------------------------------
