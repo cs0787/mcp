@@ -2592,7 +2592,9 @@ def _dashboard_error(message: str) -> HTMLResponse:
 """
     return _page("Error", body)
 
-#Desktop app
+#Dekstop application
+
+# Add to webapp.py
 
 async def desktop_get_graph(request: Request):
     user_id = request.headers.get("x-user-id") or _require_login(request)
@@ -2668,6 +2670,38 @@ async def desktop_get_graph(request: Request):
             for e in edges
         ]
     })
+
+
+async def desktop_batch_save_edges(request: Request):
+    user_id = _require_login(request)
+    if not user_id:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+
+    body = await request.json()
+    workspace = body.get("workspace", "Default")
+    new_edges = body.get("edges", [])
+
+    pool = db_control.get_control_pool()
+    user = await db_control.get_user_by_id(pool, user_id)
+    conn_str = security.decrypt_text(user["connection_string_encrypted"])
+    user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
+
+    async with user_pool.acquire() as conn:
+        for edge in new_edges:
+            await conn.execute(
+                """
+                INSERT INTO project_edges (workspace, source_node_id, target_node_id, relation_type)
+                VALUES ($1, $2, $3, $4)
+                ON CONFLICT DO NOTHING
+                """,
+                workspace,
+                uuid.UUID(edge["source"]),
+                uuid.UUID(edge["target"]),
+                edge.get("label", "semantic_link")
+            )
+
+    return JSONResponse({"status": "ok", "saved": len(new_edges)})
+
 
 
 
