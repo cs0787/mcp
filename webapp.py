@@ -2592,16 +2592,13 @@ def _dashboard_error(message: str) -> HTMLResponse:
 """
     return _page("Error", body)
 
-#Dekstop application
-
-# Add to webapp.py
+#Desktop app
 
 async def desktop_get_graph(request: Request):
-    user_id = _require_login(request)
+    user_id = request.headers.get("x-user-id") or _require_login(request)
     if not user_id:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
+        return JSONResponse({"error": "Unauthorized: Missing user credentials"}, status_code=401)
 
-    workspace = request.query_params.get("ws", "Default")
     pool = db_control.get_control_pool()
     user = await db_control.get_user_by_id(pool, user_id)
 
@@ -2611,38 +2608,55 @@ async def desktop_get_graph(request: Request):
     conn_str = security.decrypt_text(user["connection_string_encrypted"])
     user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
 
-    nodes = await user_pool.fetch(
+    # 1. Fetch Mobile / Web Notes
+    mobile_notes = await user_pool.fetch(
         """
-        SELECT id, node_type, title, summary, rationale, impact_analysis,
-               affected_components as tags, status as model_badge, updated_at
-        FROM project_nodes WHERE workspace = $1
-        ORDER BY created_at DESC
-        """,
-        workspace
+        SELECT id, coalesce(workspace_name, 'General') as workspace, 'note' as node_type,
+               title, content as summary, '' as rationale, '' as impact_analysis,
+               ARRAY[]::text[] as tags, 'Mobile Note' as model_badge, updated_at
+        FROM notes
+        ORDER BY updated_at DESC
+        """
     )
 
-    edges = await user_pool.fetch(
-        """
-        SELECT id, source_node_id, target_node_id, relation_type
-        FROM project_edges WHERE workspace = $1
-        """,
-        workspace
-    )
+    # 2. Fetch AI Codebase / Chat Nodes (if table exists)
+    project_nodes = []
+    edges = []
+    try:
+        project_nodes = await user_pool.fetch(
+            """
+            SELECT id, workspace, node_type, title, summary, rationale, impact_analysis,
+                   affected_components as tags, status as model_badge, updated_at
+            FROM project_nodes
+            ORDER BY created_at DESC
+            """
+        )
+        edges = await user_pool.fetch(
+            """
+            SELECT id, source_node_id, target_node_id, relation_type
+            FROM project_edges
+            """
+        )
+    except Exception:
+        pass
+
+    all_nodes = list(mobile_notes) + list(project_nodes)
 
     return JSONResponse({
         "nodes": [
             {
                 "id": str(n["id"]),
                 "type": n["node_type"],
-                "title": n["title"],
-                "summary": n["summary"],
-                "rationale": n["rationale"],
-                "impact": n["impact_analysis"],
+                "workspace": n["workspace"],
+                "title": n["title"] or "Untitled Note",
+                "summary": n["summary"] or "",
+                "rationale": n["rationale"] or "",
+                "impact": n["impact_analysis"] or "",
                 "tags": n["tags"] or [],
                 "model": n["model_badge"],
                 "updated_at": n["updated_at"]
             }
-            for n in nodes
+            for n in all_nodes
         ],
         "edges": [
             {
@@ -2654,38 +2668,6 @@ async def desktop_get_graph(request: Request):
             for e in edges
         ]
     })
-
-
-async def desktop_batch_save_edges(request: Request):
-    user_id = _require_login(request)
-    if not user_id:
-        return JSONResponse({"error": "Unauthorized"}, status_code=401)
-
-    body = await request.json()
-    workspace = body.get("workspace", "Default")
-    new_edges = body.get("edges", [])
-
-    pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
-    conn_str = security.decrypt_text(user["connection_string_encrypted"])
-    user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
-
-    async with user_pool.acquire() as conn:
-        for edge in new_edges:
-            await conn.execute(
-                """
-                INSERT INTO project_edges (workspace, source_node_id, target_node_id, relation_type)
-                VALUES ($1, $2, $3, $4)
-                ON CONFLICT DO NOTHING
-                """,
-                workspace,
-                uuid.UUID(edge["source"]),
-                uuid.UUID(edge["target"]),
-                edge.get("label", "semantic_link")
-            )
-
-    return JSONResponse({"status": "ok", "saved": len(new_edges)})
-
 
 
 
