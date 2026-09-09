@@ -33,17 +33,11 @@ def _page(title: str, body: str) -> HTMLResponse:
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>{title} - exom</title>
-
-<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-
-<!-- Lenis Smooth Scroll Script -->
 <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
-
-<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
     tailwind.config = {{
@@ -599,7 +593,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 1. Quickstart Configuration -->
+    <!-- Quickstart Section -->
     <section id="quickstart" class="py-12 sm:py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
@@ -636,7 +630,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. MOBILE & DESKTOP SECOND BRAIN SHOWCASE -->
+    <!-- Mobile & Desktop Second Brain Showcase -->
     <section id="mobile-showcase" class="py-16 sm:py-24 bg-[#050507] text-white border-b border-neutral-800 overflow-hidden relative">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 text-center mb-10">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.05] border border-white/[0.1] text-xs font-mono text-[#00e599] mb-3">
@@ -657,13 +651,11 @@ async def landing_page(request: Request):
                 <div class="expand-card active group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="0">
                     <img src="/img1.jpeg" alt="Spatial Canvas" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
-
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-0 group-[.active]:opacity-0 group-[.active]:translate-y-4">
                         <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
                         <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">SPATIAL CANVAS</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
-
                     <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-100 translate-y-0 group-[.active]:opacity-100 group-[.active]:translate-y-0">
                         <span class="text-[10px] font-mono text-[#00e599] font-bold uppercase tracking-wider mb-1">SPATIAL BRAIN</span>
                         <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Infinite 2D Canvas</h3>
@@ -674,16 +666,14 @@ async def landing_page(request: Request):
                 <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-[#facc15]/40 shadow-2xl transition-all" data-index="1">
                     <img src="/img2.jpeg" alt="AI Copilot" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
-
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
                         <span class="w-2 h-2 rounded-full bg-[#facc15] shadow-[0_0_10px_#facc15]"></span>
                         <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">DEEPSEEK R1</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
-
                     <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
                         <span class="text-[10px] font-mono text-[#facc15] font-bold uppercase tracking-wider mb-1">INTELLIGENCE</span>
-                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">DeepSeek R1 Assistant</h3>
+                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">DeepSeek R1 Copilot</h3>
                         <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Prompt-driven synthesis to organize thoughts, uncover latent connections, and expand concepts automatically.</p>
                     </div>
                 </div>
@@ -691,13 +681,11 @@ async def landing_page(request: Request):
                 <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-blue-400/40 shadow-2xl transition-all" data-index="2">
                     <img src="/img3.jpeg" alt="Workspaces" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
-
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
                         <span class="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_10px_#60a5fa]"></span>
                         <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">WORKSPACES</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
-
                     <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
                         <span class="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-wider mb-1">DOMAIN ISOLATION</span>
                         <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Memory Workspaces</h3>
@@ -708,13 +696,11 @@ async def landing_page(request: Request):
                 <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-purple-400/40 shadow-2xl transition-all" data-index="3">
                     <img src="/img4.jpeg" alt="Neon Cloud Sync" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
-
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
                         <span class="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_10px_#c084fc]"></span>
                         <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">CLOUD SYNC</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
-
                     <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
                         <span class="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider mb-1">ZERO-CONFIG SYNC</span>
                         <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Neon Database Sync</h3>
@@ -1517,7 +1503,7 @@ async def logout(request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Console Page (Loaded from console.html template)
+# Console Page (Template Loader)
 # ---------------------------------------------------------------------------
 async def console_page(request: Request):
     user_id = _require_login(request)
@@ -1538,15 +1524,29 @@ async def console_page(request: Request):
 
     workspaces = []
     connection_string = ""
+    total_nodes = 0
+    total_edges = 0
+
     if user["connection_string_encrypted"]:
         try:
             connection_string = security.decrypt_text(user["connection_string_encrypted"])
             user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), connection_string)
+            
+            # Fetch distinct workspaces from project_nodes and notes
             ws_rows = await user_pool.fetch("SELECT DISTINCT workspace FROM project_nodes ORDER BY workspace ASC")
             workspaces = [r["workspace"] for r in ws_rows]
+            
             if not workspaces:
                 ws_notes = await user_pool.fetch("SELECT DISTINCT coalesce(workspace_name, 'General') as ws FROM notes")
                 workspaces = list(set([r["ws"] for r in ws_notes]))
+
+            # Fetch totals
+            n_count = await user_pool.fetchval("SELECT count(*) FROM project_nodes")
+            e_count = await user_pool.fetchval("SELECT count(*) FROM project_edges")
+            notes_count = await user_pool.fetchval("SELECT count(*) FROM notes")
+            
+            total_nodes = (n_count or 0) + (notes_count or 0)
+            total_edges = e_count or 0
         except Exception:
             workspaces = []
 
@@ -1556,22 +1556,24 @@ async def console_page(request: Request):
     workspaces_rows = ""
     for ws in workspaces:
         workspaces_rows += f"""
-        <tr class="table-row-hover transition-colors border-b border-[#1f2127] cursor-pointer" onclick="window.location='/console?ws={ws}'">
+        <tr class="table-row-hover transition-colors border-b border-[#1f2127]">
           <td class="py-3.5 px-4 font-semibold text-white flex items-center gap-2">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00e599" stroke-width="2.5">
               <circle cx="12" cy="12" r="3"/><path d="M3 12h3m12 0h3M12 3v3m0 12v3"/>
             </svg>
             <span>{ws}</span>
           </td>
-          <td class="py-3.5 px-4 text-neon-muted font-mono text-[11px]">AWS US East 2 (Ohio)</td>
-          <td class="py-3.5 px-4 text-neutral-400 font-mono text-[11px]">Active</td>
-          <td class="py-3.5 px-4 text-neutral-300 font-mono text-[11px]">32.33 MB</td>
-          <td class="py-3.5 px-4 text-neon-green font-mono text-[11px]">Just now</td>
-          <td class="py-3.5 px-4 text-neutral-300 font-mono text-[11px]">1</td>
-          <td class="py-3.5 px-4 text-neon-muted text-[11px]">
-            <span class="hover:text-white transition-colors">Add ⊕</span>
+          <td class="py-3.5 px-4 text-neutral-300 font-mono text-[11px]">Active Domain</td>
+          <td class="py-3.5 px-4 text-neon-green font-mono text-[11px]">Connected</td>
+          <td class="py-3.5 px-4 text-neon-muted font-mono text-[11px]">Just now</td>
+          <td class="py-3.5 px-4">
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-[#11231a] text-neon-green border border-[#16432f]">Synchronized</span>
           </td>
-          <td class="py-3.5 px-4 text-right text-neon-muted text-sm font-bold">⋮</td>
+          <td class="py-3.5 px-4 text-right">
+            <a href="/console?ws={ws}" class="text-xs font-semibold text-neutral-300 hover:text-white bg-[#1a1b20] hover:bg-[#222328] px-3 py-1.5 rounded-lg border border-neon-border transition-colors no-underline">
+              Open Canvas →
+            </a>
+          </td>
         </tr>
         """
 
@@ -1607,7 +1609,8 @@ async def console_page(request: Request):
         .replace("{{USER_EMAIL}}", user_email)
         .replace("{{DISPLAY_NAME}}", display_name)
         .replace("{{INITIAL}}", initial)
-        .replace("{{STORAGE_ESTIMATE}}", f"{len(workspaces) * 0.04 + 0.12:.2f}")
+        .replace("{{TOTAL_NODES}}", str(total_nodes))
+        .replace("{{TOTAL_EDGES}}", str(total_edges))
         .replace("{{TOTAL_WORKSPACES}}", str(len(workspaces)))
         .replace("{{WORKSPACES_ROWS}}", workspaces_rows)
         .replace("{{API_KEYS_ROWS}}", api_keys_rows)
