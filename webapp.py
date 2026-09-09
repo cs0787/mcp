@@ -2,6 +2,7 @@
 exom - The Unified Second Brain & Memory Layer for All AI
 Full Python Starlette ASGI Application with:
 - Dedicated console.html template loader
+- In-console Account & Database Settings (eliminating standalone /dashboard)
 - Categorized Second Brain partitions (Coding Architecture vs AI Chats)
 - Direct Android APK distribution endpoints (/download, /exom.apk, /MemoryBase.apk)
 - Root image serving (/img1.jpeg - /img4.jpeg)
@@ -368,13 +369,13 @@ async def mobile_login(request: Request):
         return JSONResponse({"error": "Email and password are required"}, status_code=400)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_email(pool, email)
+    user = await db_control.get_user_by_email(pool, email)[cite: 2]
 
-    if user is None or not security.verify_password(password, user["password_hash"]):
+    if user is None or not security.verify_password(password, user["password_hash"]):[cite: 2]
         return JSONResponse({"error": "Invalid email or password"}, status_code=401)
 
     decrypted_conn_str = None
-    if user["connection_string_encrypted"]:
+    if user["connection_string_encrypted"]:[cite: 2]
         try:
             decrypted_conn_str = security.decrypt_text(user["connection_string_encrypted"])
         except Exception:
@@ -382,8 +383,8 @@ async def mobile_login(request: Request):
 
     return JSONResponse({
         "status": "success",
-        "user_id": str(user["id"]),
-        "email": user["email"],
+        "user_id": str(user["id"]),[cite: 2]
+        "email": user["email"],[cite: 2]
         "has_connection_string": decrypted_conn_str is not None,
         "connection_string": decrypted_conn_str,
     })
@@ -399,13 +400,13 @@ async def desktop_get_graph(request: Request):
 
     category = request.query_params.get("category", "all")
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
+    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
 
-    if not user or not user["connection_string_encrypted"]:
+    if not user or not user["connection_string_encrypted"]:[cite: 2]
         return JSONResponse({"nodes": [], "edges": []})
 
     conn_str = security.decrypt_text(user["connection_string_encrypted"])
-    user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
+    user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)[cite: 2]
 
     all_nodes = []
     edges = []
@@ -497,12 +498,12 @@ async def desktop_batch_save_edges(request: Request):
     new_edges = body.get("edges", [])
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
-    if not user or not user["connection_string_encrypted"]:
+    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
+    if not user or not user["connection_string_encrypted"]:[cite: 2]
         return JSONResponse({"error": "No database linked"}, status_code=400)
 
     conn_str = security.decrypt_text(user["connection_string_encrypted"])
-    user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
+    user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)[cite: 2]
 
     async with user_pool.acquire() as conn:
         for edge in new_edges:
@@ -531,9 +532,9 @@ async def landing_page(request: Request):
     user_email = None
     if user_id:
         pool = db_control.get_control_pool()
-        user = await db_control.get_user_by_id(pool, user_id)
+        user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
         if user:
-            user_email = user["email"]
+            user_email = user["email"][cite: 2]
 
     base_url = str(request.base_url).rstrip("/")
     nav_html = _navbar(request, user_email)
@@ -1425,7 +1426,7 @@ async def signup_post(request: Request):
 
     pool = db_control.get_control_pool()
     try:
-        user_id = await db_control.create_user(pool, email, security.hash_password(password))
+        user_id = await db_control.create_user(pool, email, security.hash_password(password))[cite: 2]
     except asyncpg.exceptions.UniqueViolationError:
         body = f"""
 {_navbar(request)}
@@ -1480,13 +1481,13 @@ async def login_post(request: Request):
     next_ = _safe_next(str(form.get("next", "")))
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_email(pool, email)
+    user = await db_control.get_user_by_email(pool, email)[cite: 2]
 
-    if user is None or not security.verify_password(password, user["password_hash"]):
+    if user is None or not security.verify_password(password, user["password_hash"]):[cite: 2]
         body = f"""
 {_navbar(request)}
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
-    <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
+    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm">
         <h2 class="text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
         <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">Incorrect email or password.</div>
         <form method="POST" action="/login">
@@ -1506,7 +1507,7 @@ async def login_post(request: Request):
 """
         return _page("Log in", body)
 
-    request.session["user_id"] = str(user["id"])
+    request.session["user_id"] = str(user["id"])[cite: 2]
     return RedirectResponse("/console", status_code=302)
 
 
@@ -1528,16 +1529,15 @@ async def console_page(request: Request):
         return RedirectResponse("/login", status_code=302)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
+    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
     if user is None:
         request.session.clear()
         return RedirectResponse("/login", status_code=302)
 
-    user_email = user["email"]
-    display_name = user_email.split("@")[0].capitalize()
-    first_name = display_name
+    user_email = user["email"][cite: 2]
+    first_name = user_email.split("@")[0].capitalize()
     last_name = ""
-    initial = display_name[0].upper()
+    initial = first_name[0].upper()
 
     coding_workspaces = []
     chat_workspaces = []
@@ -1546,10 +1546,10 @@ async def console_page(request: Request):
     chat_nodes_count = 0
     total_edges = 0
 
-    if user["connection_string_encrypted"]:
+    if user["connection_string_encrypted"]:[cite: 2]
         try:
             connection_string = security.decrypt_text(user["connection_string_encrypted"])
-            user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), connection_string)
+            user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), connection_string)[cite: 2]
 
             # Coding Workspaces
             cw_rows = await user_pool.fetch(
@@ -1587,16 +1587,16 @@ async def console_page(request: Request):
     coding_rows = ""
     for ws in coding_workspaces:
         coding_rows += f"""
-        <tr class="table-row-hover transition-colors border-b border-[#1f2127]">
-          <td class="py-3.5 px-4 font-semibold text-white flex items-center gap-2">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00e599" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <tr class="hover:bg-bw-hover transition-colors">
+          <td class="py-4 px-5 font-mono text-white flex items-center gap-2">
+            <span class="w-2 h-2 bg-accent-yellow"></span>
             <span>{ws}</span>
           </td>
-          <td class="py-3.5 px-4 text-neutral-400 font-mono text-[11px]">Git / Architecture Chain</td>
-          <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded text-[10px] font-mono bg-[#11231a] text-neon-green border border-[#16432f]">Sequential Tracked</span></td>
-          <td class="py-3.5 px-4 text-right">
-            <a href="/console?ws={ws}&category=coding" class="text-xs font-semibold text-neutral-300 hover:text-white bg-[#1a1b20] hover:bg-[#222328] px-3 py-1.5 rounded-lg border border-neon-border transition-colors no-underline">
-              Inspect Architecture →
+          <td class="py-4 px-5 text-bw-muted">Git Architecture Chain</td>
+          <td class="py-4 px-5"><span class="px-2 py-1 bg-white text-black font-bold text-[10px]">ACTIVE</span></td>
+          <td class="py-4 px-5 text-right">
+            <a href="/console?ws={ws}&category=coding" class="text-accent-yellow hover:text-white font-bold no-underline">
+              View →
             </a>
           </td>
         </tr>
@@ -1606,37 +1606,40 @@ async def console_page(request: Request):
     chat_rows = ""
     for ws in chat_workspaces:
         chat_rows += f"""
-        <tr class="table-row-hover transition-colors border-b border-[#1f2127]">
-          <td class="py-3.5 px-4 font-semibold text-white flex items-center gap-2">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <tr class="hover:bg-bw-hover transition-colors">
+          <td class="py-4 px-5 font-mono text-white flex items-center gap-2">
+            <span class="w-2 h-2 bg-white"></span>
             <span>{ws}</span>
           </td>
-          <td class="py-3.5 px-4 text-neutral-400 font-mono text-[11px]">Conversations &amp; Notes</td>
-          <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded text-[10px] font-mono bg-[#231e11] text-[#facc15] border border-[#443818]">Synthesized</span></td>
-          <td class="py-3.5 px-4 text-right">
-            <a href="/console?ws={ws}&category=chat" class="text-xs font-semibold text-neutral-300 hover:text-white bg-[#1a1b20] hover:bg-[#222328] px-3 py-1.5 rounded-lg border border-neon-border transition-colors no-underline">
-              View Conversations →
+          <td class="py-4 px-5 text-bw-muted">AI Chats &amp; Brainstorming</td>
+          <td class="py-4 px-5"><span class="px-2 py-1 border border-bw-border text-bw-muted font-bold text-[10px]">SYNCED</span></td>
+          <td class="py-4 px-5 text-right">
+            <a href="/console?ws={ws}&category=chat" class="text-white hover:text-accent-yellow font-bold no-underline">
+              View →
             </a>
           </td>
         </tr>
         """
 
     # API Keys Rows
-    keys = await db_control.list_api_keys(pool, user_id)
-    active_keys = [k for k in keys if k["revoked_at"] is None]
-    api_keys_rows = "".join(f"""
-    <tr class="border-b border-[#1f2127]">
-      <td class="py-2.5 px-4 font-mono font-medium text-neutral-200">{k['label']}</td>
-      <td class="py-2.5 px-4 font-mono text-neon-muted">{k['created_at'].strftime('%b %d, %Y')}</td>
-      <td class="py-2.5 px-4 font-mono text-neon-muted">{k['last_used_at'].strftime('%b %d, %Y') if k['last_used_at'] else 'Never'}</td>
-      <td class="py-2.5 px-4 text-right">
-        <form method="POST" action="/dashboard/api-key/revoke" class="m-0 inline">
-          <input type="hidden" name="key_id" value="{k['id']}">
-          <button type="submit" class="text-red-400 hover:underline text-xs" onclick="return confirm('Revoke this key?');">Revoke</button>
-        </form>
-      </td>
-    </tr>
-    """ for k in active_keys) or '<tr><td colspan="4" class="p-4 text-center text-neon-muted text-xs font-mono">No active API keys found.</td></tr>'
+    keys = await db_control.list_api_keys(pool, user_id)[cite: 2]
+    active_keys = [k for k in keys if k["revoked_at"] is None][cite: 2]
+    if active_keys:
+        api_keys_rows = "".join(f"""
+        <tr class="border-b border-bw-border">
+          <td class="py-3 px-4 font-mono text-white">{k['label']}</td>
+          <td class="py-3 px-4 font-mono text-bw-muted">{k['created_at'].strftime('%b %d, %Y')}</td>
+          <td class="py-3 px-4 font-mono text-bw-muted">{k['last_used_at'].strftime('%b %d, %Y') if k['last_used_at'] else 'Never'}</td>
+          <td class="py-3 px-4 text-right">
+            <form method="POST" action="/dashboard/api-key/revoke" class="m-0 inline">
+              <input type="hidden" name="key_id" value="{k['id']}">
+              <button type="submit" class="text-accent-yellow hover:underline text-xs uppercase tracking-wider font-bold" onclick="return confirm('Revoke this key?');">Revoke</button>
+            </form>
+          </td>
+        </tr>
+        """ for k in active_keys)[cite: 2]
+    else:
+        api_keys_rows = '<tr><td colspan="4" class="p-4 text-center text-bw-muted text-xs font-mono">No active API keys found.</td></tr>'
 
     template_path = os.path.join(os.path.dirname(__file__), "console.html")
     if not os.path.exists(template_path):
@@ -1666,115 +1669,8 @@ async def console_page(request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Dashboard & Settings
+# Form Handlers for Direct In-Console Database & API Key Actions
 # ---------------------------------------------------------------------------
-async def dashboard_get(request: Request):
-    user_id = _require_login(request)
-    if not user_id:
-        return RedirectResponse("/login", status_code=302)
-
-    pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
-    if user is None:
-        request.session.clear()
-        return RedirectResponse("/login", status_code=302)
-
-    flash_key = request.session.pop("flash_api_key", None)
-    flash_html = ""
-    if flash_key:
-        flash_html = f"""
-<div class="mb-6 p-4 bg-surface-container-low border border-primary rounded-lg">
-    <strong class="text-xs uppercase font-mono text-primary block mb-1">New exom MCP API Key (Shown Once — Copy Now):</strong>
-    <div class="flex items-center gap-2 mt-2">
-        <input type="text" readonly value="{flash_key}" id="newApiKeyField" class="w-full font-mono text-xs bg-surface-white border border-border-muted p-2 rounded">
-        <button id="btnCopyKey" onclick="copyToClipboard('{flash_key}', 'btnCopyKey')" class="bg-secondary-container text-on-surface px-4 py-2 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy</button>
-    </div>
-    <p class="text-xs text-text-secondary mt-2">Use this as your Bearer Token for Claude Desktop or Cursor configurations.</p>
-</div>
-"""
-
-    if user["connection_string_encrypted"]:
-        masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
-        conn_status = f'<p class="text-xs text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
-    else:
-        conn_status = '<div class="p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">No Neon PostgreSQL connection string set yet. Cross-model sync will fail until configured.</div>'
-
-    keys = await db_control.list_api_keys(pool, user_id)
-    active_keys = [k for k in keys if k["revoked_at"] is None]
-    if active_keys:
-        rows = "".join(f"""
-<div class="flex items-center justify-between py-3 border-b border-border-muted last:border-0">
-    <div>
-        <div class="text-sm font-semibold text-on-surface">{k['label']}</div>
-        <div class="text-xs text-text-secondary">Created {k['created_at'].strftime('%b %d, %Y')}{f" • Last used {k['last_used_at'].strftime('%b %d, %Y')}" if k['last_used_at'] else ""}</div>
-    </div>
-    <form method="POST" action="/dashboard/api-key/revoke" class="m-0">
-        <input type="hidden" name="key_id" value="{k['id']}">
-        <button type="submit" class="text-error text-xs font-semibold hover:underline" onclick="return confirm('Revoke this key? Apps using it will disconnect immediately.');">Revoke</button>
-    </form>
-</div>
-""" for k in active_keys)
-    else:
-        rows = '<p class="text-xs text-text-secondary">No active API keys found.</p>'
-
-    base_url = str(request.base_url).rstrip("/")
-    mcp_endpoint = f"{base_url}/mcp"
-    nav_html = _navbar(request, user["email"])
-
-    body = f"""
-{nav_html}
-<main class="flex-grow py-10 px-6 bg-surface-white">
-    <div class="max-w-3xl mx-auto">
-        <div class="mb-6 flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold text-on-surface mb-1">Database &amp; MCP Settings</h1>
-                <p class="text-xs text-text-secondary">Manage your personal Neon PostgreSQL database connection string and exom API keys.</p>
-            </div>
-            <a href="/console" class="text-xs font-semibold text-primary underline">← Back to Console</a>
-        </div>
-
-        {flash_html}
-
-        <!-- 1. Endpoint & Connection URL -->
-        <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
-            <h2 class="text-base font-semibold text-on-surface mb-1">1. exom MCP Server Endpoint</h2>
-            <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring Claude Desktop, Cursor, or any MCP client connector.</p>
-            <div class="flex items-center gap-2">
-                <input type="text" readonly value="{mcp_endpoint}" id="mcpEndpointField" class="w-full font-mono text-xs bg-surface-container-low border border-border-muted p-2.5 rounded">
-                <button id="btnCopyEndpoint" onclick="copyToClipboard('{mcp_endpoint}', 'btnCopyEndpoint')" class="bg-surface-white text-on-surface px-4 py-2.5 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy URL</button>
-            </div>
-        </div>
-
-        <!-- 2. Neon Database Connection String Settings -->
-        <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
-            <h2 class="text-base font-semibold text-on-surface mb-1">2. Personal Neon Database Connection String</h2>
-            <p class="text-xs text-text-secondary mb-3">Paste your PostgreSQL connection string. All companion apps, AI agents, and desktop clients synchronize with this instance.</p>
-            {conn_status}
-            <form method="POST" action="/dashboard/connection-string" class="mt-4">
-                <div class="mb-3">
-                    <input type="text" name="connection_string" placeholder="postgresql://user:password@ep-xxx.neon.tech/dbname" required class="w-full px-4 py-2.5 border border-border-muted rounded text-xs font-mono focus:outline-none focus:border-primary">
-                </div>
-                <button type="submit" class="bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505]">Save Connection String</button>
-            </form>
-        </div>
-
-        <!-- 3. API Keys Management -->
-        <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
-            <h2 class="text-base font-semibold text-on-surface mb-1">3. exom MCP API Keys</h2>
-            <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom agents.</p>
-            <div class="divide-y border-border-muted mb-4">
-                {rows}
-            </div>
-            <form method="POST" action="/dashboard/api-key/create">
-                <button type="submit" class="bg-surface-white text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors">Generate New Manual API Key</button>
-            </form>
-        </div>
-    </div>
-</main>
-"""
-    return _page("Settings", body)
-
-
 async def update_connection_string(request: Request):
     user_id = _require_login(request)
     if not user_id:
@@ -1784,17 +1680,17 @@ async def update_connection_string(request: Request):
     connection_string = str(form.get("connection_string", "")).strip()
 
     if not (connection_string.startswith("postgresql://") or connection_string.startswith("postgres://")):
-        return _dashboard_error("Invalid format: Must start with postgresql://")
+        return HTMLResponse("<script>alert('Invalid format: Must start with postgresql://');window.location='/console';</script>")
 
     ok, err = await tenant_pools.test_connection_string(connection_string)
     if not ok:
-        return _dashboard_error(f"Connection test failed: {err}")
+        return HTMLResponse(f"<script>alert('Connection test failed: {err}');window.location='/console';</script>")
 
     pool = db_control.get_control_pool()
-    await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))
+    await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))[cite: 2]
     await tenant_pools.get_manager().invalidate(user_id)
 
-    return RedirectResponse("/dashboard", status_code=302)
+    return RedirectResponse("/console", status_code=302)
 
 
 async def create_api_key(request: Request):
@@ -1804,10 +1700,9 @@ async def create_api_key(request: Request):
 
     pool = db_control.get_control_pool()
     raw_key = security.generate_api_key()
-    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")
-    request.session["flash_api_key"] = raw_key
+    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Console Key")[cite: 2]
 
-    return RedirectResponse("/dashboard", status_code=302)
+    return RedirectResponse("/console", status_code=302)
 
 
 async def revoke_api_key(request: Request):
@@ -1819,22 +1714,9 @@ async def revoke_api_key(request: Request):
     key_id = str(form.get("key_id", ""))
 
     pool = db_control.get_control_pool()
-    await db_control.revoke_api_key(pool, user_id, key_id)
+    await db_control.revoke_api_key(pool, user_id, key_id)[cite: 2]
 
-    return RedirectResponse("/dashboard", status_code=302)
-
-
-def _dashboard_error(message: str) -> HTMLResponse:
-    body = f"""
-<main class="flex-grow flex items-center justify-center py-16 px-6 bg-surface-white">
-    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm text-center">
-        <h2 class="text-lg font-bold text-error mb-2">Error</h2>
-        <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-6 border border-red-200">{message}</div>
-        <a href="/dashboard" class="inline-block bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] no-underline">Back to Settings</a>
-    </div>
-</main>
-"""
-    return _page("Error", body)
+    return RedirectResponse("/console", status_code=302)
 
 
 # ---------------------------------------------------------------------------
@@ -1856,7 +1738,6 @@ routes = [
     Route("/login", login_post, methods=["POST"]),
     Route("/logout", logout, methods=["POST"]),
     Route("/console", console_page, methods=["GET"]),
-    Route("/dashboard", dashboard_get, methods=["GET"]),
     Route("/dashboard/connection-string", update_connection_string, methods=["POST"]),
     Route("/dashboard/api-key/create", create_api_key, methods=["POST"]),
     Route("/dashboard/api-key/revoke", revoke_api_key, methods=["POST"]),
