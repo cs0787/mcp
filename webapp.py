@@ -1,15 +1,10 @@
 """
 exom - The Unified Second Brain & Memory Layer for All AI
 Full Python Starlette ASGI Application with:
-- Cross-model ambient context bridge (Claude, Cursor, autonomous agents)
+- Modular HTML Console rendering via console.html
 - Direct Android APK distribution endpoints (/download and /exom.apk)
 - Root image serving (/img1.jpeg - /img4.jpeg)
 - Mobile & Desktop authentication gateway
-- Unified 2D Second Brain graph endpoint (merging notes and MCP nodes)
-- Responsive Mobile Showcase (1024x1165 aspect ratio, unnumbered vertical labels)
-- Lenis Smooth Scrolling (@studio-freight/lenis)
-- Scrubbed, scroll-driven Instant Context Pipeline Animation
-- Dual-mode Core Capabilities Scroll-Spy
 - FastMCP Multi-Tenant Database & Control Plane Settings
 """
 
@@ -101,23 +96,6 @@ def _page(title: str, body: str) -> HTMLResponse:
                     "surface": "#fcf8f8",
                     "border-muted": "#E2E2E7",
                     "on-secondary-container": "#6f5c00"
-                }},
-                borderRadius: {{
-                    "DEFAULT": "0.125rem",
-                    "lg": "0.25rem",
-                    "xl": "0.5rem",
-                    "full": "0.75rem"
-                }},
-                fontFamily: {{
-                    "body-lg": ["Inter"],
-                    "headline-lg-mobile": ["Hanken Grotesk"],
-                    "headline-xl": ["Hanken Grotesk"],
-                    "body-md": ["Inter"],
-                    "headline-md": ["Hanken Grotesk"],
-                    "headline-lg": ["Hanken Grotesk"],
-                    "body-sm": ["Inter"],
-                    "label-sm": ["JetBrains Mono"],
-                    "label-md": ["JetBrains Mono"]
                 }}
             }}
         }}
@@ -131,16 +109,6 @@ def _page(title: str, body: str) -> HTMLResponse:
     .lenis.lenis-smooth {{
       scroll-behavior: auto !important;
     }}
-    .lenis.lenis-smooth [data-lenis-prevent] {{
-      overscroll-behavior: contain;
-    }}
-    .lenis.lenis-stopped {{
-      overflow: hidden;
-    }}
-    .lenis.lenis-smooth iframe {{
-      pointer-events: none;
-    }}
-
     .mono {{ font-family: 'JetBrains Mono', monospace; }}
 
     .hero-interactive-grid {{
@@ -152,23 +120,6 @@ def _page(title: str, body: str) -> HTMLResponse:
         background-size: 55px 55px;
         position: relative;
         overflow: hidden;
-    }}
-    .hero-interactive-grid::after {{
-        content: '';
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background-image: 
-            linear-gradient(0deg, transparent 24%, #1a1313 25%, #756e6e 26%, transparent 27%, transparent 74%, #000000 75%, #000000 76%, transparent 77%, transparent),
-            linear-gradient(90deg, transparent 24%, #000000 25%, #000000 26%, transparent 27%, transparent 74%, #000000 75%, #000000 76%, transparent 77%, transparent);
-        background-size: 55px 55px;
-        opacity: 0;
-        transition: opacity 0.2s ease-in-out;
-        -webkit-mask-image: radial-gradient(circle 160px at var(--x, -999px) var(--y, -999px), rgb(16, 15, 15) 0%, transparent 100%);
-        mask-image: radial-gradient(circle 160px at var(--x, -999px) var(--y, -999px), rgb(36, 35, 35) 0%, transparent 100%);
-    }}
-    .hero-interactive-grid:hover::after {{
-        opacity: 1;
     }}
 
     .vertical-mode-text {{
@@ -198,394 +149,10 @@ def _page(title: str, body: str) -> HTMLResponse:
             width: calc(23rem * 1024 / 1165);
         }}
     }}
-
-    .diagram-scaler-wrapper {{
-        width: 100%;
-        max-width: min(1000px, calc((100vh - 200px) * 1000 / 524));
-        margin: 0 auto;
-        position: relative;
-        container-type: inline-size;
-    }}
-    @media (max-width: 640px) {{
-        .diagram-scaler-wrapper {{
-            max-width: min(1000px, calc((100vh - 150px) * 1000 / 524));
-        }}
-    }}
-
-    .diagram-container {{
-        position: relative;
-        width: 100%;
-        aspect-ratio: 1000 / 524;
-        background-color: #000000;
-        overflow: hidden;
-    }}
-
-    .vertical-grid {{
-        position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 3.5%; pointer-events: none; opacity: 0.12;
-    }}
-    .grid-line {{ width: 1px; height: 100%; background-color: #ffffff; }}
-    
-    svg.canvas {{
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
-    }}
-
-    .line-green {{ stroke: #00e599; stroke-width: 1.5; fill: none; }}
-    .line-green-dash {{ stroke: #00e599; stroke-width: 1.5; stroke-dasharray: 4 4; fill: none; }}
-    .line-white-dash {{ stroke: #71767c; stroke-width: 1.5; stroke-dasharray: 4 4; fill: none; }}
-    .line-white-solid {{ stroke: #71767c; stroke-width: 1.5; fill: none; }}
-    .ruler-tick {{ stroke: #25282c; stroke-width: 1.5; transition: stroke 0.25s ease; }}
-    .ruler-tick.lit {{ stroke: #00e599; }}
-    .tick-active {{ stroke: #00e599; stroke-width: 1.5; }}
-
-    .badge {{
-        position: absolute; transform: translate(-50%, -50%) scale(0.7); display: flex; align-items: center; gap: 0.6cqw; font-size: 1.2cqw; font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
-        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
-    }}
-    .badge.visible {{ opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }}
-    .badge-white {{ background: #ffffff; color: #000000; padding: 0.5cqw 1.2cqw; font-weight: 600; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1); }}
-    .badge-yellow {{ background: #fcee0a; color: #000000; padding: 0.6cqw 1.4cqw; font-weight: 700; font-size: 1.3cqw; box-shadow: 0 0 28px rgba(252, 238, 10, 0.45); }}
-    .badge-dark {{ background: #25282e; color: #b1b8c0; border: 1px solid #383c44; padding: 0.4cqw 1.1cqw; font-size: 1.1cqw; }}
-    
-    .circle-icon {{
-        position: absolute; transform: translate(-50%, -50%) scale(0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; opacity: 0;
-        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }}
-    .circle-icon.visible {{ opacity: 1; transform: translate(-50%, -50%) scale(1); }}
-    .check-node {{ width: 1.5cqw; height: 1.5cqw; background: #00e599; color: #000000; font-size: 0.9cqw; font-weight: 900; box-shadow: 0 0 10px rgba(0, 229, 153, 0.7); }}
-    .outline-node {{ width: 2cqw; height: 2cqw; border-radius: 50%; background: #0b0d10; border: 1px solid #30353c; color: #8b949e; }}
-    .hollow-node {{ width: 0.7cqw; height: 0.7cqw; background: #000000; border: 1.5px solid #00e599; border-radius: 50%; }}
-
-    .meta-text {{
-        position: absolute; transform: translateX(-50%); font-size: 0.95cqw; color: #7d8590; text-align: center; line-height: 1.35; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.3s ease;
-    }}
-    .meta-text.visible {{ opacity: 1; }}
-    .timestamp {{ font-size: 0.95cqw; color: #555d68; letter-spacing: 0.3px; }}
-    .glow-dot {{ fill: #00e599; filter: url(#glow); opacity: 0; transition: opacity 0.2s ease; }}
-    .glow-dot.active {{ opacity: 1; }}
-
-    :root {{
-      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-      --neon-green: #00e599;
-      --dark-bg: #000000;
-      --light-bg: #ffffff;
-      --footer-bg: #F5F5F5;
-    }}
-
-    .showcase-container {{
-      position: relative;
-      width: 100%;
-      padding-bottom: 80px;
-      font-family: var(--font-main);
-    }}
-
-    .sticky-nav-wrapper {{
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 80px;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-      pointer-events: none;
-      z-index: 20;
-    }}
-
-    .sticky-sidebar {{
-      position: sticky;
-      top: 90px;
-      width: 260px;
-      pointer-events: auto;
-      padding-top: 8px;
-    }}
-
-    .menu-badge-btn {{
-      display: inline-flex;
-      align-items: center;
-      padding: 10px 18px;
-      border: unset;
-      border-radius: 12px;
-      color: #000000;
-      background: #facc15;
-      font-family: var(--font-main);
-      font-weight: 800;
-      font-size: 13.5px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      box-shadow: 0 4px 14px -2px rgba(250, 204, 21, 0.45);
-      cursor: default;
-      pointer-events: none;
-      user-select: none;
-      margin-bottom: 20px;
-      margin-left: 0;
-      text-align: left;
-    }}
-
-    .mobile-feature-badge {{
-      display: none;
-      align-items: center;
-      padding: 6px 12px;
-      border-radius: 9999px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      margin-bottom: 14px;
-      width: fit-content;
-    }}
-
-    .section-dark .mobile-feature-badge {{
-      background: rgba(255, 255, 255, 0.1);
-      color: #00e599;
-      border: 1px solid rgba(0, 229, 153, 0.3);
-    }}
-
-    .section-light .mobile-feature-badge {{
-      background: #f4f4f5;
-      color: #18181b;
-      border: 1px solid #e4e4e7;
-    }}
-
-    .nav-list {{
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin: 0;
-      padding: 0;
-    }}
-
-    .nav-btn {{
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14.5px;
-      font-weight: 500;
-      color: #71717a;
-      text-decoration: none;
-      transition: color 0.2s ease;
-      cursor: pointer;
-    }}
-
-    .nav-btn:hover {{ color: #ffffff; }}
-    .nav-btn.active {{ color: #ffffff; font-weight: 700; }}
-
-    .sticky-sidebar.theme-light .nav-btn {{ color: #71717a; }}
-    .sticky-sidebar.theme-light .nav-btn:hover {{ color: #000000; }}
-    .sticky-sidebar.theme-light .nav-btn.active {{ color: #000000; }}
-
-    .nav-dot {{
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background-color: transparent;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-    }}
-
-    .nav-btn.active .nav-dot {{
-      background-color: var(--neon-green);
-      box-shadow: 0 0 10px rgba(0, 229, 153, 0.9);
-      transform: scale(1.3);
-    }}
-
-    .feature-section {{
-      width: 100%;
-      min-height: 85vh;
-      padding: 90px 0;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      scroll-margin-top: 0;
-    }}
-
-    .section-inner {{
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      column-gap: 56px;
-    }}
-
-    .section-content {{
-      grid-column: 2;
-      max-width: 820px;
-    }}
-
-    .section-dark {{ background-color: #000000; color: #e2e8f0; }}
-    .section-dark .hero-heading {{ color: #ffffff; }}
-    .section-dark .lead-text {{ color: #a1a1aa; }}
-    .section-dark .checklist li {{ color: #d4d4d8; }}
-
-    .section-light {{ background-color: #ffffff; color: #000000; }}
-    .section-light .hero-heading {{ color: #000000; }}
-    .section-light .lead-text {{ color: #52525b; }}
-    .section-light .checklist li {{ color: #27272a; }}
-
-    .hero-heading {{
-      font-size: clamp(28px, 4vw, 48px);
-      font-weight: 800;
-      letter-spacing: -0.035em;
-      line-height: 1.15;
-      margin-bottom: 20px;
-    }}
-
-    .lead-text {{
-      font-size: 17px;
-      line-height: 1.6;
-      margin-bottom: 28px;
-    }}
-
-    .checklist {{
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 32px;
-      padding-left: 0;
-    }}
-
-    .checklist li {{
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 15px;
-      font-weight: 600;
-    }}
-
-    .checklist li .check-icon {{
-      color: var(--neon-green);
-      font-weight: 800;
-      font-size: 15px;
-    }}
-
-    .terminal-box {{
-      background: #09090b;
-      border: 1px solid #27272a;
-      border-radius: 12px;
-      overflow: hidden;
-      font-family: var(--font-mono);
-      max-width: 740px;
-      box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.7);
-    }}
-
-    .terminal-topbar {{
-      background: #18181b;
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }}
-
-    .terminal-dots {{ display: flex; gap: 6px; }}
-    .terminal-dots span {{ width: 10px; height: 10px; border-radius: 50%; }}
-    .dot-red {{ background: #ef4444; }}
-    .dot-yellow {{ background: #eab308; }}
-    .dot-green {{ background: #22c55e; }}
-
-    .terminal-title {{
-      font-size: 12px;
-      color: #a1a1aa;
-      font-weight: 500;
-      margin-left: 6px;
-    }}
-
-    .terminal-code {{
-      padding: 20px;
-      font-size: 13.5px;
-      color: #e4e4e7;
-      overflow-x: auto;
-      line-height: 1.65;
-    }}
-
-    .hl-key {{ color: #38bdf8; }}
-    .hl-str {{ color: #fbbf24; }}
-    .hl-green {{ color: #4ade80; }}
-    .hl-dim {{ color: #71717a; }}
-
-    .neon-footer {{
-      background-color: var(--footer-bg);
-      border-top: 1px solid #e5e5e5;
-      color: #52525b;
-      padding: 80px 24px 48px;
-      font-family: var(--font-main);
-      position: relative;
-      z-index: 30;
-      clear: both;
-    }}
-
-    .footer-container {{ max-width: 1200px; margin: 0 auto; }}
-    .footer-top {{
-      display: grid;
-      grid-template-columns: 2fr repeat(4, 1fr);
-      gap: 48px;
-      margin-bottom: 64px;
-    }}
-    .footer-brand {{ display: flex; flex-direction: column; gap: 16px; }}
-    .footer-logo {{
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      color: #18181b;
-      font-weight: 800;
-      font-size: 20px;
-      letter-spacing: -0.03em;
-    }}
-    .footer-logo svg {{ width: 24px; height: 24px; }}
-    .footer-tagline {{ font-size: 14px; color: #71717a; max-width: 270px; line-height: 1.5; }}
-    
-    .status-badge {{
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      width: fit-content;
-      margin-top: 8px;
-      padding: 6px 12px;
-      border-radius: 9999px;
-      background: #ffffff;
-      border: 1px solid #e4e4e7;
-      color: #3f3f46;
-      font-size: 12px;
-      font-weight: 600;
-      text-decoration: none;
-    }}
-    .status-dot {{ width: 6px; height: 6px; border-radius: 50%; background-color: #16a34a; box-shadow: 0 0 8px #16a34a; }}
-    .footer-col h4 {{ font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #18181b; margin-bottom: 20px; }}
-    .footer-col ul {{ list-style: none; display: flex; flex-direction: column; gap: 12px; padding: 0; }}
-    .footer-col ul li a {{ color: #71717a; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.15s ease; }}
-    .footer-col ul li a:hover {{ color: #18181b; font-weight: 600; }}
-
-    .footer-bottom {{
-      border-top: 1px solid #e5e5e5;
-      padding-top: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 20px;
-      font-size: 13px;
-      color: #71717a;
-    }}
-
-    @media (max-width: 900px) {{
-      .sticky-nav-wrapper {{ display: none !important; }}
-      .mobile-feature-badge {{ display: inline-flex; }}
-      .section-inner {{ display: block; padding: 0 20px; }}
-      .section-content {{ width: 100%; }}
-      .feature-section {{ padding: 60px 0; min-height: auto; }}
-      .footer-top {{ grid-template-columns: 1fr 1fr; gap: 36px; }}
-      .footer-brand {{ grid-column: 1 / -1; }}
-      .footer-bottom {{ flex-direction: column; align-items: flex-start; }}
-    }}
 </style>
 </head>
 <body class="bg-surface-white text-on-surface font-body-md min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
 
-<!-- Global Lenis Initialized before components load -->
 <script>
     window.lenis = new Lenis({{
       duration: 1.2,
@@ -612,20 +179,6 @@ def _page(title: str, body: str) -> HTMLResponse:
             setTimeout(() => btn.innerText = orig, 2000);
         }});
     }}
-    function setTerminalTab(tab) {{
-        const tabs = ['claude', 'cursor', 'curl'];
-        tabs.forEach(t => {{
-            const btn = document.getElementById('tab-' + t);
-            const block = document.getElementById('snippet-' + t);
-            if (t === tab) {{
-                btn.className = 'px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors whitespace-nowrap';
-                block.classList.remove('hidden');
-            }} else {{
-                btn.className = 'px-3 py-1.5 text-xs font-mono rounded text-text-secondary hover:text-on-surface bg-transparent transition-colors whitespace-nowrap';
-                block.classList.add('hidden');
-            }}
-        }});
-    }}
 </script>
 
 {body}
@@ -635,13 +188,13 @@ def _page(title: str, body: str) -> HTMLResponse:
 
 
 def _require_login(request: Request) -> str | None:
-    return request.session.get("user_id")
+    return request.session.get("user_id")[cite: 10]
 
 
 def _safe_next(raw: str | None) -> str:
     if raw and raw.startswith("/") and not raw.startswith("//"):
         return raw
-    return "/console"
+    return "/console"[cite: 10]
 
 
 def _navbar(request: Request, user_email: str | None = None) -> str:
@@ -670,40 +223,23 @@ def _navbar(request: Request, user_email: str | None = None) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Direct APK & Executable Distribution Route
+# Direct APK & Image Distribution Routes
 # ---------------------------------------------------------------------------
 async def download_apk(request: Request):
-    apk_path = os.path.join(os.path.dirname(__file__), "MemoryBase.apk")
-    if not os.path.exists(apk_path):
-        return HTMLResponse(
-            """
-            <div style="font-family:sans-serif; padding:40px; text-align:center;">
-                <h2>Release Build Pending</h2>
-                <p>The companion installer is packaging. Please check back shortly or inspect repository releases.</p>
-                <a href="/">← Return Home</a>
-            </div>
-            """,
-            status_code=404,
-        )
-    return FileResponse(
-        path=apk_path,
-        media_type="application/vnd.android.package-archive",
-        filename="exom.apk",
-    )
+    for fname in ("MemoryBase.apk", "exom.apk"):
+        apk_path = os.path.join(os.path.dirname(__file__), fname)
+        if os.path.exists(apk_path):
+            return FileResponse(path=apk_path, media_type="application/vnd.android.package-archive", filename="exom.apk")
+    return HTMLResponse("<p style='text-align:center;padding:40px;font-family:sans-serif;'>Companion app installer is packaging. Check back shortly.</p>", status_code=404)
 
 
-# ---------------------------------------------------------------------------
-# Root Image Serving Route (img1.jpeg - img4.jpeg)
-# ---------------------------------------------------------------------------
 async def serve_root_image(request: Request):
     filename = request.url.path.lstrip("/")
     if ".." in filename or "/" in filename or "\\" in filename:
         return HTMLResponse("Forbidden", status_code=403)
-
     img_path = os.path.join(os.path.dirname(__file__), filename)
     if not os.path.exists(img_path):
-        return HTMLResponse(f"Image {filename} not found in root directory.", status_code=404)
-
+        return HTMLResponse(f"Image {filename} not found.", status_code=404)
     return FileResponse(img_path, media_type="image/jpeg")
 
 
@@ -722,159 +258,129 @@ async def mobile_login(request: Request):
     if not email or not password:
         return JSONResponse({"error": "Email and password are required"}, status_code=400)
 
-    pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_email(pool, email)
+    pool = db_control.get_control_pool()[cite: 2]
+    user = await db_control.get_user_by_email(pool, email)[cite: 2]
 
-    if user is None or not security.verify_password(password, user["password_hash"]):
+    if user is None or not security.verify_password(password, user["password_hash"]):[cite: 2, 5]
         return JSONResponse({"error": "Invalid email or password"}, status_code=401)
 
     decrypted_conn_str = None
-    if user["connection_string_encrypted"]:
+    if user["connection_string_encrypted"]:[cite: 2]
         try:
-            decrypted_conn_str = security.decrypt_text(user["connection_string_encrypted"])
+            decrypted_conn_str = security.decrypt_text(user["connection_string_encrypted"])[cite: 5]
         except Exception:
             return JSONResponse({"error": "Failed to decrypt connection string"}, status_code=500)
 
     return JSONResponse({
         "status": "success",
-        "user_id": str(user["id"]),
-        "email": user["email"],
+        "user_id": str(user["id"]),[cite: 2]
+        "email": user["email"],[cite: 2]
         "has_connection_string": decrypted_conn_str is not None,
         "connection_string": decrypted_conn_str,
     })
 
 
 # ---------------------------------------------------------------------------
-# Desktop Gateway Endpoints (Merges Context & Graph)
+# Console Page (Renders console.html) & Console Data API
 # ---------------------------------------------------------------------------
-async def desktop_get_graph(request: Request):
-    user_id = request.headers.get("x-user-id") or _require_login(request)
+async def console_page(request: Request):
+    user_id = _require_login(request)[cite: 10]
     if not user_id:
-        return JSONResponse({"error": "Unauthorized: Missing user credentials"}, status_code=401)
+        return RedirectResponse("/login?next=/console", status_code=302)[cite: 10]
 
-    pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
+    html_path = os.path.join(os.path.dirname(__file__), "console.html")
+    if not os.path.exists(html_path):
+        return HTMLResponse("console.html file not found in root directory.", status_code=404)
 
-    if not user or not user["connection_string_encrypted"]:
-        return JSONResponse({"nodes": [], "edges": []})
+    with open(html_path, "r", encoding="utf-8") as f:
+        return HTMLResponse(f.read())
 
-    conn_str = security.decrypt_text(user["connection_string_encrypted"])
-    user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
 
-    mobile_notes = await user_pool.fetch(
-        """
-        SELECT id, coalesce(workspace_name, 'General') as workspace, 'thought' as node_type,
-               title, content as summary, '' as rationale, '' as impact_analysis,
-               ARRAY[]::text[] as tags, 'Universal Memory' as model_badge, updated_at
-        FROM notes
-        ORDER BY updated_at DESC
-        """
-    )
+async def console_data(request: Request):
+    user_id = _require_login(request)[cite: 10]
+    if not user_id:
+        return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-    project_nodes = []
+    pool = db_control.get_control_pool()[cite: 2]
+    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
+    if not user:
+        return JSONResponse({"error": "User not found"}, status_code=404)
+
+    user_email = user["email"][cite: 2]
+    display_name = user_email.split("@")[0].capitalize()
+    initial = display_name[0].upper()
+
+    workspaces = []
+    nodes = []
     edges = []
-    try:
-        project_nodes = await user_pool.fetch(
-            """
-            SELECT id, workspace, node_type, title, summary, rationale, impact_analysis,
-                   affected_components as tags, status as model_badge, updated_at
-            FROM project_nodes
-            ORDER BY created_at DESC
-            """
-        )
-        edges = await user_pool.fetch(
-            """
-            SELECT id, source_node_id, target_node_id, relation_type
-            FROM project_edges
-            """
-        )
-    except Exception:
-        pass
+    selected_workspace = request.query_params.get("ws", "")
 
-    all_nodes = list(mobile_notes) + list(project_nodes)
+    if user["connection_string_encrypted"]:[cite: 2]
+        try:
+            conn_str = security.decrypt_text(user["connection_string_encrypted"])[cite: 5]
+            user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)[cite: 2, 8]
+
+            ws_rows = await user_pool.fetch("SELECT DISTINCT workspace FROM project_nodes ORDER BY workspace ASC")
+            workspaces = [r["workspace"] for r in ws_rows]
+
+            if not selected_workspace and workspaces:
+                selected_workspace = workspaces[0]
+
+            if selected_workspace:
+                node_rows = await user_pool.fetch(
+                    """
+                    SELECT id, node_type, sequence_index, title, summary, rationale, impact_analysis, affected_components, status, central_hub_id, created_at
+                    FROM project_nodes
+                    WHERE workspace = $1
+                    ORDER BY sequence_index ASC NULLS LAST, created_at ASC
+                    """,
+                    selected_workspace,
+                )
+                nodes = [dict(r) for r in node_rows]
+
+                edge_rows = await user_pool.fetch(
+                    """
+                    SELECT source_node_id, target_node_id, relation_type
+                    FROM project_edges
+                    WHERE workspace = $1
+                    """,
+                    selected_workspace,
+                )
+                edges = [dict(r) for r in edge_rows]
+        except Exception:
+            pass
+
+    for n in nodes:
+        n["id"] = str(n["id"])
+        if n.get("central_hub_id"):
+            n["central_hub_id"] = str(n["central_hub_id"])
+        if hasattr(n.get("created_at"), "isoformat"):
+            n["created_at"] = n["created_at"].isoformat()
+
+    for e in edges:
+        e["source_node_id"] = str(e["source_node_id"])
+        e["target_node_id"] = str(e["target_node_id"])
 
     return JSONResponse({
-        "nodes": [
-            {
-                "id": str(n["id"]),
-                "type": n["node_type"],
-                "workspace": n["workspace"],
-                "title": n["title"] or "Untitled Memory",
-                "summary": n["summary"] or "",
-                "rationale": n["rationale"] or "",
-                "impact": n["impact_analysis"] or "",
-                "tags": n["tags"] or [],
-                "model": n["model_badge"],
-                "updated_at": n["updated_at"]
-            }
-            for n in all_nodes
-        ],
-        "edges": [
-            {
-                "id": str(e["id"]),
-                "source": str(e["source_node_id"]),
-                "target": str(e["target_node_id"]),
-                "label": e["relation_type"]
-            }
-            for e in edges
-        ]
+        "user": {"email": user_email, "display_name": display_name, "initial": initial},
+        "workspaces": workspaces,
+        "selected_workspace": selected_workspace,
+        "nodes": nodes,
+        "edges": edges,
     })
-
-
-async def desktop_batch_save_edges(request: Request):
-    user_id = request.headers.get("x-user-id") or _require_login(request)
-    if not user_id:
-        return JSONResponse({"error": "Unauthorized: Missing user credentials"}, status_code=401)
-
-    try:
-        body = await request.json()
-    except Exception:
-        return JSONResponse({"error": "Invalid JSON body"}, status_code=400)
-
-    workspace = body.get("workspace", "Default")
-    new_edges = body.get("edges", [])
-
-    pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
-    if not user or not user["connection_string_encrypted"]:
-        return JSONResponse({"error": "No database linked"}, status_code=400)
-
-    conn_str = security.decrypt_text(user["connection_string_encrypted"])
-    user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
-
-    async with user_pool.acquire() as conn:
-        for edge in new_edges:
-            try:
-                s_id = uuid.UUID(str(edge["source"]))
-                t_id = uuid.UUID(str(edge["target"]))
-                await conn.execute(
-                    """
-                    INSERT INTO project_edges (workspace, source_node_id, target_node_id, relation_type)
-                    VALUES ($1, $2, $3, $4)
-                    ON CONFLICT DO NOTHING
-                    """,
-                    workspace,
-                    s_id,
-                    t_id,
-                    str(edge.get("label", "semantic_link"))
-                )
-            except Exception:
-                continue
-
-    return JSONResponse({"status": "ok", "saved": len(new_edges)})
 
 
 # ---------------------------------------------------------------------------
 # Landing Page
 # ---------------------------------------------------------------------------
 async def landing_page(request: Request):
-    user_id = _require_login(request)
+    user_id = _require_login(request)[cite: 10]
     user_email = None
     if user_id:
-        pool = db_control.get_control_pool()
-        user = await db_control.get_user_by_id(pool, user_id)
+        pool = db_control.get_control_pool()[cite: 2]
+        user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
         if user:
-            user_email = user["email"]
+            user_email = user["email"][cite: 2]
 
     base_url = str(request.base_url).rstrip("/")
     nav_html = _navbar(request, user_email)
@@ -913,8 +419,7 @@ async def landing_page(request: Request):
 {nav_html}
 <main class="flex-grow">
     <!-- Hero Section -->
-    <section class="relative pt-12 sm:pt-20 pb-16 sm:pb-20 border-b border-border-muted hero-interactive-grid"
-             onmousemove="const r = this.getBoundingClientRect(); this.style.setProperty('--x', (event.clientX - r.left) + 'px'); this.style.setProperty('--y', (event.clientY - r.top) + 'px');">
+    <section class="relative pt-12 sm:pt-20 pb-16 sm:pb-20 border-b border-border-muted hero-interactive-grid">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 relative z-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
             <div class="flex-1 space-y-4 text-center lg:text-left">
                 <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-surface-white border border-border-muted text-xs font-mono text-on-surface-variant mb-2 shadow-xs">
@@ -929,7 +434,6 @@ async def landing_page(request: Request):
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-3">
                     <a href="/download" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#050505] text-white px-5 py-3 text-sm font-semibold rounded border border-[#050505] hover:bg-neutral-800 transition-colors shadow-sm no-underline">
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993s-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9994.4482.9994.9993s-.4483.9997-.9994.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.4114 13.8533 8.083 12 8.083s-3.5902.3284-5.1368.8667L4.8409 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396"/></svg>
                         Get Companion App
                     </a>
                     <a href="{' /console' if user_id else '/signup'}" class="w-full sm:w-auto text-center bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Launch Console</a>
@@ -945,13 +449,13 @@ async def landing_page(request: Request):
                     </div>
                     <p class="text-text-secondary mb-1">&gt; Cross-agent recall query:</p>
                     <p class="text-on-surface font-semibold">&gt; get_codebase_context(workspace="Deployments")</p>
-                    <p class="text-primary mt-2">✓ 14 decisions &amp; concepts shared across Claude, Cursor &amp; DeepSeek.</p>
+                    <p class="text-primary mt-2">✓ Context unified across Claude, Cursor &amp; DeepSeek.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 1. Quickstart Configuration -->
+    <!-- Quickstart Section -->
     <section id="quickstart" class="py-12 sm:py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
@@ -987,734 +491,18 @@ async def landing_page(request: Request):
             </div>
         </div>
     </section>
-
-    <!-- 2. MOBILE & DESKTOP SECOND BRAIN SHOWCASE -->
-    <section id="mobile-showcase" class="py-16 sm:py-24 bg-[#050507] text-white border-b border-neutral-800 overflow-hidden relative">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 text-center mb-10">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.05] border border-white/[0.1] text-xs font-mono text-[#00e599] mb-3">
-                <span class="w-2 h-2 rounded-full bg-[#00e599] animate-pulse"></span>
-                Universal Companion Ecosystem
-            </div>
-            <h2 class="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
-                Your Pocket Mind Palace
-            </h2>
-            <p class="text-sm sm:text-base text-neutral-400 max-w-xl mx-auto leading-relaxed">
-                Connect your personal Neon PostgreSQL database once. Explore thoughts in 2D space, query reasoning models, and inspect architectural graphs anywhere.
-            </p>
-        </div>
-
-        <div class="w-full flex items-center justify-center px-4 overflow-x-auto pb-4">
-            <div id="skiperCardsWrapper" class="flex items-center justify-center gap-2.5 sm:gap-3.5 max-w-6xl w-full">
-                
-                <!-- Card 1: Spatial Canvas -->
-                <div class="expand-card active group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="0">
-                    <img src="/img1.jpeg" alt="Spatial Canvas" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
-
-                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-0 group-[.active]:opacity-0 group-[.active]:translate-y-4">
-                        <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
-                        <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">SPATIAL CANVAS</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
-                    </div>
-
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-100 translate-y-0 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-[#00e599] font-bold uppercase tracking-wider mb-1">SPATIAL BRAIN</span>
-                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Infinite 2D Canvas</h3>
-                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Interactive thought clusters with frictionless zoom and hardware-accelerated mind palace rendering.</p>
-                    </div>
-                </div>
-
-                <!-- Card 2: AI Copilot & Reasoning -->
-                <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-[#facc15]/40 shadow-2xl transition-all" data-index="1">
-                    <img src="/img2.jpeg" alt="AI Copilot" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
-
-                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
-                        <span class="w-2 h-2 rounded-full bg-[#facc15] shadow-[0_0_10px_#facc15]"></span>
-                        <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">DEEPSEEK R1</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
-                    </div>
-
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-[#facc15] font-bold uppercase tracking-wider mb-1">INTELLIGENCE</span>
-                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">DeepSeek R1 Copilot</h3>
-                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Prompt-driven synthesis to organize thoughts, uncover latent connections, and expand concepts automatically.</p>
-                    </div>
-                </div>
-
-                <!-- Card 3: Neural Workspaces -->
-                <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-blue-400/40 shadow-2xl transition-all" data-index="2">
-                    <img src="/img3.jpeg" alt="Workspaces" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
-
-                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
-                        <span class="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_10px_#60a5fa]"></span>
-                        <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">WORKSPACES</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
-                    </div>
-
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-wider mb-1">DOMAIN ISOLATION</span>
-                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Memory Workspaces</h3>
-                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Isolate repositories and personal thoughts into distinct spatial domains with discrete context boundaries.</p>
-                    </div>
-                </div>
-
-                <!-- Card 4: Neon DB & Sync Settings -->
-                <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-purple-400/40 shadow-2xl transition-all" data-index="3">
-                    <img src="/img4.jpeg" alt="Neon Cloud Sync" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
-
-                    <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
-                        <span class="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_10px_#c084fc]"></span>
-                        <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">CLOUD SYNC</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
-                    </div>
-
-                    <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider mb-1">SELF-SOVEREIGN</span>
-                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Neon Database Sync</h3>
-                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Your data stays in your personal PostgreSQL database. Direct HTTPS sync without vendor lock-in.</p>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="text-center mt-8">
-            <a href="/download" class="inline-flex items-center gap-2 bg-[#00e599] text-black font-semibold text-xs sm:text-sm px-6 py-3 rounded-xl hover:bg-[#00c985] transition-all shadow-[0_0_20px_rgba(0,229,153,0.3)] no-underline">
-                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993s-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9994.4482.9994.9993s-.4483.9997-.9994.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.4114 13.8533 8.083 12 8.083s-3.5902.3284-5.1368.8667L4.8409 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396"/></svg>
-                Download Companion App
-            </a>
-        </div>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {{
-                const cards = document.querySelectorAll('#skiperCardsWrapper .expand-card');
-                cards.forEach((card) => {{
-                    const activate = () => {{
-                        cards.forEach(c => {{
-                            c.classList.remove('active');
-                            const label = c.querySelector('.card-collapsed-label');
-                            const content = c.querySelector('.card-expanded-content');
-                            if (label) {{
-                                label.classList.remove('opacity-0', 'translate-y-4');
-                                label.classList.add('opacity-100');
-                            }}
-                            if (content) {{
-                                content.classList.remove('opacity-100', 'translate-y-0');
-                                content.classList.add('opacity-0', 'translate-y-4');
-                            }}
-                        }});
-
-                        card.classList.add('active');
-                        const activeLabel = card.querySelector('.card-collapsed-label');
-                        const activeContent = card.querySelector('.card-expanded-content');
-                        if (activeLabel) {{
-                            activeLabel.classList.remove('opacity-100');
-                            activeLabel.classList.add('opacity-0', 'translate-y-4');
-                        }}
-                        if (activeContent) {{
-                            activeContent.classList.remove('opacity-0', 'translate-y-4');
-                            activeContent.classList.add('opacity-100', 'translate-y-0');
-                        }}
-                    }};
-
-                    card.addEventListener('mouseenter', activate);
-                    card.addEventListener('click', activate);
-                }});
-            }});
-        </script>
-    </section>
-
-    <!-- 3. INSTANT CONTEXT PIPELINE ANIMATION -->
-    <section id="pipeline" class="bg-[#000000] text-white border-b border-neutral-800 relative z-10">
-        <div id="pipelineScrollWrapper" class="relative" style="height: 300vh;">
-          <div id="pipelineSticky" class="sticky top-0 flex flex-col items-center justify-center" style="height: 100vh; overflow: hidden;">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 w-full">
-
-              <div class="mb-3 sm:mb-5 flex-shrink-0">
-                  <p class="mono text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-1.5 flex items-center gap-2">
-                      <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
-                      Universal Context Bus
-                  </p>
-                  <h2 class="text-white text-xl sm:text-3xl font-bold tracking-tight">
-                      Instant Cross-Model Context Pipeline
-                  </h2>
-              </div>
-
-              <div id="pipelineContainer" class="diagram-scaler-wrapper rounded-2xl border border-white/[0.08] shadow-2xl p-2 sm:p-4 bg-[#000000] overflow-hidden relative select-none flex-shrink-0">
-                <div id="pipelineViewport" class="diagram-container">
-                <div class="vertical-grid">
-                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
-                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
-                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
-                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
-                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
-                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
-                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
-                </div>
-
-                <svg class="canvas" viewBox="0 0 1000 524">
-                  <defs>
-                    <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                      <path d="M 1 2 L 7 5 L 1 8" fill="none" stroke="#00e599" stroke-width="1.5" stroke-linecap="round"/>
-                    </marker>
-                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                      <feGaussianBlur stdDeviation="3.5" result="blur" />
-                      <feMerge>
-                        <feMergeNode in="blur" />
-                        <feMergeNode in="SourceGraphic" />
-                      </feMerge>
-                    </filter>
-                  </defs>
-
-                  <path id="path-main" d="M 74 262 L 950 262" class="line-green" />
-                  <path id="path-sync-arrow" d="M 132 262 L 188 262" class="line-green" marker-end="url(#arrow-green)" />
-
-                  <g id="ticks">
-                    <line x1="292" y1="256" x2="292" y2="268" class="ruler-tick" />
-                    <line x1="316" y1="258" x2="316" y2="266" class="ruler-tick" />
-                    <line x1="340" y1="256" x2="340" y2="268" class="ruler-tick" />
-                    <line x1="364" y1="258" x2="364" y2="266" class="ruler-tick" />
-                    <line x1="388" y1="256" x2="388" y2="268" class="ruler-tick" />
-                    <line id="tick-19" x1="410" y1="244" x2="410" y2="268" class="ruler-tick tick-active" style="opacity: 0;" />
-                    <line x1="434" y1="258" x2="434" y2="266" class="ruler-tick" />
-                    <line x1="458" y1="256" x2="458" y2="268" class="ruler-tick" />
-                    <line x1="482" y1="258" x2="482" y2="266" class="ruler-tick" />
-                    <line x1="506" y1="256" x2="506" y2="268" class="ruler-tick" />
-                    <line x1="530" y1="258" x2="530" y2="266" class="ruler-tick" />
-                    <line x1="554" y1="256" x2="554" y2="268" class="ruler-tick" />
-                    <line x1="578" y1="258" x2="578" y2="266" class="ruler-tick" />
-                    <line x1="602" y1="256" x2="602" y2="268" class="ruler-tick" />
-                    <line x1="626" y1="258" x2="626" y2="266" class="ruler-tick" />
-                    <line x1="650" y1="256" x2="650" y2="268" class="ruler-tick" />
-                    <line x1="674" y1="258" x2="674" y2="266" class="ruler-tick" />
-                    <line x1="698" y1="256" x2="698" y2="268" class="ruler-tick" />
-                    <line x1="722" y1="258" x2="722" y2="266" class="ruler-tick" />
-                    <line id="tick-20" x1="743" y1="248" x2="743" y2="276" class="ruler-tick tick-active" style="opacity: 0;" />
-                    <line x1="766" y1="258" x2="766" y2="266" class="ruler-tick" />
-                    <line x1="790" y1="256" x2="790" y2="268" class="ruler-tick" />
-                    <line x1="814" y1="258" x2="814" y2="266" class="ruler-tick" />
-                    <line x1="838" y1="256" x2="838" y2="268" class="ruler-tick" />
-                    <line x1="862" y1="258" x2="862" y2="266" class="ruler-tick" />
-                  </g>
-
-                  <path id="path-db-up" d="M 226 262 V 182" class="line-green-dash" />
-                  <path id="path-req-data" d="M 226 162 V 138 Q 226 118 248 118 H 268" class="line-white-dash" />
-                  <path id="path-data-to-mcp" d="M 390 118 H 410 Q 426 118 426 140 V 158 Q 426 172 444 172 H 455" class="line-white-dash" />
-
-                  <path id="path-neg-1" d="M 450 85 V 157" class="line-green-dash" />
-                  <path id="path-neg-2" d="M 591 85 V 157" class="line-green-dash" />
-
-                  <path id="path-mcp-to-tools" d="M 584 172 H 598 Q 614 172 614 150 V 138 Q 614 118 632 118 H 648" class="line-white-dash" />
-                  <path id="path-tools-to-apps" d="M 776 118 H 806 Q 828 118 828 138 V 162" class="line-white-dash" />
-                  <path id="path-apps-down" d="M 828 182 V 262" class="line-green-dash" />
-
-                  <path id="path-protocol" d="M 520 188 V 328" class="line-white-dash" />
-                  <path id="path-granted" d="M 572 188 V 276 Q 572 298 598 298 H 618" class="line-white-solid" />
-
-                  <path id="path-ai-to-note" d="M 918 278 V 356 Q 918 380 892 380 H 885" class="line-green-dash" />
-                  <path id="path-note-to-proc" d="M 775 380 H 760 Q 747 380 747 408 V 418 Q 747 440 726 440 H 635" class="line-white-solid" />
-                  <path id="path-lower-flow" d="M 615 440 L 280 440" class="line-green-dash" marker-end="url(#arrow-green)" />
-                  <path id="path-ret-db" d="M 248 440 H 236 Q 236 400 236 360" class="line-green-dash" marker-end="url(#arrow-green)" />
-                  <path id="path-ret-sync" d="M 248 440 H 76 V 340" class="line-green-dash" marker-end="url(#arrow-green)" />
-
-                  <circle id="head-dot" class="glow-dot" r="3.5" cx="0" cy="0" />
-                </svg>
-
-                <div id="el-neg1-txt" class="meta-text" style="top: 10.3%; left: 45%;">negotiation<br>started</div>
-                <div id="el-neg1-ico" class="circle-icon check-node" style="top: 21.2%; left: 45%;">✓</div>
-
-                <div id="el-neg2-txt" class="meta-text" style="top: 10.3%; left: 59.1%;">negotiation<br>complete</div>
-                <div id="el-neg2-ico" class="circle-icon check-node" style="top: 21.2%; left: 59.1%;">✓</div>
-
-                <div id="el-db-ico" class="circle-icon outline-node" style="top: 32.8%; left: 22.6%;">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-                </div>
-                <div id="el-req-data" class="badge badge-dark" style="top: 22.5%; left: 32.7%;">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
-                  pull context
-                </div>
-
-                <div id="el-mcp" class="badge badge-yellow" style="top: 32.8%; left: 52%;">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                  exom MCP core
-                </div>
-
-                <div id="el-req-tools" class="badge badge-dark" style="top: 22.5%; left: 71.3%;">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg>
-                  serve memory tools
-                </div>
-
-                <div id="el-bot-ico" class="circle-icon outline-node" style="top: 32.8%; left: 82.8%;">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
-                </div>
-                <div id="el-hollow-top" class="circle-icon hollow-node" style="top: 43.5%; left: 82.8%;"></div>
-
-                <div id="el-notes" class="badge badge-white" style="top: 50%; left: 7.4%;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
-                  exom Brain
-                </div>
-                <div id="el-notes-sub" class="meta-text" style="top: 55%; left: 7.4%;">Universal Memory<br>Repository</div>
-                <div id="el-sync-txt" class="meta-text" style="top: 52%; left: 15.6%; font-size: 10px;">sync</div>
-
-                <div id="el-neondb" class="badge badge-white" style="top: 50%; left: 24%;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-                  neon postgres
-                </div>
-                <div id="el-neondb-sub" class="meta-text" style="top: 55%; left: 24%;">User-Owned DB</div>
-                <div id="el-neondb-time" class="meta-text timestamp" style="top: 60.7%; left: 24%;">18:24:00</div>
-
-                <div id="el-time-mid" class="meta-text timestamp" style="top: 42.7%; left: 41%;">19:08:12</div>
-
-                <div id="el-grant-ico" class="circle-icon check-node" style="top: 56.8%; left: 62.5%;">✓</div>
-                <div id="el-grant-txt" class="meta-text" style="top: 61%; left: 62.5%;">context access<br>granted</div>
-
-                <div id="el-time-right" class="meta-text timestamp" style="top: 56.8%; left: 74.3%;">20:32:04</div>
-
-                <div id="el-ai-apps" class="badge badge-white" style="top: 50%; left: 91.8%;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg>
-                  all AI apps
-                </div>
-                <div id="el-ai-apps-sub" class="meta-text" style="top: 55%; left: 91.8%;">Claude, Cursor, Agents</div>
-
-                <div id="el-proto-ico" class="circle-icon outline-node" style="top: 64.5%; left: 52%;">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                </div>
-                <div id="el-proto-txt" class="meta-text" style="top: 69.6%; left: 52%;">protocol<br>negotiation</div>
-                <div id="el-hollow-bot" class="circle-icon hollow-node" style="top: 63.7%; left: 91.8%;"></div>
-
-                <div id="el-write" class="badge badge-dark" style="top: 72.5%; left: 83%;">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                  record memory
-                </div>
-
-                <div id="el-proc-ico" class="circle-icon check-node" style="top: 84%; left: 62.5%;">✓</div>
-                <div id="el-proc-txt" class="meta-text" style="top: 88.2%; left: 62.5%;">context indexed<br>by exom</div>
-
-                <div id="el-saved-ico" class="circle-icon check-node" style="top: 84%; left: 26.5%;">✓</div>
-                <div id="el-saved-txt" class="meta-text" style="top: 88.2%; left: 26.5%;">synced to<br>neon brain</div>
-
-                <div id="el-sync-ico" class="circle-icon check-node" style="top: 84%; left: 7.6%;">✓</div>
-                <div id="el-sync-bot-txt" class="meta-text" style="top: 88.2%; left: 7.6%;">real-time sync<br>(cross-device)</div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        <script>
-              document.addEventListener('DOMContentLoaded', () => {{
-                const allPaths = document.querySelectorAll('#pipelineViewport svg.canvas path:not(defs path)');
-                const dot = document.getElementById('head-dot');
-                const pipelineWrapper = document.getElementById('pipelineScrollWrapper');
-                const ticks = document.querySelectorAll('#pipelineViewport #ticks line:not(.tick-active)');
-                if (!allPaths.length || !pipelineWrapper) return;
-
-                const pathLengths = {{}};
-                allPaths.forEach(path => {{
-                  const len = path.getTotalLength();
-                  pathLengths[path.id] = len;
-                  path.style.strokeDasharray = `${{len}} ${{len}}`;
-                  path.style.strokeDashoffset = len;
-                  path.style.transition = 'none';
-                }});
-
-                function setPathProgress(id, startP, endP, currentP) {{
-                  const p = document.getElementById(id);
-                  if (!p) return;
-                  const len = pathLengths[id];
-                  if (currentP < startP) {{
-                    p.style.strokeDashoffset = len;
-                  }} else if (currentP > endP) {{
-                    p.style.strokeDashoffset = 0;
-                  }} else {{
-                    const localProg = (currentP - startP) / (endP - startP);
-                    p.style.strokeDashoffset = len * (1 - localProg);
-                  }}
-                }}
-
-                function setElementVisibility(id, triggerProg, currentP) {{
-                  const el = document.getElementById(id);
-                  if (!el) return;
-                  el.classList.toggle('visible', currentP >= triggerProg);
-                }}
-
-                function updateScrollPipeline() {{
-                  const rect = pipelineWrapper.getBoundingClientRect();
-                  const scrollableDistance = rect.height - window.innerHeight;
-                  const progress = scrollableDistance > 0
-                    ? Math.min(Math.max(-rect.top / scrollableDistance, 0), 1)
-                    : 0;
-
-                  setElementVisibility('el-notes', 0.05, progress);
-                  setElementVisibility('el-notes-sub', 0.07, progress);
-                  setPathProgress('path-sync-arrow', 0.08, 0.12, progress);
-                  setElementVisibility('el-sync-txt', 0.12, progress);
-
-                  setPathProgress('path-main', 0.10, 0.55, progress);
-                  
-                  const pMain = document.getElementById('path-main');
-                  if (progress >= 0.10 && progress <= 0.55 && pMain && dot) {{
-                    dot.classList.add('active');
-                    const localProg = (progress - 0.10) / (0.55 - 0.10);
-                    const pt = pMain.getPointAtLength(localProg * pathLengths['path-main']);
-                    dot.setAttribute('cx', pt.x);
-                    dot.setAttribute('cy', pt.y);
-                  }} else if (dot) {{
-                    dot.classList.remove('active');
-                  }}
-
-                  ticks.forEach((tick, i) => {{
-                    const tickProg = 0.15 + (i / ticks.length) * 0.35;
-                    tick.classList.toggle('lit', progress >= tickProg);
-                  }});
-
-                  setElementVisibility('el-neondb', 0.18, progress);
-                  setElementVisibility('el-neondb-sub', 0.20, progress);
-                  setElementVisibility('el-neondb-time', 0.22, progress);
-
-                  setPathProgress('path-db-up', 0.22, 0.26, progress);
-                  setElementVisibility('el-db-ico', 0.26, progress);
-                  setPathProgress('path-req-data', 0.26, 0.32, progress);
-                  setElementVisibility('el-req-data', 0.32, progress);
-
-                  setPathProgress('path-data-to-mcp', 0.32, 0.38, progress);
-                  const t19 = document.getElementById('tick-19');
-                  if (t19) t19.style.opacity = progress >= 0.36 ? '1' : '0';
-                  setElementVisibility('el-time-mid', 0.37, progress);
-                  setElementVisibility('el-mcp', 0.39, progress);
-
-                  setPathProgress('path-neg-1', 0.39, 0.44, progress);
-                  setElementVisibility('el-neg1-ico', 0.44, progress);
-                  setElementVisibility('el-neg1-txt', 0.44, progress);
-
-                  setPathProgress('path-protocol', 0.42, 0.48, progress);
-                  setElementVisibility('el-proto-ico', 0.48, progress);
-                  setElementVisibility('el-proto-txt', 0.48, progress);
-
-                  setPathProgress('path-neg-2', 0.45, 0.50, progress);
-                  setElementVisibility('el-neg2-ico', 0.50, progress);
-                  setElementVisibility('el-neg2-txt', 0.50, progress);
-
-                  setPathProgress('path-granted', 0.48, 0.54, progress);
-                  setElementVisibility('el-grant-ico', 0.54, progress);
-                  setElementVisibility('el-grant-txt', 0.54, progress);
-
-                  setPathProgress('path-mcp-to-tools', 0.48, 0.54, progress);
-                  setElementVisibility('el-req-tools', 0.54, progress);
-                  setPathProgress('path-tools-to-apps', 0.54, 0.60, progress);
-                  setElementVisibility('el-bot-ico', 0.60, progress);
-
-                  setPathProgress('path-apps-down', 0.60, 0.65, progress);
-                  setElementVisibility('el-hollow-top', 0.65, progress);
-                  const t20 = document.getElementById('tick-20');
-                  if (t20) t20.style.opacity = progress >= 0.64 ? '1' : '0';
-                  setElementVisibility('el-time-right', 0.65, progress);
-                  setElementVisibility('el-ai-apps', 0.67, progress);
-                  setElementVisibility('el-ai-apps-sub', 0.69, progress);
-
-                  setPathProgress('path-ai-to-note', 0.68, 0.74, progress);
-                  setElementVisibility('el-hollow-bot', 0.72, progress);
-                  setElementVisibility('el-write', 0.74, progress);
-
-                  setPathProgress('path-note-to-proc', 0.74, 0.80, progress);
-                  setElementVisibility('el-proc-ico', 0.80, progress);
-                  setElementVisibility('el-proc-txt', 0.80, progress);
-
-                  setPathProgress('path-lower-flow', 0.80, 0.90, progress);
-
-                  setPathProgress('path-ret-db', 0.90, 0.94, progress);
-                  setElementVisibility('el-saved-ico', 0.94, progress);
-                  setElementVisibility('el-saved-txt', 0.94, progress);
-
-                  setPathProgress('path-ret-sync', 0.92, 0.98, progress);
-                  setElementVisibility('el-sync-ico', 0.98, progress);
-                  setElementVisibility('el-sync-bot-txt', 0.98, progress);
-                }}
-
-                if (window.lenis) {{
-                  window.lenis.on('scroll', updateScrollPipeline);
-                }}
-                window.addEventListener('scroll', updateScrollPipeline, {{ passive: true }});
-                window.addEventListener('resize', updateScrollPipeline);
-                updateScrollPipeline();
-              }});
-        </script>
-    </div>
-</section>
-
-    <!-- 4. CORE CAPABILITIES (Second Brain Focus) -->
-    <div class="showcase-container">
-      <div class="sticky-nav-wrapper">
-        <nav class="sticky-sidebar" id="sidebar">
-          <button class="menu-badge-btn" aria-hidden="true" tabindex="-1">CORE CAPABILITIES</button>
-          <ul class="nav-list">
-            <li><a class="nav-btn active" data-target="trigram-search"><span class="nav-dot"></span>Zero-Latency Recall</a></li>
-            <li><a class="nav-btn" data-target="ai-memory-sync"><span class="nav-dot"></span>Autonomous Memory Sync</a></li>
-            <li><a class="nav-btn" data-target="zen-canvas"><span class="nav-dot"></span>Spatial Mind Palace</a></li>
-            <li><a class="nav-btn" data-target="non-linear"><span class="nav-dot"></span>Cross-Model Knowledge Graphs</a></li>
-            <li><a class="nav-btn" data-target="open-protocol"><span class="nav-dot"></span>Open Protocol Standards</a></li>
-          </ul>
-        </nav>
-      </div>
-
-      <section id="trigram-search" class="feature-section section-dark" data-theme="dark">
-        <div class="section-inner">
-          <div class="section-content">
-            <span class="mobile-feature-badge">01 • Fuzzy Trigram Search</span>
-            <h2 class="hero-heading">Zero-Latency Recall. Retrieve decisions made across any AI.</h2>
-            <p class="lead-text">exom uses PostgreSQL trigram matching (<code>pg_trgm</code>) to instantly recall prompts, architecture decisions, and code changes across all your past sessions in milliseconds.</p>
-            <ul class="checklist">
-              <li><span class="check-icon">✓</span> Typo-tolerant substring &amp; fuzzy similarity scoring</li>
-              <li><span class="check-icon">✓</span> Automatic fallback to ILIKE if extensions are missing</li>
-              <li><span class="check-icon">✓</span> Sub-4ms lookup times across 100,000+ thought vectors</li>
-            </ul>
-
-            <div class="terminal-box">
-              <div class="terminal-topbar">
-                <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
-                <span class="terminal-title">PostgreSQL Memory Lookup</span>
-              </div>
-              <div class="terminal-code">
-<span class="hl-key">SELECT</span> id, title, similarity(title, $1) <span class="hl-key">AS</span> score <br>
-<span class="hl-key">FROM</span> project_nodes <br>
-<span class="hl-key">WHERE</span> title % $1 <span class="hl-key">OR</span> summary <span class="hl-key">ILIKE</span> <span class="hl-str">'%'</span>||$1||<span class="hl-str">'%'</span> <br>
-<span class="hl-key">ORDER BY</span> score <span class="hl-key">DESC LIMIT</span> 10;<br><br>
-<span class="hl-green">⚡ Context Resolved: 2.8ms | Passed to Claude System Prompt</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="ai-memory-sync" class="feature-section section-light" data-theme="light">
-        <div class="section-inner">
-          <div class="section-content">
-            <span class="mobile-feature-badge">02 • Autonomous Sync</span>
-            <h2 class="hero-heading">Autonomous Memory Sync. Continuous context without human copy-pasting.</h2>
-            <p class="lead-text">Whenever Claude or Cursor designs a module or writes a change, exom logs the rationale, impact, and dependencies into your second brain chain automatically.</p>
-            <ul class="checklist">
-              <li><span class="check-icon">✓</span> Chronological sequence chaining (Step 1 -> Step 2 -> Step 3)</li>
-              <li><span class="check-icon">✓</span> Plain-English rationale &amp; downstream impact analysis</li>
-              <li><span class="check-icon">✓</span> Instant synchronization down to mobile and Windows desktop</li>
-            </ul>
-
-            <div class="terminal-box">
-              <div class="terminal-topbar">
-                <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
-                <span class="terminal-title">MCP Memory Tool Invocation</span>
-              </div>
-              <div class="terminal-code">
-<span class="hl-dim">&gt; log_sequential_codebase_change( title="Auth Gateway", impact="No auth required on /api" )</span><br>
-{{<br>
-&nbsp;&nbsp;<span class="hl-key">"status"</span>: <span class="hl-str">"success"</span>,<br>
-&nbsp;&nbsp;<span class="hl-key">"step_number"</span>: 14,<br>
-&nbsp;&nbsp;<span class="hl-key">"message"</span>: <span class="hl-str">"Permanently committed to user second brain"</span><br>
-}}<br><br>
-<span class="hl-green">✓ Second brain updated • Available to all future AI chats</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="zen-canvas" class="feature-section section-dark" data-theme="dark">
-        <div class="section-inner">
-          <div class="section-content">
-            <span class="mobile-feature-badge">03 • Spatial Mind Palace</span>
-            <h2 class="hero-heading">Spatial Mind Palace. Visualize knowledge in 2D space.</h2>
-            <p class="lead-text">Move beyond linear chat threads. Inspect your thoughts, notes, and architectural modifications on an interactive canvas with intuitive pan, zoom, and clustering.</p>
-            <ul class="checklist">
-              <li><span class="check-icon">✓</span> Hardware-accelerated 2D infinite canvas</li>
-              <li><span class="check-icon">✓</span> Hub-and-Spoke concept groupings</li>
-              <li><span class="check-icon">✓</span> Double-click inspection of rationale and project impact</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section id="non-linear" class="feature-section section-light" data-theme="light">
-        <div class="section-inner">
-          <div class="section-content">
-            <span class="mobile-feature-badge">04 • Knowledge Graph</span>
-            <h2 class="hero-heading">Cross-Model Knowledge Graphs. Semantic links across conversations.</h2>
-            <p class="lead-text">Link disparate concepts together. Whether an architectural pattern was discussed in Cursor or a business strategy in Claude, exom bridges them into a unified web.</p>
-            <ul class="checklist">
-              <li><span class="check-icon">✓</span> Semantic relationship linking (references, builds_upon, refutes)</li>
-              <li><span class="check-icon">✓</span> Ripple effect analysis for upstream and downstream decisions</li>
-              <li><span class="check-icon">✓</span> DeepSeek-R1 copilot suggested connections</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section id="open-protocol" class="feature-section section-dark" data-theme="dark">
-        <div class="section-inner">
-          <div class="section-content">
-            <span class="mobile-feature-badge">05 • Open Standards</span>
-            <h2 class="hero-heading">Open Protocol Standards. Zero lock-in, user-owned storage.</h2>
-            <p class="lead-text">Built strictly on Anthropic's Model Context Protocol (MCP) and Starlette ASGI. Your memory resides in your own serverless Neon PostgreSQL instance.</p>
-            <ul class="checklist">
-              <li><span class="check-icon">✓</span> FastMCP server runtime with SSE and HTTP streaming</li>
-              <li><span class="check-icon">✓</span> End-to-end credential encryption with Fernet</li>
-              <li><span class="check-icon">✓</span> Exportable PostgreSQL schema anytime</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <!-- Footer -->
-    <footer class="neon-footer">
-      <div class="footer-container">
-        <div class="footer-top">
-          <div class="footer-brand">
-            <a href="/" class="footer-logo">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M2 17L12 22L22 17" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M2 12L12 17L22 12" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              <span>exom</span>
-            </a>
-            <p class="footer-tagline">The unified second brain across all AI. Connect your context once; access, synthesize, and expand knowledge seamlessly across models.</p>
-            <a href="#" class="status-badge">
-              <span class="status-dot"></span>
-              MCP Gateway Online
-            </a>
-          </div>
-
-          <div class="footer-col">
-            <h4>Product</h4>
-            <ul>
-              <li><a href="#trigram-search">Instant Recall</a></li>
-              <li><a href="#ai-memory-sync">Autonomous Sync</a></li>
-              <li><a href="/download">Download Companion App</a></li>
-              <li><a href="/console">Developer Console</a></li>
-            </ul>
-          </div>
-
-          <div class="footer-col">
-            <h4>Integrations</h4>
-            <ul>
-              <li><a href="#">Claude Desktop</a></li>
-              <li><a href="#">Cursor IDE</a></li>
-              <li><a href="#">DeepSeek R1 Copilot</a></li>
-              <li><a href="#">Model Context Protocol (MCP)</a></li>
-            </ul>
-          </div>
-
-          <div class="footer-col">
-            <h4>Developers</h4>
-            <ul>
-              <li><a href="#">FastMCP Starlette ASGI</a></li>
-              <li><a href="#">SSE Stream Handshakes</a></li>
-              <li><a href="#">Neon Serverless SQL</a></li>
-              <li><a href="#">GitHub Repository</a></li>
-            </ul>
-          </div>
-
-          <div class="footer-col">
-            <h4>Platform</h4>
-            <ul>
-              <li><a href="#">About exom</a></li>
-              <li><a href="#">Changelog</a></li>
-              <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">Multi-Tenant Security</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="footer-bottom">
-          <div>&copy; 2026 exom. All systems operational.</div>
-          <div class="footer-bottom-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Security</a>
-          </div>
-        </div>
-      </div>
-    </footer>
-
-    <!-- Fixed Core Capabilities Scroll-Spy Script -->
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {{
-        const navButtons = document.querySelectorAll('.nav-btn');
-        const sections = document.querySelectorAll('.feature-section');
-        const sidebar = document.getElementById('sidebar');
-
-        function syncActiveNav() {{
-          if (!sections.length || !navButtons.length) return;
-          if (window.innerWidth <= 900) return;
-
-          const scrollY = window.scrollY || window.pageYOffset;
-          const viewportMiddle = scrollY + (window.innerHeight * 0.4);
-
-          let currentSection = sections[0];
-          sections.forEach((section) => {{
-            const top = section.offsetTop;
-            const height = section.offsetHeight;
-            if (viewportMiddle >= top && viewportMiddle < top + height) {{
-              currentSection = section;
-            }}
-          }});
-
-          navButtons.forEach((btn) => {{
-            btn.classList.toggle('active', btn.dataset.target === currentSection.id);
-          }});
-
-          const theme = currentSection.getAttribute('data-theme');
-          if (sidebar) {{
-            if (theme === 'light') {{
-              sidebar.classList.add('theme-light');
-            }} else {{
-              sidebar.classList.remove('theme-light');
-            }}
-          }}
-        }}
-
-        if (window.lenis) {{
-          window.lenis.on('scroll', syncActiveNav);
-        }}
-        window.addEventListener('scroll', syncActiveNav, {{ passive: true }});
-        window.addEventListener('resize', syncActiveNav);
-        syncActiveNav();
-
-        navButtons.forEach((btn) => {{
-          btn.addEventListener('click', (e) => {{
-            e.preventDefault();
-            const targetId = btn.dataset.target;
-            const target = document.getElementById(targetId);
-            if (target) {{
-              navButtons.forEach((b) => b.classList.remove('active'));
-              btn.classList.add('active');
-
-              if (window.lenis) {{
-                window.lenis.scrollTo(target, {{ offset: 0, duration: 1.2 }});
-              }} else {{
-                target.scrollIntoView({{ behavior: 'smooth' }});
-              }}
-            }}
-          }});
-        }});
-      }});
-    </script>
 </main>
 """
     return _page("Home", body)
 
 
 # ---------------------------------------------------------------------------
-# Signup & Login
+# Signup & Login Handlers
 # ---------------------------------------------------------------------------
 async def signup_get(request: Request):
     next_ = _safe_next(request.query_params.get("next"))
-    if _require_login(request):
-        return RedirectResponse(next_, status_code=302)
-    
+    if _require_login(request):[cite: 10]
+        return RedirectResponse(next_, status_code=302)[cite: 10]
     body = f"""
 {_navbar(request)}
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
@@ -1728,12 +516,11 @@ async def signup_get(request: Request):
                 <input type="email" name="email" placeholder="name@example.com" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm focus:outline-none focus:border-primary">
             </div>
             <div class="mb-6">
-                <label class="block text-xs font-semibold text-on-surface mb-1">Password (min 8 characters)</label>
+                <label class="block text-xs font-semibold text-on-surface mb-1">Password</label>
                 <input type="password" name="password" placeholder="••••••••" minlength="8" required class="w-full px-4 py-2 border border-border-muted rounded text-sm focus:outline-none focus:border-primary">
             </div>
-            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all">Sign Up</button>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border border-[#050505]">Sign Up</button>
         </form>
-        <p class="text-xs text-text-secondary text-center mt-6">Already have an account? <a href="/login?next={next_}" class="text-primary font-semibold hover:underline">Log in</a></p>
     </div>
 </main>
 """
@@ -1746,61 +533,23 @@ async def signup_post(request: Request):
     password = str(form.get("password", ""))
     next_ = _safe_next(str(form.get("next", "")))
 
-    error = None
-    if "@" not in email:
-        error = "Enter a valid email address."
-    elif len(password) < 8:
-        error = "Password must be at least 8 characters."
+    if "@" not in email or len(password) < 8:
+        return RedirectResponse(f"/signup?next={next_}", status_code=302)
 
-    if error:
-        body = f"""
-{_navbar(request)}
-<main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
-    <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
-        <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
-        <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">{error}</div>
-        <form method="POST" action="/signup">
-            <input type="hidden" name="next" value="{next_}">
-            <div class="mb-4">
-                <label class="block text-xs font-semibold text-on-surface mb-1">Email Address</label>
-                <input type="email" name="email" value="{email}" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm">
-            </div>
-            <div class="mb-6">
-                <label class="block text-xs font-semibold text-on-surface mb-1">Password</label>
-                <input type="password" name="password" minlength="8" required class="w-full px-4 py-2 border border-border-muted rounded text-sm">
-            </div>
-            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-xs font-semibold border border-[#050505]">Sign Up</button>
-        </form>
-    </div>
-</main>
-"""
-        return _page("Sign up", body)
-
-    pool = db_control.get_control_pool()
+    pool = db_control.get_control_pool()[cite: 2]
     try:
-        user_id = await db_control.create_user(pool, email, security.hash_password(password))
+        user_id = await db_control.create_user(pool, email, security.hash_password(password))[cite: 2, 5]
     except asyncpg.exceptions.UniqueViolationError:
-        body = f"""
-{_navbar(request)}
-<main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
-    <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
-        <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
-        <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">An account with that email already exists.</div>
-        <p class="text-xs"><a href="/login?next={next_}" class="text-primary font-semibold underline">Log in instead</a></p>
-    </div>
-</main>
-"""
-        return _page("Sign up", body)
+        return RedirectResponse(f"/login?next={next_}", status_code=302)
 
-    request.session["user_id"] = user_id
-    return RedirectResponse("/console", status_code=302)
+    request.session["user_id"] = user_id[cite: 10]
+    return RedirectResponse(next_, status_code=302)
 
 
 async def login_get(request: Request):
     next_ = _safe_next(request.query_params.get("next"))
-    if _require_login(request):
-        return RedirectResponse(next_, status_code=302)
-    
+    if _require_login(request):[cite: 10]
+        return RedirectResponse(next_, status_code=302)[cite: 10]
     body = f"""
 {_navbar(request)}
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
@@ -1811,15 +560,14 @@ async def login_get(request: Request):
             <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
                 <label class="block text-xs font-semibold text-on-surface mb-1">Email Address</label>
-                <input type="email" name="email" placeholder="name@example.com" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm focus:outline-none focus:border-primary">
+                <input type="email" name="email" placeholder="name@example.com" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm">
             </div>
             <div class="mb-6">
                 <label class="block text-xs font-semibold text-on-surface mb-1">Password</label>
-                <input type="password" name="password" placeholder="••••••••" required class="w-full px-4 py-2 border border-border-muted rounded text-sm focus:outline-none focus:border-primary">
+                <input type="password" name="password" required class="w-full px-4 py-2 border border-border-muted rounded text-sm">
             </div>
-            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all">Log In</button>
+            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-sm font-semibold border border-[#050505]">Log In</button>
         </form>
-        <p class="text-xs text-text-secondary text-center mt-6">No account yet? <a href="/signup?next={next_}" class="text-primary font-semibold hover:underline">Sign up</a></p>
     </div>
 </main>
 """
@@ -1832,727 +580,73 @@ async def login_post(request: Request):
     password = str(form.get("password", ""))
     next_ = _safe_next(str(form.get("next", "")))
 
-    pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_email(pool, email)
+    pool = db_control.get_control_pool()[cite: 2]
+    user = await db_control.get_user_by_email(pool, email)[cite: 2]
 
-    if user is None or not security.verify_password(password, user["password_hash"]):
-        body = f"""
-{_navbar(request)}
-<main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
-    <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
-        <h2 class="text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
-        <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-4 border border-red-200">Incorrect email or password.</div>
-        <form method="POST" action="/login">
-            <input type="hidden" name="next" value="{next_}">
-            <div class="mb-4">
-                <label class="block text-xs font-semibold text-on-surface mb-1">Email Address</label>
-                <input type="email" name="email" value="{email}" required autofocus class="w-full px-4 py-2 border border-border-muted rounded text-sm">
-            </div>
-            <div class="mb-6">
-                <label class="block text-xs font-semibold text-on-surface mb-1">Password</label>
-                <input type="password" name="password" required class="w-full px-4 py-2 border border-border-muted rounded text-sm">
-            </div>
-            <button type="submit" class="w-full bg-secondary-container text-on-surface py-3 rounded text-xs font-semibold border border-[#050505]">Log In</button>
-        </form>
-    </div>
-</main>
-"""
-        return _page("Log in", body)
+    if user is None or not security.verify_password(password, user["password_hash"]):[cite: 2, 5]
+        return RedirectResponse(f"/login?next={next_}", status_code=302)
 
-    request.session["user_id"] = str(user["id"])
-    return RedirectResponse("/console", status_code=302)
+    request.session["user_id"] = str(user["id"])[cite: 2, 10]
+    return RedirectResponse(next_, status_code=302)
 
 
 async def logout(request: Request):
-    form = await request.form()
-    next_ = str(form.get("next", "")) if form.get("next") else None
-    request.session.clear()
-    if next_ and next_.startswith("/") and not next_.startswith("//"):
-        return RedirectResponse(f"/login?next={next_}", status_code=302)
-    return RedirectResponse("/login", status_code=302)
+    request.session.clear()[cite: 10]
+    return RedirectResponse("/login", status_code=302)[cite: 10]
 
 
 # ---------------------------------------------------------------------------
-# Console Page (Universal Graph Engine)
-# ---------------------------------------------------------------------------
-async def console_page(request: Request):
-    user_id = _require_login(request)
-    if not user_id:
-        return RedirectResponse("/login", status_code=302)
-
-    pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
-    if user is None:
-        request.session.clear()
-        return RedirectResponse("/login", status_code=302)
-
-    user_email = user["email"]
-    display_name = user_email.split("@")[0].capitalize()
-    initial = display_name[0].upper()
-
-    workspaces = []
-    nodes = []
-    edges = []
-    selected_workspace = request.query_params.get("ws", "")
-
-    if user["connection_string_encrypted"]:
-        try:
-            conn_str = security.decrypt_text(user["connection_string_encrypted"])
-            user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
-            
-            ws_rows = await user_pool.fetch("SELECT DISTINCT workspace FROM project_nodes ORDER BY workspace ASC")
-            workspaces = [r["workspace"] for r in ws_rows]
-            
-            if selected_workspace:
-                node_rows = await user_pool.fetch(
-                    """
-                    SELECT id, node_type, sequence_index, title, summary, rationale, impact_analysis, affected_components, status, central_hub_id, created_at
-                    FROM project_nodes
-                    WHERE workspace = $1
-                    ORDER BY sequence_index ASC NULLS LAST, created_at ASC
-                    """,
-                    selected_workspace
-                )
-                nodes = [dict(r) for r in node_rows]
-
-                edge_rows = await user_pool.fetch(
-                    """
-                    SELECT source_node_id, target_node_id, relation_type
-                    FROM project_edges
-                    WHERE workspace = $1
-                    """,
-                    selected_workspace
-                )
-                edges = [dict(r) for r in edge_rows]
-        except Exception:
-            pass
-
-    if workspaces:
-        repo_list_html = "".join(f"""
-            <li class="chat-item {'active' if ws == selected_workspace else ''}" onclick="window.location='/console?ws={ws}'">
-                📁 {ws}
-            </li>
-        """ for ws in workspaces)
-    else:
-        repo_list_html = '<div class="p-3 text-xs text-[#8e8e8e]">No workspaces found. Connect MCP to an AI client to start committing memory.</div>'
-
-    if selected_workspace:
-        if nodes:
-            nodes_html = ""
-            svg_lines_html = ""
-            card_width = 250
-            card_height = 145
-            
-            pos_dict = {}
-            linear_index = 0
-            hub_index = 0
-            
-            for node in nodes:
-                nid = str(node['id'])
-                ntype = node.get('node_type', 'codebase_change')
-                
-                if ntype == 'hub':
-                    x = 100 + (hub_index * 420)
-                    y = 80
-                    hub_index += 1
-                elif ntype == 'concept':
-                    x = 100 + (linear_index * 320)
-                    y = 220
-                    linear_index += 1
-                else:
-                    x = 100 + (linear_index * 320)
-                    y = 400 + (70 if linear_index % 2 == 1 else -40)
-                    linear_index += 1
-
-                pos_dict[nid] = (x, y)
-
-            for edge in edges:
-                s_id = str(edge['source_node_id'])
-                t_id = str(edge['target_node_id'])
-                if s_id in pos_dict and t_id in pos_dict:
-                    sx, sy = pos_dict[s_id]
-                    tx, ty = pos_dict[t_id]
-                    scx, scy = sx + (card_width / 2), sy + (card_height / 2)
-                    tcx, tcy = tx + (card_width / 2), ty + (card_height / 2)
-                    
-                    stroke_color = "#3b82f6" if edge.get('relation_type') == 'belongs_to_hub' else "#00e599"
-                    svg_lines_html += f'<line x1="{scx}" y1="{scy}" x2="{tcx}" y2="{tcy}" stroke="{stroke_color}" stroke-width="2" stroke-dasharray="4 4" />'
-
-            for node in nodes:
-                nid = str(node['id'])
-                x, y = pos_dict[nid]
-                title_esc = node['title'].replace('"', '&quot;')
-                summary_esc = node['summary'].replace('"', '&quot;')
-                why_esc = (node['rationale'] or 'No rationale provided').replace('"', '&quot;')
-                impact_esc = (node['impact_analysis'] or 'None').replace('"', '&quot;')
-                step_idx = node['sequence_index'] or '-'
-                ntype = node.get('node_type', 'codebase_change')
-                
-                layer_badge = ""
-                border_cls = "border-[#d4d4d8]"
-                if ntype == 'hub':
-                    layer_badge = '<span class="bg-amber-100 text-amber-800 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">HUB</span>'
-                    border_cls = "border-amber-400 bg-amber-50/20"
-                elif ntype == 'concept':
-                    layer_badge = '<span class="bg-blue-100 text-blue-800 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">CONCEPT</span>'
-                    border_cls = "border-blue-400 bg-blue-50/20"
-                else:
-                    layer_badge = f'<span class="node-step">Memory #{step_idx}</span>'
-
-                nodes_html += f"""
-                <div class="canvas-node {border_cls}" style="left: {x}px; top: {y}px; width: {card_width}px;" 
-                     ondblclick="openNodeModal('{title_esc}', '{summary_esc}', '{why_esc}', '{impact_esc}')"
-                     onclick="openNodeModal('{title_esc}', '{summary_esc}', '{why_esc}', '{impact_esc}')">
-                    <div class="node-header">
-                        {layer_badge}
-                        <span class="node-status">✓</span>
-                    </div>
-                    <div class="node-title">{node['title']}</div>
-                    <div class="node-snippet">{node['summary'][:90]}...</div>
-                    <div class="node-footer">Double-click / Tap to inspect</div>
-                </div>
-                """
-            
-            canvas_content = f"""
-            <div id="canvasViewport" style="transform-origin: 0 0; position: absolute; top: 0; left: 0;">
-                <svg class="canvas-svg">{svg_lines_html}</svg>
-                {nodes_html}
-            </div>
-            """
-        else:
-            canvas_content = f"""
-            <div class="empty-canvas-state">
-                <div class="empty-icon">⚡</div>
-                <h3>No Context Nodes Found</h3>
-                <p>Connect your AI client to exom to start streaming persistent memory.</p>
-                <code>mcpServers -&gt; exom</code>
-            </div>
-            """
-    else:
-        canvas_content = f"""
-        <div class="empty-canvas-state">
-            <div class="empty-icon">📁</div>
-            <h3>Universal Memory Vault</h3>
-            <p>Select a workspace from the sidebar to inspect its connected architecture graph.</p>
-        </div>
-        """
-
-    return HTMLResponse(f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Console - exom</title>
-<style>
-:root {{
-  --sidebar-bg: #171717;
-  --text-main: #ececec;
-  --text-muted: #8e8e8e;
-  --hover-bg: rgba(255, 255, 255, 0.05);
-  --border-color: rgba(255, 255, 255, 0.08);
-}}
-
-body {{
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  height: 100vh;
-  overflow: hidden;
-}}
-
-.container {{
-  width: 100%;
-  height: 100%;
-  --color: #E1E1E1;
-  background-color: #F3F3F3;
-  background-image: linear-gradient(0deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%, transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%, transparent),
-      linear-gradient(90deg, transparent 24%, var(--color) 25%, var(--color) 26%, transparent 27%, transparent 74%, var(--color) 75%, var(--color) 76%, transparent 77%, transparent);
-  background-size: 55px 55px;
-  display: flex;
-  position: relative;
-}}
-
-#sidebar-toggle {{ display: none; }}
-
-.toggle-btn {{
-  background: black;
-  border: 1px solid var(--border-color);
-  color: var(--text-muted);
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}}
-
-.floating-toggle {{
-  position: fixed;
-  top: 12px;
-  left: 12px;
-  z-index: 50;
-  display: none;
-}}
-
-.sidebar {{
-  width: 260px;
-  background-color: var(--sidebar-bg);
-  border-right: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  box-sizing: border-box;
-  padding: 12px;
-  z-index: 40;
-  transition: transform 0.3s ease, width 0.3s ease;
-}}
-
-#sidebar-toggle:checked ~ .sidebar {{
-  transform: translateX(-100%);
-  width: 0;
-  padding: 0;
-  overflow: hidden;
-}}
-
-@media (max-width: 768px) {{
-  .sidebar {{
-    position: absolute;
-    height: 100%;
-    box-shadow: 10px 0 30px rgba(0,0,0,0.5);
-  }}
-  #sidebar-toggle:checked ~ .sidebar {{
-    transform: translateX(-100%);
-    width: 260px;
-    padding: 12px;
-  }}
-  .floating-toggle {{
-    display: flex !important;
-  }}
-}}
-
-.sidebar-header {{
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding: 4px;
-}}
-
-.sidebar-brand {{ font-size: 14px; font-weight: 600; color: var(--text-main); }}
-.sidebar-section-title {{ font-size: 12px; font-weight: 500; color: var(--text-muted); padding: 8px 12px; }}
-
-.chat-list {{
-  flex: 1;
-  overflow-y: auto;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  -webkit-overflow-scrolling: touch;
-}}
-
-.chat-item {{
-  padding: 10px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  color: var(--text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: background 0.2s ease, color 0.2s;
-}}
-.chat-item:hover, .chat-item.active {{
-  background-color: var(--hover-bg);
-  color: var(--text-main);
-}}
-
-.sidebar-footer {{
-  border-top: 1px solid var(--border-color);
-  padding-top: 12px;
-}}
-
-.user-profile {{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-}}
-
-.user-info {{ display: flex; align-items: center; gap: 10px; font-size: 14px; }}
-.user-name {{ color: white; }}
-.avatar {{
-  width: 24px; height: 24px; background-color: #3b82f6; color: white;
-  border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;
-}}
-.plan-badge {{ font-size: 11px; color: var(--text-muted); }}
-
-.logout-btn {{
-  all: unset; color: #f87171; font-size: 12px; cursor: pointer; padding: 4px 12px; display: block;
-}}
-.logout-btn:hover {{ text-decoration: underline; }}
-
-.main-canvas {{
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  cursor: grab;
-  background: transparent;
-  -webkit-overflow-scrolling: touch;
-}}
-.main-canvas:active {{ cursor: grabbing; }}
-
-.canvas-svg {{
-  position: absolute;
-  top: 0; left: 0;
-  width: 6000px; height: 6000px;
-  pointer-events: none;
-}}
-
-.canvas-node {{
-  position: absolute;
-  background: #ffffff;
-  border: 1px solid;
-  border-radius: 8px;
-  padding: 14px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  user-select: none;
-}}
-.canvas-node:hover {{
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}}
-.node-header {{
-  display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
-}}
-.node-step {{
-  font-size: 10px; font-family: monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: #475569; font-weight: 600;
-}}
-.node-status {{ color: #16a34a; font-size: 12px; }}
-.node-title {{ font-size: 13px; font-weight: 700; color: #09090b; margin-bottom: 4px; }}
-.node-snippet {{ font-size: 11px; color: #71717a; line-height: 1.4; }}
-.node-footer {{
-  margin-top: 10px; padding-top: 6px; border-top: 1px solid #f1f5f9; font-size: 10px; color: #0284c7; text-align: right;
-}}
-
-.canvas-hud {{
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  background: #ffffff;
-  border: 1px solid #e4e4e7;
-  border-radius: 8px;
-  display: flex;
-  gap: 4px;
-  padding: 4px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-  z-index: 30;
-}}
-.hud-btn {{
-  background: none;
-  border: none;
-  font-size: 14px;
-  font-weight: bold;
-  padding: 6px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  color: #3f3f46;
-}}
-.hud-btn:hover {{ background: #f4f4f5; color: #18181b; }}
-
-.empty-canvas-state {{
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  text-align: center; max-width: 380px; background: white; border: 1px solid #e2e2e7; padding: 32px; border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.04);
-}}
-.empty-icon {{ font-size: 32px; margin-bottom: 12px; }}
-.empty-canvas-state h3 {{ font-size: 16px; font-weight: bold; margin: 0 0 8px 0; color: #111; }}
-.empty-canvas-state p {{ font-size: 12px; color: #666; line-height: 1.5; margin: 0 0 16px 0; }}
-.empty-canvas-state code {{ display: block; background: #f4f4f5; padding: 8px; border-radius: 6px; font-family: monospace; font-size: 11px; color: #333; }}
-
-.modal-overlay {{
-  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center;
-}}
-.modal-overlay.active {{ display: flex; }}
-.modal-card {{
-  background: white; width: 500px; max-width: 90%; border-radius: 12px; border: 1px solid #e4e4e7; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); padding: 24px; position: relative;
-}}
-.modal-close {{
-  position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 18px; cursor: pointer; color: #71717a;
-}}
-.modal-title {{ font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #18181b; }}
-.modal-section {{ margin-bottom: 12px; }}
-.modal-label {{ font-size: 11px; font-weight: bold; text-transform: uppercase; color: #71717a; margin-bottom: 4px; }}
-.modal-body {{ font-size: 13px; color: #3f3f46; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; line-height: 1.5; }}
-</style>
-</head>
-<body>
-<div class="container" data-lenis-prevent>
-  <input type="checkbox" id="sidebar-toggle" />
-
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <label for="sidebar-toggle" class="toggle-btn" title="Toggle Sidebar">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="9" y1="3" x2="9" y2="21"></line>
-        </svg>
-      </label>
-      <span class="sidebar-brand">exom Vault</span>
-    </div>
-
-    <div class="sidebar-section-title">Context Workspaces</div>
-    <ul class="chat-list">
-      <li class="chat-item" style="border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:6px; padding-bottom:6px;">
-        <a href="/dashboard" style="color:inherit; text-decoration:none;">⚙️ Database &amp; MCP Settings</a>
-      </li>
-      {repo_list_html}
-    </ul>
-
-    <div class="sidebar-footer">
-      <div class="user-profile">
-        <div class="user-info">
-          <div class="avatar">{initial}</div>
-          <span class="user-name">{display_name}</span>
-        </div>
-        <span class="plan-badge">MCP Bridge Active</span>
-      </div>
-      <form method="POST" action="/logout" style="margin-top:8px;">
-        <button type="submit" class="logout-btn">Log Out</button>
-      </form>
-    </div>
-  </aside>
-
-  <label for="sidebar-toggle" class="toggle-btn floating-toggle" title="Toggle Sidebar">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-      <line x1="9" y1="3" x2="9" y2="21"></line>
-    </svg>
-  </label>
-
-  <main class="main-canvas" id="canvasContainer">
-    {canvas_content}
-    <div class="canvas-hud">
-      <button class="hud-btn" onclick="zoomCanvas(0.1)">+</button>
-      <button class="hud-btn" onclick="resetZoom()">100%</button>
-      <button class="hud-btn" onclick="zoomCanvas(-0.1)">-</button>
-    </div>
-  </main>
-</div>
-
-<!-- Node Details Modal -->
-<div id="nodeModal" class="modal-overlay" onclick="closeNodeModal(event)">
-  <div class="modal-card" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeNodeModalDirect()">×</button>
-    <div id="modalTitle" class="modal-title">Memory Details</div>
-    
-    <div class="modal-section">
-      <div class="modal-label">Core Context &amp; Summary</div>
-      <div id="modalSummary" class="modal-body"></div>
-    </div>
-
-    <div class="modal-section">
-      <div class="modal-label">Model Reasoning &amp; Rationale</div>
-      <div id="modalRationale" class="modal-body"></div>
-    </div>
-
-    <div class="modal-section">
-      <div class="modal-label">Downstream Impact Analysis</div>
-      <div id="modalImpact" class="modal-body"></div>
-    </div>
-  </div>
-</div>
-
-<script>
-  const container = document.getElementById('canvasContainer');
-  const viewport = document.getElementById('canvasViewport');
-  let scale = 1.0;
-  let panX = 0, panY = 0;
-  let isDragging = false;
-  let startX, startY;
-
-  function updateTransform() {{
-    if(viewport) {{
-      viewport.style.transform = `translate(${{panX}}px, ${{panY}}px) scale(${{scale}})`;
-    }}
-  }}
-
-  container.addEventListener('mousedown', (e) => {{
-    if(e.target.closest('.canvas-node') || e.target.closest('.canvas-hud')) return;
-    isDragging = true;
-    startX = e.clientX - panX;
-    startY = e.clientY - panY;
-  }});
-
-  window.addEventListener('mouseup', () => {{ isDragging = false; }});
-  window.addEventListener('mousemove', (e) => {{
-    if(!isDragging) return;
-    panX = e.clientX - startX;
-    panY = e.clientY - startY;
-    updateTransform();
-  }});
-
-  container.addEventListener('touchstart', (e) => {{
-    if(e.target.closest('.canvas-node') || e.target.closest('.canvas-hud')) return;
-    isDragging = true;
-    const touch = e.touches[0];
-    startX = touch.clientX - panX;
-    startY = touch.clientY - panY;
-  }}, {{ passive: true }});
-
-  container.addEventListener('touchend', () => {{ isDragging = false; }});
-  container.addEventListener('touchmove', (e) => {{
-    if(!isDragging) return;
-    const touch = e.touches[0];
-    panX = touch.clientX - startX;
-    panY = touch.clientY - startY;
-    updateTransform();
-  }}, {{ passive: true }});
-
-  container.addEventListener('wheel', (e) => {{
-    e.preventDefault();
-    const zoomFactor = e.deltaY < 0 ? 1.08 : 0.92;
-    scale = Math.min(Math.max(0.4, scale * zoomFactor), 2.5);
-    updateTransform();
-  }}, {{ passive: false }});
-
-  function zoomCanvas(delta) {{
-    scale = Math.min(Math.max(0.4, scale + delta), 2.5);
-    updateTransform();
-  }}
-
-  function resetZoom() {{
-    scale = 1.0;
-    panX = 0;
-    panY = 0;
-    updateTransform();
-  }}
-
-  function openNodeModal(title, summary, rationale, impact) {{
-    document.getElementById('modalTitle').innerText = title;
-    document.getElementById('modalSummary').innerText = summary;
-    document.getElementById('modalRationale').innerText = rationale;
-    document.getElementById('modalImpact').innerText = impact;
-    document.getElementById('nodeModal').classList.add('active');
-  }}
-
-  function closeNodeModalDirect() {{
-    document.getElementById('nodeModal').classList.remove('active');
-  }}
-
-  function closeNodeModal(e) {{
-    if(e.target.id === 'nodeModal') {{
-      document.getElementById('nodeModal').classList.remove('active');
-    }}
-  }}
-</script>
-</body>
-</html>
-""")
-
-
-# ---------------------------------------------------------------------------
-# Dashboard & Settings
+# Dashboard & Settings Handlers
 # ---------------------------------------------------------------------------
 async def dashboard_get(request: Request):
-    user_id = _require_login(request)
+    user_id = _require_login(request)[cite: 10]
     if not user_id:
-        return RedirectResponse("/login", status_code=302)
+        return RedirectResponse("/login", status_code=302)[cite: 10]
 
-    pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
+    pool = db_control.get_control_pool()[cite: 2]
+    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
     if user is None:
-        request.session.clear()
-        return RedirectResponse("/login", status_code=302)
+        request.session.clear()[cite: 10]
+        return RedirectResponse("/login", status_code=302)[cite: 10]
 
     flash_key = request.session.pop("flash_api_key", None)
     flash_html = ""
     if flash_key:
         flash_html = f"""
 <div class="mb-6 p-4 bg-surface-container-low border border-primary rounded-lg">
-    <strong class="text-xs uppercase font-mono text-primary block mb-1">New exom MCP API Key (Shown Once — Copy Now):</strong>
+    <strong class="text-xs uppercase font-mono text-primary block mb-1">New exom MCP API Key:</strong>
     <div class="flex items-center gap-2 mt-2">
-        <input type="text" readonly value="{flash_key}" id="newApiKeyField" class="w-full font-mono text-xs bg-surface-white border border-border-muted p-2 rounded">
-        <button id="btnCopyKey" onclick="copyToClipboard('{flash_key}', 'btnCopyKey')" class="bg-secondary-container text-on-surface px-4 py-2 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy</button>
+        <input type="text" readonly value="{flash_key}" class="w-full font-mono text-xs bg-surface-white border p-2 rounded">
     </div>
-    <p class="text-xs text-text-secondary mt-2">Use this as your Bearer Token for Claude Desktop or Cursor configurations.</p>
 </div>
 """
 
-    if user["connection_string_encrypted"]:
-        masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
-        conn_status = f'<p class="text-xs text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
-    else:
-        conn_status = '<div class="p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">No Neon PostgreSQL connection string set yet. Cross-model sync will fail until configured.</div>'
-
-    keys = await db_control.list_api_keys(pool, user_id)
-    active_keys = [k for k in keys if k["revoked_at"] is None]
-    if active_keys:
-        rows = "".join(f"""
-<div class="flex items-center justify-between py-3 border-b border-border-muted last:border-0">
-    <div>
-        <div class="text-sm font-semibold text-on-surface">{k['label']}</div>
-        <div class="text-xs text-text-secondary">Created {k['created_at'].strftime('%b %d, %Y')}{f" • Last used {k['last_used_at'].strftime('%b %d, %Y')}" if k['last_used_at'] else ""}</div>
-    </div>
-    <form method="POST" action="/dashboard/api-key/revoke" class="m-0">
-        <input type="hidden" name="key_id" value="{k['id']}">
-        <button type="submit" class="text-error text-xs font-semibold hover:underline" onclick="return confirm('Revoke this key? Apps using it will disconnect immediately.');">Revoke</button>
-    </form>
-</div>
-""" for k in active_keys)
-    else:
-        rows = '<p class="text-xs text-text-secondary">No active API keys found.</p>'
-
     base_url = str(request.base_url).rstrip("/")
     mcp_endpoint = f"{base_url}/mcp"
-    nav_html = _navbar(request, user["email"])
 
     body = f"""
-{nav_html}
+{_navbar(request, user["email"])}
 <main class="flex-grow py-10 px-6 bg-surface-white">
     <div class="max-w-3xl mx-auto">
         <div class="mb-6 flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold text-on-surface mb-1">Database &amp; MCP Settings</h1>
-                <p class="text-xs text-text-secondary">Manage your personal Neon PostgreSQL database connection string and exom API keys.</p>
-            </div>
+            <h1 class="text-2xl font-bold text-on-surface">Database &amp; MCP Settings</h1>
             <a href="/console" class="text-xs font-semibold text-primary underline">← Back to Console</a>
         </div>
-
         {flash_html}
-
-        <!-- 1. Endpoint & Connection URL -->
-        <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
-            <h2 class="text-base font-semibold text-on-surface mb-1">1. exom MCP Server Endpoint</h2>
-            <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring Claude Desktop, Cursor, or any MCP client connector.</p>
-            <div class="flex items-center gap-2">
-                <input type="text" readonly value="{mcp_endpoint}" id="mcpEndpointField" class="w-full font-mono text-xs bg-surface-container-low border border-border-muted p-2.5 rounded">
-                <button id="btnCopyEndpoint" onclick="copyToClipboard('{mcp_endpoint}', 'btnCopyEndpoint')" class="bg-surface-white text-on-surface px-4 py-2.5 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy URL</button>
-            </div>
+        <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6">
+            <h2 class="text-base font-semibold text-on-surface mb-2">MCP Endpoint</h2>
+            <input type="text" readonly value="{mcp_endpoint}" class="w-full font-mono text-xs bg-surface-container-low border p-2 rounded">
         </div>
-
-        <!-- 2. Neon Database Connection String Settings -->
-        <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
-            <h2 class="text-base font-semibold text-on-surface mb-1">2. Personal Neon Database Connection String</h2>
-            <p class="text-xs text-text-secondary mb-3">Paste your PostgreSQL connection string. All companion apps, AI agents, and desktop clients synchronize with this instance.</p>
-            {conn_status}
-            <form method="POST" action="/dashboard/connection-string" class="mt-4">
-                <div class="mb-3">
-                    <input type="text" name="connection_string" placeholder="postgresql://user:password@ep-xxx.neon.tech/dbname" required class="w-full px-4 py-2.5 border border-border-muted rounded text-xs font-mono focus:outline-none focus:border-primary">
-                </div>
-                <button type="submit" class="bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505]">Save Connection String</button>
+        <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6">
+            <h2 class="text-base font-semibold text-on-surface mb-2">Personal Neon PostgreSQL Connection String</h2>
+            <form method="POST" action="/dashboard/connection-string">
+                <input type="text" name="connection_string" placeholder="postgresql://user:password@ep-xxx.neon.tech/dbname" required class="w-full px-4 py-2 border rounded text-xs font-mono mb-3">
+                <button type="submit" class="bg-secondary-container text-on-surface px-6 py-2 rounded text-xs font-semibold border border-[#050505]">Save Connection String</button>
             </form>
         </div>
-
-        <!-- 3. API Keys Management -->
-        <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
-            <h2 class="text-base font-semibold text-on-surface mb-1">3. exom MCP API Keys</h2>
-            <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom agents.</p>
-            <div class="divide-y border-border-muted mb-4">
-                {rows}
-            </div>
+        <div class="bg-surface-white border border-border-muted p-6 rounded-xl">
             <form method="POST" action="/dashboard/api-key/create">
-                <button type="submit" class="bg-surface-white text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors">Generate New Manual API Key</button>
+                <button type="submit" class="bg-surface-white text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505]">Generate New API Key</button>
             </form>
         </div>
     </div>
@@ -2562,68 +656,40 @@ async def dashboard_get(request: Request):
 
 
 async def update_connection_string(request: Request):
-    user_id = _require_login(request)
+    user_id = _require_login(request)[cite: 10]
     if not user_id:
-        return RedirectResponse("/login", status_code=302)
+        return RedirectResponse("/login", status_code=302)[cite: 10]
 
     form = await request.form()
     connection_string = str(form.get("connection_string", "")).strip()
 
-    if not (connection_string.startswith("postgresql://") or connection_string.startswith("postgres://")):
-        return _dashboard_error("Invalid format: Must start with postgresql://")
-
-    ok, err = await tenant_pools.test_connection_string(connection_string)
+    ok, err = await tenant_pools.test_connection_string(connection_string)[cite: 8]
     if not ok:
-        return _dashboard_error(f"Connection test failed: {err}")
+        return HTMLResponse(f"Database connection failed: {err}", status_code=400)
 
-    pool = db_control.get_control_pool()
-    await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))
-    await tenant_pools.get_manager().invalidate(user_id)
+    pool = db_control.get_control_pool()[cite: 2]
+    await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))[cite: 2, 5]
+    await tenant_pools.get_manager().invalidate(user_id)[cite: 8]
 
     return RedirectResponse("/dashboard", status_code=302)
 
 
 async def create_api_key(request: Request):
-    user_id = _require_login(request)
+    user_id = _require_login(request)[cite: 10]
     if not user_id:
-        return RedirectResponse("/login", status_code=302)
+        return RedirectResponse("/login", status_code=302)[cite: 10]
 
-    pool = db_control.get_control_pool()
-    raw_key = security.generate_api_key()
-    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")
+    pool = db_control.get_control_pool()[cite: 2]
+    raw_key = security.generate_api_key()[cite: 5]
+    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Key")[cite: 2, 5]
     request.session["flash_api_key"] = raw_key
 
     return RedirectResponse("/dashboard", status_code=302)
 
 
-async def revoke_api_key(request: Request):
-    user_id = _require_login(request)
-    if not user_id:
-        return RedirectResponse("/login", status_code=302)
-
-    form = await request.form()
-    key_id = str(form.get("key_id", ""))
-
-    pool = db_control.get_control_pool()
-    await db_control.revoke_api_key(pool, user_id, key_id)
-
-    return RedirectResponse("/dashboard", status_code=302)
-
-
-def _dashboard_error(message: str) -> HTMLResponse:
-    body = f"""
-<main class="flex-grow flex items-center justify-center py-16 px-6 bg-surface-white">
-    <div class="max-w-md w-full bg-surface-white border border-border-muted p-8 rounded-xl shadow-sm text-center">
-        <h2 class="text-lg font-bold text-error mb-2">Error</h2>
-        <div class="p-3 bg-red-50 text-red-700 text-xs rounded mb-6 border border-red-200">{message}</div>
-        <a href="/dashboard" class="inline-block bg-secondary-container text-on-surface px-6 py-2.5 rounded text-xs font-semibold border border-[#050505] no-underline">Back to Settings</a>
-    </div>
-</main>
-"""
-    return _page("Error", body)
-
-
-# Route registry
+# ---------------------------------------------------------------------------
+# Route Registry
+# ---------------------------------------------------------------------------
 routes = [
     Route("/", landing_page, methods=["GET"]),
     Route("/download", download_apk, methods=["GET"]),
@@ -2634,16 +700,14 @@ routes = [
     Route("/img3.jpeg", serve_root_image, methods=["GET"]),
     Route("/img4.jpeg", serve_root_image, methods=["GET"]),
     Route("/api/mobile/login", mobile_login, methods=["POST"]),
+    Route("/console", console_page, methods=["GET"]),
+    Route("/api/console/data", console_data, methods=["GET"]),
     Route("/signup", signup_get, methods=["GET"]),
     Route("/signup", signup_post, methods=["POST"]),
     Route("/login", login_get, methods=["GET"]),
     Route("/login", login_post, methods=["POST"]),
     Route("/logout", logout, methods=["POST"]),
-    Route("/console", console_page, methods=["GET"]),
     Route("/dashboard", dashboard_get, methods=["GET"]),
     Route("/dashboard/connection-string", update_connection_string, methods=["POST"]),
     Route("/dashboard/api-key/create", create_api_key, methods=["POST"]),
-    Route("/dashboard/api-key/revoke", revoke_api_key, methods=["POST"]),
-    Route("/api/desktop/graph", desktop_get_graph, methods=["GET"]),
-    Route("/api/desktop/edges/batch", desktop_batch_save_edges, methods=["POST"]),
 ]
