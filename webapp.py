@@ -720,8 +720,8 @@ async def landing_page(request: Request):
                     </div>
 
                     <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider mb-1">SELF-SOVEREIGN</span>
-                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Neon Database Sync</h3>
+                        <span class="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider mb-1">ZERO-CONFIG SYNC</span>
+                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Neon DB & NIM Config</h3>
                         <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Your data stays in your personal PostgreSQL database. Direct HTTPS sync without vendor lock-in.</p>
                     </div>
                 </div>
@@ -1521,187 +1521,6 @@ async def logout(request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Console Page (Loaded from console.html template)
-# ---------------------------------------------------------------------------
-async def console_page(request: Request):
-    user_id = _require_login(request)
-    if not user_id:
-        return RedirectResponse("/login", status_code=302)
-
-    pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
-    if user is None:
-        request.session.clear()
-        return RedirectResponse("/login", status_code=302)
-
-    user_email = user["email"]
-    display_name = user_email.split("@")[0].capitalize()
-    initial = display_name[0].upper()
-
-    workspaces = []
-    nodes = []
-    edges = []
-    selected_workspace = request.query_params.get("ws", "")
-
-    if user["connection_string_encrypted"]:
-        try:
-            conn_str = security.decrypt_text(user["connection_string_encrypted"])
-            user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
-            
-            ws_rows = await user_pool.fetch("SELECT DISTINCT workspace FROM project_nodes ORDER BY workspace ASC")
-            workspaces = [r["workspace"] for r in ws_rows]
-            
-            if selected_workspace:
-                node_rows = await user_pool.fetch(
-                    """
-                    SELECT id, node_type, sequence_index, title, summary, rationale, impact_analysis, affected_components, status, central_hub_id, created_at
-                    FROM project_nodes
-                    WHERE workspace = $1
-                    ORDER BY sequence_index ASC NULLS LAST, created_at ASC
-                    """,
-                    selected_workspace
-                )
-                nodes = [dict(r) for r in node_rows]
-
-                edge_rows = await user_pool.fetch(
-                    """
-                    SELECT source_node_id, target_node_id, relation_type
-                    FROM project_edges
-                    WHERE workspace = $1
-                    """,
-                    selected_workspace
-                )
-                edges = [dict(r) for r in edge_rows]
-        except Exception:
-            pass
-
-    if workspaces:
-        repo_list_html = "".join(f"""
-            <li class="chat-item {'active' if ws == selected_workspace else ''}" onclick="window.location='/console?ws={ws}'">
-                📁 {ws}
-            </li>
-        """ for ws in workspaces)
-    else:
-        repo_list_html = '<div class="p-3 text-xs text-[#8e8e8e]">No workspaces found. Connect MCP to an AI client to start committing memory.</div>'
-
-    if selected_workspace:
-        if nodes:
-            nodes_html = ""
-            svg_lines_html = ""
-            card_width = 250
-            card_height = 145
-            pos_dict = {}
-            linear_index = 0
-            hub_index = 0
-            
-            for node in nodes:
-                nid = str(node['id'])
-                ntype = node.get('node_type', 'codebase_change')
-                
-                if ntype == 'hub':
-                    x = 100 + (hub_index * 420)
-                    y = 80
-                    hub_index += 1
-                elif ntype == 'concept':
-                    x = 100 + (linear_index * 320)
-                    y = 220
-                    linear_index += 1
-                else:
-                    x = 100 + (linear_index * 320)
-                    y = 400 + (70 if linear_index % 2 == 1 else -40)
-                    linear_index += 1
-
-                pos_dict[nid] = (x, y)
-
-            for edge in edges:
-                s_id = str(edge['source_node_id'])
-                t_id = str(edge['target_node_id'])
-                if s_id in pos_dict and t_id in pos_dict:
-                    sx, sy = pos_dict[s_id]
-                    tx, ty = pos_dict[t_id]
-                    scx, scy = sx + (card_width / 2), sy + (card_height / 2)
-                    tcx, tcy = tx + (card_width / 2), ty + (card_height / 2)
-                    
-                    stroke_color = "#3b82f6" if edge.get('relation_type') == 'belongs_to_hub' else "#00e599"
-                    svg_lines_html += f'<line x1="{scx}" y1="{scy}" x2="{tcx}" y2="{tcy}" stroke="{stroke_color}" stroke-width="2" stroke-dasharray="4 4" />'
-
-            for node in nodes:
-                nid = str(node['id'])
-                x, y = pos_dict[nid]
-                title_esc = node['title'].replace('"', '&quot;')
-                summary_esc = node['summary'].replace('"', '&quot;')
-                why_esc = (node['rationale'] or 'No rationale provided').replace('"', '&quot;')
-                impact_esc = (node['impact_analysis'] or 'None').replace('"', '&quot;')
-                step_idx = node['sequence_index'] or '-'
-                ntype = node.get('node_type', 'codebase_change')
-                
-                layer_badge = ""
-                border_cls = "border-[#d4d4d8]"
-                if ntype == 'hub':
-                    layer_badge = '<span class="bg-amber-100 text-amber-800 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">HUB</span>'
-                    border_cls = "border-amber-400 bg-amber-50/20"
-                elif ntype == 'concept':
-                    layer_badge = '<span class="bg-blue-100 text-blue-800 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">CONCEPT</span>'
-                    border_cls = "border-blue-400 bg-blue-50/20"
-                else:
-                    layer_badge = f'<span class="node-step">Memory #{step_idx}</span>'
-
-                nodes_html += f"""
-                <div class="canvas-node {border_cls}" style="left: {x}px; top: {y}px; width: {card_width}px;" 
-                     ondblclick="openNodeModal('{title_esc}', '{summary_esc}', '{why_esc}', '{impact_esc}')"
-                     onclick="openNodeModal('{title_esc}', '{summary_esc}', '{why_esc}', '{impact_esc}')">
-                    <div class="node-header">
-                        {layer_badge}
-                        <span class="node-status">✓</span>
-                    </div>
-                    <div class="node-title">{node['title']}</div>
-                    <div class="node-snippet">{node['summary'][:90]}...</div>
-                    <div class="node-footer">Double-click / Tap to inspect</div>
-                </div>
-                """
-            
-            canvas_content = f"""
-            <div id="canvasViewport" style="transform-origin: 0 0; position: absolute; top: 0; left: 0;">
-                <svg class="canvas-svg">{svg_lines_html}</svg>
-                {nodes_html}
-            </div>
-            """
-        else:
-            canvas_content = """
-            <div class="empty-canvas-state">
-                <div class="empty-icon">⚡</div>
-                <h3>No Context Nodes Found</h3>
-                <p>Connect your AI client to exom to start streaming persistent memory.</p>
-                <code>mcpServers -&gt; exom</code>
-            </div>
-            """
-    else:
-        canvas_content = """
-        <div class="empty-canvas-state">
-            <div class="empty-icon">📁</div>
-            <h3>Universal Memory Vault</h3>
-            <p>Select a workspace from the sidebar to inspect its connected architecture graph.</p>
-        </div>
-        """
-
-    template_path = os.path.join(os.path.dirname(__file__), "console.html")
-    if not os.path.exists(template_path):
-        return HTMLResponse("console.html template missing from root directory.", status_code=500)
-
-    with open(template_path, "r", encoding="utf-8") as f:
-        template_html = f.read()
-
-    rendered = (
-        template_html.replace("{{INITIAL}}", initial)
-        .replace("{{DISPLAY_NAME}}", display_name)
-        .replace("{{REPO_LIST_HTML}}", repo_list_html)
-        .replace("{{CANVAS_CONTENT}}", canvas_content)
-    )
-
-    return HTMLResponse(rendered)
-
-
-# ---------------------------------------------------------------------------
 # Dashboard & Settings
 # ---------------------------------------------------------------------------
 async def dashboard_get(request: Request):
@@ -1873,7 +1692,9 @@ def _dashboard_error(message: str) -> HTMLResponse:
     return _page("Error", body)
 
 
+# ---------------------------------------------------------------------------
 # Route registry
+# ---------------------------------------------------------------------------
 routes = [
     Route("/", landing_page, methods=["GET"]),
     Route("/download", download_apk, methods=["GET"]),
