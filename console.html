@@ -1,5 +1,3 @@
-use this for console and remove the separate dashboard page in webapp.py for mcp token and database  and add same to same exact in console 
-
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -11,610 +9,540 @@ use this for console and remove the separate dashboard page in webapp.py for mcp
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
-  tailwind.config = {
-    darkMode: 'class',
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ['Inter', 'sans-serif'],
-          mono: ['JetBrains Mono', 'monospace'],
-        },
-        colors: {
-          bw: {
-            bg: '#000000',
-            sidebar: '#000000',
-            card: '#050505',
-            hover: '#111111',
-            border: '#222222',
-            muted: '#888888',
-            subtle: '#444444',
-          },
-          accent: {
-            yellow: '#ffcc00',
-          }
-        }
-      }
-    }
-  }
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace'],
+        },
+        colors: {
+          bw: {
+            bg: '#000000',
+            sidebar: '#000000',
+            card: '#050505',
+            hover: '#111111',
+            border: '#222222',
+            muted: '#888888',
+            subtle: '#444444',
+          },
+          accent: {
+            yellow: '#ffcc00',
+          }
+        }
+      }
+    }
+  }
 </script>
 <style>
-  body {
-    background-color: #000000;
-    color: #ffffff;
-    font-family: 'Inter', sans-serif;
-    overflow-x: hidden;
-  }
-  .minimal-input {
-    background-color: #000000;
-    border: 1px solid #222222;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-  }
-  .minimal-input:focus {
-    border-color: #ffcc00;
-    outline: none;
-    box-shadow: 0 0 0 1px #ffcc00;
-  }
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #222222;
-    border-radius: 0px; /* Squared off for minimalist look */
-  }
-  /* Minimalist Tab Active State */
-  .tab-active {
-    background-color: #ffffff;
-    color: #000000 !important;
-    border-color: #ffffff;
-  }
+  body {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+  .minimal-input {
+    background-color: #000000;
+    border: 1px solid #222222;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .minimal-input:focus {
+    border-color: #ffcc00;
+    outline: none;
+    box-shadow: 0 0 0 1px #ffcc00;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #222222;
+    border-radius: 0px;
+  }
+  .tab-active {
+    background-color: #ffffff;
+    color: #000000 !important;
+    border-color: #ffffff;
+  }
 </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-accent-yellow selection:text-black">
 
-  <!-- Top Navbar -->
-  <header class="h-14 border-b border-bw-border flex items-center justify-between px-4 bg-bw-bg sticky top-0 z-40">
-    <div class="flex items-center gap-3">
-      <a href="/console" aria-label="Console Home" class="flex items-center gap-2 text-white group">
-        <!-- Re-colored SVG to Black, White and Yellow -->
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true" class="transition-transform group-hover:scale-105">
-          <path d="M4 4H10V10H4V4Z" fill="#ffffff"/>
-          <path d="M14 4H20V10H14V4Z" fill="#ffcc00"/>
-          <path d="M4 14H10V20H4V14Z" fill="#ffcc00"/>
-          <path d="M14 14H20V20H14V14Z" fill="#ffffff"/>
-        </svg>
-      </a>
-      <span class="text-bw-subtle text-lg font-light" aria-hidden="true">/</span>
-      <button onclick="switchView('projects')" class="flex items-center gap-2 text-sm font-semibold hover:bg-bw-hover px-2.5 py-1.5 rounded-none border border-transparent hover:border-bw-border transition-colors">
-        <span id="navTitleText">{{FIRST_NAME}}</span>
-        <span class="text-[11px] font-mono font-medium px-1.5 py-0.5 rounded-none bg-bw-border text-white">Unified Brain</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" class="text-bw-muted ml-0.5">
-          <path d="m7 15 5 5 5-5M7 9l5-5 5 5"/>
-        </svg>
-      </button>
-    </div>
+  <!-- Top Navbar -->
+  <header class="h-14 border-b border-bw-border flex items-center justify-between px-4 bg-bw-bg sticky top-0 z-40">
+    <div class="flex items-center gap-3">
+      <a href="/console" aria-label="Console Home" class="flex items-center gap-2 text-white group">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true" class="transition-transform group-hover:scale-105">
+          <path d="M4 4H10V10H4V4Z" fill="#ffffff"/>
+          <path d="M14 4H20V10H14V4Z" fill="#ffcc00"/>
+          <path d="M4 14H10V20H4V14Z" fill="#ffcc00"/>
+          <path d="M14 14H20V20H14V14Z" fill="#ffffff"/>
+        </svg>
+      </a>
+      <span class="text-bw-subtle text-lg font-light" aria-hidden="true">/</span>
+      <button onclick="switchView('projects')" class="flex items-center gap-2 text-sm font-semibold hover:bg-bw-hover px-2.5 py-1.5 rounded-none border border-transparent hover:border-bw-border transition-colors">
+        <span id="navTitleText">{{FIRST_NAME}}</span>
+        <span class="text-[11px] font-mono font-medium px-1.5 py-0.5 rounded-none bg-bw-border text-white">Unified Brain</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" class="text-bw-muted ml-0.5">
+          <path d="m7 15 5 5 5-5M7 9l5-5 5 5"/>
+        </svg>
+      </button>
+    </div>
 
-    <!-- Center Search Bar -->
-    <div class="hidden md:flex items-center w-80 lg:w-96 relative">
-      <label for="globalSearchInput" class="sr-only">Search thoughts, decisions, and modules</label>
-      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" class="text-bw-muted">
-          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-        </svg>
-      </div>
-      <input
-        type="text"
-        id="globalSearchInput"
-        placeholder="Search thoughts, decisions, and modules..."
-        class="w-full pl-9 pr-14 py-1.5 text-xs placeholder-bw-muted text-white minimal-input rounded-none"
-      />
-      <div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
-        <span class="text-[10px] font-mono text-bw-muted px-1.5 py-0.5 border border-bw-border bg-bw-bg" aria-hidden="true">CtrlK</span>
-      </div>
-    </div>
+    <!-- Center Search Bar -->
+    <div class="hidden md:flex items-center w-80 lg:w-96 relative">
+      <label for="globalSearchInput" class="sr-only">Search thoughts, decisions, and modules</label>
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" class="text-bw-muted">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+        </svg>
+      </div>
+      <input
+        type="text"
+        id="globalSearchInput"
+        placeholder="Search thoughts, decisions, and modules..."
+        class="w-full pl-9 pr-14 py-1.5 text-xs placeholder-bw-muted text-white minimal-input rounded-none"
+      />
+      <div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+        <span class="text-[10px] font-mono text-bw-muted px-1.5 py-0.5 border border-bw-border bg-bw-bg" aria-hidden="true">CtrlK</span>
+      </div>
+    </div>
 
-    <!-- Right Controls -->
-    <div class="flex items-center gap-3">
-      <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 border border-bw-border bg-bw-card text-[11px] font-mono text-white" role="status">
-        <span class="w-2 h-2 bg-accent-yellow animate-pulse" aria-hidden="true"></span>
-        MCP Bridge Active
-      </div>
+    <!-- Right Controls -->
+    <div class="flex items-center gap-3">
+      <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 border border-bw-border bg-bw-card text-[11px] font-mono text-white" role="status">
+        <span class="w-2 h-2 bg-accent-yellow animate-pulse" aria-hidden="true"></span>
+        MCP Bridge Active
+      </div>
 
-      <button onclick="triggerAskAI();" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-bw-card hover:bg-bw-hover border border-bw-border text-xs font-semibold text-white transition-colors">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2.2" aria-hidden="true">
-          <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"/>
-        </svg>
-        Query Memory
-      </button>
+      <button onclick="triggerAskAI();" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-bw-card hover:bg-bw-hover border border-bw-border text-xs font-semibold text-white transition-colors">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2.2" aria-hidden="true">
+          <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"/>
+        </svg>
+        Query Memory
+      </button>
 
-      <a href="/" title="Documentation" aria-label="Documentation" class="w-8 h-8 flex items-center justify-center text-bw-muted hover:text-white hover:bg-bw-hover border border-transparent hover:border-bw-border transition-colors">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-        </svg>
-      </a>
+      <a href="/" title="Documentation" aria-label="Documentation" class="w-8 h-8 flex items-center justify-center text-bw-muted hover:text-white hover:bg-bw-hover border border-transparent hover:border-bw-border transition-colors">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </a>
 
-      <!-- Profile Dropdown Button -->
-      <div class="relative">
-        <button id="userMenuBtn" aria-haspopup="menu" aria-expanded="false" aria-label="User menu" class="w-8 h-8 border border-bw-border hover:border-white flex items-center justify-center bg-white text-black text-xs font-bold transition-all hover:bg-accent-yellow">
-          {{INITIAL}}
-        </button>
+      <!-- Profile Dropdown Button -->
+      <div class="relative">
+        <button id="userMenuBtn" aria-haspopup="menu" aria-expanded="false" aria-label="User menu" class="w-8 h-8 border border-bw-border hover:border-white flex items-center justify-center bg-white text-black text-xs font-bold transition-all hover:bg-accent-yellow">
+          {{INITIAL}}
+        </button>
 
-        <!-- Dropdown Menu -->
-        <div id="userDropdown" role="menu" class="hidden absolute right-0 mt-2 w-64 bg-bw-bg border border-bw-border shadow-2xl py-1 z-50 text-left select-none">
-          <div class="px-4 py-3 border-b border-bw-border">
-            <div class="text-sm font-semibold text-white truncate">{{DISPLAY_NAME}}</div>
-            <div class="text-xs text-bw-muted truncate font-mono mt-0.5">{{USER_EMAIL}}</div>
-          </div>
-          
-          <div class="py-1">
-            <button onclick="switchView('settings')" role="menuitem" class="w-full px-4 py-2 text-xs font-medium text-bw-muted hover:bg-white hover:text-black flex items-center justify-between transition-colors">
-              <span>Account settings</span>
-            </button>
-            <div role="menuitem" tabindex="0" class="w-full px-4 py-2 text-xs font-medium text-bw-muted hover:bg-white hover:text-black flex items-center justify-between cursor-pointer transition-colors">
-              <span>Theme: Minimalist BW</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-          </div>
+        <!-- Dropdown Menu -->
+        <div id="userDropdown" role="menu" class="hidden absolute right-0 mt-2 w-64 bg-bw-bg border border-bw-border shadow-2xl py-1 z-50 text-left select-none">
+          <div class="px-4 py-3 border-b border-bw-border">
+            <div class="text-sm font-semibold text-white truncate">{{DISPLAY_NAME}}</div>
+            <div class="text-xs text-bw-muted truncate font-mono mt-0.5">{{USER_EMAIL}}</div>
+          </div>
+          
+          <div class="py-1">
+            <button onclick="switchView('settings')" role="menuitem" class="w-full px-4 py-2 text-xs font-medium text-bw-muted hover:bg-white hover:text-black flex items-center justify-between transition-colors">
+              <span>Account settings</span>
+            </button>
+            <button onclick="switchView('settings', 'api-keys')" role="menuitem" class="w-full text-left px-4 py-2 text-xs font-medium text-bw-muted hover:bg-white hover:text-black transition-colors">
+              MCP API keys
+            </button>
+            <button onclick="switchView('settings', 'database')" role="menuitem" class="w-full text-left px-4 py-2 text-xs font-medium text-bw-muted hover:bg-white hover:text-black transition-colors">
+              PostgreSQL link
+            </button>
+          </div>
 
-          <div class="border-t border-bw-border pt-1 mt-1">
-            <form method="POST" action="/logout" class="m-0">
-              <button type="submit" role="menuitem" class="w-full text-left px-4 py-2 text-xs font-medium text-bw-muted hover:bg-white hover:text-black transition-colors">
-                Logout
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
+          <div class="border-t border-bw-border pt-1 mt-1">
+            <form method="POST" action="/logout" class="m-0">
+              <button type="submit" role="menuitem" class="w-full text-left px-4 py-2 text-xs font-medium text-bw-muted hover:bg-white hover:text-black transition-colors">
+                Logout
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
 
-  <!-- Layout: Sidebar + Main Content -->
-  <div class="flex-1 flex overflow-hidden">
-    <!-- Sidebar -->
-    <aside id="sidebar" class="w-60 bg-bw-sidebar border-r border-bw-border flex flex-col justify-between p-4 flex-shrink-0 transition-all duration-200 select-none">
-      <nav aria-label="Sidebar Navigation">
-        <div class="text-[10px] font-mono uppercase tracking-widest text-bw-muted px-2 py-2 font-bold mb-2">Second Brain</div>
-        <div class="space-y-1">
-          <button onclick="switchView('projects')" id="nav-projects-btn" class="w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold text-black bg-white transition-colors text-left border border-white">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <circle cx="12" cy="12" r="3"/><path d="M3 12h3m12 0h3M12 3v3m0 12v3"/>
-            </svg>
-            <span>Workspaces</span>
-          </button>
-          <a href="/download" class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-bw-muted hover:text-white hover:border-bw-border border border-transparent transition-colors no-underline">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <rect width="18" height="18" x="3" y="3" rx="0"/><path d="M7 15l5 5 5-5M12 9v11"/>
-            </svg>
-            <span>Apps &amp; Installers</span>
-          </a>
-          <button onclick="switchView('settings', 'api-keys')" class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-bw-muted hover:text-white hover:border-bw-border border border-transparent transition-colors text-left">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
-            </svg>
-            <span>MCP API Keys</span>
-          </button>
-          <button onclick="switchView('settings', 'database')" class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-bw-muted hover:text-white hover:border-bw-border border border-transparent transition-colors text-left">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/>
-            </svg>
-            <span>PostgreSQL Link</span>
-          </button>
-          <button onclick="switchView('settings')" id="nav-settings-btn" class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-bw-muted hover:text-white hover:border-bw-border border border-transparent transition-colors text-left">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
-              <circle cx="12" cy="12" r="3"/>
-            </svg>
-            <span>Settings</span>
-          </button>
-        </div>
-      </nav>
+  <!-- Layout: Sidebar + Main Content -->
+  <div class="flex-1 flex overflow-hidden">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-60 bg-bw-sidebar border-r border-bw-border flex flex-col justify-between p-4 flex-shrink-0 transition-all duration-200 select-none">
+      <nav aria-label="Sidebar Navigation">
+        <div class="text-[10px] font-mono uppercase tracking-widest text-bw-muted px-2 py-2 font-bold mb-2">Second Brain</div>
+        <div class="space-y-1">
+          <button onclick="switchView('projects')" id="nav-projects-btn" class="w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold text-black bg-white transition-colors text-left border border-white">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"/><path d="M3 12h3m12 0h3M12 3v3m0 12v3"/>
+            </svg>
+            <span>Workspaces</span>
+          </button>
+          <a href="/download" class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-bw-muted hover:text-white hover:border-bw-border border border-transparent transition-colors no-underline">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect width="18" height="18" x="3" y="3" rx="0"/><path d="M7 15l5 5 5-5M12 9v11"/>
+            </svg>
+            <span>Apps &amp; Installers</span>
+          </a>
+          <button onclick="switchView('settings', 'api-keys')" class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-bw-muted hover:text-white hover:border-bw-border border border-transparent transition-colors text-left">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+            </svg>
+            <span>MCP API Keys</span>
+          </button>
+          <button onclick="switchView('settings', 'database')" class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-bw-muted hover:text-white hover:border-bw-border border border-transparent transition-colors text-left">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/>
+            </svg>
+            <span>PostgreSQL Link</span>
+          </button>
+          <button onclick="switchView('settings')" id="nav-settings-btn" class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-bw-muted hover:text-white hover:border-bw-border border border-transparent transition-colors text-left">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <span>Settings</span>
+          </button>
+        </div>
+      </nav>
 
-      <div class="border-t border-bw-border pt-4 mt-4">
-        <button onclick="toggleSidebarCollapse()" aria-label="Toggle Sidebar Navigation" class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-bw-muted hover:text-white transition-colors text-left">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="0" ry="0"/><path d="M9 3v18"/></svg>
-          <span>Collapse menu</span>
-        </button>
-      </div>
-    </aside>
+      <div class="border-t border-bw-border pt-4 mt-4">
+        <button onclick="toggleSidebarCollapse()" aria-label="Toggle Sidebar Navigation" class="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-bw-muted hover:text-white transition-colors text-left">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="0" ry="0"/><path d="M9 3v18"/></svg>
+          <span>Collapse menu</span>
+        </button>
+      </div>
+    </aside>
 
-    <!-- Content Area -->
-    <main class="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-12">
+    <!-- Content Area -->
+    <main class="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-12">
 
-      <!-- View 1: Memory Workspaces Dashboard -->
-      <section id="view-projects" class="max-w-6xl mx-auto space-y-8">
-        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-bw-border pb-6">
-          <div>
-            <h1 class="text-3xl lg:text-4xl font-bold tracking-tighter text-white">{{FIRST_NAME}}'s Second Brain</h1>
-            <p class="text-sm text-bw-muted mt-2 font-mono">Cross-model persistent knowledge network.</p>
-          </div>
-          <div class="flex items-center gap-3">
-            <a href="/dashboard" class="px-4 py-2 border border-bw-border bg-bw-bg hover:bg-white hover:text-black text-xs font-bold text-white transition-colors no-underline">
-              Configure MCP
-            </a>
-            <button onclick="openNewProjectModal()" class="flex items-center gap-2 bg-accent-yellow hover:bg-white text-black px-4 py-2 text-xs font-bold transition-colors">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              New workspace
-            </button>
-          </div>
-        </div>
+      <!-- View 1: Memory Workspaces Dashboard -->
+      <section id="view-projects" class="max-w-6xl mx-auto space-y-8">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-bw-border pb-6">
+          <div>
+            <h1 class="text-3xl lg:text-4xl font-bold tracking-tighter text-white">{{FIRST_NAME}}'s Second Brain</h1>
+            <p class="text-sm text-bw-muted mt-2 font-mono">Cross-model persistent knowledge network.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="switchView('settings', 'database')" class="px-4 py-2 border border-bw-border bg-bw-bg hover:bg-white hover:text-black text-xs font-bold text-white transition-colors">
+              PostgreSQL Link
+            </button>
+            <button onclick="openNewProjectModal()" class="flex items-center gap-2 bg-accent-yellow hover:bg-white text-black px-4 py-2 text-xs font-bold transition-colors">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              New workspace
+            </button>
+          </div>
+        </div>
 
-        <!-- Metric KPI Cards -->
-        <div class="border border-bw-border p-6 bg-bw-card">
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div class="border-l-2 border-accent-yellow pl-4">
-              <div class="flex items-center gap-1.5 text-xs text-bw-muted font-bold tracking-widest uppercase mb-2">
-                <span>Codebase</span>
-              </div>
-              <div class="text-2xl lg:text-3xl font-bold text-white font-mono">{{CODING_NODES_COUNT}} <span class="text-xs font-normal text-bw-subtle">commits</span></div>
-            </div>
-            <div class="border-l-2 border-white pl-4">
-              <div class="flex items-center gap-1.5 text-xs text-bw-muted font-bold tracking-widest uppercase mb-2">
-                <span>Chats</span>
-              </div>
-              <div class="text-2xl lg:text-3xl font-bold text-white font-mono">{{CHAT_NODES_COUNT}} <span class="text-xs font-normal text-bw-subtle">notes</span></div>
-            </div>
-            <div class="border-l-2 border-bw-subtle pl-4">
-              <div class="flex items-center gap-1.5 text-xs text-bw-muted font-bold tracking-widest uppercase mb-2">
-                <span>Semantic Links</span>
-              </div>
-              <div class="text-2xl lg:text-3xl font-bold text-white font-mono">{{TOTAL_EDGES}}</div>
-            </div>
-            <div class="border-l-2 border-bw-subtle pl-4">
-              <div class="flex items-center gap-1.5 text-xs text-bw-muted font-bold tracking-widest uppercase mb-2">
-                <span>Workspaces</span>
-              </div>
-              <div class="text-2xl lg:text-3xl font-bold text-white font-mono">{{TOTAL_CODING_PROJECTS}} <span class="text-xs font-normal text-bw-subtle">Code</span></div>
-            </div>
-          </div>
-          <div class="text-xs text-bw-muted mt-6 pt-6 border-t border-bw-border font-mono">
-            > Real-time multi-agent sync active. Stored in personal PostgreSQL instance.
-            <a href="/dashboard" class="text-accent-yellow hover:underline ml-1">Inspect</a>
-          </div>
-        </div>
+        <!-- Metric KPI Cards -->
+        <div class="border border-bw-border p-6 bg-bw-card">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div class="border-l-2 border-accent-yellow pl-4">
+              <div class="flex items-center gap-1.5 text-xs text-bw-muted font-bold tracking-widest uppercase mb-2">
+                <span>Codebase</span>
+              </div>
+              <div class="text-2xl lg:text-3xl font-bold text-white font-mono">{{CODING_NODES_COUNT}} <span class="text-xs font-normal text-bw-subtle">commits</span></div>
+            </div>
+            <div class="border-l-2 border-white pl-4">
+              <div class="flex items-center gap-1.5 text-xs text-bw-muted font-bold tracking-widest uppercase mb-2">
+                <span>Chats</span>
+              </div>
+              <div class="text-2xl lg:text-3xl font-bold text-white font-mono">{{CHAT_NODES_COUNT}} <span class="text-xs font-normal text-bw-subtle">notes</span></div>
+            </div>
+            <div class="border-l-2 border-bw-subtle pl-4">
+              <div class="flex items-center gap-1.5 text-xs text-bw-muted font-bold tracking-widest uppercase mb-2">
+                <span>Semantic Links</span>
+              </div>
+              <div class="text-2xl lg:text-3xl font-bold text-white font-mono">{{TOTAL_EDGES}}</div>
+            </div>
+            <div class="border-l-2 border-bw-subtle pl-4">
+              <div class="flex items-center gap-1.5 text-xs text-bw-muted font-bold tracking-widest uppercase mb-2">
+                <span>Workspaces</span>
+              </div>
+              <div class="text-2xl lg:text-3xl font-bold text-white font-mono">{{TOTAL_CODING_PROJECTS}} <span class="text-xs font-normal text-bw-subtle">Code</span></div>
+            </div>
+          </div>
+        </div>
 
-        <!-- Section with Tab Switching: Coding Projects vs AI Chats -->
-        <div class="space-y-4">
-          <!-- Tab Header -->
-          <div role="tablist" class="flex items-center gap-4 border-b border-bw-border pb-0">
-            <button role="tab" aria-selected="true" aria-controls="table-coding" onclick="toggleTab('coding')" id="tab-btn-coding" class="tab-active px-6 py-3 text-xs font-bold border border-b-0 border-bw-border transition-colors uppercase tracking-widest">
-              Coding Projects ({{TOTAL_CODING_PROJECTS}})
-            </button>
-            <button role="tab" aria-selected="false" aria-controls="table-chat" onclick="toggleTab('chat')" id="tab-btn-chat" class="text-bw-muted hover:text-white px-6 py-3 text-xs font-bold border border-transparent hover:border-bw-border hover:border-b-0 transition-colors uppercase tracking-widest">
-              AI Chats ({{TOTAL_CHAT_SESSIONS}})
-            </button>
-          </div>
+        <!-- Tab Switching: Coding Projects vs AI Chats -->
+        <div class="space-y-4">
+          <div role="tablist" class="flex items-center gap-4 border-b border-bw-border pb-0">
+            <button role="tab" aria-selected="true" aria-controls="table-coding" onclick="toggleTab('coding')" id="tab-btn-coding" class="tab-active px-6 py-3 text-xs font-bold border border-b-0 border-bw-border transition-colors uppercase tracking-widest">
+              Coding Projects ({{TOTAL_CODING_PROJECTS}})
+            </button>
+            <button role="tab" aria-selected="false" aria-controls="table-chat" onclick="toggleTab('chat')" id="tab-btn-chat" class="text-bw-muted hover:text-white px-6 py-3 text-xs font-bold border border-transparent hover:border-bw-border hover:border-b-0 transition-colors uppercase tracking-widest">
+              AI Chats ({{TOTAL_CHAT_SESSIONS}})
+            </button>
+          </div>
 
-          <!-- Table 1: Coding Projects -->
-          <div role="tabpanel" id="table-coding" aria-labelledby="tab-btn-coding" class="border border-bw-border bg-bw-bg">
-            <table class="w-full text-left text-xs">
-              <thead class="text-bw-muted bg-bw-card border-b border-bw-border font-bold uppercase tracking-wider">
-                <tr>
-                  <th class="py-4 px-5">Repository / Domain</th>
-                  <th class="py-4 px-5">Architecture Track</th>
-                  <th class="py-4 px-5">Status</th>
-                  <th class="py-4 px-5 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-bw-border text-white">
-                <!-- Replace with dynamic content -->
-                <tr class="hover:bg-bw-hover transition-colors">
-                  <td class="py-4 px-5 font-mono">exom-core-api</td>
-                  <td class="py-4 px-5 text-bw-muted">Microservices</td>
-                  <td class="py-4 px-5"><span class="px-2 py-1 bg-white text-black font-bold text-[10px]">ACTIVE</span></td>
-                  <td class="py-4 px-5 text-right"><button class="text-accent-yellow hover:text-white font-bold">View →</button></td>
-                </tr>
-                {{CODING_ROWS}}
-              </tbody>
-            </table>
-          </div>
+          <!-- Table 1: Coding Projects -->
+          <div role="tabpanel" id="table-coding" aria-labelledby="tab-btn-coding" class="border border-bw-border bg-bw-bg">
+            <table class="w-full text-left text-xs">
+              <thead class="text-bw-muted bg-bw-card border-b border-bw-border font-bold uppercase tracking-wider">
+                <tr>
+                  <th class="py-4 px-5">Repository / Domain</th>
+                  <th class="py-4 px-5">Architecture Track</th>
+                  <th class="py-4 px-5">Status</th>
+                  <th class="py-4 px-5 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-bw-border text-white">
+                {{CODING_ROWS}}
+              </tbody>
+            </table>
+          </div>
 
-          <!-- Table 2: AI Chats & Thoughts (Hidden by default) -->
-          <div role="tabpanel" id="table-chat" aria-labelledby="tab-btn-chat" class="hidden border border-bw-border bg-bw-bg">
-            <table class="w-full text-left text-xs">
-              <thead class="text-bw-muted bg-bw-card border-b border-bw-border font-bold uppercase tracking-wider">
-                <tr>
-                  <th class="py-4 px-5">Conversation Workspace</th>
-                  <th class="py-4 px-5">Type</th>
-                  <th class="py-4 px-5">Status</th>
-                  <th class="py-4 px-5 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-bw-border text-white">
-                {{CHAT_ROWS}}
-              </tbody>
-            </table>
-          </div>
-        </div>
+          <!-- Table 2: AI Chats -->
+          <div role="tabpanel" id="table-chat" aria-labelledby="tab-btn-chat" class="hidden border border-bw-border bg-bw-bg">
+            <table class="w-full text-left text-xs">
+              <thead class="text-bw-muted bg-bw-card border-b border-bw-border font-bold uppercase tracking-wider">
+                <tr>
+                  <th class="py-4 px-5">Conversation Workspace</th>
+                  <th class="py-4 px-5">Type</th>
+                  <th class="py-4 px-5">Status</th>
+                  <th class="py-4 px-5 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-bw-border text-white">
+                {{CHAT_ROWS}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-        <!-- Bottom Quick Connect Helper -->
-        <div class="p-4 border border-bw-border bg-bw-card flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono">
-          <div class="flex items-center gap-3 text-white">
-            <span class="w-5 h-5 bg-accent-yellow text-black flex items-center justify-center font-bold text-[12px]" aria-hidden="true">!</span>
-            <span>Connect your AI client to exom:</span>
-          </div>
-          <div class="flex items-center gap-3 bg-bw-bg border border-bw-border px-4 py-2 text-bw-muted w-full sm:w-auto justify-between">
-            <code class="truncate text-white">https://contera.vercel.app/mcp</code>
-            <button onclick="copyToClipboard('https://contera.vercel.app/mcp', 'btnCopyMcpEndpoint')" id="btnCopyMcpEndpoint" class="text-accent-yellow hover:text-white font-bold ml-4 uppercase tracking-wider">
-              Copy
-            </button>
-          </div>
-        </div>
-      </section>
+      <!-- View 2: Account Settings & Dedicated Management Sections -->
+      <section id="view-settings" class="hidden max-w-6xl mx-auto space-y-8">
+        <div class="flex items-center justify-between border-b border-bw-border pb-6">
+          <h1 class="text-3xl lg:text-4xl font-bold tracking-tighter text-white">Settings</h1>
+          <button onclick="switchView('projects')" class="text-xs font-bold text-bw-muted hover:text-white flex items-center gap-2 uppercase tracking-widest transition-colors">
+            ← Back to workspaces
+          </button>
+        </div>
 
-      <!-- View 2: Account Settings -->
-      <section id="view-settings" class="hidden max-w-6xl mx-auto space-y-8">
-        <div class="flex items-center justify-between border-b border-bw-border pb-6">
-          <h1 class="text-3xl lg:text-4xl font-bold tracking-tighter text-white">Settings</h1>
-          <button onclick="switchView('projects')" class="text-xs font-bold text-bw-muted hover:text-white flex items-center gap-2 uppercase tracking-widest transition-colors">
-            ← Back to workspaces
-          </button>
-        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-12 items-start">
+          <div class="lg:col-span-3 space-y-12">
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-12 items-start">
-          <div class="lg:col-span-3 space-y-10">
+            <!-- Personal Info -->
+            <div id="section-profile" class="space-y-5">
+              <h2 class="text-lg font-bold text-white tracking-tight border-b border-bw-border pb-2">Personal Information</h2>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-xs font-bold text-bw-muted mb-2 uppercase tracking-wide">First name</label>
+                  <input type="text" value="{{FIRST_NAME}}" class="w-full px-4 py-2.5 text-xs text-white minimal-input"/>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-bw-muted mb-2 uppercase tracking-wide">Last name</label>
+                  <input type="text" value="{{LAST_NAME}}" class="w-full px-4 py-2.5 text-xs text-white minimal-input"/>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-bw-muted mb-2 uppercase tracking-wide">Email Address</label>
+                <input type="email" readonly value="{{USER_EMAIL}}" class="w-full px-4 py-2.5 bg-bw-card border border-bw-border text-xs text-bw-muted font-mono select-all cursor-not-allowed"/>
+              </div>
+            </div>
 
-            <!-- Personal Info -->
-            <div id="section-profile" class="space-y-5">
-              <h2 class="text-lg font-bold text-white tracking-tight border-b border-bw-border pb-2">Personal Information</h2>
-              
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label for="firstNameInput" class="block text-xs font-bold text-bw-muted mb-2 uppercase tracking-wide">First name</label>
-                  <input type="text" id="firstNameInput" autocomplete="given-name" value="{{FIRST_NAME}}" class="w-full px-4 py-2.5 text-xs text-white minimal-input"/>
-                </div>
-                <div>
-                  <label for="lastNameInput" class="block text-xs font-bold text-bw-muted mb-2 uppercase tracking-wide">Last name</label>
-                  <input type="text" id="lastNameInput" autocomplete="family-name" value="{{LAST_NAME}}" class="w-full px-4 py-2.5 text-xs text-white minimal-input"/>
-                </div>
-              </div>
-              
-              <div>
-                <label for="emailInput" class="block text-xs font-bold text-bw-muted mb-2 uppercase tracking-wide">Email Address</label>
-                <input type="email" id="emailInput" autocomplete="email" readonly value="{{USER_EMAIL}}" class="w-full px-4 py-2.5 bg-bw-card border border-bw-border text-xs text-bw-muted font-mono select-all cursor-not-allowed"/>
-              </div>
+            <!-- Dedicated Section: PostgreSQL Database Link -->
+            <div id="section-database" class="space-y-5 pt-8 border-t border-bw-border">
+              <h2 class="text-lg font-bold text-white tracking-tight border-b border-bw-border pb-2">PostgreSQL Database Link</h2>
+              <p class="text-xs text-bw-muted leading-relaxed max-w-2xl">
+                Configure your serverless Neon PostgreSQL connection string. All agent memory vectors and chat sessions persist here.
+              </p>
+              <form method="POST" action="/dashboard/connection-string" class="space-y-4">
+                <input
+                  type="text"
+                  name="connection_string"
+                  value="{{CONNECTION_STRING}}"
+                  placeholder="postgresql://user:pass@ep-cool-fog-123.neon.tech/neondb"
+                  class="w-full px-4 py-3 text-xs text-accent-yellow font-mono minimal-input"
+                  required
+                />
+                <button type="submit" class="bg-accent-yellow hover:bg-white text-black px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition-colors">
+                  Save Database Link
+                </button>
+              </form>
+            </div>
 
-              <div>
-                <button type="button" class="bg-white hover:bg-accent-yellow text-black px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition-colors">
-                  Save Changes
-                </button>
-              </div>
-            </div>
+            <!-- Dedicated Section: MCP API Keys -->
+            <div id="section-api-keys" class="space-y-5 pt-8 border-t border-bw-border">
+              <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-bw-border pb-2">
+                <div>
+                  <h2 class="text-lg font-bold text-white tracking-tight">MCP API Keys</h2>
+                  <p class="text-xs text-bw-muted mt-1 font-mono">Tokens used by Claude Desktop & Cursor to authenticate.</p>
+                </div>
+                <form method="POST" action="/dashboard/api-key/create" class="m-0">
+                  <button type="submit" class="bg-white hover:bg-accent-yellow text-black px-4 py-2 text-xs font-bold transition-colors">
+                    + Generate New Key
+                  </button>
+                </form>
+              </div>
 
-            <!-- Password -->
-            <div id="section-password" class="space-y-5 pt-8 border-t border-bw-border">
-              <h2 class="text-lg font-bold text-white tracking-tight border-b border-bw-border pb-2">Change Password</h2>
-              <div>
-                <label for="currentPasswordInput" class="block text-xs font-bold text-bw-muted mb-2 uppercase tracking-wide">Current password</label>
-                <input type="password" id="currentPasswordInput" autocomplete="current-password" placeholder="••••••••" class="w-full px-4 py-2.5 text-xs text-white minimal-input"/>
-              </div>
-              <div>
-                <label for="newPasswordInput" class="block text-xs font-bold text-bw-muted mb-2 uppercase tracking-wide">New password</label>
-                <input type="password" id="newPasswordInput" autocomplete="new-password" placeholder="••••••••" class="w-full px-4 py-2.5 text-xs text-white minimal-input"/>
-              </div>
-              <div>
-                <button type="button" class="border border-bw-border bg-bw-bg hover:bg-white hover:text-black text-white px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition-colors">
-                  Update Password
-                </button>
-              </div>
-            </div>
+              <div class="border border-bw-border bg-bw-bg overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-bw-card text-bw-muted border-b border-bw-border font-bold uppercase tracking-wider">
+                    <tr>
+                      <th class="py-3 px-4">Key name</th>
+                      <th class="py-3 px-4">Created</th>
+                      <th class="py-3 px-4">Last used</th>
+                      <th class="py-3 px-4 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-bw-border text-white">
+                    {{API_KEYS_ROWS}}
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
-            <!-- API Keys -->
-            <div id="section-api-keys" class="space-y-5 pt-8 border-t border-bw-border">
-              <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-bw-border pb-2">
-                <div>
-                  <h2 class="text-lg font-bold text-white tracking-tight">MCP API Keys</h2>
-                  <p class="text-xs text-bw-muted mt-1 font-mono">Bearer tokens used by Claude Desktop & Cursor.</p>
-                </div>
-                <form method="POST" action="/dashboard/api-key/create" class="m-0">
-                  <button type="submit" class="bg-white hover:bg-accent-yellow text-black px-4 py-2 text-xs font-bold transition-colors">
-                    + Generate Key
-                  </button>
-                </form>
-              </div>
+          </div>
 
-              <div class="border border-bw-border bg-bw-bg overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                  <thead class="bg-bw-card text-bw-muted border-b border-bw-border font-bold uppercase tracking-wider">
-                    <tr>
-                      <th class="py-3 px-4">Key name</th>
-                      <th class="py-3 px-4">Created</th>
-                      <th class="py-3 px-4">Last used</th>
-                      <th class="py-3 px-4 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-bw-border text-white">
-                    {{API_KEYS_ROWS}}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          <!-- Right Anchor Navigation -->
+          <nav aria-label="Settings Navigation" class="hidden lg:block sticky top-24 border-l-2 border-bw-border pl-6 space-y-4 text-xs font-bold uppercase tracking-widest">
+            <a href="#section-profile" class="block text-white hover:text-accent-yellow transition-colors">Profile</a>
+            <a href="#section-database" class="block text-bw-muted hover:text-white transition-colors">Database Link</a>
+            <a href="#section-api-keys" class="block text-bw-muted hover:text-white transition-colors">MCP API Keys</a>
+          </nav>
 
-            <!-- Neon DB Link -->
-            <div id="section-database" class="space-y-5 pt-8 border-t border-bw-border">
-              <h2 class="text-lg font-bold text-white tracking-tight border-b border-bw-border pb-2">PostgreSQL Database Link</h2>
-              <p class="text-xs text-bw-muted leading-relaxed max-w-2xl">
-                Your second brain data is self-sovereign. It lives in your personal Neon PostgreSQL database. Enter your connection string below to sync.
-              </p>
-              <form method="POST" action="/dashboard/connection-string" class="space-y-4">
-                <label for="dbConnectionInput" class="sr-only">Database connection string</label>
-                <input
-                  type="text"
-                  id="dbConnectionInput"
-                  name="connection_string"
-                  value="{{CONNECTION_STRING}}"
-                  placeholder="postgresql://user:pass@ep-cool-fog-123.neon.tech/neondb"
-                  class="w-full px-4 py-3 text-xs text-accent-yellow font-mono minimal-input"
-                  required
-                />
-                <button type="submit" class="bg-accent-yellow hover:bg-white text-black px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition-colors">
-                  Save Link
-                </button>
-              </form>
-            </div>
+        </div>
+      </section>
 
-          </div>
+    </main>
+  </div>
 
-          <!-- Right Navigation -->
-          <nav aria-label="Settings Navigation" class="hidden lg:block sticky top-24 border-l-2 border-bw-border pl-6 space-y-4 text-xs font-bold uppercase tracking-widest">
-            <a href="#section-profile" class="block text-white hover:text-accent-yellow transition-colors">Profile</a>
-            <a href="#section-password" class="block text-bw-muted hover:text-white transition-colors">Password</a>
-            <a href="#section-api-keys" class="block text-bw-muted hover:text-white transition-colors">API keys</a>
-            <a href="#section-database" class="block text-bw-muted hover:text-white transition-colors">Database Link</a>
-          </nav>
+  <!-- New Workspace Modal -->
+  <div id="newProjectModal" role="dialog" aria-modal="true" class="hidden fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-bw-bg border border-bw-border p-8 w-full max-w-md shadow-2xl space-y-6">
+      <div class="flex justify-between items-center pb-4 border-b border-bw-border">
+        <h3 class="text-base font-bold text-white uppercase tracking-wider">Create Workspace</h3>
+        <button onclick="closeNewProjectModal()" class="text-bw-muted hover:text-accent-yellow text-xl transition-colors">✕</button>
+      </div>
+      <form onsubmit="handleCreateWorkspace(event)" class="space-y-6">
+        <div>
+          <label class="block text-xs font-bold text-bw-muted mb-2 uppercase tracking-wide">Workspace Name</label>
+          <input type="text" id="newWorkspaceNameInput" placeholder="e.g. backend-microservices" required class="w-full px-4 py-3 text-xs text-white minimal-input"/>
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" onclick="closeNewProjectModal()" class="px-6 py-2.5 border border-bw-border text-white text-xs font-bold uppercase tracking-widest hover:bg-bw-hover transition-colors">Cancel</button>
+          <button type="submit" class="px-6 py-2.5 bg-accent-yellow hover:bg-white text-black text-xs font-bold uppercase tracking-widest transition-colors">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-        </div>
-      </section>
+  <script>
+    const userBtn = document.getElementById('userMenuBtn');
+    const userDropdown = document.getElementById('userDropdown');
 
-    </main>
-  </div>
+    userBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userDropdown.classList.toggle('hidden');
+    });
 
-  <!-- New Workspace Modal -->
-  <div id="newProjectModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="hidden fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-    <div class="bg-bw-bg border border-bw-border p-8 w-full max-w-md shadow-2xl space-y-6">
-      <div class="flex justify-between items-center pb-4 border-b border-bw-border">
-        <h3 id="modalTitle" class="text-base font-bold text-white uppercase tracking-wider">Create Workspace</h3>
-        <button onclick="closeNewProjectModal()" aria-label="Close modal" class="text-bw-muted hover:text-accent-yellow text-xl transition-colors">✕</button>
-      </div>
-      <form onsubmit="handleCreateWorkspace(event)" class="space-y-6">
-        <div>
-          <label for="newWorkspaceNameInput" class="block text-xs font-bold text-bw-muted mb-2 uppercase tracking-wide">Workspace Name</label>
-          <input type="text" id="newWorkspaceNameInput" placeholder="e.g. backend-microservices" required class="w-full px-4 py-3 text-xs text-white minimal-input"/>
-        </div>
-        <div class="flex justify-end gap-3 pt-2">
-          <button type="button" onclick="closeNewProjectModal()" class="px-6 py-2.5 border border-bw-border text-white text-xs font-bold uppercase tracking-widest hover:bg-bw-hover transition-colors">Cancel</button>
-          <button type="submit" class="px-6 py-2.5 bg-accent-yellow hover:bg-white text-black text-xs font-bold uppercase tracking-widest transition-colors">Create</button>
-        </div>
-      </form>
-    </div>
-  </div>
+    window.addEventListener('click', (e) => {
+      if (!userDropdown.contains(e.target) && !userBtn.contains(e.target)) {
+        userDropdown.classList.add('hidden');
+      }
+    });
 
-  <script>
-    const userBtn = document.getElementById('userMenuBtn');
-    const userDropdown = document.getElementById('userDropdown');
+    function switchView(viewName, targetAnchor = null) {
+      const projectsView = document.getElementById('view-projects');
+      const settingsView = document.getElementById('view-settings');
+      const navProjects = document.getElementById('nav-projects-btn');
+      const navSettings = document.getElementById('nav-settings-btn');
+      const navTitle = document.getElementById('navTitleText');
 
-    userBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isHidden = userDropdown.classList.toggle('hidden');
-      userBtn.setAttribute('aria-expanded', !isHidden);
-    });
+      if (viewName === 'settings') {
+        projectsView.classList.add('hidden');
+        settingsView.classList.remove('hidden');
+        navProjects.className = "w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-bw-muted hover:text-white hover:border-bw-border border border-transparent transition-colors text-left";
+        navSettings.className = "w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold text-black bg-white transition-colors text-left border border-white";
+        navTitle.innerText = "Settings";
+        userDropdown.classList.add('hidden');
+        if (targetAnchor) {
+          setTimeout(() => {
+            const el = document.getElementById('section-' + targetAnchor);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }, 50);
+        }
+      } else {
+        settingsView.classList.add('hidden');
+        projectsView.classList.remove('hidden');
+        navProjects.className = "w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold text-black bg-white transition-colors text-left border border-white";
+        navSettings.className = "w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-bw-muted hover:text-white hover:border-bw-border border border-transparent transition-colors text-left";
+        navTitle.innerText = "{{FIRST_NAME}}";
+      }
+    }
 
-    window.addEventListener('click', (e) => {
-      if (!userDropdown.contains(e.target) && !userBtn.contains(e.target)) {
-        userDropdown.classList.add('hidden');
-        userBtn.setAttribute('aria-expanded', 'false');
-      }
-    });
+    function toggleTab(type) {
+      const tableCoding = document.getElementById('table-coding');
+      const tableChat = document.getElementById('table-chat');
+      const btnCoding = document.getElementById('tab-btn-coding');
+      const btnChat = document.getElementById('tab-btn-chat');
 
-    function switchView(viewName, targetAnchor = null) {
-      const projectsView = document.getElementById('view-projects');
-      const settingsView = document.getElementById('view-settings');
-      const navProjects = document.getElementById('nav-projects-btn');
-      const navSettings = document.getElementById('nav-settings-btn');
-      const navTitle = document.getElementById('navTitleText');
+      if (type === 'coding') {
+        tableCoding.classList.remove('hidden');
+        tableChat.classList.add('hidden');
+        btnCoding.className = "tab-active px-6 py-3 text-xs font-bold border border-b-0 border-bw-border transition-colors uppercase tracking-widest";
+        btnChat.className = "text-bw-muted hover:text-white px-6 py-3 text-xs font-bold border border-transparent hover:border-bw-border hover:border-b-0 transition-colors uppercase tracking-widest";
+      } else {
+        tableCoding.classList.add('hidden');
+        tableChat.classList.remove('hidden');
+        btnChat.className = "tab-active px-6 py-3 text-xs font-bold border border-b-0 border-bw-border transition-colors uppercase tracking-widest";
+        btnCoding.className = "text-bw-muted hover:text-white px-6 py-3 text-xs font-bold border border-transparent hover:border-bw-border hover:border-b-0 transition-colors uppercase tracking-widest";
+      }
+    }
 
-      if (viewName === 'settings') {
-        projectsView.classList.add('hidden');
-        settingsView.classList.remove('hidden');
-        
-        navProjects.className = "w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-bw-muted hover:text-white hover:border-bw-border border border-transparent transition-colors text-left";
-        navSettings.className = "w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold text-black bg-white transition-colors text-left border border-white";
-        
-        navTitle.innerText = "Settings";
-        userDropdown.classList.add('hidden');
-        userBtn.setAttribute('aria-expanded', 'false');
-        if (targetAnchor) {
-          setTimeout(() => {
-            const el = document.getElementById('section-' + targetAnchor);
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }, 50);
-        }
-      } else {
-        settingsView.classList.add('hidden');
-        projectsView.classList.remove('hidden');
-        
-        navProjects.className = "w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold text-black bg-white transition-colors text-left border border-white";
-        navSettings.className = "w-full flex items-center gap-3 px-3 py-2 text-xs font-medium text-bw-muted hover:text-white hover:border-bw-border border border-transparent transition-colors text-left";
-        
-        navTitle.innerText = "{{FIRST_NAME}}";
-      }
-    }
+    function openNewProjectModal() {
+      document.getElementById('newProjectModal').classList.remove('hidden');
+      document.getElementById('newWorkspaceNameInput').focus();
+    }
+    function closeNewProjectModal() {
+      document.getElementById('newProjectModal').classList.add('hidden');
+    }
+    function handleCreateWorkspace(e) {
+      e.preventDefault();
+      const name = document.getElementById('newWorkspaceNameInput').value.trim();
+      if (name) {
+        window.location.href = `/console?ws=${encodeURIComponent(name)}`;
+      }
+    }
 
-    function toggleTab(type) {
-      const tableCoding = document.getElementById('table-coding');
-      const tableChat = document.getElementById('table-chat');
-      const btnCoding = document.getElementById('tab-btn-coding');
-      const btnChat = document.getElementById('tab-btn-chat');
+    function copyToClipboard(text, btnId) {
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById(btnId);
+        if (btn) {
+          const orig = btn.innerText;
+          btn.innerText = 'COPIED';
+          setTimeout(() => btn.innerText = orig, 2000);
+        }
+      });
+    }
 
-      if (type === 'coding') {
-        tableCoding.classList.remove('hidden');
-        tableChat.classList.add('hidden');
-        btnCoding.setAttribute('aria-selected', 'true');
-        btnChat.setAttribute('aria-selected', 'false');
-        
-        btnCoding.className = "tab-active px-6 py-3 text-xs font-bold border border-b-0 border-bw-border transition-colors uppercase tracking-widest";
-        btnChat.className = "text-bw-muted hover:text-white px-6 py-3 text-xs font-bold border border-transparent hover:border-bw-border hover:border-b-0 transition-colors uppercase tracking-widest";
-      } else {
-        tableCoding.classList.add('hidden');
-        tableChat.classList.remove('hidden');
-        btnCoding.setAttribute('aria-selected', 'false');
-        btnChat.setAttribute('aria-selected', 'true');
-        
-        btnChat.className = "tab-active px-6 py-3 text-xs font-bold border border-b-0 border-bw-border transition-colors uppercase tracking-widest";
-        btnCoding.className = "text-bw-muted hover:text-white px-6 py-3 text-xs font-bold border border-transparent hover:border-bw-border hover:border-b-0 transition-colors uppercase tracking-widest";
-      }
-    }
+    function toggleSidebarCollapse() {
+      const sb = document.getElementById('sidebar');
+      sb.classList.toggle('w-60');
+      sb.classList.toggle('w-16');
+      const spans = sb.querySelectorAll('nav span, aside div span, aside div div');
+      spans.forEach(s => s.classList.toggle('hidden'));
+    }
 
-    function openNewProjectModal() {
-      document.getElementById('newProjectModal').classList.remove('hidden');
-      document.getElementById('newWorkspaceNameInput').focus();
-    }
-    
-    function closeNewProjectModal() {
-      document.getElementById('newProjectModal').classList.add('hidden');
-    }
-    
-    function handleCreateWorkspace(e) {
-      e.preventDefault();
-      const name = document.getElementById('newWorkspaceNameInput').value.trim();
-      if (name) {
-        window.location.href = `/console?ws=${encodeURIComponent(name)}`;
-      }
-    }
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        const inp = document.getElementById('globalSearchInput');
+        if (inp) inp.focus();
+      }
+    });
 
-    function copyToClipboard(text, btnId) {
-      navigator.clipboard.writeText(text).then(() => {
-        const btn = document.getElementById(btnId);
-        if (btn) {
-          const orig = btn.innerText;
-          btn.innerText = 'COPIED';
-          setTimeout(() => btn.innerText = orig, 2000);
-        }
-      });
-    }
-
-    function toggleSidebarCollapse() {
-      const sb = document.getElementById('sidebar');
-      sb.classList.toggle('w-60');
-      sb.classList.toggle('w-16');
-      const spans = sb.querySelectorAll('nav span, aside div span, aside div div');
-      spans.forEach(s => s.classList.toggle('hidden'));
-    }
-
-    window.addEventListener('keydown', (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        const inp = document.getElementById('globalSearchInput');
-        if (inp) inp.focus();
-      }
-    });
-
-    function triggerAskAI() {
-      const inp = document.getElementById('globalSearchInput');
-      if (inp) {
-        inp.value = "Recall: Explain our recent architecture decisions...";
-        inp.focus();
-      }
-    }
-  </script>
+    function triggerAskAI() {
+      const inp = document.getElementById('globalSearchInput');
+      if (inp) {
+        inp.value = "Recall: Explain our recent architecture decisions...";
+        inp.focus();
+      }
+    }
+  </script>
 </body>
 </html>
