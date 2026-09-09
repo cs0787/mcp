@@ -229,36 +229,36 @@
           </div>
         </div>
 
-        <!-- Metric KPI Cards (Adapted for exom Second Brain) -->
+        <!-- Metric KPI Cards -->
         <div class="bg-[#121316] border border-neon-border rounded-xl p-5 shadow-sm">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pb-4 border-b border-[#1f2025]">
             <div>
               <div class="flex items-center gap-1.5 text-xs text-neon-muted font-medium mb-1">
-                <span>Memory Nodes</span>
-                <span title="Total thoughts, decisions, and chat summaries logged across all AI sessions" class="cursor-help">ⓘ</span>
+                <span>Codebase Changes</span>
+                <span title="Sequential linear modifications made by Claude/Cursor" class="cursor-help">ⓘ</span>
               </div>
-              <div class="text-xl lg:text-2xl font-bold text-white font-mono">{{TOTAL_NODES}} <span class="text-xs font-normal text-neon-muted">nodes</span></div>
+              <div class="text-xl lg:text-2xl font-bold text-[#00e599] font-mono">{{CODING_NODES_COUNT}} <span class="text-xs font-normal text-neon-muted">commits</span></div>
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5 text-xs text-neon-muted font-medium mb-1">
+                <span>Chat &amp; Idea Nodes</span>
+                <span title="Conversation summaries and unstructured thoughts" class="cursor-help">ⓘ</span>
+              </div>
+              <div class="text-xl lg:text-2xl font-bold text-[#facc15] font-mono">{{CHAT_NODES_COUNT}} <span class="text-xs font-normal text-neon-muted">notes</span></div>
             </div>
             <div>
               <div class="flex items-center gap-1.5 text-xs text-neon-muted font-medium mb-1">
                 <span>Semantic Links</span>
                 <span title="Graph edges linking concepts across workspaces" class="cursor-help">ⓘ</span>
               </div>
-              <div class="text-xl lg:text-2xl font-bold text-neon-green font-mono">{{TOTAL_EDGES}} <span class="text-xs font-normal text-neon-muted">links</span></div>
+              <div class="text-xl lg:text-2xl font-bold text-white font-mono">{{TOTAL_EDGES}} <span class="text-xs font-normal text-neon-muted">links</span></div>
             </div>
             <div>
               <div class="flex items-center gap-1.5 text-xs text-neon-muted font-medium mb-1">
                 <span>Active Workspaces</span>
-                <span title="Isolated knowledge domains" class="cursor-help">ⓘ</span>
+                <span title="Total segregated repositories and discussion spaces" class="cursor-help">ⓘ</span>
               </div>
-              <div class="text-xl lg:text-2xl font-bold text-white font-mono">{{TOTAL_WORKSPACES}}</div>
-            </div>
-            <div>
-              <div class="flex items-center gap-1.5 text-xs text-neon-muted font-medium mb-1">
-                <span>Connected Models</span>
-                <span title="AI agents utilizing exom MCP context" class="cursor-help">ⓘ</span>
-              </div>
-              <div class="text-xl lg:text-2xl font-bold text-white font-mono">Claude, Cursor, R1</div>
+              <div class="text-xl lg:text-2xl font-bold text-white font-mono">{{TOTAL_CODING_PROJECTS}} Code / {{TOTAL_CHAT_SESSIONS}} Chat</div>
             </div>
           </div>
           <p class="text-[11px] text-neon-muted pt-3">
@@ -267,41 +267,52 @@
           </p>
         </div>
 
-        <!-- Workspaces Table -->
-        <div class="space-y-3">
-          <div class="text-base font-bold text-white">{{TOTAL_WORKSPACES}} Workspaces</div>
-          
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-neon-muted"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            </div>
-            <input
-              type="text"
-              id="workspaceSearchInput"
-              onkeyup="filterWorkspaceRows()"
-              placeholder="Search workspaces by name or tag..."
-              class="w-full pl-9 pr-4 py-2 bg-[#121316] border border-neon-border rounded-lg text-xs placeholder-neon-subtle text-neutral-200 neon-input"
-            />
+        <!-- Section with Tab Switching: Coding Projects vs AI Chats -->
+        <div class="space-y-4">
+          <!-- Tab Header -->
+          <div class="flex items-center gap-3 border-b border-neon-border pb-3">
+            <button onclick="toggleTab('coding')" id="tab-btn-coding" class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold bg-white/[0.08] text-white transition-colors">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00e599" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              <span>Coding Projects ({{TOTAL_CODING_PROJECTS}})</span>
+            </button>
+            <button onclick="toggleTab('chat')" id="tab-btn-chat" class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium text-neon-muted hover:text-white transition-colors">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span>AI Chats &amp; Brainstorming ({{TOTAL_CHAT_SESSIONS}})</span>
+            </button>
           </div>
 
-          <div class="bg-[#121316] border border-neon-border rounded-xl overflow-hidden shadow-sm">
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs" id="workspacesTable">
-                <thead class="text-neon-muted bg-[#141518] border-b border-neon-border font-medium">
-                  <tr>
-                    <th class="py-3 px-4 font-medium">Workspace Domain</th>
-                    <th class="py-3 px-4 font-medium">Memory Nodes</th>
-                    <th class="py-3 px-4 font-medium">Semantic Links</th>
-                    <th class="py-3 px-4 font-medium">Last Synchronized</th>
-                    <th class="py-3 px-4 font-medium">Status</th>
-                    <th class="py-3 px-4 font-medium text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-[#1d1f24] text-neutral-300">
-                  {{WORKSPACES_ROWS}}
-                </tbody>
-              </table>
-            </div>
+          <!-- Table 1: Coding Projects -->
+          <div id="table-coding" class="bg-[#121316] border border-neon-border rounded-xl overflow-hidden shadow-sm">
+            <table class="w-full text-left text-xs">
+              <thead class="text-neon-muted bg-[#141518] border-b border-neon-border font-medium">
+                <tr>
+                  <th class="py-3 px-4">Repository / Domain</th>
+                  <th class="py-3 px-4">Architecture Track</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#1d1f24] text-neutral-300">
+                {{CODING_ROWS}}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Table 2: AI Chats & Thoughts (Hidden by default) -->
+          <div id="table-chat" class="hidden bg-[#121316] border border-neon-border rounded-xl overflow-hidden shadow-sm">
+            <table class="w-full text-left text-xs">
+              <thead class="text-neon-muted bg-[#141518] border-b border-neon-border font-medium">
+                <tr>
+                  <th class="py-3 px-4">Conversation Workspace</th>
+                  <th class="py-3 px-4">Type</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#1d1f24] text-neutral-300">
+                {{CHAT_ROWS}}
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -405,7 +416,7 @@
               </div>
             </div>
 
-            <!-- Neon DB String -->
+            <!-- Neon DB Link -->
             <div id="section-database" class="bg-[#121316] border border-neon-border rounded-xl p-6 space-y-4">
               <h2 class="text-base font-bold text-white tracking-tight">Neon PostgreSQL Database Link</h2>
               <p class="text-xs text-neon-muted leading-relaxed">
@@ -506,6 +517,25 @@
       }
     }
 
+    function toggleTab(type) {
+      const tableCoding = document.getElementById('table-coding');
+      const tableChat = document.getElementById('table-chat');
+      const btnCoding = document.getElementById('tab-btn-coding');
+      const btnChat = document.getElementById('tab-btn-chat');
+
+      if (type === 'coding') {
+        tableCoding.classList.remove('hidden');
+        tableChat.classList.add('hidden');
+        btnCoding.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold bg-white/[0.08] text-white transition-colors";
+        btnChat.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium text-neon-muted hover:text-white transition-colors";
+      } else {
+        tableCoding.classList.add('hidden');
+        tableChat.classList.remove('hidden');
+        btnChat.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold bg-white/[0.08] text-white transition-colors";
+        btnCoding.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium text-neon-muted hover:text-white transition-colors";
+      }
+    }
+
     function openNewProjectModal() {
       document.getElementById('newProjectModal').classList.remove('hidden');
       document.getElementById('newWorkspaceNameInput').focus();
@@ -519,15 +549,6 @@
       if (name) {
         window.location.href = `/console?ws=${encodeURIComponent(name)}`;
       }
-    }
-
-    function filterWorkspaceRows() {
-      const q = document.getElementById('workspaceSearchInput').value.toLowerCase();
-      const rows = document.querySelectorAll('#workspacesTable tbody tr');
-      rows.forEach(r => {
-        const text = r.innerText.toLowerCase();
-        r.style.display = text.includes(q) ? '' : 'none';
-      });
     }
 
     function copyToClipboard(text, btnId) {
