@@ -33,17 +33,11 @@ def _page(title: str, body: str) -> HTMLResponse:
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>{title} - exom</title>
-
-<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-
-<!-- Lenis Smooth Scroll Script -->
 <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
-
-<!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
     tailwind.config = {{
@@ -374,22 +368,22 @@ async def mobile_login(request: Request):
         return JSONResponse({"error": "Email and password are required"}, status_code=400)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_email(pool, email)
+    user = await db_control.get_user_by_email(pool, email)[cite: 2]
 
-    if user is None or not security.verify_password(password, user["password_hash"]):
+    if user is None or not security.verify_password(password, user["password_hash"]):[cite: 2, 5]
         return JSONResponse({"error": "Invalid email or password"}, status_code=401)
 
     decrypted_conn_str = None
-    if user["connection_string_encrypted"]:
+    if user["connection_string_encrypted"]:[cite: 2]
         try:
-            decrypted_conn_str = security.decrypt_text(user["connection_string_encrypted"])
+            decrypted_conn_str = security.decrypt_text(user["connection_string_encrypted"])[cite: 5]
         except Exception:
             return JSONResponse({"error": "Failed to decrypt connection string"}, status_code=500)
 
     return JSONResponse({
         "status": "success",
-        "user_id": str(user["id"]),
-        "email": user["email"],
+        "user_id": str(user["id"]),[cite: 2]
+        "email": user["email"],[cite: 2]
         "has_connection_string": decrypted_conn_str is not None,
         "connection_string": decrypted_conn_str,
     })
@@ -404,13 +398,13 @@ async def desktop_get_graph(request: Request):
         return JSONResponse({"error": "Unauthorized: Missing user credentials"}, status_code=401)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
+    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
 
-    if not user or not user["connection_string_encrypted"]:
+    if not user or not user["connection_string_encrypted"]:[cite: 2]
         return JSONResponse({"nodes": [], "edges": []})
 
-    conn_str = security.decrypt_text(user["connection_string_encrypted"])
-    user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
+    conn_str = security.decrypt_text(user["connection_string_encrypted"])[cite: 5]
+    user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)[cite: 2]
 
     mobile_notes = await user_pool.fetch(
         """
@@ -486,12 +480,12 @@ async def desktop_batch_save_edges(request: Request):
     new_edges = body.get("edges", [])
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
-    if not user or not user["connection_string_encrypted"]:
+    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
+    if not user or not user["connection_string_encrypted"]:[cite: 2]
         return JSONResponse({"error": "No database linked"}, status_code=400)
 
-    conn_str = security.decrypt_text(user["connection_string_encrypted"])
-    user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
+    conn_str = security.decrypt_text(user["connection_string_encrypted"])[cite: 5]
+    user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)[cite: 2]
 
     async with user_pool.acquire() as conn:
         for edge in new_edges:
@@ -520,9 +514,9 @@ async def landing_page(request: Request):
     user_email = None
     if user_id:
         pool = db_control.get_control_pool()
-        user = await db_control.get_user_by_id(pool, user_id)
+        user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
         if user:
-            user_email = user["email"]
+            user_email = user["email"][cite: 2]
 
     base_url = str(request.base_url).rstrip("/")
     nav_html = _navbar(request, user_email)
@@ -599,7 +593,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 1. Quickstart Configuration -->
+    <!-- Quickstart -->
     <section id="quickstart" class="py-12 sm:py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
@@ -636,7 +630,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. MOBILE & DESKTOP SECOND BRAIN SHOWCASE -->
+    <!-- Mobile Showcase -->
     <section id="mobile-showcase" class="py-16 sm:py-24 bg-[#050507] text-white border-b border-neutral-800 overflow-hidden relative">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 text-center mb-10">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.05] border border-white/[0.1] text-xs font-mono text-[#00e599] mb-3">
@@ -654,17 +648,14 @@ async def landing_page(request: Request):
         <div class="w-full flex items-center justify-center px-4 overflow-x-auto pb-4">
             <div id="skiperCardsWrapper" class="flex items-center justify-center gap-2.5 sm:gap-3.5 max-w-6xl w-full">
                 
-                <!-- Card 1: Spatial Canvas -->
                 <div class="expand-card active group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="0">
                     <img src="/img1.jpeg" alt="Spatial Canvas" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
-
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-0 group-[.active]:opacity-0 group-[.active]:translate-y-4">
                         <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
                         <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">SPATIAL CANVAS</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
-
                     <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-100 translate-y-0 group-[.active]:opacity-100 group-[.active]:translate-y-0">
                         <span class="text-[10px] font-mono text-[#00e599] font-bold uppercase tracking-wider mb-1">SPATIAL BRAIN</span>
                         <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Infinite 2D Canvas</h3>
@@ -672,17 +663,14 @@ async def landing_page(request: Request):
                     </div>
                 </div>
 
-                <!-- Card 2: AI Copilot & Reasoning -->
                 <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-[#facc15]/40 shadow-2xl transition-all" data-index="1">
                     <img src="/img2.jpeg" alt="AI Copilot" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
-
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
                         <span class="w-2 h-2 rounded-full bg-[#facc15] shadow-[0_0_10px_#facc15]"></span>
                         <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">DEEPSEEK R1</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
-
                     <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
                         <span class="text-[10px] font-mono text-[#facc15] font-bold uppercase tracking-wider mb-1">INTELLIGENCE</span>
                         <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">DeepSeek R1 Copilot</h3>
@@ -690,17 +678,14 @@ async def landing_page(request: Request):
                     </div>
                 </div>
 
-                <!-- Card 3: Neural Workspaces -->
                 <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-blue-400/40 shadow-2xl transition-all" data-index="2">
                     <img src="/img3.jpeg" alt="Workspaces" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
-
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
                         <span class="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_10px_#60a5fa]"></span>
                         <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">WORKSPACES</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
-
                     <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
                         <span class="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-wider mb-1">DOMAIN ISOLATION</span>
                         <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Memory Workspaces</h3>
@@ -708,20 +693,17 @@ async def landing_page(request: Request):
                     </div>
                 </div>
 
-                <!-- Card 4: Neon DB & Sync Settings -->
                 <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-purple-400/40 shadow-2xl transition-all" data-index="3">
                     <img src="/img4.jpeg" alt="Neon Cloud Sync" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
-
                     <div class="card-collapsed-label absolute inset-0 flex flex-col justify-between items-center py-9 z-20 pointer-events-none transition-all duration-300 opacity-100 group-[.active]:opacity-0 group-[.active]:translate-y-4">
                         <span class="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_10px_#c084fc]"></span>
                         <span class="vertical-mode-text font-mono text-[11px] uppercase font-bold text-neutral-300">CLOUD SYNC</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span>
                     </div>
-
                     <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider mb-1">ZERO-CONFIG SYNC</span>
-                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Neon DB & NIM Config</h3>
+                        <span class="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider mb-1">SELF-SOVEREIGN</span>
+                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Neon Database Sync</h3>
                         <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Your data stays in your personal PostgreSQL database. Direct HTTPS sync without vendor lock-in.</p>
                     </div>
                 </div>
@@ -775,7 +757,7 @@ async def landing_page(request: Request):
         </script>
     </section>
 
-    <!-- 3. INSTANT CONTEXT PIPELINE ANIMATION -->
+    <!-- Context Pipeline Animation -->
     <section id="pipeline" class="bg-[#000000] text-white border-b border-neutral-800 relative z-10">
         <div id="pipelineScrollWrapper" class="relative" style="height: 300vh;">
           <div id="pipelineSticky" class="sticky top-0 flex flex-col items-center justify-center" style="height: 100vh; overflow: hidden;">
@@ -928,7 +910,7 @@ async def landing_page(request: Request):
                 <div id="el-ai-apps-sub" class="meta-text" style="top: 55%; left: 91.8%;">Claude, Cursor, Agents</div>
 
                 <div id="el-proto-ico" class="circle-icon outline-node" style="top: 64.5%; left: 52%;">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </div>
                 <div id="el-proto-txt" class="meta-text" style="top: 69.6%; left: 52%;">protocol<br>negotiation</div>
                 <div id="el-hollow-bot" class="circle-icon hollow-node" style="top: 63.7%; left: 91.8%;"></div>
@@ -1094,7 +1076,7 @@ async def landing_page(request: Request):
     </div>
 </section>
 
-    <!-- 4. CORE CAPABILITIES (Second Brain Focus) -->
+    <!-- Core Capabilities -->
     <div class="showcase-container">
       <div class="sticky-nav-wrapper">
         <nav class="sticky-sidebar" id="sidebar">
@@ -1426,7 +1408,7 @@ async def signup_post(request: Request):
 
     pool = db_control.get_control_pool()
     try:
-        user_id = await db_control.create_user(pool, email, security.hash_password(password))
+        user_id = await db_control.create_user(pool, email, security.hash_password(password))[cite: 2, 5]
     except asyncpg.exceptions.UniqueViolationError:
         body = f"""
 {_navbar(request)}
@@ -1481,9 +1463,9 @@ async def login_post(request: Request):
     next_ = _safe_next(str(form.get("next", "")))
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_email(pool, email)
+    user = await db_control.get_user_by_email(pool, email)[cite: 2]
 
-    if user is None or not security.verify_password(password, user["password_hash"]):
+    if user is None or not security.verify_password(password, user["password_hash"]):[cite: 2, 5]
         body = f"""
 {_navbar(request)}
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
@@ -1507,7 +1489,7 @@ async def login_post(request: Request):
 """
         return _page("Log in", body)
 
-    request.session["user_id"] = str(user["id"])
+    request.session["user_id"] = str(user["id"])[cite: 2]
     return RedirectResponse("/console", status_code=302)
 
 
@@ -1521,6 +1503,107 @@ async def logout(request: Request):
 
 
 # ---------------------------------------------------------------------------
+# Console Page (Template Loader)
+# ---------------------------------------------------------------------------
+async def console_page(request: Request):
+    user_id = _require_login(request)
+    if not user_id:
+        return RedirectResponse("/login", status_code=302)
+
+    pool = db_control.get_control_pool()
+    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
+    if user is None:
+        request.session.clear()
+        return RedirectResponse("/login", status_code=302)
+
+    user_email = user["email"][cite: 2]
+    display_name = user_email.split("@")[0].capitalize()
+    first_name = display_name
+    last_name = ""
+    initial = display_name[0].upper()
+
+    workspaces = []
+    connection_string = ""
+    if user["connection_string_encrypted"]:[cite: 2]
+        try:
+            connection_string = security.decrypt_text(user["connection_string_encrypted"])[cite: 5]
+            user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), connection_string)[cite: 2]
+            ws_rows = await user_pool.fetch("SELECT DISTINCT workspace FROM project_nodes ORDER BY workspace ASC")
+            workspaces = [r["workspace"] for r in ws_rows]
+            if not workspaces:
+                ws_notes = await user_pool.fetch("SELECT DISTINCT coalesce(workspace_name, 'General') as ws FROM notes")
+                workspaces = list(set([r["ws"] for r in ws_notes]))
+        except Exception:
+            workspaces = []
+
+    if not workspaces:
+        workspaces = ["Deployments", "General"]
+
+    workspaces_rows = ""
+    for ws in workspaces:
+        workspaces_rows += f"""
+        <tr class="table-row-hover transition-colors border-b border-[#1f2127] cursor-pointer" onclick="window.location='/console?ws={ws}'">
+          <td class="py-3.5 px-4 font-semibold text-white flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00e599" stroke-width="2.5">
+              <circle cx="12" cy="12" r="3"/><path d="M3 12h3m12 0h3M12 3v3m0 12v3"/>
+            </svg>
+            <span>{ws}</span>
+          </td>
+          <td class="py-3.5 px-4 text-neon-muted font-mono text-[11px]">AWS US East 2 (Ohio)</td>
+          <td class="py-3.5 px-4 text-neutral-400 font-mono text-[11px]">Active</td>
+          <td class="py-3.5 px-4 text-neutral-300 font-mono text-[11px]">32.33 MB</td>
+          <td class="py-3.5 px-4 text-neon-green font-mono text-[11px]">Just now</td>
+          <td class="py-3.5 px-4 text-neutral-300 font-mono text-[11px]">1</td>
+          <td class="py-3.5 px-4 text-neon-muted text-[11px]">
+            <span class="hover:text-white transition-colors">Add ⊕</span>
+          </td>
+          <td class="py-3.5 px-4 text-right text-neon-muted text-sm font-bold">⋮</td>
+        </tr>
+        """
+
+    keys = await db_control.list_api_keys(pool, user_id)[cite: 2]
+    active_keys = [k for k in keys if k["revoked_at"] is None][cite: 2]
+    if active_keys:
+        api_keys_rows = "".join(f"""
+        <tr class="border-b border-[#1f2127]">
+          <td class="py-2.5 px-4 font-mono font-medium text-neutral-200">{k['label']}</td>
+          <td class="py-2.5 px-4 font-mono text-neon-muted">{k['created_at'].strftime('%b %d, %Y')}</td>
+          <td class="py-2.5 px-4 font-mono text-neon-muted">{k['last_used_at'].strftime('%b %d, %Y') if k['last_used_at'] else 'Never'}</td>
+          <td class="py-2.5 px-4 text-right">
+            <form method="POST" action="/dashboard/api-key/revoke" class="m-0 inline">
+              <input type="hidden" name="key_id" value="{k['id']}">
+              <button type="submit" class="text-red-400 hover:underline text-xs" onclick="return confirm('Revoke this key?');">Revoke</button>
+            </form>
+          </td>
+        </tr>
+        """ for k in active_keys)[cite: 2]
+    else:
+        api_keys_rows = '<tr><td colspan="4" class="p-4 text-center text-neon-muted text-xs font-mono">No active API keys found.</td></tr>'
+
+    template_path = os.path.join(os.path.dirname(__file__), "console.html")
+    if not os.path.exists(template_path):
+        return HTMLResponse("console.html template missing from root directory.", status_code=500)
+
+    with open(template_path, "r", encoding="utf-8") as f:
+        template_html = f.read()
+
+    rendered = (
+        template_html.replace("{{FIRST_NAME}}", first_name)
+        .replace("{{LAST_NAME}}", last_name)
+        .replace("{{USER_EMAIL}}", user_email)
+        .replace("{{DISPLAY_NAME}}", display_name)
+        .replace("{{INITIAL}}", initial)
+        .replace("{{STORAGE_ESTIMATE}}", f"{len(workspaces) * 0.04 + 0.12:.2f}")
+        .replace("{{TOTAL_WORKSPACES}}", str(len(workspaces)))
+        .replace("{{WORKSPACES_ROWS}}", workspaces_rows)
+        .replace("{{API_KEYS_ROWS}}", api_keys_rows)
+        .replace("{{CONNECTION_STRING}}", connection_string)
+    )
+
+    return HTMLResponse(rendered)
+
+
+# ---------------------------------------------------------------------------
 # Dashboard & Settings
 # ---------------------------------------------------------------------------
 async def dashboard_get(request: Request):
@@ -1529,7 +1612,7 @@ async def dashboard_get(request: Request):
         return RedirectResponse("/login", status_code=302)
 
     pool = db_control.get_control_pool()
-    user = await db_control.get_user_by_id(pool, user_id)
+    user = await db_control.get_user_by_id(pool, user_id)[cite: 2]
     if user is None:
         request.session.clear()
         return RedirectResponse("/login", status_code=302)
@@ -1548,14 +1631,14 @@ async def dashboard_get(request: Request):
 </div>
 """
 
-    if user["connection_string_encrypted"]:
-        masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
+    if user["connection_string_encrypted"]:[cite: 2]
+        masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))[cite: 5]
         conn_status = f'<p class="text-xs text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
     else:
         conn_status = '<div class="p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">No Neon PostgreSQL connection string set yet. Cross-model sync will fail until configured.</div>'
 
-    keys = await db_control.list_api_keys(pool, user_id)
-    active_keys = [k for k in keys if k["revoked_at"] is None]
+    keys = await db_control.list_api_keys(pool, user_id)[cite: 2]
+    active_keys = [k for k in keys if k["revoked_at"] is None][cite: 2]
     if active_keys:
         rows = "".join(f"""
 <div class="flex items-center justify-between py-3 border-b border-border-muted last:border-0">
@@ -1568,13 +1651,13 @@ async def dashboard_get(request: Request):
         <button type="submit" class="text-error text-xs font-semibold hover:underline" onclick="return confirm('Revoke this key? Apps using it will disconnect immediately.');">Revoke</button>
     </form>
 </div>
-""" for k in active_keys)
+""" for k in active_keys)[cite: 2]
     else:
         rows = '<p class="text-xs text-text-secondary">No active API keys found.</p>'
 
     base_url = str(request.base_url).rstrip("/")
     mcp_endpoint = f"{base_url}/mcp"
-    nav_html = _navbar(request, user["email"])
+    nav_html = _navbar(request, user["email"])[cite: 2]
 
     body = f"""
 {nav_html}
@@ -1590,7 +1673,6 @@ async def dashboard_get(request: Request):
 
         {flash_html}
 
-        <!-- 1. Endpoint & Connection URL -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">1. exom MCP Server Endpoint</h2>
             <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring Claude Desktop, Cursor, or any MCP client connector.</p>
@@ -1600,7 +1682,6 @@ async def dashboard_get(request: Request):
             </div>
         </div>
 
-        <!-- 2. Neon Database Connection String Settings -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">2. Personal Neon Database Connection String</h2>
             <p class="text-xs text-text-secondary mb-3">Paste your PostgreSQL connection string. All companion apps, AI agents, and desktop clients synchronize with this instance.</p>
@@ -1613,7 +1694,6 @@ async def dashboard_get(request: Request):
             </form>
         </div>
 
-        <!-- 3. API Keys Management -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
             <h2 class="text-base font-semibold text-on-surface mb-1">3. exom MCP API Keys</h2>
             <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom agents.</p>
@@ -1646,7 +1726,7 @@ async def update_connection_string(request: Request):
         return _dashboard_error(f"Connection test failed: {err}")
 
     pool = db_control.get_control_pool()
-    await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))
+    await db_control.set_connection_string(pool, user_id, security.encrypt_text(connection_string))[cite: 2, 5]
     await tenant_pools.get_manager().invalidate(user_id)
 
     return RedirectResponse("/dashboard", status_code=302)
@@ -1658,8 +1738,8 @@ async def create_api_key(request: Request):
         return RedirectResponse("/login", status_code=302)
 
     pool = db_control.get_control_pool()
-    raw_key = security.generate_api_key()
-    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")
+    raw_key = security.generate_api_key()[cite: 5]
+    await db_control.create_api_key(pool, user_id, security.hash_api_key(raw_key), "Manual Dashboard Key")[cite: 2, 5]
     request.session["flash_api_key"] = raw_key
 
     return RedirectResponse("/dashboard", status_code=302)
@@ -1674,7 +1754,7 @@ async def revoke_api_key(request: Request):
     key_id = str(form.get("key_id", ""))
 
     pool = db_control.get_control_pool()
-    await db_control.revoke_api_key(pool, user_id, key_id)
+    await db_control.revoke_api_key(pool, user_id, key_id)[cite: 2]
 
     return RedirectResponse("/dashboard", status_code=302)
 
@@ -1693,7 +1773,7 @@ def _dashboard_error(message: str) -> HTMLResponse:
 
 
 # ---------------------------------------------------------------------------
-# Route registry
+# Route Registry
 # ---------------------------------------------------------------------------
 routes = [
     Route("/", landing_page, methods=["GET"]),
