@@ -1,11 +1,12 @@
 """
-MemoryBase - Web Application & Mobile/Desktop Gateway
+exom - The Unified Second Brain & Memory Layer for All AI
 Full Python Starlette ASGI Application with:
-- Direct Android APK distribution endpoints (/download and /MemoryBase.apk)
+- Cross-model ambient context bridge (Claude, Cursor, autonomous agents)
+- Direct Android APK distribution endpoints (/download and /exom.apk)
 - Root image serving (/img1.jpeg - /img4.jpeg)
 - Mobile & Desktop authentication gateway
 - Unified 2D Second Brain graph endpoint (merging notes and MCP nodes)
-- Responsive Mobile Showcase (Aspect ratio matched, unnumbered vertical labels)
+- Responsive Mobile Showcase (1024x1165 aspect ratio, unnumbered vertical labels)
 - Lenis Smooth Scrolling (@studio-freight/lenis)
 - Scrubbed, scroll-driven Instant Context Pipeline Animation
 - Dual-mode Core Capabilities Scroll-Spy
@@ -30,7 +31,7 @@ def _page(title: str, body: str) -> HTMLResponse:
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>{title} - MemoryBase</title>
+<title>{title} - exom</title>
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -646,12 +647,12 @@ def _safe_next(raw: str | None) -> str:
 def _navbar(request: Request, user_email: str | None = None) -> str:
     if user_email:
         right_actions = """
-        <a href="/download" class="text-xs sm:text-sm font-semibold text-on-surface hover:text-primary transition-colors no-underline">Get APK</a>
+        <a href="/download" class="text-xs sm:text-sm font-semibold text-on-surface hover:text-primary transition-colors no-underline">Get App</a>
         <a href="/console" class="bg-secondary-container text-on-surface px-3 sm:px-4 py-2 rounded text-xs sm:text-sm font-semibold hover:bg-secondary-fixed transition-colors no-underline">Console</a>
         """
     else:
         right_actions = """
-        <a href="/download" class="text-xs sm:text-sm font-semibold text-on-surface hover:text-primary transition-colors no-underline">Get APK</a>
+        <a href="/download" class="text-xs sm:text-sm font-semibold text-on-surface hover:text-primary transition-colors no-underline">Get App</a>
         <a href="/login" class="bg-surface-white text-on-surface px-3 sm:px-4 py-2 rounded text-xs sm:text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors no-underline">Log In</a>
         <a href="/signup" class="bg-secondary-container text-on-surface px-3 sm:px-4 py-2 rounded text-xs sm:text-sm font-semibold hover:bg-secondary-fixed transition-colors no-underline">Get Started</a>
         """
@@ -659,7 +660,7 @@ def _navbar(request: Request, user_email: str | None = None) -> str:
     return f"""
 <nav class="sticky top-0 z-50 flex justify-between items-center w-full px-4 sm:px-6 lg:px-12 py-3 bg-surface-white border-b border-border-muted">
     <div class="flex items-center gap-2 sm:gap-4">
-        <a href="/" class="text-lg sm:text-xl font-bold text-on-surface no-underline tracking-tight">MemoryBase</a>
+        <a href="/" class="text-lg sm:text-xl font-bold text-on-surface no-underline tracking-tight">exom</a>
     </div>
     <div class="flex items-center gap-2 sm:gap-4">
         {right_actions}
@@ -669,7 +670,7 @@ def _navbar(request: Request, user_email: str | None = None) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Direct APK Download Route
+# Direct APK & Executable Distribution Route
 # ---------------------------------------------------------------------------
 async def download_apk(request: Request):
     apk_path = os.path.join(os.path.dirname(__file__), "MemoryBase.apk")
@@ -677,8 +678,8 @@ async def download_apk(request: Request):
         return HTMLResponse(
             """
             <div style="font-family:sans-serif; padding:40px; text-align:center;">
-                <h2>APK Not Found</h2>
-                <p>Ensure <code>MemoryBase.apk</code> is uploaded to your root application directory.</p>
+                <h2>Release Build Pending</h2>
+                <p>The companion installer is packaging. Please check back shortly or inspect repository releases.</p>
                 <a href="/">← Return Home</a>
             </div>
             """,
@@ -687,7 +688,7 @@ async def download_apk(request: Request):
     return FileResponse(
         path=apk_path,
         media_type="application/vnd.android.package-archive",
-        filename="MemoryBase.apk",
+        filename="exom.apk",
     )
 
 
@@ -707,7 +708,7 @@ async def serve_root_image(request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Mobile Login Gateway (Returns Decrypted Neon String)
+# Mobile & Desktop Login Gateway
 # ---------------------------------------------------------------------------
 async def mobile_login(request: Request):
     try:
@@ -744,7 +745,7 @@ async def mobile_login(request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Desktop Gateway Endpoints (Merges Notes & MCP Graph)
+# Desktop Gateway Endpoints (Merges Context & Graph)
 # ---------------------------------------------------------------------------
 async def desktop_get_graph(request: Request):
     user_id = request.headers.get("x-user-id") or _require_login(request)
@@ -762,9 +763,9 @@ async def desktop_get_graph(request: Request):
 
     mobile_notes = await user_pool.fetch(
         """
-        SELECT id, coalesce(workspace_name, 'General') as workspace, 'note' as node_type,
+        SELECT id, coalesce(workspace_name, 'General') as workspace, 'thought' as node_type,
                title, content as summary, '' as rationale, '' as impact_analysis,
-               ARRAY[]::text[] as tags, 'Mobile Note' as model_badge, updated_at
+               ARRAY[]::text[] as tags, 'Universal Memory' as model_badge, updated_at
         FROM notes
         ORDER BY updated_at DESC
         """
@@ -798,7 +799,7 @@ async def desktop_get_graph(request: Request):
                 "id": str(n["id"]),
                 "type": n["node_type"],
                 "workspace": n["workspace"],
-                "title": n["title"] or "Untitled Note",
+                "title": n["title"] or "Untitled Memory",
                 "summary": n["summary"] or "",
                 "rationale": n["rationale"] or "",
                 "impact": n["impact_analysis"] or "",
@@ -880,7 +881,7 @@ async def landing_page(request: Request):
 
     claude_config_snippet = f"""{{
   "mcpServers": {{
-    "memory-base": {{
+    "exom": {{
       "url": "{base_url}/mcp",
       "headers": {{
         "Authorization": "Bearer sbmcp_your_api_key_here"
@@ -893,7 +894,7 @@ async def landing_page(request: Request):
 {{
   "servers": [
     {{
-      "name": "memory-base",
+      "name": "exom",
       "transport": "sse",
       "url": "{base_url}/mcp",
       "headers": {{
@@ -918,45 +919,45 @@ async def landing_page(request: Request):
             <div class="flex-1 space-y-4 text-center lg:text-left">
                 <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-surface-white border border-border-muted text-xs font-mono text-on-surface-variant mb-2 shadow-xs">
                     <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    Model Context Protocol Active
+                    Unified Second Brain Layer Active
                 </div>
                 <h1 class="text-3xl sm:text-4xl lg:text-[54px] lg:leading-[60px] font-bold text-on-surface tracking-tight max-w-2xl">
-                    Structured Freedom for Your Thoughts.
+                    One Persistent Memory Across Every AI.
                 </h1>
                 <p class="text-sm sm:text-base lg:text-lg text-on-surface-variant max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                    A private notes app and long-term memory bridge for Claude, Cursor, and custom AI agents. Read and write thoughts dynamically.
+                    Stop re-explaining yourself. <strong>exom</strong> is your ambient second brain that automatically connects, synchronizes, and recalls context across Claude, Cursor, ChatGPT, and autonomous agents.
                 </p>
                 <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-3">
                     <a href="/download" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#050505] text-white px-5 py-3 text-sm font-semibold rounded border border-[#050505] hover:bg-neutral-800 transition-colors shadow-sm no-underline">
                         <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993s-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9994.4482.9994.9993s-.4483.9997-.9994.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.4114 13.8533 8.083 12 8.083s-3.5902.3284-5.1368.8667L4.8409 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396"/></svg>
-                        Download Android App (.apk)
+                        Get Companion App
                     </a>
-                    <a href="{' /console' if user_id else '/signup'}" class="w-full sm:w-auto text-center bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Get Started</a>
-                    <a href="#quickstart" class="w-full sm:w-auto text-center bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline shadow-sm">See more</a>
+                    <a href="{' /console' if user_id else '/signup'}" class="w-full sm:w-auto text-center bg-secondary-container text-on-surface px-6 py-3 text-sm font-semibold border-b-2 border-r-2 border-[#050505] active:translate-y-[1px] active:translate-x-[1px] transition-all inline-block no-underline shadow-sm">Launch Console</a>
+                    <a href="#quickstart" class="w-full sm:w-auto text-center bg-surface-white text-on-surface px-6 py-3 text-sm font-semibold border border-[#050505] hover:bg-surface-container-low transition-colors inline-block no-underline shadow-sm">Quickstart</a>
                 </div>
             </div>
             
             <div class="flex-1 w-full max-w-md lg:max-w-none flex items-center justify-center">
                 <div class="p-4 sm:p-6 bg-surface-white border border-border-muted rounded-xl shadow-md text-left w-full max-w-md font-mono text-xs">
                     <div class="flex items-center justify-between pb-3 mb-3 border-b border-border-muted">
-                        <span class="font-bold text-primary">● MCP MEMORY GATEWAY</span>
-                        <span class="text-text-secondary">Connected</span>
+                        <span class="font-bold text-primary">● EXOM NEURAL GATEWAY</span>
+                        <span class="text-text-secondary">Synchronized</span>
                     </div>
-                    <p class="text-text-secondary mb-1">&gt; AI Model query sync:</p>
-                    <p class="text-on-surface font-semibold">&gt; search_notes(query="architecture design")</p>
-                    <p class="text-primary mt-2">✓ Synced instantly to local client.</p>
+                    <p class="text-text-secondary mb-1">&gt; Cross-agent recall query:</p>
+                    <p class="text-on-surface font-semibold">&gt; get_codebase_context(workspace="Deployments")</p>
+                    <p class="text-primary mt-2">✓ 14 decisions &amp; concepts shared across Claude, Cursor &amp; DeepSeek.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 1. Live Interactive Code / Terminal Block -->
+    <!-- 1. Quickstart Configuration -->
     <section id="quickstart" class="py-12 sm:py-16 bg-surface-white border-b border-border-muted">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
                 <div>
                     <h2 class="text-2xl lg:text-3xl font-bold text-on-surface mb-2">Connect in 30 Seconds</h2>
-                    <p class="text-sm text-on-surface-variant">Add your MCP Memory endpoint to your AI client configuration file.</p>
+                    <p class="text-sm text-on-surface-variant">Link exom's Model Context Protocol memory bridge to your preferred agent configuration.</p>
                 </div>
                 <div class="flex items-center bg-surface-container-low border border-border-muted p-1 rounded-lg gap-1 overflow-x-auto max-w-full">
                     <button id="tab-claude" onclick="setTerminalTab('claude')" class="px-3 py-1.5 text-xs font-mono rounded bg-on-surface text-surface-white font-semibold transition-colors whitespace-nowrap">Claude Desktop</button>
@@ -987,25 +988,25 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- 2. MOBILE SHOWCASE (Exact Aspect-Ratio Matched Cards, Unnumbered Collapsed State, Fully Visible on Hover) -->
+    <!-- 2. MOBILE & DESKTOP SECOND BRAIN SHOWCASE -->
     <section id="mobile-showcase" class="py-16 sm:py-24 bg-[#050507] text-white border-b border-neutral-800 overflow-hidden relative">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 text-center mb-10">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.05] border border-white/[0.1] text-xs font-mono text-[#00e599] mb-3">
                 <span class="w-2 h-2 rounded-full bg-[#00e599] animate-pulse"></span>
-                Companion Mobile Architecture
+                Universal Companion Ecosystem
             </div>
             <h2 class="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
-                Spatial Mind Palace on Android
+                Your Pocket Mind Palace
             </h2>
             <p class="text-sm sm:text-base text-neutral-400 max-w-xl mx-auto leading-relaxed">
-                Connect your personal Neon PostgreSQL database to Android. Bi-directional sync with your AI models, distraction-free note canvas, and instant thought visualization.
+                Connect your personal Neon PostgreSQL database once. Explore thoughts in 2D space, query reasoning models, and inspect architectural graphs anywhere.
             </p>
         </div>
 
         <div class="w-full flex items-center justify-center px-4 overflow-x-auto pb-4">
             <div id="skiperCardsWrapper" class="flex items-center justify-center gap-2.5 sm:gap-3.5 max-w-6xl w-full">
                 
-                <!-- Card 1: 2D Spatial Canvas -->
+                <!-- Card 1: Spatial Canvas -->
                 <div class="expand-card active group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-[#00e599]/40 shadow-2xl transition-all" data-index="0">
                     <img src="/img1.jpeg" alt="Spatial Canvas" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
@@ -1017,13 +1018,13 @@ async def landing_page(request: Request):
                     </div>
 
                     <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-100 translate-y-0 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-[#00e599] font-bold uppercase tracking-wider mb-1">SPATIAL ENGINE</span>
+                        <span class="text-[10px] font-mono text-[#00e599] font-bold uppercase tracking-wider mb-1">SPATIAL BRAIN</span>
                         <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Infinite 2D Canvas</h3>
-                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Interactive node clusters with smooth zoom HUD controls and hardware acceleration.</p>
+                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Interactive thought clusters with frictionless zoom and hardware-accelerated mind palace rendering.</p>
                     </div>
                 </div>
 
-                <!-- Card 2: AI Copilot & DeepSeek R1 -->
+                <!-- Card 2: AI Copilot & Reasoning -->
                 <div class="expand-card group relative cursor-pointer overflow-hidden bg-[#0c0d11] border border-white/[0.09] hover:border-[#facc15]/40 shadow-2xl transition-all" data-index="1">
                     <img src="/img2.jpeg" alt="AI Copilot" class="absolute inset-0 w-full h-full object-contain bg-black filter brightness-[0.85] group-[.active]:brightness-100 transition-all duration-500 pointer-events-none" />
                     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none z-10"></div>
@@ -1035,9 +1036,9 @@ async def landing_page(request: Request):
                     </div>
 
                     <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-[#facc15] font-bold uppercase tracking-wider mb-1">REASONING COPILOT</span>
-                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">DeepSeek R1 Assistant</h3>
-                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Native prompt synthesis to organize thoughts, discover cluster back-links, and expand graphs.</p>
+                        <span class="text-[10px] font-mono text-[#facc15] font-bold uppercase tracking-wider mb-1">INTELLIGENCE</span>
+                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">DeepSeek R1 Copilot</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Prompt-driven synthesis to organize thoughts, uncover latent connections, and expand concepts automatically.</p>
                     </div>
                 </div>
 
@@ -1053,9 +1054,9 @@ async def landing_page(request: Request):
                     </div>
 
                     <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-wider mb-1">PALACE ENGINE</span>
-                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Neural Workspaces</h3>
-                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Segment projects into isolated domains with dedicated protocols and contextual memory clusters.</p>
+                        <span class="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-wider mb-1">DOMAIN ISOLATION</span>
+                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Memory Workspaces</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Isolate repositories and personal thoughts into distinct spatial domains with discrete context boundaries.</p>
                     </div>
                 </div>
 
@@ -1071,9 +1072,9 @@ async def landing_page(request: Request):
                     </div>
 
                     <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
-                        <span class="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider mb-1">ZERO-CONFIG SYNC</span>
-                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Neon DB & NIM Config</h3>
-                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">One-touch login auto-provisions your encrypted PostgreSQL credentials with background sync.</p>
+                        <span class="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider mb-1">SELF-SOVEREIGN</span>
+                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">Neon Database Sync</h3>
+                        <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Your data stays in your personal PostgreSQL database. Direct HTTPS sync without vendor lock-in.</p>
                     </div>
                 </div>
 
@@ -1083,7 +1084,7 @@ async def landing_page(request: Request):
         <div class="text-center mt-8">
             <a href="/download" class="inline-flex items-center gap-2 bg-[#00e599] text-black font-semibold text-xs sm:text-sm px-6 py-3 rounded-xl hover:bg-[#00c985] transition-all shadow-[0_0_20px_rgba(0,229,153,0.3)] no-underline">
                 <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993s-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9994.4482.9994.9993s-.4483.9997-.9994.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.4114 13.8533 8.083 12 8.083s-3.5902.3284-5.1368.8667L4.8409 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396"/></svg>
-                Download MemoryBase.apk
+                Download Companion App
             </a>
         </div>
 
@@ -1126,7 +1127,7 @@ async def landing_page(request: Request):
         </script>
     </section>
 
-    <!-- 3. SCROLL-DRIVEN PINNED PIPELINE ANIMATION SECTION -->
+    <!-- 3. INSTANT CONTEXT PIPELINE ANIMATION -->
     <section id="pipeline" class="bg-[#000000] text-white border-b border-neutral-800 relative z-10">
         <div id="pipelineScrollWrapper" class="relative" style="height: 300vh;">
           <div id="pipelineSticky" class="sticky top-0 flex flex-col items-center justify-center" style="height: 100vh; overflow: hidden;">
@@ -1135,10 +1136,10 @@ async def landing_page(request: Request):
               <div class="mb-3 sm:mb-5 flex-shrink-0">
                   <p class="mono text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-[#00e599] mb-1.5 flex items-center gap-2">
                       <span class="w-2 h-2 rounded-full bg-[#00e599] shadow-[0_0_10px_#00e599]"></span>
-                      Scroll-Driven Flow
+                      Universal Context Bus
                   </p>
                   <h2 class="text-white text-xl sm:text-3xl font-bold tracking-tight">
-                      Instant Context Pipeline
+                      Instant Cross-Model Context Pipeline
                   </h2>
               </div>
 
@@ -1233,17 +1234,17 @@ async def landing_page(request: Request):
                 </div>
                 <div id="el-req-data" class="badge badge-dark" style="top: 22.5%; left: 32.7%;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
-                  request data
+                  pull context
                 </div>
 
                 <div id="el-mcp" class="badge badge-yellow" style="top: 32.8%; left: 52%;">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                  mcp-server
+                  exom MCP core
                 </div>
 
                 <div id="el-req-tools" class="badge badge-dark" style="top: 22.5%; left: 71.3%;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg>
-                  request tools
+                  serve memory tools
                 </div>
 
                 <div id="el-bot-ico" class="circle-icon outline-node" style="top: 32.8%; left: 82.8%;">
@@ -1253,30 +1254,30 @@ async def landing_page(request: Request):
 
                 <div id="el-notes" class="badge badge-white" style="top: 50%; left: 7.4%;">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
-                  MemoryBase
+                  exom Brain
                 </div>
-                <div id="el-notes-sub" class="meta-text" style="top: 55%; left: 7.4%;">Notes added<br>by you</div>
+                <div id="el-notes-sub" class="meta-text" style="top: 55%; left: 7.4%;">Universal Memory<br>Repository</div>
                 <div id="el-sync-txt" class="meta-text" style="top: 52%; left: 15.6%; font-size: 10px;">sync</div>
 
                 <div id="el-neondb" class="badge badge-white" style="top: 50%; left: 24%;">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-                  neon db
+                  neon postgres
                 </div>
-                <div id="el-neondb-sub" class="meta-text" style="top: 55%; left: 24%;">Stores all notes</div>
+                <div id="el-neondb-sub" class="meta-text" style="top: 55%; left: 24%;">User-Owned DB</div>
                 <div id="el-neondb-time" class="meta-text timestamp" style="top: 60.7%; left: 24%;">18:24:00</div>
 
                 <div id="el-time-mid" class="meta-text timestamp" style="top: 42.7%; left: 41%;">19:08:12</div>
 
                 <div id="el-grant-ico" class="circle-icon check-node" style="top: 56.8%; left: 62.5%;">✓</div>
-                <div id="el-grant-txt" class="meta-text" style="top: 61%; left: 62.5%;">tools & data<br>access granted</div>
+                <div id="el-grant-txt" class="meta-text" style="top: 61%; left: 62.5%;">context access<br>granted</div>
 
                 <div id="el-time-right" class="meta-text timestamp" style="top: 56.8%; left: 74.3%;">20:32:04</div>
 
                 <div id="el-ai-apps" class="badge badge-white" style="top: 50%; left: 91.8%;">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></svg>
-                  ai apps
+                  all AI apps
                 </div>
-                <div id="el-ai-apps-sub" class="meta-text" style="top: 55%; left: 91.8%;">AI Agents / Apps</div>
+                <div id="el-ai-apps-sub" class="meta-text" style="top: 55%; left: 91.8%;">Claude, Cursor, Agents</div>
 
                 <div id="el-proto-ico" class="circle-icon outline-node" style="top: 64.5%; left: 52%;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -1286,17 +1287,17 @@ async def landing_page(request: Request):
 
                 <div id="el-write" class="badge badge-dark" style="top: 72.5%; left: 83%;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                  write note
+                  record memory
                 </div>
 
                 <div id="el-proc-ico" class="circle-icon check-node" style="top: 84%; left: 62.5%;">✓</div>
-                <div id="el-proc-txt" class="meta-text" style="top: 88.2%; left: 62.5%;">note processed<br>by mcp-server</div>
+                <div id="el-proc-txt" class="meta-text" style="top: 88.2%; left: 62.5%;">context indexed<br>by exom</div>
 
                 <div id="el-saved-ico" class="circle-icon check-node" style="top: 84%; left: 26.5%;">✓</div>
-                <div id="el-saved-txt" class="meta-text" style="top: 88.2%; left: 26.5%;">note saved<br>in neon db</div>
+                <div id="el-saved-txt" class="meta-text" style="top: 88.2%; left: 26.5%;">synced to<br>neon brain</div>
 
                 <div id="el-sync-ico" class="circle-icon check-node" style="top: 84%; left: 7.6%;">✓</div>
-                <div id="el-sync-bot-txt" class="meta-text" style="top: 88.2%; left: 7.6%;">sync<br>(auto / manual)</div>
+                <div id="el-sync-bot-txt" class="meta-text" style="top: 88.2%; left: 7.6%;">real-time sync<br>(cross-device)</div>
                 </div>
               </div>
 
@@ -1445,16 +1446,16 @@ async def landing_page(request: Request):
     </div>
 </section>
 
-    <!-- 4. Core Capabilities Showcase (Scroll-Spy Fixed) -->
+    <!-- 4. CORE CAPABILITIES (Second Brain Focus) -->
     <div class="showcase-container">
       <div class="sticky-nav-wrapper">
         <nav class="sticky-sidebar" id="sidebar">
           <button class="menu-badge-btn" aria-hidden="true" tabindex="-1">CORE CAPABILITIES</button>
           <ul class="nav-list">
-            <li><a class="nav-btn active" data-target="trigram-search"><span class="nav-dot"></span>Zero-Latency Trigram Search</a></li>
-            <li><a class="nav-btn" data-target="ai-memory-sync"><span class="nav-dot"></span>Autonomous AI Memory Sync</a></li>
-            <li><a class="nav-btn" data-target="zen-canvas"><span class="nav-dot"></span>Zen Canvas</a></li>
-            <li><a class="nav-btn" data-target="non-linear"><span class="nav-dot"></span>Non-Linear Connectivity</a></li>
+            <li><a class="nav-btn active" data-target="trigram-search"><span class="nav-dot"></span>Zero-Latency Recall</a></li>
+            <li><a class="nav-btn" data-target="ai-memory-sync"><span class="nav-dot"></span>Autonomous Memory Sync</a></li>
+            <li><a class="nav-btn" data-target="zen-canvas"><span class="nav-dot"></span>Spatial Mind Palace</a></li>
+            <li><a class="nav-btn" data-target="non-linear"><span class="nav-dot"></span>Cross-Model Knowledge Graphs</a></li>
             <li><a class="nav-btn" data-target="open-protocol"><span class="nav-dot"></span>Open Protocol Standards</a></li>
           </ul>
         </nav>
@@ -1463,26 +1464,26 @@ async def landing_page(request: Request):
       <section id="trigram-search" class="feature-section section-dark" data-theme="dark">
         <div class="section-inner">
           <div class="section-content">
-            <span class="mobile-feature-badge">01 • Trigram Search</span>
-            <h2 class="hero-heading">Zero-Latency Trigram Search. Never miss a fragmented thought.</h2>
-            <p class="lead-text">MemoryBase harnesses PostgreSQL trigram matching (<code>pg_trgm</code>) to fuzzy-match title and body content across workspaces in milliseconds.</p>
+            <span class="mobile-feature-badge">01 • Fuzzy Trigram Search</span>
+            <h2 class="hero-heading">Zero-Latency Recall. Retrieve decisions made across any AI.</h2>
+            <p class="lead-text">exom uses PostgreSQL trigram matching (<code>pg_trgm</code>) to instantly recall prompts, architecture decisions, and code changes across all your past sessions in milliseconds.</p>
             <ul class="checklist">
-              <li><span class="check-icon">✓</span> Typo-tolerant substring & fuzzy similarity scoring</li>
+              <li><span class="check-icon">✓</span> Typo-tolerant substring &amp; fuzzy similarity scoring</li>
               <li><span class="check-icon">✓</span> Automatic fallback to ILIKE if extensions are missing</li>
-              <li><span class="check-icon">✓</span> Indexed lookups executing in under 4ms</li>
+              <li><span class="check-icon">✓</span> Sub-4ms lookup times across 100,000+ thought vectors</li>
             </ul>
 
             <div class="terminal-box">
               <div class="terminal-topbar">
                 <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
-                <span class="terminal-title">SQL Query Execution</span>
+                <span class="terminal-title">PostgreSQL Memory Lookup</span>
               </div>
               <div class="terminal-code">
 <span class="hl-key">SELECT</span> id, title, similarity(title, $1) <span class="hl-key">AS</span> score <br>
-<span class="hl-key">FROM</span> notes <br>
-<span class="hl-key">WHERE</span> title % $1 <span class="hl-key">OR</span> content <span class="hl-key">ILIKE</span> <span class="hl-str">'%'</span>||$1||<span class="hl-str">'%'</span> <br>
+<span class="hl-key">FROM</span> project_nodes <br>
+<span class="hl-key">WHERE</span> title % $1 <span class="hl-key">OR</span> summary <span class="hl-key">ILIKE</span> <span class="hl-str">'%'</span>||$1||<span class="hl-str">'%'</span> <br>
 <span class="hl-key">ORDER BY</span> score <span class="hl-key">DESC LIMIT</span> 10;<br><br>
-<span class="hl-green">⚡ Query Execution: 3.4ms | 10 rows retrieved</span>
+<span class="hl-green">⚡ Context Resolved: 2.8ms | Passed to Claude System Prompt</span>
               </div>
             </div>
           </div>
@@ -1493,27 +1494,27 @@ async def landing_page(request: Request):
         <div class="section-inner">
           <div class="section-content">
             <span class="mobile-feature-badge">02 • Autonomous Sync</span>
-            <h2 class="hero-heading">Autonomous AI Memory Sync. Bi-directional writes from your agent.</h2>
-            <p class="lead-text">Claude and Cursor don't just inspect your past notes—they can create new workspace folders, append structured summaries, or update documents directly from prompt context.</p>
+            <h2 class="hero-heading">Autonomous Memory Sync. Continuous context without human copy-pasting.</h2>
+            <p class="lead-text">Whenever Claude or Cursor designs a module or writes a change, exom logs the rationale, impact, and dependencies into your second brain chain automatically.</p>
             <ul class="checklist">
-              <li><span class="check-icon">✓</span> Explicit bigint epoch timestamping for Last-Write-Wins (LWW)</li>
-              <li><span class="check-icon">✓</span> Reactive Jetpack Compose Room sync down to Android</li>
-              <li><span class="check-icon">✓</span> Automated schema compaction for continuous agent memory</li>
+              <li><span class="check-icon">✓</span> Chronological sequence chaining (Step 1 -> Step 2 -> Step 3)</li>
+              <li><span class="check-icon">✓</span> Plain-English rationale &amp; downstream impact analysis</li>
+              <li><span class="check-icon">✓</span> Instant synchronization down to mobile and Windows desktop</li>
             </ul>
 
             <div class="terminal-box">
               <div class="terminal-topbar">
                 <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
-                <span class="terminal-title">MCP Tool Invocation Output</span>
+                <span class="terminal-title">MCP Memory Tool Invocation</span>
               </div>
               <div class="terminal-code">
-<span class="hl-dim">&gt; create_note( title="Sprint Specs", workspace="Dev" )</span><br>
+<span class="hl-dim">&gt; log_sequential_codebase_change( title="Auth Gateway", impact="No auth required on /api" )</span><br>
 {{<br>
-&nbsp;&nbsp;<span class="hl-key">"id"</span>: <span class="hl-str">"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"</span>,<br>
-&nbsp;&nbsp;<span class="hl-key">"title"</span>: <span class="hl-str">"Sprint Specs"</span>,<br>
-&nbsp;&nbsp;<span class="hl-key">"updated_at"</span>: 1786675973594<br>
+&nbsp;&nbsp;<span class="hl-key">"status"</span>: <span class="hl-str">"success"</span>,<br>
+&nbsp;&nbsp;<span class="hl-key">"step_number"</span>: 14,<br>
+&nbsp;&nbsp;<span class="hl-key">"message"</span>: <span class="hl-str">"Permanently committed to user second brain"</span><br>
 }}<br><br>
-<span class="hl-green">✓ Database record created • Dispatched to mobile sync engine</span>
+<span class="hl-green">✓ Second brain updated • Available to all future AI chats</span>
               </div>
             </div>
           </div>
@@ -1523,13 +1524,13 @@ async def landing_page(request: Request):
       <section id="zen-canvas" class="feature-section section-dark" data-theme="dark">
         <div class="section-inner">
           <div class="section-content">
-            <span class="mobile-feature-badge">03 • Zen Canvas</span>
-            <h2 class="hero-heading">Zen Canvas. Distraction-free writing surface.</h2>
-            <p class="lead-text">A writing environment that strips away the superfluous, centering your thoughts and fading interface clutter away during deep focus.</p>
+            <span class="mobile-feature-badge">03 • Spatial Mind Palace</span>
+            <h2 class="hero-heading">Spatial Mind Palace. Visualize knowledge in 2D space.</h2>
+            <p class="lead-text">Move beyond linear chat threads. Inspect your thoughts, notes, and architectural modifications on an interactive canvas with intuitive pan, zoom, and clustering.</p>
             <ul class="checklist">
-              <li><span class="check-icon">✓</span> Clean Markdown canvas with zero UI distraction</li>
-              <li><span class="check-icon">✓</span> Full keyboard-first command palette navigation</li>
-              <li><span class="check-icon">✓</span> Instant local-first caching for zero-latency typing</li>
+              <li><span class="check-icon">✓</span> Hardware-accelerated 2D infinite canvas</li>
+              <li><span class="check-icon">✓</span> Hub-and-Spoke concept groupings</li>
+              <li><span class="check-icon">✓</span> Double-click inspection of rationale and project impact</li>
             </ul>
           </div>
         </div>
@@ -1538,13 +1539,13 @@ async def landing_page(request: Request):
       <section id="non-linear" class="feature-section section-light" data-theme="light">
         <div class="section-inner">
           <div class="section-content">
-            <span class="mobile-feature-badge">04 • Connectivity</span>
-            <h2 class="hero-heading">Non-Linear Connectivity. An interconnected web of knowledge.</h2>
-            <p class="lead-text">Link thoughts effortlessly with bi-directional wikilinks to visualize complex patterns, relationships, and emergent ideas.</p>
+            <span class="mobile-feature-badge">04 • Knowledge Graph</span>
+            <h2 class="hero-heading">Cross-Model Knowledge Graphs. Semantic links across conversations.</h2>
+            <p class="lead-text">Link disparate concepts together. Whether an architectural pattern was discussed in Cursor or a business strategy in Claude, exom bridges them into a unified web.</p>
             <ul class="checklist">
-              <li><span class="check-icon">✓</span> Bi-directional backlinks and automatic connection mapping</li>
-              <li><span class="check-icon">✓</span> Interactive visual node graph for complex mental models</li>
-              <li><span class="check-icon">✓</span> Dynamic workspace clustering by topic and reference</li>
+              <li><span class="check-icon">✓</span> Semantic relationship linking (references, builds_upon, refutes)</li>
+              <li><span class="check-icon">✓</span> Ripple effect analysis for upstream and downstream decisions</li>
+              <li><span class="check-icon">✓</span> DeepSeek-R1 copilot suggested connections</li>
             </ul>
           </div>
         </div>
@@ -1554,19 +1555,19 @@ async def landing_page(request: Request):
         <div class="section-inner">
           <div class="section-content">
             <span class="mobile-feature-badge">05 • Open Standards</span>
-            <h2 class="hero-heading">Open Protocol Standards. Zero lock-in, complete control.</h2>
-            <p class="lead-text">Built directly on Anthropic's Model Context Protocol (MCP) and Starlette ASGI for developer independence and easy tooling integrations.</p>
+            <h2 class="hero-heading">Open Protocol Standards. Zero lock-in, user-owned storage.</h2>
+            <p class="lead-text">Built strictly on Anthropic's Model Context Protocol (MCP) and Starlette ASGI. Your memory resides in your own serverless Neon PostgreSQL instance.</p>
             <ul class="checklist">
-              <li><span class="check-icon">✓</span> Server runtime powered by FastMCP and Python 3.12</li>
-              <li><span class="check-icon">✓</span> Streamable HTTP with Server-Sent Events (SSE)</li>
-              <li><span class="check-icon">✓</span> Multi-tenant isolation with portable data export</li>
+              <li><span class="check-icon">✓</span> FastMCP server runtime with SSE and HTTP streaming</li>
+              <li><span class="check-icon">✓</span> End-to-end credential encryption with Fernet</li>
+              <li><span class="check-icon">✓</span> Exportable PostgreSQL schema anytime</li>
             </ul>
           </div>
         </div>
       </section>
     </div>
 
-    <!-- Neon-Style Modern Footer -->
+    <!-- Footer -->
     <footer class="neon-footer">
       <div class="footer-container">
         <div class="footer-top">
@@ -1577,32 +1578,32 @@ async def landing_page(request: Request):
                 <path d="M2 17L12 22L22 17" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M2 12L12 17L22 12" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <span>MemoryBase</span>
+              <span>exom</span>
             </a>
-            <p class="footer-tagline">Structured freedom for your thoughts. A private notes application and long-term memory bridge for Claude, Cursor, and custom AI agents.</p>
+            <p class="footer-tagline">The unified second brain across all AI. Connect your context once; access, synthesize, and expand knowledge seamlessly across models.</p>
             <a href="#" class="status-badge">
               <span class="status-dot"></span>
-              MCP Gateway Connected
+              MCP Gateway Online
             </a>
           </div>
 
           <div class="footer-col">
             <h4>Product</h4>
             <ul>
-              <li><a href="#trigram-search">Trigram Fuzzy Search</a></li>
-              <li><a href="#ai-memory-sync">Autonomous AI Sync</a></li>
-              <li><a href="/download">Download Android App</a></li>
+              <li><a href="#trigram-search">Instant Recall</a></li>
+              <li><a href="#ai-memory-sync">Autonomous Sync</a></li>
+              <li><a href="/download">Download Companion App</a></li>
               <li><a href="/console">Developer Console</a></li>
             </ul>
           </div>
 
           <div class="footer-col">
-            <h4>Resources</h4>
+            <h4>Integrations</h4>
             <ul>
-              <li><a href="#">MCP Protocol Guide</a></li>
-              <li><a href="#">Cursor Setup</a></li>
-              <li><a href="#">Claude Desktop Integration</a></li>
-              <li><a href="#">API Specification</a></li>
+              <li><a href="#">Claude Desktop</a></li>
+              <li><a href="#">Cursor IDE</a></li>
+              <li><a href="#">DeepSeek R1 Copilot</a></li>
+              <li><a href="#">Model Context Protocol (MCP)</a></li>
             </ul>
           </div>
 
@@ -1611,7 +1612,7 @@ async def landing_page(request: Request):
             <ul>
               <li><a href="#">FastMCP Starlette ASGI</a></li>
               <li><a href="#">SSE Stream Handshakes</a></li>
-              <li><a href="#">Android Room Schema</a></li>
+              <li><a href="#">Neon Serverless SQL</a></li>
               <li><a href="#">GitHub Repository</a></li>
             </ul>
           </div>
@@ -1619,16 +1620,16 @@ async def landing_page(request: Request):
           <div class="footer-col">
             <h4>Platform</h4>
             <ul>
-              <li><a href="#">About</a></li>
+              <li><a href="#">About exom</a></li>
               <li><a href="#">Changelog</a></li>
               <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">Security &amp; Multi-Tenancy</a></li>
+              <li><a href="#">Multi-Tenant Security</a></li>
             </ul>
           </div>
         </div>
 
         <div class="footer-bottom">
-          <div>&copy; 2026 MemoryBase. Structured Freedom.</div>
+          <div>&copy; 2026 exom. All systems operational.</div>
           <div class="footer-bottom-links">
             <a href="#">Privacy Policy</a>
             <a href="#">Terms of Service</a>
@@ -1719,7 +1720,7 @@ async def signup_get(request: Request):
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
         <h2 class="text-2xl font-bold text-on-surface mb-1">Create Your Account</h2>
-        <p class="text-xs text-text-secondary mb-6">Set up your MemoryBase gateway account.</p>
+        <p class="text-xs text-text-secondary mb-6">Initialize your exom second brain gateway.</p>
         <form method="POST" action="/signup">
             <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
@@ -1805,7 +1806,7 @@ async def login_get(request: Request):
 <main class="flex-grow flex items-center justify-center py-16 px-4 sm:px-6">
     <div class="max-w-md w-full bg-surface-white border border-border-muted p-6 sm:p-8 rounded-xl shadow-sm">
         <h2 class="text-2xl font-bold text-on-surface mb-1">Welcome Back</h2>
-        <p class="text-xs text-text-secondary mb-6">Log in to your MemoryBase account.</p>
+        <p class="text-xs text-text-secondary mb-6">Log in to your exom account.</p>
         <form method="POST" action="/login">
             <input type="hidden" name="next" value="{next_}">
             <div class="mb-4">
@@ -1872,7 +1873,7 @@ async def logout(request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Console Page (Dynamic Multi-Tree & Module Clustered Directed Graph Engine)
+# Console Page (Universal Graph Engine)
 # ---------------------------------------------------------------------------
 async def console_page(request: Request):
     user_id = _require_login(request)
@@ -1933,7 +1934,7 @@ async def console_page(request: Request):
             </li>
         """ for ws in workspaces)
     else:
-        repo_list_html = '<div class="p-3 text-xs text-[#8e8e8e]">No repositories found. Connect MCP to Claude/Cursor to log changes.</div>'
+        repo_list_html = '<div class="p-3 text-xs text-[#8e8e8e]">No workspaces found. Connect MCP to an AI client to start committing memory.</div>'
 
     if selected_workspace:
         if nodes:
@@ -1996,7 +1997,7 @@ async def console_page(request: Request):
                     layer_badge = '<span class="bg-blue-100 text-blue-800 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">CONCEPT</span>'
                     border_cls = "border-blue-400 bg-blue-50/20"
                 else:
-                    layer_badge = f'<span class="node-step">Step {step_idx}</span>'
+                    layer_badge = f'<span class="node-step">Memory #{step_idx}</span>'
 
                 nodes_html += f"""
                 <div class="canvas-node {border_cls}" style="left: {x}px; top: {y}px; width: {card_width}px;" 
@@ -2022,17 +2023,17 @@ async def console_page(request: Request):
             canvas_content = f"""
             <div class="empty-canvas-state">
                 <div class="empty-icon">⚡</div>
-                <h3>No CodeBase Data</h3>
-                <p>No CodeBase Data. Connect MCP to AI models and store CodeBase Logs.</p>
-                <code>mcpServers -&gt; memory-base</code>
+                <h3>No Context Nodes Found</h3>
+                <p>Connect your AI client to exom to start streaming persistent memory.</p>
+                <code>mcpServers -&gt; exom</code>
             </div>
             """
     else:
         canvas_content = f"""
         <div class="empty-canvas-state">
             <div class="empty-icon">📁</div>
-            <h3>Manage Code Base</h3>
-            <p>Select a codebase from the sidebar to view its architecture nodes and logs.</p>
+            <h3>Universal Memory Vault</h3>
+            <p>Select a workspace from the sidebar to inspect its connected architecture graph.</p>
         </div>
         """
 
@@ -2041,7 +2042,7 @@ async def console_page(request: Request):
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Console - MemoryBase</title>
+<title>Console - exom</title>
 <style>
 :root {{
   --sidebar-bg: #171717;
@@ -2297,13 +2298,13 @@ body {{
           <line x1="9" y1="3" x2="9" y2="21"></line>
         </svg>
       </label>
-      <span class="sidebar-brand">MemoryBase Vault</span>
+      <span class="sidebar-brand">exom Vault</span>
     </div>
 
-    <div class="sidebar-section-title">Repositories &amp; Codebases</div>
+    <div class="sidebar-section-title">Context Workspaces</div>
     <ul class="chat-list">
       <li class="chat-item" style="border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:6px; padding-bottom:6px;">
-        <a href="/dashboard" style="color:inherit; text-decoration:none;">⚙️ Database & Settings</a>
+        <a href="/dashboard" style="color:inherit; text-decoration:none;">⚙️ Database &amp; MCP Settings</a>
       </li>
       {repo_list_html}
     </ul>
@@ -2314,7 +2315,7 @@ body {{
           <div class="avatar">{initial}</div>
           <span class="user-name">{display_name}</span>
         </div>
-        <span class="plan-badge">MCP Active</span>
+        <span class="plan-badge">MCP Bridge Active</span>
       </div>
       <form method="POST" action="/logout" style="margin-top:8px;">
         <button type="submit" class="logout-btn">Log Out</button>
@@ -2343,20 +2344,20 @@ body {{
 <div id="nodeModal" class="modal-overlay" onclick="closeNodeModal(event)">
   <div class="modal-card" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeNodeModalDirect()">×</button>
-    <div id="modalTitle" class="modal-title">Node Details</div>
+    <div id="modalTitle" class="modal-title">Memory Details</div>
     
     <div class="modal-section">
-      <div class="modal-label">What Changed (Summary)</div>
+      <div class="modal-label">Core Context &amp; Summary</div>
       <div id="modalSummary" class="modal-body"></div>
     </div>
 
     <div class="modal-section">
-      <div class="modal-label">Why (Rationale)</div>
+      <div class="modal-label">Model Reasoning &amp; Rationale</div>
       <div id="modalRationale" class="modal-body"></div>
     </div>
 
     <div class="modal-section">
-      <div class="modal-label">Project Impact Analysis</div>
+      <div class="modal-label">Downstream Impact Analysis</div>
       <div id="modalImpact" class="modal-body"></div>
     </div>
   </div>
@@ -2469,12 +2470,12 @@ async def dashboard_get(request: Request):
     if flash_key:
         flash_html = f"""
 <div class="mb-6 p-4 bg-surface-container-low border border-primary rounded-lg">
-    <strong class="text-xs uppercase font-mono text-primary block mb-1">New API Key (Shown Once — Copy Now):</strong>
+    <strong class="text-xs uppercase font-mono text-primary block mb-1">New exom MCP API Key (Shown Once — Copy Now):</strong>
     <div class="flex items-center gap-2 mt-2">
         <input type="text" readonly value="{flash_key}" id="newApiKeyField" class="w-full font-mono text-xs bg-surface-white border border-border-muted p-2 rounded">
         <button id="btnCopyKey" onclick="copyToClipboard('{flash_key}', 'btnCopyKey')" class="bg-secondary-container text-on-surface px-4 py-2 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy</button>
     </div>
-    <p class="text-xs text-text-secondary mt-2">Use this as your Bearer Token for Claude or direct API configurations.</p>
+    <p class="text-xs text-text-secondary mt-2">Use this as your Bearer Token for Claude Desktop or Cursor configurations.</p>
 </div>
 """
 
@@ -2482,7 +2483,7 @@ async def dashboard_get(request: Request):
         masked = security.mask_connection_string(security.decrypt_text(user["connection_string_encrypted"]))
         conn_status = f'<p class="text-xs text-text-secondary">Currently linked: <code class="text-on-surface font-mono">{masked}</code></p>'
     else:
-        conn_status = '<div class="p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">No Neon connection string set yet. Claude connector will fail until configured.</div>'
+        conn_status = '<div class="p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">No Neon PostgreSQL connection string set yet. Cross-model sync will fail until configured.</div>'
 
     keys = await db_control.list_api_keys(pool, user_id)
     active_keys = [k for k in keys if k["revoked_at"] is None]
@@ -2512,26 +2513,28 @@ async def dashboard_get(request: Request):
     <div class="max-w-3xl mx-auto">
         <div class="mb-6 flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold text-on-surface mb-1">Database & API Settings</h1>
-                <p class="text-xs text-text-secondary">Manage your Neon database connection string and MCP API keys.</p>
+                <h1 class="text-2xl font-bold text-on-surface mb-1">Database &amp; MCP Settings</h1>
+                <p class="text-xs text-text-secondary">Manage your personal Neon PostgreSQL database connection string and exom API keys.</p>
             </div>
             <a href="/console" class="text-xs font-semibold text-primary underline">← Back to Console</a>
         </div>
 
         {flash_html}
 
+        <!-- 1. Endpoint & Connection URL -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
-            <h2 class="text-base font-semibold text-on-surface mb-1">1. MCP Server Endpoint</h2>
-            <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring your Claude Desktop or HTTP MCP client connector.</p>
+            <h2 class="text-base font-semibold text-on-surface mb-1">1. exom MCP Server Endpoint</h2>
+            <p class="text-xs text-text-secondary mb-3">Provide this URL when configuring Claude Desktop, Cursor, or any MCP client connector.</p>
             <div class="flex items-center gap-2">
                 <input type="text" readonly value="{mcp_endpoint}" id="mcpEndpointField" class="w-full font-mono text-xs bg-surface-container-low border border-border-muted p-2.5 rounded">
                 <button id="btnCopyEndpoint" onclick="copyToClipboard('{mcp_endpoint}', 'btnCopyEndpoint')" class="bg-surface-white text-on-surface px-4 py-2.5 rounded text-xs font-semibold whitespace-nowrap border border-[#050505]">Copy URL</button>
             </div>
         </div>
 
+        <!-- 2. Neon Database Connection String Settings -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl mb-6 shadow-sm">
-            <h2 class="text-base font-semibold text-on-surface mb-1">2. Neon Database Connection String</h2>
-            <p class="text-xs text-text-secondary mb-3">Paste the same PostgreSQL connection string your mobile notes app uses to sync.</p>
+            <h2 class="text-base font-semibold text-on-surface mb-1">2. Personal Neon Database Connection String</h2>
+            <p class="text-xs text-text-secondary mb-3">Paste your PostgreSQL connection string. All companion apps, AI agents, and desktop clients synchronize with this instance.</p>
             {conn_status}
             <form method="POST" action="/dashboard/connection-string" class="mt-4">
                 <div class="mb-3">
@@ -2541,9 +2544,10 @@ async def dashboard_get(request: Request):
             </form>
         </div>
 
+        <!-- 3. API Keys Management -->
         <div class="bg-surface-white border border-border-muted p-6 rounded-xl shadow-sm">
-            <h2 class="text-base font-semibold text-on-surface mb-1">3. MCP API Keys</h2>
-            <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom apps.</p>
+            <h2 class="text-base font-semibold text-on-surface mb-1">3. exom MCP API Keys</h2>
+            <p class="text-xs text-text-secondary mb-3">API keys are generated automatically through Claude OAuth, or you can create them manually for custom agents.</p>
             <div class="divide-y border-border-muted mb-4">
                 {rows}
             </div>
@@ -2624,6 +2628,7 @@ routes = [
     Route("/", landing_page, methods=["GET"]),
     Route("/download", download_apk, methods=["GET"]),
     Route("/MemoryBase.apk", download_apk, methods=["GET"]),
+    Route("/exom.apk", download_apk, methods=["GET"]),
     Route("/img1.jpeg", serve_root_image, methods=["GET"]),
     Route("/img2.jpeg", serve_root_image, methods=["GET"]),
     Route("/img3.jpeg", serve_root_image, methods=["GET"]),
