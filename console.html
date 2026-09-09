@@ -333,13 +333,13 @@ body {
   let startX, startY;
 
   function updateTransform() {
-    if(viewport) {
+    if (viewport) {
       viewport.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
     }
   }
 
   container.addEventListener('mousedown', (e) => {
-    if(e.target.closest('.canvas-node') || e.target.closest('.canvas-hud')) return;
+    if (e.target.closest('.canvas-node') || e.target.closest('.canvas-hud')) return;
     isDragging = true;
     startX = e.clientX - panX;
     startY = e.clientY - panY;
@@ -347,14 +347,14 @@ body {
 
   window.addEventListener('mouseup', () => { isDragging = false; });
   window.addEventListener('mousemove', (e) => {
-    if(!isDragging) return;
+    if (!isDragging) return;
     panX = e.clientX - startX;
     panY = e.clientY - startY;
     updateTransform();
   });
 
   container.addEventListener('touchstart', (e) => {
-    if(e.target.closest('.canvas-node') || e.target.closest('.canvas-hud')) return;
+    if (e.target.closest('.canvas-node') || e.target.closest('.canvas-hud')) return;
     isDragging = true;
     const touch = e.touches[0];
     startX = touch.clientX - panX;
@@ -363,7 +363,7 @@ body {
 
   container.addEventListener('touchend', () => { isDragging = false; });
   container.addEventListener('touchmove', (e) => {
-    if(!isDragging) return;
+    if (!isDragging) return;
     const touch = e.touches[0];
     panX = touch.clientX - startX;
     panY = touch.clientY - startY;
@@ -402,7 +402,7 @@ body {
   }
 
   function closeNodeModal(e) {
-    if(e.target.id === 'nodeModal') {
+    if (e.target.id === 'nodeModal') {
       document.getElementById('nodeModal').classList.remove('active');
     }
   }
