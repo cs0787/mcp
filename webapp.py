@@ -1,11 +1,16 @@
 """
-exom - Web Application & Mobile/Desktop Gateway
+exom - The Unified Second Brain & Memory Layer for All AI
 Full Python Starlette ASGI Application with:
 - Dedicated console.html template loader
-- Direct Android APK distribution endpoints (/download, /exom.apk, /MemoryBase.apk)
+- Cross-model ambient context bridge (Claude, Cursor, autonomous agents)
+- Direct Android APK distribution endpoints (/download and /exom.apk)
 - Root image serving (/img1.jpeg - /img4.jpeg)
 - Mobile & Desktop authentication gateway
-- Unified 2D Second Brain graph endpoint
+- Unified 2D Second Brain graph endpoint (merging notes and MCP nodes)
+- Responsive Mobile Showcase (1024x1165 aspect ratio, unnumbered vertical labels)
+- Lenis Smooth Scrolling (@studio-freight/lenis)
+- Scrubbed, scroll-driven Instant Context Pipeline Animation
+- Dual-mode Core Capabilities Scroll-Spy
 - FastMCP Multi-Tenant Database & Control Plane Settings
 """
 
@@ -121,11 +126,22 @@ def _page(title: str, body: str) -> HTMLResponse:
 </script>
 
 <style>
-    html.lenis, html.lenis body {{ height: auto; }}
-    .lenis.lenis-smooth {{ scroll-behavior: auto !important; }}
-    .lenis.lenis-smooth [data-lenis-prevent] {{ overscroll-behavior: contain; }}
-    .lenis.lenis-stopped {{ overflow: hidden; }}
-    .lenis.lenis-smooth iframe {{ pointer-events: none; }}
+    html.lenis, html.lenis body {{
+      height: auto;
+    }}
+    .lenis.lenis-smooth {{
+      scroll-behavior: auto !important;
+    }}
+    .lenis.lenis-smooth [data-lenis-prevent] {{
+      overscroll-behavior: contain;
+    }}
+    .lenis.lenis-stopped {{
+      overflow: hidden;
+    }}
+    .lenis.lenis-smooth iframe {{
+      pointer-events: none;
+    }}
+
     .mono {{ font-family: 'JetBrains Mono', monospace; }}
 
     .hero-interactive-grid {{
@@ -152,21 +168,68 @@ def _page(title: str, body: str) -> HTMLResponse:
         -webkit-mask-image: radial-gradient(circle 160px at var(--x, -999px) var(--y, -999px), rgb(16, 15, 15) 0%, transparent 100%);
         mask-image: radial-gradient(circle 160px at var(--x, -999px) var(--y, -999px), rgb(36, 35, 35) 0%, transparent 100%);
     }}
-    .hero-interactive-grid:hover::after {{ opacity: 1; }}
-
-    .vertical-mode-text {{ writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.32em; }}
-    .expand-card {{ flex: 0 0 5.2rem; height: 28rem; border-radius: 26px; transition: all 0.5s cubic-bezier(0.25, 1, 0.35, 1); }}
-    .expand-card.active {{ flex: 0 0 calc(28rem * 1024 / 1165); width: calc(28rem * 1024 / 1165); }}
-    @media (max-width: 900px) {{
-        .expand-card {{ flex: 0 0 4.2rem; height: 23rem; border-radius: 20px; }}
-        .expand-card.active {{ flex: 0 0 calc(23rem * 1024 / 1165); width: calc(23rem * 1024 / 1165); }}
+    .hero-interactive-grid:hover::after {{
+        opacity: 1;
     }}
 
-    .diagram-scaler-wrapper {{ width: 100%; max-width: min(1000px, calc((100vh - 200px) * 1000 / 524)); margin: 0 auto; position: relative; container-type: inline-size; }}
-    .diagram-container {{ position: relative; width: 100%; aspect-ratio: 1000 / 524; background-color: #000000; overflow: hidden; }}
-    .vertical-grid {{ position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 3.5%; pointer-events: none; opacity: 0.12; }}
+    .vertical-mode-text {{
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        letter-spacing: 0.32em;
+    }}
+
+    .expand-card {{
+        flex: 0 0 5.2rem;
+        height: 28rem;
+        border-radius: 26px;
+        transition: all 0.5s cubic-bezier(0.25, 1, 0.35, 1);
+    }}
+    .expand-card.active {{
+        flex: 0 0 calc(28rem * 1024 / 1165);
+        width: calc(28rem * 1024 / 1165);
+    }}
+    @media (max-width: 900px) {{
+        .expand-card {{
+            flex: 0 0 4.2rem;
+            height: 23rem;
+            border-radius: 20px;
+        }}
+        .expand-card.active {{
+            flex: 0 0 calc(23rem * 1024 / 1165);
+            width: calc(23rem * 1024 / 1165);
+        }}
+    }}
+
+    .diagram-scaler-wrapper {{
+        width: 100%;
+        max-width: min(1000px, calc((100vh - 200px) * 1000 / 524));
+        margin: 0 auto;
+        position: relative;
+        container-type: inline-size;
+    }}
+    @media (max-width: 640px) {{
+        .diagram-scaler-wrapper {{
+            max-width: min(1000px, calc((100vh - 150px) * 1000 / 524));
+        }}
+    }}
+
+    .diagram-container {{
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1000 / 524;
+        background-color: #000000;
+        overflow: hidden;
+    }}
+
+    .vertical-grid {{
+        position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 3.5%; pointer-events: none; opacity: 0.12;
+    }}
     .grid-line {{ width: 1px; height: 100%; background-color: #ffffff; }}
-    svg.canvas {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }}
+    
+    svg.canvas {{
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+    }}
+
     .line-green {{ stroke: #00e599; stroke-width: 1.5; fill: none; }}
     .line-green-dash {{ stroke: #00e599; stroke-width: 1.5; stroke-dasharray: 4 4; fill: none; }}
     .line-white-dash {{ stroke: #71767c; stroke-width: 1.5; stroke-dasharray: 4 4; fill: none; }}
@@ -174,72 +237,340 @@ def _page(title: str, body: str) -> HTMLResponse:
     .ruler-tick {{ stroke: #25282c; stroke-width: 1.5; transition: stroke 0.25s ease; }}
     .ruler-tick.lit {{ stroke: #00e599; }}
     .tick-active {{ stroke: #00e599; stroke-width: 1.5; }}
-    .badge {{ position: absolute; transform: translate(-50%, -50%) scale(0.7); display: flex; align-items: center; gap: 0.6cqw; font-size: 1.2cqw; font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px); transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease; }}
+
+    .badge {{
+        position: absolute; transform: translate(-50%, -50%) scale(0.7); display: flex; align-items: center; gap: 0.6cqw; font-size: 1.2cqw; font-weight: 500; border-radius: 9999px; z-index: 2; user-select: none; white-space: nowrap; opacity: 0; filter: blur(3px);
+        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+    }}
     .badge.visible {{ opacity: 1; filter: blur(0px); transform: translate(-50%, -50%) scale(1); }}
     .badge-white {{ background: #ffffff; color: #000000; padding: 0.5cqw 1.2cqw; font-weight: 600; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1); }}
     .badge-yellow {{ background: #fcee0a; color: #000000; padding: 0.6cqw 1.4cqw; font-weight: 700; font-size: 1.3cqw; box-shadow: 0 0 28px rgba(252, 238, 10, 0.45); }}
     .badge-dark {{ background: #25282e; color: #b1b8c0; border: 1px solid #383c44; padding: 0.4cqw 1.1cqw; font-size: 1.1cqw; }}
-    .circle-icon {{ position: absolute; transform: translate(-50%, -50%) scale(0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; opacity: 0; transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }}
+    
+    .circle-icon {{
+        position: absolute; transform: translate(-50%, -50%) scale(0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; opacity: 0;
+        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }}
     .circle-icon.visible {{ opacity: 1; transform: translate(-50%, -50%) scale(1); }}
     .check-node {{ width: 1.5cqw; height: 1.5cqw; background: #00e599; color: #000000; font-size: 0.9cqw; font-weight: 900; box-shadow: 0 0 10px rgba(0, 229, 153, 0.7); }}
     .outline-node {{ width: 2cqw; height: 2cqw; border-radius: 50%; background: #0b0d10; border: 1px solid #30353c; color: #8b949e; }}
     .hollow-node {{ width: 0.7cqw; height: 0.7cqw; background: #000000; border: 1.5px solid #00e599; border-radius: 50%; }}
-    .meta-text {{ position: absolute; transform: translateX(-50%); font-size: 0.95cqw; color: #7d8590; text-align: center; line-height: 1.35; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.3s ease; }}
+
+    .meta-text {{
+        position: absolute; transform: translateX(-50%); font-size: 0.95cqw; color: #7d8590; text-align: center; line-height: 1.35; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.3s ease;
+    }}
     .meta-text.visible {{ opacity: 1; }}
     .timestamp {{ font-size: 0.95cqw; color: #555d68; letter-spacing: 0.3px; }}
     .glow-dot {{ fill: #00e599; filter: url(#glow); opacity: 0; transition: opacity 0.2s ease; }}
     .glow-dot.active {{ opacity: 1; }}
 
-    :root {{ --font-main: 'Plus Jakarta Sans', sans-serif; --font-mono: 'JetBrains Mono', monospace; --neon-green: #00e599; --footer-bg: #F5F5F5; }}
-    .showcase-container {{ position: relative; width: 100%; padding-bottom: 80px; font-family: var(--font-main); }}
-    .sticky-nav-wrapper {{ position: absolute; top: 0; left: 0; right: 0; bottom: 80px; max-width: 1200px; margin: 0 auto; padding: 0 24px; pointer-events: none; z-index: 20; }}
-    .sticky-sidebar {{ position: sticky; top: 90px; width: 260px; pointer-events: auto; padding-top: 8px; }}
-    .menu-badge-btn {{ display: inline-flex; align-items: center; padding: 10px 18px; border-radius: 12px; color: #000000; background: #facc15; font-weight: 800; font-size: 13.5px; text-transform: uppercase; margin-bottom: 20px; }}
-    .mobile-feature-badge {{ display: none; align-items: center; padding: 6px 12px; border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 14px; width: fit-content; }}
-    .section-dark .mobile-feature-badge {{ background: rgba(255, 255, 255, 0.1); color: #00e599; border: 1px solid rgba(0, 229, 153, 0.3); }}
-    .section-light .mobile-feature-badge {{ background: #f4f4f5; color: #18181b; border: 1px solid #e4e4e7; }}
-    .nav-list {{ list-style: none; display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; }}
-    .nav-btn {{ display: flex; align-items: center; gap: 10px; font-size: 14.5px; font-weight: 500; color: #71717a; text-decoration: none; cursor: pointer; transition: color 0.2s; }}
+    :root {{
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --neon-green: #00e599;
+      --dark-bg: #000000;
+      --light-bg: #ffffff;
+      --footer-bg: #F5F5F5;
+    }}
+
+    .showcase-container {{
+      position: relative;
+      width: 100%;
+      padding-bottom: 80px;
+      font-family: var(--font-main);
+    }}
+
+    .sticky-nav-wrapper {{
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 80px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      pointer-events: none;
+      z-index: 20;
+    }}
+
+    .sticky-sidebar {{
+      position: sticky;
+      top: 90px;
+      width: 260px;
+      pointer-events: auto;
+      padding-top: 8px;
+    }}
+
+    .menu-badge-btn {{
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 18px;
+      border: unset;
+      border-radius: 12px;
+      color: #000000;
+      background: #facc15;
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 13.5px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 14px -2px rgba(250, 204, 21, 0.45);
+      cursor: default;
+      pointer-events: none;
+      user-select: none;
+      margin-bottom: 20px;
+      margin-left: 0;
+      text-align: left;
+    }}
+
+    .mobile-feature-badge {{
+      display: none;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      width: fit-content;
+    }}
+
+    .section-dark .mobile-feature-badge {{
+      background: rgba(255, 255, 255, 0.1);
+      color: #00e599;
+      border: 1px solid rgba(0, 229, 153, 0.3);
+    }}
+
+    .section-light .mobile-feature-badge {{
+      background: #f4f4f5;
+      color: #18181b;
+      border: 1px solid #e4e4e7;
+    }}
+
+    .nav-list {{
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+    }}
+
+    .nav-btn {{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14.5px;
+      font-weight: 500;
+      color: #71717a;
+      text-decoration: none;
+      transition: color 0.2s ease;
+      cursor: pointer;
+    }}
+
+    .nav-btn:hover {{ color: #ffffff; }}
     .nav-btn.active {{ color: #ffffff; font-weight: 700; }}
+
+    .sticky-sidebar.theme-light .nav-btn {{ color: #71717a; }}
+    .sticky-sidebar.theme-light .nav-btn:hover {{ color: #000000; }}
     .sticky-sidebar.theme-light .nav-btn.active {{ color: #000000; }}
-    .nav-dot {{ width: 6px; height: 6px; border-radius: 50%; background-color: transparent; transition: all 0.2s; }}
-    .nav-btn.active .nav-dot {{ background-color: var(--neon-green); box-shadow: 0 0 10px rgba(0, 229, 153, 0.9); transform: scale(1.3); }}
-    .feature-section {{ width: 100%; min-height: 85vh; padding: 90px 0; display: flex; align-items: center; }}
-    .section-inner {{ max-width: 1200px; margin: 0 auto; padding: 0 24px; width: 100%; display: grid; grid-template-columns: 260px 1fr; column-gap: 56px; }}
-    .section-content {{ grid-column: 2; max-width: 820px; }}
+
+    .nav-dot {{
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: transparent;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }}
+
+    .nav-btn.active .nav-dot {{
+      background-color: var(--neon-green);
+      box-shadow: 0 0 10px rgba(0, 229, 153, 0.9);
+      transform: scale(1.3);
+    }}
+
+    .feature-section {{
+      width: 100%;
+      min-height: 85vh;
+      padding: 90px 0;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      scroll-margin-top: 0;
+    }}
+
+    .section-inner {{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      column-gap: 56px;
+    }}
+
+    .section-content {{
+      grid-column: 2;
+      max-width: 820px;
+    }}
+
     .section-dark {{ background-color: #000000; color: #e2e8f0; }}
     .section-dark .hero-heading {{ color: #ffffff; }}
     .section-dark .lead-text {{ color: #a1a1aa; }}
+    .section-dark .checklist li {{ color: #d4d4d8; }}
+
     .section-light {{ background-color: #ffffff; color: #000000; }}
     .section-light .hero-heading {{ color: #000000; }}
     .section-light .lead-text {{ color: #52525b; }}
-    .hero-heading {{ font-size: clamp(28px, 4vw, 48px); font-weight: 800; letter-spacing: -0.035em; line-height: 1.15; margin-bottom: 20px; }}
-    .lead-text {{ font-size: 17px; line-height: 1.6; margin-bottom: 28px; }}
-    .checklist {{ list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; padding-left: 0; }}
-    .checklist li {{ display: flex; align-items: flex-start; gap: 10px; font-size: 15px; font-weight: 600; }}
-    .checklist li .check-icon {{ color: var(--neon-green); font-weight: 800; }}
-    .terminal-box {{ background: #09090b; border: 1px solid #27272a; border-radius: 12px; overflow: hidden; font-family: var(--font-mono); max-width: 740px; box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.7); }}
-    .terminal-topbar {{ background: #18181b; padding: 10px 16px; display: flex; align-items: center; gap: 8px; }}
+    .section-light .checklist li {{ color: #27272a; }}
+
+    .hero-heading {{
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }}
+
+    .lead-text {{
+      font-size: 17px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }}
+
+    .checklist {{
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+      padding-left: 0;
+    }}
+
+    .checklist li {{
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 600;
+    }}
+
+    .checklist li .check-icon {{
+      color: var(--neon-green);
+      font-weight: 800;
+      font-size: 15px;
+    }}
+
+    .terminal-box {{
+      background: #09090b;
+      border: 1px solid #27272a;
+      border-radius: 12px;
+      overflow: hidden;
+      font-family: var(--font-mono);
+      max-width: 740px;
+      box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.7);
+    }}
+
+    .terminal-topbar {{
+      background: #18181b;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }}
+
     .terminal-dots {{ display: flex; gap: 6px; }}
     .terminal-dots span {{ width: 10px; height: 10px; border-radius: 50%; }}
-    .dot-red {{ background: #ef4444; }} .dot-yellow {{ background: #eab308; }} .dot-green {{ background: #22c55e; }}
-    .terminal-title {{ font-size: 12px; color: #a1a1aa; font-weight: 500; margin-left: 6px; }}
-    .terminal-code {{ padding: 20px; font-size: 13.5px; color: #e4e4e7; overflow-x: auto; line-height: 1.65; }}
-    .hl-key {{ color: #38bdf8; }} .hl-str {{ color: #fbbf24; }} .hl-green {{ color: #4ade80; }} .hl-dim {{ color: #71717a; }}
-    .neon-footer {{ background-color: var(--footer-bg); border-top: 1px solid #e5e5e5; color: #52525b; padding: 80px 24px 48px; font-family: var(--font-main); }}
+    .dot-red {{ background: #ef4444; }}
+    .dot-yellow {{ background: #eab308; }}
+    .dot-green {{ background: #22c55e; }}
+
+    .terminal-title {{
+      font-size: 12px;
+      color: #a1a1aa;
+      font-weight: 500;
+      margin-left: 6px;
+    }}
+
+    .terminal-code {{
+      padding: 20px;
+      font-size: 13.5px;
+      color: #e4e4e7;
+      overflow-x: auto;
+      line-height: 1.65;
+    }}
+
+    .hl-key {{ color: #38bdf8; }}
+    .hl-str {{ color: #fbbf24; }}
+    .hl-green {{ color: #4ade80; }}
+    .hl-dim {{ color: #71717a; }}
+
+    .neon-footer {{
+      background-color: var(--footer-bg);
+      border-top: 1px solid #e5e5e5;
+      color: #52525b;
+      padding: 80px 24px 48px;
+      font-family: var(--font-main);
+      position: relative;
+      z-index: 30;
+      clear: both;
+    }}
+
     .footer-container {{ max-width: 1200px; margin: 0 auto; }}
-    .footer-top {{ display: grid; grid-template-columns: 2fr repeat(4, 1fr); gap: 48px; margin-bottom: 64px; }}
+    .footer-top {{
+      display: grid;
+      grid-template-columns: 2fr repeat(4, 1fr);
+      gap: 48px;
+      margin-bottom: 64px;
+    }}
     .footer-brand {{ display: flex; flex-direction: column; gap: 16px; }}
-    .footer-logo {{ display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: #18181b; font-weight: 800; font-size: 20px; }}
+    .footer-logo {{
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #18181b;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.03em;
+    }}
     .footer-logo svg {{ width: 24px; height: 24px; }}
     .footer-tagline {{ font-size: 14px; color: #71717a; max-width: 270px; line-height: 1.5; }}
-    .status-badge {{ display: inline-flex; align-items: center; gap: 8px; width: fit-content; padding: 6px 12px; border-radius: 9999px; background: #ffffff; border: 1px solid #e4e4e7; color: #3f3f46; font-size: 12px; font-weight: 600; text-decoration: none; }}
+    
+    .status-badge {{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      margin-top: 8px;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      background: #ffffff;
+      border: 1px solid #e4e4e7;
+      color: #3f3f46;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+    }}
     .status-dot {{ width: 6px; height: 6px; border-radius: 50%; background-color: #16a34a; box-shadow: 0 0 8px #16a34a; }}
     .footer-col h4 {{ font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #18181b; margin-bottom: 20px; }}
     .footer-col ul {{ list-style: none; display: flex; flex-direction: column; gap: 12px; padding: 0; }}
-    .footer-col ul li a {{ color: #71717a; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.15s; }}
+    .footer-col ul li a {{ color: #71717a; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.15s ease; }}
     .footer-col ul li a:hover {{ color: #18181b; font-weight: 600; }}
-    .footer-bottom {{ border-top: 1px solid #e5e5e5; padding-top: 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; font-size: 13px; color: #71717a; }}
+
+    .footer-bottom {{
+      border-top: 1px solid #e5e5e5;
+      padding-top: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-size: 13px;
+      color: #71717a;
+    }}
 
     @media (max-width: 900px) {{
       .sticky-nav-wrapper {{ display: none !important; }}
@@ -255,6 +586,7 @@ def _page(title: str, body: str) -> HTMLResponse:
 </head>
 <body class="bg-surface-white text-on-surface font-body-md min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
 
+<!-- Global Lenis Initialized before components load -->
 <script>
     window.lenis = new Lenis({{
       duration: 1.2,
@@ -263,7 +595,11 @@ def _page(title: str, body: str) -> HTMLResponse:
       smoothWheel: true,
       infinite: false,
     }});
-    function raf(time) {{ window.lenis.raf(time); requestAnimationFrame(raf); }}
+
+    function raf(time) {{
+      window.lenis.raf(time);
+      requestAnimationFrame(raf);
+    }}
     requestAnimationFrame(raf);
 
     function copyToClipboard(text, btnId) {{
@@ -275,7 +611,8 @@ def _page(title: str, body: str) -> HTMLResponse:
         }});
     }}
     function setTerminalTab(tab) {{
-        ['claude', 'cursor', 'curl'].forEach(t => {{
+        const tabs = ['claude', 'cursor', 'curl'];
+        tabs.forEach(t => {{
             const btn = document.getElementById('tab-' + t);
             const block = document.getElementById('snippet-' + t);
             if (t === tab) {{
@@ -331,16 +668,32 @@ def _navbar(request: Request, user_email: str | None = None) -> str:
 
 
 # ---------------------------------------------------------------------------
-# File Serving Routes
+# Direct APK & Executable Distribution Route
 # ---------------------------------------------------------------------------
 async def download_apk(request: Request):
     for name in ("exom.apk", "MemoryBase.apk"):
         apk_path = os.path.join(os.path.dirname(__file__), name)
         if os.path.exists(apk_path):
-            return FileResponse(path=apk_path, media_type="application/vnd.android.package-archive", filename="exom.apk")
-    return HTMLResponse("<div style='font-family:sans-serif;padding:40px;text-align:center;'><h2>Build in progress</h2><p>The companion installer will be available shortly.</p><a href='/'>← Return Home</a></div>", status_code=404)
+            return FileResponse(
+                path=apk_path,
+                media_type="application/vnd.android.package-archive",
+                filename="exom.apk",
+            )
+    return HTMLResponse(
+        """
+        <div style="font-family:sans-serif; padding:40px; text-align:center;">
+            <h2>Release Build Pending</h2>
+            <p>The companion installer is packaging. Please check back shortly or inspect repository releases.</p>
+            <a href="/">← Return Home</a>
+        </div>
+        """,
+        status_code=404,
+    )
 
 
+# ---------------------------------------------------------------------------
+# Root Image Serving Route (img1.jpeg - img4.jpeg)
+# ---------------------------------------------------------------------------
 async def serve_root_image(request: Request):
     filename = request.url.path.lstrip("/")
     if ".." in filename or "/" in filename or "\\" in filename:
@@ -348,7 +701,7 @@ async def serve_root_image(request: Request):
 
     img_path = os.path.join(os.path.dirname(__file__), filename)
     if not os.path.exists(img_path):
-        return HTMLResponse(f"Image {filename} not found.", status_code=404)
+        return HTMLResponse(f"Image {filename} not found in root directory.", status_code=404)
 
     return FileResponse(img_path, media_type="image/jpeg")
 
@@ -391,7 +744,7 @@ async def mobile_login(request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Desktop Graph Gateway Endpoints
+# Desktop Gateway Endpoints (Merges Context & Graph)
 # ---------------------------------------------------------------------------
 async def desktop_get_graph(request: Request):
     user_id = request.headers.get("x-user-id") or _require_login(request)
