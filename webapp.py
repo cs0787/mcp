@@ -2,7 +2,7 @@
 exom - The Unified Second Brain & Memory Layer for All AI
 Full Python Starlette ASGI Application with:
 - Dedicated console.html template loader
-- Cross-model ambient context bridge (Claude, Cursor, autonomous agents)
+- Categorized Second Brain partitions (Coding Architecture vs AI Chats)
 - Direct Android APK distribution endpoints (/download, /exom.apk, /MemoryBase.apk)
 - Root image serving (/img1.jpeg - /img4.jpeg)
 - Mobile & Desktop authentication gateway
@@ -397,6 +397,7 @@ async def desktop_get_graph(request: Request):
     if not user_id:
         return JSONResponse({"error": "Unauthorized: Missing user credentials"}, status_code=401)
 
+    category = request.query_params.get("category", "all")
     pool = db_control.get_control_pool()
     user = await db_control.get_user_by_id(pool, user_id)
 
@@ -406,27 +407,44 @@ async def desktop_get_graph(request: Request):
     conn_str = security.decrypt_text(user["connection_string_encrypted"])
     user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), conn_str)
 
-    mobile_notes = await user_pool.fetch(
-        """
-        SELECT id, coalesce(workspace_name, 'General') as workspace, 'thought' as node_type,
-               title, content as summary, '' as rationale, '' as impact_analysis,
-               ARRAY[]::text[] as tags, 'Universal Memory' as model_badge, updated_at
-        FROM notes
-        ORDER BY updated_at DESC
-        """
-    )
-
-    project_nodes = []
+    all_nodes = []
     edges = []
-    try:
-        project_nodes = await user_pool.fetch(
+
+    if category in ("all", "chat"):
+        mobile_notes = await user_pool.fetch(
+            """
+            SELECT id, coalesce(workspace_name, 'General') as workspace, 'chat_summary' as node_type,
+                   title, content as summary, '' as rationale, '' as impact_analysis,
+                   ARRAY[]::text[] as tags, 'Chat / Thought' as model_badge, updated_at
+            FROM notes
+            ORDER BY updated_at DESC
+            """
+        )
+        chat_nodes = await user_pool.fetch(
             """
             SELECT id, workspace, node_type, title, summary, rationale, impact_analysis,
                    affected_components as tags, status as model_badge, updated_at
             FROM project_nodes
+            WHERE node_type = 'chat_summary'
             ORDER BY created_at DESC
             """
         )
+        all_nodes.extend(mobile_notes)
+        all_nodes.extend(chat_nodes)
+
+    if category in ("all", "coding"):
+        code_nodes = await user_pool.fetch(
+            """
+            SELECT id, workspace, node_type, title, summary, rationale, impact_analysis,
+                   affected_components as tags, status as model_badge, updated_at
+            FROM project_nodes
+            WHERE node_type IN ('codebase_change', 'hub', 'concept')
+            ORDER BY created_at DESC
+            """
+        )
+        all_nodes.extend(code_nodes)
+
+    try:
         edges = await user_pool.fetch(
             """
             SELECT id, source_node_id, target_node_id, relation_type
@@ -436,15 +454,14 @@ async def desktop_get_graph(request: Request):
     except Exception:
         pass
 
-    all_nodes = list(mobile_notes) + list(project_nodes)
-
     return JSONResponse({
         "nodes": [
             {
                 "id": str(n["id"]),
                 "type": n["node_type"],
+                "category": "chat" if n["node_type"] in ("chat_summary", "thought", "note") else "coding",
                 "workspace": n["workspace"],
-                "title": n["title"] or "Untitled Memory",
+                "title": n["title"] or "Untitled",
                 "summary": n["summary"] or "",
                 "rationale": n["rationale"] or "",
                 "impact": n["impact_analysis"] or "",
@@ -630,7 +647,7 @@ async def landing_page(request: Request):
         </div>
     </section>
 
-    <!-- Mobile & Desktop Second Brain Showcase -->
+    <!-- Mobile Showcase -->
     <section id="mobile-showcase" class="py-16 sm:py-24 bg-[#050507] text-white border-b border-neutral-800 overflow-hidden relative">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-12 text-center mb-10">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.05] border border-white/[0.1] text-xs font-mono text-[#00e599] mb-3">
@@ -673,7 +690,7 @@ async def landing_page(request: Request):
                     </div>
                     <div class="card-expanded-content absolute inset-0 flex flex-col justify-end p-5 sm:p-6 z-30 pointer-events-none transition-all duration-500 opacity-0 translate-y-4 group-[.active]:opacity-100 group-[.active]:translate-y-0">
                         <span class="text-[10px] font-mono text-[#facc15] font-bold uppercase tracking-wider mb-1">INTELLIGENCE</span>
-                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">DeepSeek R1 Copilot</h3>
+                        <h3 class="text-base sm:text-lg font-bold text-white mb-1 tracking-tight">DeepSeek R1 Assistant</h3>
                         <p class="text-xs text-neutral-300 leading-relaxed line-clamp-2">Prompt-driven synthesis to organize thoughts, uncover latent connections, and expand concepts automatically.</p>
                     </div>
                 </div>
@@ -910,7 +927,7 @@ async def landing_page(request: Request):
                 <div id="el-ai-apps-sub" class="meta-text" style="top: 55%; left: 91.8%;">Claude, Cursor, Agents</div>
 
                 <div id="el-proto-ico" class="circle-icon outline-node" style="top: 64.5%; left: 52%;">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </div>
                 <div id="el-proto-txt" class="meta-text" style="top: 69.6%; left: 52%;">protocol<br>negotiation</div>
                 <div id="el-hollow-bot" class="circle-icon hollow-node" style="top: 63.7%; left: 91.8%;"></div>
@@ -1522,79 +1539,104 @@ async def console_page(request: Request):
     last_name = ""
     initial = display_name[0].upper()
 
-    workspaces = []
+    coding_workspaces = []
+    chat_workspaces = []
     connection_string = ""
-    total_nodes = 0
+    coding_nodes_count = 0
+    chat_nodes_count = 0
     total_edges = 0
 
     if user["connection_string_encrypted"]:
         try:
             connection_string = security.decrypt_text(user["connection_string_encrypted"])
             user_pool = await tenant_pools.get_manager().get_pool(str(user["id"]), connection_string)
-            
-            # Fetch distinct workspaces from project_nodes and notes
-            ws_rows = await user_pool.fetch("SELECT DISTINCT workspace FROM project_nodes ORDER BY workspace ASC")
-            workspaces = [r["workspace"] for r in ws_rows]
-            
-            if not workspaces:
-                ws_notes = await user_pool.fetch("SELECT DISTINCT coalesce(workspace_name, 'General') as ws FROM notes")
-                workspaces = list(set([r["ws"] for r in ws_notes]))
 
-            # Fetch totals
-            n_count = await user_pool.fetchval("SELECT count(*) FROM project_nodes")
-            e_count = await user_pool.fetchval("SELECT count(*) FROM project_edges")
-            notes_count = await user_pool.fetchval("SELECT count(*) FROM notes")
-            
-            total_nodes = (n_count or 0) + (notes_count or 0)
-            total_edges = e_count or 0
+            # Coding Workspaces
+            cw_rows = await user_pool.fetch(
+                "SELECT DISTINCT workspace FROM project_nodes WHERE node_type IN ('codebase_change', 'hub', 'concept') ORDER BY workspace ASC"
+            )
+            coding_workspaces = [r["workspace"] for r in cw_rows]
+
+            # Chat Workspaces
+            chat_p_rows = await user_pool.fetch(
+                "SELECT DISTINCT workspace FROM project_nodes WHERE node_type = 'chat_summary'"
+            )
+            notes_ws_rows = await user_pool.fetch(
+                "SELECT DISTINCT coalesce(workspace_name, 'General') as ws FROM notes"
+            )
+            chat_workspaces = list(set([r["workspace"] for r in chat_p_rows] + [r["ws"] for r in notes_ws_rows]))
+
+            # Metric Counts
+            coding_nodes_count = await user_pool.fetchval(
+                "SELECT count(*) FROM project_nodes WHERE node_type IN ('codebase_change', 'hub', 'concept')"
+            ) or 0
+            chat_nodes_count = (await user_pool.fetchval(
+                "SELECT count(*) FROM project_nodes WHERE node_type = 'chat_summary'"
+            ) or 0) + (await user_pool.fetchval("SELECT count(*) FROM notes") or 0)
+
+            total_edges = await user_pool.fetchval("SELECT count(*) FROM project_edges") or 0
         except Exception:
-            workspaces = []
+            pass
 
-    if not workspaces:
-        workspaces = ["Deployments", "General"]
+    if not coding_workspaces:
+        coding_workspaces = ["Deployments"]
+    if not chat_workspaces:
+        chat_workspaces = ["General", "Brainstorming"]
 
-    workspaces_rows = ""
-    for ws in workspaces:
-        workspaces_rows += f"""
+    # Render Coding Rows
+    coding_rows = ""
+    for ws in coding_workspaces:
+        coding_rows += f"""
         <tr class="table-row-hover transition-colors border-b border-[#1f2127]">
           <td class="py-3.5 px-4 font-semibold text-white flex items-center gap-2">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00e599" stroke-width="2.5">
-              <circle cx="12" cy="12" r="3"/><path d="M3 12h3m12 0h3M12 3v3m0 12v3"/>
-            </svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00e599" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
             <span>{ws}</span>
           </td>
-          <td class="py-3.5 px-4 text-neutral-300 font-mono text-[11px]">Active Domain</td>
-          <td class="py-3.5 px-4 text-neon-green font-mono text-[11px]">Connected</td>
-          <td class="py-3.5 px-4 text-neon-muted font-mono text-[11px]">Just now</td>
-          <td class="py-3.5 px-4">
-            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-[#11231a] text-neon-green border border-[#16432f]">Synchronized</span>
-          </td>
+          <td class="py-3.5 px-4 text-neutral-400 font-mono text-[11px]">Git / Architecture Chain</td>
+          <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded text-[10px] font-mono bg-[#11231a] text-neon-green border border-[#16432f]">Sequential Tracked</span></td>
           <td class="py-3.5 px-4 text-right">
-            <a href="/console?ws={ws}" class="text-xs font-semibold text-neutral-300 hover:text-white bg-[#1a1b20] hover:bg-[#222328] px-3 py-1.5 rounded-lg border border-neon-border transition-colors no-underline">
-              Open Canvas →
+            <a href="/console?ws={ws}&category=coding" class="text-xs font-semibold text-neutral-300 hover:text-white bg-[#1a1b20] hover:bg-[#222328] px-3 py-1.5 rounded-lg border border-neon-border transition-colors no-underline">
+              Inspect Architecture →
             </a>
           </td>
         </tr>
         """
 
-    keys = await db_control.list_api_keys(pool, user_id)
-    active_keys = [k for k in keys if k["revoked_at"] is None]
-    if active_keys:
-        api_keys_rows = "".join(f"""
-        <tr class="border-b border-[#1f2127]">
-          <td class="py-2.5 px-4 font-mono font-medium text-neutral-200">{k['label']}</td>
-          <td class="py-2.5 px-4 font-mono text-neon-muted">{k['created_at'].strftime('%b %d, %Y')}</td>
-          <td class="py-2.5 px-4 font-mono text-neon-muted">{k['last_used_at'].strftime('%b %d, %Y') if k['last_used_at'] else 'Never'}</td>
-          <td class="py-2.5 px-4 text-right">
-            <form method="POST" action="/dashboard/api-key/revoke" class="m-0 inline">
-              <input type="hidden" name="key_id" value="{k['id']}">
-              <button type="submit" class="text-red-400 hover:underline text-xs" onclick="return confirm('Revoke this key?');">Revoke</button>
-            </form>
+    # Render Chat Rows
+    chat_rows = ""
+    for ws in chat_workspaces:
+        chat_rows += f"""
+        <tr class="table-row-hover transition-colors border-b border-[#1f2127]">
+          <td class="py-3.5 px-4 font-semibold text-white flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span>{ws}</span>
+          </td>
+          <td class="py-3.5 px-4 text-neutral-400 font-mono text-[11px]">Conversations &amp; Notes</td>
+          <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded text-[10px] font-mono bg-[#231e11] text-[#facc15] border border-[#443818]">Synthesized</span></td>
+          <td class="py-3.5 px-4 text-right">
+            <a href="/console?ws={ws}&category=chat" class="text-xs font-semibold text-neutral-300 hover:text-white bg-[#1a1b20] hover:bg-[#222328] px-3 py-1.5 rounded-lg border border-neon-border transition-colors no-underline">
+              View Conversations →
+            </a>
           </td>
         </tr>
-        """ for k in active_keys)
-    else:
-        api_keys_rows = '<tr><td colspan="4" class="p-4 text-center text-neon-muted text-xs font-mono">No active API keys found.</td></tr>'
+        """
+
+    # API Keys Rows
+    keys = await db_control.list_api_keys(pool, user_id)
+    active_keys = [k for k in keys if k["revoked_at"] is None]
+    api_keys_rows = "".join(f"""
+    <tr class="border-b border-[#1f2127]">
+      <td class="py-2.5 px-4 font-mono font-medium text-neutral-200">{k['label']}</td>
+      <td class="py-2.5 px-4 font-mono text-neon-muted">{k['created_at'].strftime('%b %d, %Y')}</td>
+      <td class="py-2.5 px-4 font-mono text-neon-muted">{k['last_used_at'].strftime('%b %d, %Y') if k['last_used_at'] else 'Never'}</td>
+      <td class="py-2.5 px-4 text-right">
+        <form method="POST" action="/dashboard/api-key/revoke" class="m-0 inline">
+          <input type="hidden" name="key_id" value="{k['id']}">
+          <button type="submit" class="text-red-400 hover:underline text-xs" onclick="return confirm('Revoke this key?');">Revoke</button>
+        </form>
+      </td>
+    </tr>
+    """ for k in active_keys) or '<tr><td colspan="4" class="p-4 text-center text-neon-muted text-xs font-mono">No active API keys found.</td></tr>'
 
     template_path = os.path.join(os.path.dirname(__file__), "console.html")
     if not os.path.exists(template_path):
@@ -1607,12 +1649,15 @@ async def console_page(request: Request):
         template_html.replace("{{FIRST_NAME}}", first_name)
         .replace("{{LAST_NAME}}", last_name)
         .replace("{{USER_EMAIL}}", user_email)
-        .replace("{{DISPLAY_NAME}}", display_name)
+        .replace("{{DISPLAY_NAME}}", first_name)
         .replace("{{INITIAL}}", initial)
-        .replace("{{TOTAL_NODES}}", str(total_nodes))
+        .replace("{{CODING_NODES_COUNT}}", str(coding_nodes_count))
+        .replace("{{CHAT_NODES_COUNT}}", str(chat_nodes_count))
         .replace("{{TOTAL_EDGES}}", str(total_edges))
-        .replace("{{TOTAL_WORKSPACES}}", str(len(workspaces)))
-        .replace("{{WORKSPACES_ROWS}}", workspaces_rows)
+        .replace("{{TOTAL_CODING_PROJECTS}}", str(len(coding_workspaces)))
+        .replace("{{TOTAL_CHAT_SESSIONS}}", str(len(chat_workspaces)))
+        .replace("{{CODING_ROWS}}", coding_rows)
+        .replace("{{CHAT_ROWS}}", chat_rows)
         .replace("{{API_KEYS_ROWS}}", api_keys_rows)
         .replace("{{CONNECTION_STRING}}", connection_string)
     )
