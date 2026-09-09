@@ -24,10 +24,7 @@
             card: '#121316',
             hover: '#18191d',
             border: '#222429',
-            borderLight: 'rgba(255, 255, 255, 0.08)',
             green: '#00e599',
-            greenDark: '#0e2b20',
-            greenBorder: '#164833',
             muted: '#8e8e93',
             subtle: '#60626a',
           }
@@ -42,9 +39,6 @@
     color: #f3f4f6;
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
-  }
-  .table-row-hover:hover {
-    background-color: rgba(255, 255, 255, 0.035);
   }
   .neon-input {
     background-color: #121316;
@@ -70,9 +64,8 @@
 
   <!-- Top Navbar -->
   <header class="h-14 border-b border-neon-border flex items-center justify-between px-4 bg-neon-bg sticky top-0 z-40">
-    <!-- Left Logo & Breadcrumb -->
     <div class="flex items-center gap-3">
-      <a href="/console" class="flex items-center gap-2 no-underline text-white group">
+      <a href="/console" class="flex items-center gap-2 text-white group">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" class="text-neon-green transition-transform group-hover:scale-105">
           <path d="M4 4H10V10H4V4Z" fill="#00e599"/>
           <path d="M14 4H20V10H14V4Z" fill="#00e599" fill-opacity="0.5"/>
@@ -81,9 +74,9 @@
         </svg>
       </a>
       <span class="text-neon-subtle text-lg font-light">/</span>
-      <button id="orgSwitcherBtn" class="flex items-center gap-2 text-sm font-semibold hover:bg-neon-card px-2.5 py-1.5 rounded-lg border border-transparent hover:border-neon-border transition-colors">
+      <button onclick="switchView('projects')" class="flex items-center gap-2 text-sm font-semibold hover:bg-neon-card px-2.5 py-1.5 rounded-lg border border-transparent hover:border-neon-border transition-colors">
         <span id="navTitleText">{{FIRST_NAME}}</span>
-        <span class="text-[11px] font-mono font-medium px-1.5 py-0.2 rounded bg-[#202227] text-neutral-300 border border-[#2b2d35]">Free</span>
+        <span class="text-[11px] font-mono font-medium px-1.5 py-0.5 rounded bg-[#202227] text-neutral-300 border border-[#2b2d35]">Free</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-neon-muted ml-0.5">
           <path d="m7 15 5 5 5-5M7 9l5-5 5 5"/>
         </svg>
@@ -108,41 +101,37 @@
       </div>
     </div>
 
-    <!-- Right Actions & Profile -->
+    <!-- Right Controls -->
     <div class="flex items-center gap-2.5">
-      <!-- Status Badge -->
       <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#11231a] border border-[#16432f] text-[11px] font-medium text-neon-green">
         <span class="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse"></span>
         All OK
       </div>
 
-      <!-- Ask AI -->
-      <button onclick="switchView('projects'); triggerAskAI();" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neon-card hover:bg-neon-hover border border-neon-border hover:border-neutral-600 text-xs font-semibold text-neutral-200 transition-colors">
+      <button onclick="switchView('projects'); triggerAskAI();" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neon-card hover:bg-neon-hover border border-neon-border text-xs font-semibold text-neutral-200 transition-colors">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00e599" stroke-width="2.2">
           <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"/>
         </svg>
         Ask AI
       </button>
 
-      <!-- Docs Helper Icon -->
       <a href="/" title="Documentation" class="w-8 h-8 rounded-lg flex items-center justify-center text-neon-muted hover:text-white hover:bg-neon-card transition-colors">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
         </svg>
       </a>
 
-      <!-- Upgrade Button -->
       <a href="/dashboard" class="hidden sm:block text-xs font-semibold bg-white hover:bg-neutral-200 text-black px-3.5 py-1.5 rounded-lg transition-colors no-underline">
         Upgrade
       </a>
 
-      <!-- User Avatar Button -->
+      <!-- Profile Dropdown Button -->
       <div class="relative">
-        <button id="userMenuBtn" class="w-8 h-8 rounded-lg border border-neon-border hover:border-neutral-500 overflow-hidden flex items-center justify-center bg-gradient-to-tr from-[#1b2b3a] to-[#244b6e] text-white text-xs font-bold transition-all focus:outline-none focus:ring-1 focus:ring-neon-green">
+        <button id="userMenuBtn" class="w-8 h-8 rounded-lg border border-neon-border hover:border-neutral-500 overflow-hidden flex items-center justify-center bg-gradient-to-tr from-[#1b2b3a] to-[#244b6e] text-white text-xs font-bold transition-all">
           {{INITIAL}}
         </button>
 
-        <!-- Dropdown Menu (Exact Replica of Neon Screenshot) -->
+        <!-- Profile Dropdown Menu -->
         <div id="userDropdown" class="hidden absolute right-0 mt-2 w-64 rounded-xl bg-[#141518] border border-[#26282f] shadow-2xl py-1.5 z-50 text-left select-none">
           <div class="px-3.5 py-2.5 border-b border-[#23252a]">
             <div class="text-sm font-semibold text-white truncate">{{DISPLAY_NAME}}</div>
@@ -171,10 +160,9 @@
     </div>
   </header>
 
-  <!-- Body Layout: Sidebar + Main Content -->
+  <!-- Layout: Sidebar + Main Content -->
   <div class="flex-1 flex overflow-hidden">
-
-    <!-- Left Sidebar -->
+    <!-- Sidebar -->
     <aside id="sidebar" class="w-60 bg-neon-sidebar border-r border-neon-border flex flex-col justify-between p-3 flex-shrink-0 transition-all duration-200 select-none">
       <div>
         <div class="text-[11px] font-mono uppercase tracking-wider text-neon-subtle px-3 py-2 font-semibold">Organization</div>
@@ -185,17 +173,11 @@
             </svg>
             Projects
           </button>
-          <a href="/console" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-neon-muted hover:text-white hover:bg-white/[0.03] transition-colors no-underline">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>
-            </svg>
-            Graph Canvas
-          </a>
           <button onclick="switchView('settings', 'api-keys')" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-neon-muted hover:text-white hover:bg-white/[0.03] transition-colors text-left">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
             </svg>
-            Billing & Usage
+            Billing &amp; Usage
           </button>
           <a href="/dashboard" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-neon-muted hover:text-white hover:bg-white/[0.03] transition-colors no-underline">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -213,7 +195,6 @@
         </nav>
       </div>
 
-      <!-- Bottom Nav -->
       <div class="border-t border-neon-border pt-3 space-y-1">
         <button class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-neon-muted hover:text-white hover:bg-white/[0.03] transition-colors text-left">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -226,15 +207,11 @@
       </div>
     </aside>
 
-    <!-- Content View Area -->
+    <!-- Content Area -->
     <main class="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10">
 
-      <!-- ============================================================ -->
-      <!-- VIEW 1: PROJECTS & WORKSPACES DASHBOARD (Screenshot 1)       -->
-      <!-- ============================================================ -->
+      <!-- View 1: Projects Dashboard -->
       <section id="view-projects" class="max-w-6xl mx-auto space-y-7">
-        
-        <!-- Header & Top Actions -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-white">{{FIRST_NAME}}'s projects</h1>
           <div class="flex items-center gap-3">
@@ -248,7 +225,7 @@
           </div>
         </div>
 
-        <!-- Metric KPI Cards (Exact replica of Neon) -->
+        <!-- Metric KPI Cards -->
         <div class="bg-[#121316] border border-neon-border rounded-xl p-5 shadow-sm">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pb-4 border-b border-[#1f2025]">
             <div>
@@ -261,7 +238,7 @@
             <div>
               <div class="flex items-center gap-1.5 text-xs text-neon-muted font-medium mb-1">
                 <span>Storage</span>
-                <span title="Total vector & node storage occupied in your personal database" class="cursor-help">ⓘ</span>
+                <span title="Total vector & node storage occupied" class="cursor-help">ⓘ</span>
               </div>
               <div class="text-xl lg:text-2xl font-bold text-white font-mono">{{STORAGE_ESTIMATE}} <span class="text-xs font-normal text-neon-muted">GB</span></div>
             </div>
@@ -286,11 +263,10 @@
           </p>
         </div>
 
-        <!-- Workspaces Table Section -->
+        <!-- Workspaces Table -->
         <div class="space-y-3">
           <div class="text-base font-bold text-white">{{TOTAL_WORKSPACES}} Projects</div>
           
-          <!-- Filter Search -->
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-neon-muted"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -304,7 +280,6 @@
             />
           </div>
 
-          <!-- Table Container -->
           <div class="bg-[#121316] border border-neon-border rounded-xl overflow-hidden shadow-sm">
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs" id="workspacesTable">
@@ -328,7 +303,7 @@
           </div>
         </div>
 
-        <!-- Passwordless Connect Banner (Bottom Sticky helper from Neon) -->
+        <!-- Passwordless Connect Banner -->
         <div class="p-3.5 rounded-xl bg-[#121316] border border-neon-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
           <div class="flex items-center gap-2 text-neutral-300">
             <span class="w-4 h-4 rounded-full bg-neon-green/20 text-neon-green flex items-center justify-center font-bold text-[10px]">i</span>
@@ -341,14 +316,10 @@
             </button>
           </div>
         </div>
-
       </section>
 
-      <!-- ============================================================ -->
-      <!-- VIEW 2: ACCOUNT SETTINGS VIEW (Screenshots 2 & 3)           -->
-      <!-- ============================================================ -->
+      <!-- View 2: Account Settings -->
       <section id="view-settings" class="hidden max-w-6xl mx-auto space-y-6">
-        
         <div class="flex items-center justify-between">
           <h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-white">Account settings</h1>
           <button onclick="switchView('projects')" class="text-xs text-neon-muted hover:text-white flex items-center gap-1.5 transition-colors">
@@ -356,13 +327,10 @@
           </button>
         </div>
 
-        <!-- Two Column Settings Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-          
-          <!-- Left Main Settings Stack -->
           <div class="lg:col-span-3 space-y-6">
 
-            <!-- Card 1: Personal Information -->
+            <!-- Personal info -->
             <div id="section-profile" class="bg-[#121316] border border-neon-border rounded-xl p-6 space-y-4">
               <h2 class="text-base font-bold text-white tracking-tight">Personal information</h2>
               
@@ -401,7 +369,7 @@
               </div>
             </div>
 
-            <!-- Card 2: Change Password -->
+            <!-- Password -->
             <div id="section-password" class="bg-[#121316] border border-neon-border rounded-xl p-6 space-y-4">
               <h2 class="text-base font-bold text-white tracking-tight">Change password</h2>
               <div>
@@ -414,11 +382,11 @@
               </div>
             </div>
 
-            <!-- Card 3: Two-Factor Auth & Passkeys -->
+            <!-- Two-Factor & Passkeys -->
             <div id="section-2fa" class="bg-[#121316] border border-neon-border rounded-xl p-6 space-y-3">
               <h2 class="text-base font-bold text-white tracking-tight">Two-factor authentication</h2>
               <p class="text-xs text-neon-muted leading-relaxed max-w-xl">
-                Add an extra layer of security to your account by requiring a code from an authenticator app (such as Google Authenticator or Authy) each time you log in.
+                Add an extra layer of security to your account by requiring an authenticator code each time you log in.
               </p>
               <button class="bg-[#24252a] hover:bg-[#2e3037] text-white px-4 py-2 rounded-lg text-xs font-semibold transition-colors mt-2">
                 Set up two-factor authentication
@@ -428,19 +396,19 @@
             <div id="section-passkeys" class="bg-[#121316] border border-neon-border rounded-xl p-6 space-y-3">
               <h2 class="text-base font-bold text-white tracking-tight">Passkeys</h2>
               <p class="text-xs text-neon-muted leading-relaxed max-w-xl">
-                Add a passkey to sign in with your device's biometrics or a security key instead of entering an authenticator code.
+                Add a passkey to sign in with your device's biometrics or security key.
               </p>
               <button class="bg-[#24252a] hover:bg-[#2e3037] text-white px-4 py-2 rounded-lg text-xs font-semibold transition-colors mt-2">
                 Add passkey
               </button>
             </div>
 
-            <!-- Card 4: Personal API Keys (Matching screenshot 3) -->
+            <!-- API Keys -->
             <div id="section-api-keys" class="bg-[#121316] border border-neon-border rounded-xl p-6 space-y-4">
               <div class="flex items-center justify-between">
                 <div>
                   <h2 class="text-base font-bold text-white tracking-tight">Personal API keys</h2>
-                  <p class="text-xs text-neon-muted mt-0.5">These are your personal API keys for Claude Desktop, Cursor, and custom agents.</p>
+                  <p class="text-xs text-neon-muted mt-0.5">Your personal MCP authentication keys for Claude, Cursor, and custom clients.</p>
                 </div>
                 <form method="POST" action="/dashboard/api-key/create" class="m-0">
                   <button type="submit" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors">
@@ -449,7 +417,6 @@
                 </form>
               </div>
 
-              <!-- Keys Table -->
               <div class="border border-neon-border rounded-lg overflow-hidden mt-3">
                 <table class="w-full text-left text-xs">
                   <thead class="bg-[#141518] text-neon-muted border-b border-neon-border">
@@ -467,7 +434,7 @@
               </div>
             </div>
 
-            <!-- Card 5: Personal Neon DB Connection Configuration -->
+            <!-- Neon DB String -->
             <div id="section-database" class="bg-[#121316] border border-neon-border rounded-xl p-6 space-y-4">
               <h2 class="text-base font-bold text-white tracking-tight">Neon Database Connection String</h2>
               <p class="text-xs text-neon-muted leading-relaxed">
@@ -478,7 +445,7 @@
                   type="text"
                   name="connection_string"
                   value="{{CONNECTION_STRING}}"
-                  placeholder="postgresql://alex:pass@ep-cool-fog-123.neon.tech/neondb"
+                  placeholder="postgresql://user:pass@ep-cool-fog-123.neon.tech/neondb"
                   class="w-full px-3.5 py-2.5 bg-[#17181c] border border-neon-border rounded-lg text-xs text-white font-mono neon-input"
                   required
                 />
@@ -490,7 +457,7 @@
 
           </div>
 
-          <!-- Right Sidebar Navigation (Sticky exact match from account.png) -->
+          <!-- Right Sidebar Navigation -->
           <div class="hidden lg:block sticky top-20 border-l border-neon-border pl-4 space-y-2 text-xs">
             <a href="#section-profile" class="block text-white font-semibold hover:text-neon-green transition-colors">Profile</a>
             <a href="#section-password" class="block text-neon-muted hover:text-white transition-colors">Password</a>
@@ -503,13 +470,12 @@
           </div>
 
         </div>
-
       </section>
 
     </main>
   </div>
 
-  <!-- New Project Modal -->
+  <!-- New Workspace Modal -->
   <div id="newProjectModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 z-50">
     <div class="bg-[#141518] border border-neon-border rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-4">
       <div class="flex justify-between items-center pb-2 border-b border-neon-border">
@@ -529,9 +495,7 @@
     </div>
   </div>
 
-  <!-- Javascript Logic -->
   <script>
-    // User Profile Dropdown
     const userBtn = document.getElementById('userMenuBtn');
     const userDropdown = document.getElementById('userDropdown');
 
@@ -546,7 +510,6 @@
       }
     });
 
-    // View Switching: Projects vs Account Settings
     function switchView(viewName, targetAnchor = null) {
       const projectsView = document.getElementById('view-projects');
       const settingsView = document.getElementById('view-settings');
@@ -576,7 +539,6 @@
       }
     }
 
-    // Modal Control
     function openNewProjectModal() {
       document.getElementById('newProjectModal').classList.remove('hidden');
       document.getElementById('newWorkspaceNameInput').focus();
@@ -592,7 +554,6 @@
       }
     }
 
-    // Search Filtering
     function filterWorkspaceRows() {
       const q = document.getElementById('workspaceSearchInput').value.toLowerCase();
       const rows = document.querySelectorAll('#workspacesTable tbody tr');
@@ -602,7 +563,6 @@
       });
     }
 
-    // Copy To Clipboard
     function copyToClipboard(text, btnId) {
       navigator.clipboard.writeText(text).then(() => {
         const btn = document.getElementById(btnId);
@@ -614,7 +574,6 @@
       });
     }
 
-    // Collapse Sidebar Toggle
     function toggleSidebarCollapse() {
       const sb = document.getElementById('sidebar');
       sb.classList.toggle('w-60');
@@ -623,7 +582,6 @@
       spans.forEach(s => s.classList.toggle('hidden'));
     }
 
-    // Ctrl+K Shortcut Handler
     window.addEventListener('keydown', (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
@@ -635,7 +593,7 @@
     function triggerAskAI() {
       const inp = document.getElementById('globalSearchInput');
       if (inp) {
-        inp.value = "Ask AI: Explain recent codebase decisions...";
+        inp.value = "Ask AI: Explain recent second brain decisions...";
         inp.focus();
       }
     }
