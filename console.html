@@ -263,20 +263,20 @@ body {
     </div>
 
     <div class="sidebar-section-title">Context Workspaces</div>
-    <ul class="chat-list" id="workspaceList">
+    <ul class="chat-list">
       <li class="chat-item" style="border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:6px; padding-bottom:6px;">
-        <a href="/dashboard" style="color:inherit; text-decoration:none;">⚙️ Database &amp; Settings</a>
+        <a href="/dashboard" style="color:inherit; text-decoration:none;">⚙️ Database &amp; MCP Settings</a>
       </li>
-      <li class="chat-item" style="color:#666;">Loading workspaces...</li>
+      {{REPO_LIST_HTML}}
     </ul>
 
     <div class="sidebar-footer">
       <div class="user-profile">
         <div class="user-info">
-          <div class="avatar" id="userAvatar">-</div>
-          <span class="user-name" id="userName">User</span>
+          <div class="avatar">{{INITIAL}}</div>
+          <span class="user-name">{{DISPLAY_NAME}}</span>
         </div>
-        <span class="plan-badge">MCP Active</span>
+        <span class="plan-badge">MCP Bridge Active</span>
       </div>
       <form method="POST" action="/logout" style="margin-top:8px;">
         <button type="submit" class="logout-btn">Log Out</button>
@@ -292,16 +292,7 @@ body {
   </label>
 
   <main class="main-canvas" id="canvasContainer">
-    <div id="canvasViewport" style="transform-origin: 0 0; position: absolute; top: 0; left: 0;">
-      <svg class="canvas-svg" id="canvasSvg"></svg>
-      <div id="canvasNodes"></div>
-    </div>
-    <div id="emptyState" class="empty-canvas-state" style="display:none;">
-      <div class="empty-icon">📁</div>
-      <h3 id="emptyTitle">No Context Found</h3>
-      <p id="emptyMsg">Connect your AI models to start capturing memory nodes.</p>
-    </div>
-
+    {{CANVAS_CONTENT}}
     <div class="canvas-hud">
       <button class="hud-btn" onclick="zoomCanvas(0.1)">+</button>
       <button class="hud-btn" onclick="resetZoom()">100%</button>
@@ -334,148 +325,17 @@ body {
 </div>
 
 <script>
-  let activeNodes = [];
-  let currentWorkspace = new URLSearchParams(window.location.search).get('ws') || '';
-
-  async function initConsole() {
-    try {
-      const res = await fetch(`/api/console/data?ws=${encodeURIComponent(currentWorkspace)}`);
-      if (!res.ok) {
-        if (res.status === 401) window.location.href = '/login?next=' + encodeURIComponent(window.location.pathname + window.location.search);
-        return;
-      }
-      const data = await res.json();
-      
-      // User identity
-      document.getElementById('userName').innerText = data.user.display_name;
-      document.getElementById('userAvatar').innerText = data.user.initial;
-
-      // Workspaces sidebar
-      const wsList = document.getElementById('workspaceList');
-      let wsHtml = `<li class="chat-item" style="border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:6px; padding-bottom:6px;">
-        <a href="/dashboard" style="color:inherit; text-decoration:none;">⚙️ Database &amp; Settings</a>
-      </li>`;
-
-      if (data.workspaces && data.workspaces.length) {
-        data.workspaces.forEach(ws => {
-          const isActive = ws === data.selected_workspace;
-          wsHtml += `<li class="chat-item ${isActive ? 'active' : ''}" onclick="switchWorkspace('${escapeJs(ws)}')">📁 ${escapeHtml(ws)}</li>`;
-        });
-      } else {
-        wsHtml += `<div class="p-3 text-xs text-[#8e8e8e]">No workspaces found.</div>`;
-      }
-      wsList.innerHTML = wsHtml;
-
-      currentWorkspace = data.selected_workspace;
-      activeNodes = data.nodes || [];
-
-      renderGraph(data.nodes || [], data.edges || []);
-    } catch (err) {
-      console.error("Failed to load console data", err);
-    }
-  }
-
-  function switchWorkspace(ws) {
-    window.location.href = `/console?ws=${encodeURIComponent(ws)}`;
-  }
-
-  function renderGraph(nodes, edges) {
-    const emptyState = document.getElementById('emptyState');
-    const svgEl = document.getElementById('canvasSvg');
-    const nodesEl = document.getElementById('canvasNodes');
-
-    if (!nodes.length) {
-      emptyState.style.display = 'block';
-      svgEl.innerHTML = '';
-      nodesEl.innerHTML = '';
-      return;
-    }
-    emptyState.style.display = 'none';
-
-    const cardWidth = 250;
-    const cardHeight = 145;
-    const posDict = {};
-    let linearIdx = 0, hubIdx = 0;
-
-    nodes.forEach(node => {
-      const nid = node.id;
-      const ntype = node.node_type || 'thought';
-      let x = 100, y = 100;
-      if (ntype === 'hub') {
-        x = 100 + (hubIdx * 420);
-        y = 80;
-        hubIdx++;
-      } else if (ntype === 'concept') {
-        x = 100 + (linearIdx * 320);
-        y = 220;
-        linearIdx++;
-      } else {
-        x = 100 + (linearIdx * 320);
-        y = 400 + (linearIdx % 2 === 1 ? 70 : -40);
-        linearIdx++;
-      }
-      posDict[nid] = { x, y };
-    });
-
-    let linesHtml = '';
-    edges.forEach(edge => {
-      const s = posDict[edge.source_node_id];
-      const t = posDict[edge.target_node_id];
-      if (s && t) {
-        const scx = s.x + (cardWidth / 2);
-        const scy = s.y + (cardHeight / 2);
-        const tcx = t.x + (cardWidth / 2);
-        const tcy = t.y + (cardHeight / 2);
-        const stroke = edge.relation_type === 'belongs_to_hub' ? '#3b82f6' : '#00e599';
-        linesHtml += `<line x1="${scx}" y1="${scy}" x2="${tcx}" y2="${tcy}" stroke="${stroke}" stroke-width="2" stroke-dasharray="4 4" />`;
-      }
-    });
-    svgEl.innerHTML = linesHtml;
-
-    let nodesHtml = '';
-    nodes.forEach(node => {
-      const pos = posDict[node.id];
-      const ntype = node.node_type || 'thought';
-      let borderCls = "border-[#d4d4d8]";
-      let badge = `<span class="node-step">#${node.sequence_index || '•'}</span>`;
-
-      if (ntype === 'hub') {
-        borderCls = "border-amber-400 bg-amber-50/20";
-        badge = `<span class="bg-amber-100 text-amber-800 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">HUB</span>`;
-      } else if (ntype === 'concept') {
-        borderCls = "border-blue-400 bg-blue-50/20";
-        badge = `<span class="bg-blue-100 text-blue-800 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold">CONCEPT</span>`;
-      }
-
-      nodesHtml += `
-      <div class="canvas-node ${borderCls}" style="left:${pos.x}px; top:${pos.y}px; width:${cardWidth}px;" onclick="openNodeModal('${escapeJs(node.id)}')">
-        <div class="node-header">
-          ${badge}
-          <span class="node-status">✓</span>
-        </div>
-        <div class="node-title">${escapeHtml(node.title || 'Untitled')}</div>
-        <div class="node-snippet">${escapeHtml((node.summary || '').substring(0, 85))}...</div>
-        <div class="node-footer">Tap to inspect context</div>
-      </div>`;
-    });
-    nodesEl.innerHTML = nodesHtml;
-  }
-
-  function escapeHtml(s) {
-    return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
-  function escapeJs(s) {
-    return (s || '').replace(/'/g, "\\'").replace(/"/g, '\\"');
-  }
-
-  // Pan & Zoom
   const container = document.getElementById('canvasContainer');
   const viewport = document.getElementById('canvasViewport');
-  let scale = 1.0, panX = 0, panY = 0, isDragging = false, startX = 0, startY = 0;
+  let scale = 1.0;
+  let panX = 0, panY = 0;
+  let isDragging = false;
+  let startX, startY;
 
   function updateTransform() {
-    if (viewport) viewport.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    if (viewport) {
+      viewport.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    }
   }
 
   container.addEventListener('mousedown', (e) => {
@@ -492,6 +352,23 @@ body {
     panY = e.clientY - startY;
     updateTransform();
   });
+
+  container.addEventListener('touchstart', (e) => {
+    if (e.target.closest('.canvas-node') || e.target.closest('.canvas-hud')) return;
+    isDragging = true;
+    const touch = e.touches[0];
+    startX = touch.clientX - panX;
+    startY = touch.clientY - panY;
+  }, { passive: true });
+
+  container.addEventListener('touchend', () => { isDragging = false; });
+  container.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    const touch = e.touches[0];
+    panX = touch.clientX - startX;
+    panY = touch.clientY - startY;
+    updateTransform();
+  }, { passive: true });
 
   container.addEventListener('wheel', (e) => {
     e.preventDefault();
@@ -512,13 +389,11 @@ body {
     updateTransform();
   }
 
-  function openNodeModal(nodeId) {
-    const node = activeNodes.find(n => n.id === nodeId);
-    if (!node) return;
-    document.getElementById('modalTitle').innerText = node.title || 'Memory Details';
-    document.getElementById('modalSummary').innerText = node.summary || 'No summary logged.';
-    document.getElementById('modalRationale').innerText = node.rationale || 'No model rationale attached.';
-    document.getElementById('modalImpact').innerText = node.impact_analysis || 'No downstream impact tracked.';
+  function openNodeModal(title, summary, rationale, impact) {
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalSummary').innerText = summary;
+    document.getElementById('modalRationale').innerText = rationale;
+    document.getElementById('modalImpact').innerText = impact;
     document.getElementById('nodeModal').classList.add('active');
   }
 
@@ -527,10 +402,10 @@ body {
   }
 
   function closeNodeModal(e) {
-    if (e.target.id === 'nodeModal') document.getElementById('nodeModal').classList.remove('active');
+    if (e.target.id === 'nodeModal') {
+      document.getElementById('nodeModal').classList.remove('active');
+    }
   }
-
-  initConsole();
 </script>
 </body>
 </html>
